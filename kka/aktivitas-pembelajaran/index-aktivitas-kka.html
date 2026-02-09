@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktivitas Pembelajaran KKA - Kelas X</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* KKA ACTIVITIES PAGE STYLES */
+        :root {
+            --kka-primary: #9b59b6;
+            --kka-secondary: #8e44ad;
+            --kka-light: #f4ecf7;
+            --kka-dark: #6c3483;
+            --kka-semester1: #3498db;
+            --kka-semester2: #e74c3c;
+        }
+        
+        .activities-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .activities-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .activities-header h1 {
+            color: var(--kka-dark);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .activities-header p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Semester Navigation */
+        .semester-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .semester-tab {
+            background: white;
+            border: 2px solid var(--kka-light);
+            color: var(--kka-dark);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .semester-tab:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.2);
+        }
+        
+        .semester-tab.active {
+            background: var(--kka-primary);
+            color: white;
+            border-color: var(--kka-primary);
+        }
+        
+        .semester-tab.semester1.active {
+            background: var(--kka-semester1);
+            border-color: var(--kka-semester1);
+        }
+        
+        .semester-tab.semester2.active {
+            background: var(--kka-semester2);
+            border-color: var(--kka-semester2);
+        }
+        
+        /* Elemen Navigation */
+        .elemen-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .elemen-tab {
+            background: white;
+            border: 2px solid var(--kka-light);
+            color: var(--kka-dark);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .elemen-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.15);
+        }
+        
+        .elemen-tab.active {
+            background: var(--kka-primary);
+            color: white;
+            border-color: var(--kka-primary);
+        }
+        
+        .elemen-tab .elemen-number {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        /* Activities Grid */
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .activity-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-top: 5px solid var(--kka-primary);
+            position: relative;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(155, 89, 182, 0.2);
+        }
+        
+        .activity-card.semester1 {
+            border-top-color: var(--kka-semester1);
+        }
+        
+        .activity-card.semester2 {
+            border-top-color: var(--kka-semester2);
+        }
+        
+        .activity-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--kka-light), white);
+            border-bottom: 1px solid #e8f5e9;
+        }
+        
+        .activity-number {
+            display: inline-block;
+            background: var(--kka-primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .activity-card.semester1 .activity-number {
+            background: var(--kka-semester1);
+        }
+        
+        .activity-card.semester2 .activity-number {
+            background: var(--kka-semester2);
+        }
+        
+        .activity-header h3 {
+            color: var(--kka-dark);
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+        
+        .activity-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .activity-meta i {
+            color: var(--kka-primary);
+        }
+        
+        .activity-card.semester1 .activity-meta i {
+            color: var(--kka-semester1);
+        }
+        
+        .activity-card.semester2 .activity-meta i {
+            color: var(--kka-semester2);
+        }
+        
+        .activity-content {
+            padding: 1.5rem;
+        }
+        
+        .activity-content p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .activity-objectives {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .activity-objectives h4 {
+            color: var(--kka-dark);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .activity-objectives ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        
+        .activity-objectives li {
+            color: #666;
+            font-size: 0.9rem;
+            padding: 0.3rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .activity-objectives li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--kka-primary);
+            font-weight: bold;
+        }
+        
+        .activity-card.semester1 .activity-objectives li:before {
+            color: var(--kka-semester1);
+        }
+        
+        .activity-card.semester2 .activity-objectives li:before {
+            color: var(--kka-semester2);
+        }
+        
+        .activity-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .activity-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.8rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-btn.primary {
+            background: var(--kka-primary);
+            color: white;
+        }
+        
+        .activity-card.semester1 .activity-btn.primary {
+            background: var(--kka-semester1);
+        }
+        
+        .activity-card.semester2 .activity-btn.primary {
+            background: var(--kka-semester2);
+        }
+        
+        .activity-btn.secondary {
+            background: var(--kka-light);
+            color: var(--kka-dark);
+            border: 1px solid var(--kka-primary);
+        }
+        
+        .activity-card.semester1 .activity-btn.secondary {
+            background: #ebf5fb;
+            color: var(--kka-semester1);
+            border-color: var(--kka-semester1);
+        }
+        
+        .activity-card.semester2 .activity-btn.secondary {
+            background: #fdedec;
+            color: var(--kka-semester2);
+            border-color: var(--kka-semester2);
+        }
+        
+        .activity-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Progress Indicator */
+        .progress-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+        
+        .progress-badge {
+            background: var(--kka-light);
+            color: var(--kka-dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .progress-badge.completed {
+            background: var(--kka-primary);
+            color: white;
+        }
+        
+        .progress-badge.in-progress {
+            background: #f39c12;
+            color: white;
+        }
+        
+        /* Elemen Badge */
+        .elemen-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+        }
+        
+        .elemen-tag {
+            background: var(--kka-light);
+            color: var(--kka-dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--kka-light);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state h3 {
+            color: var(--kka-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Back Navigation */
+        .back-navigation {
+            margin-top: 3rem;
+            text-align: center;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--kka-light);
+            color: var(--kka-dark);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: var(--kka-primary);
+            color: white;
+            transform: translateX(-5px);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .activities-container {
+                padding: 1rem;
+            }
+            
+            .activities-header h1 {
+                font-size: 2rem;
+            }
+            
+            .semester-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .semester-tab {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+            
+            .elemen-nav {
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding-bottom: 0.5rem;
+            }
+            
+            .elemen-tab {
+                flex-shrink: 0;
+                white-space: nowrap;
+            }
+            
+            .activities-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .activity-actions {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .activities-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .activity-header {
+                padding: 1rem;
+            }
+            
+            .activity-content {
+                padding: 1rem;
+            }
+            
+            .activity-header h3 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>KKA - AKTIVITAS PEMBELAJARAN</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index-kka.html" class="nav-link"><i class="fas fa-robot"></i> Beranda KKA</a></li>
+                    <li><a href="index-aktivitas-kka.html" class="nav-link active"><i class="fas fa-tasks"></i> Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-kka.html" class="nav-link"><i class="fas fa-book-open"></i> Materi</a></li>
+                    <li><a href="../penilaian/index-penilaian-kka.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Activities Content -->
+    <section class="activities-container">
+        <div class="activities-header">
+            <h1>Aktivitas Pembelajaran KKA</h1>
+            <p>Jelajahi berbagai aktivitas pembelajaran Koding dan Kecerdasan Artifisial yang dirancang untuk mengembangkan kemampuan berpikir komputasional, pemrograman, analisis data, dan pemahaman tentang kecerdasan artifisial.</p>
+        </div>
+
+        <!-- Semester Navigation -->
+        <div class="semester-nav">
+            <button class="semester-tab semester1 active" data-semester="semester1">
+                <i class="fas fa-robot"></i> Semester 1
+            </button>
+            <button class="semester-tab semester2" data-semester="semester2">
+                <i class="fas fa-brain"></i> Semester 2
+            </button>
+        </div>
+
+        <!-- Elemen Navigation -->
+        <div class="elemen-nav">
+            <button class="elemen-tab active" data-elemen="all">
+                <i class="fas fa-th"></i> Semua Elemen
+            </button>
+            <button class="elemen-tab" data-elemen="1">
+                <span class="elemen-number">1</span>
+                Berpikir Komputasional
+            </button>
+            <button class="elemen-tab" data-elemen="2">
+                <span class="elemen-number">2</span>
+                Literasi Digital
+            </button>
+            <button class="elemen-tab" data-elemen="3">
+                <span class="elemen-number">3</span>
+                Algoritma
+            </button>
+            <button class="elemen-tab" data-elemen="4">
+                <span class="elemen-number">4</span>
+                Analisis Data
+            </button>
+            <button class="elemen-tab" data-elemen="5">
+                <span class="elemen-number">5</span>
+                Literasi KA
+            </button>
+            <button class="elemen-tab" data-elemen="6">
+                <span class="elemen-number">6</span>
+                Pengembangan KA
+            </button>
+        </div>
+
+        <!-- Semester 1 Activities -->
+        <div id="semester1-activities" class="semester-content active">
+            <div class="activities-grid">
+                <!-- Aktivitas S1A1 -->
+                <div class="activity-card semester1" data-elemen="1">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-brain"></i> Berpikir Komputasional
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A1</div>
+                        <h3>Dekomposisi Masalah</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 2 JP • 
+                            <i class="fas fa-tag"></i> Konsep Dasar
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Mempelajari cara memecah masalah kompleks menjadi bagian-bagian kecil yang lebih mudah dikelola dan diselesaikan.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Memahami konsep dekomposisi</li>
+                                <li>Menerapkan dekomposisi pada masalah nyata</li>
+                                <li>Mengidentifikasi komponen utama masalah</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas1a1.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai Aktivitas
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S1A2 -->
+                <div class="activity-card semester1" data-elemen="2">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-globe"></i> Literasi Digital
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge in-progress">
+                            <i class="fas fa-spinner"></i> Dalam Proses
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A2</div>
+                        <h3>Etika Bermedia Digital</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 2 JP • 
+                            <i class="fas fa-tag"></i> Etika Digital
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Memahami prinsip-prinsip etika, keamanan, dan tanggung jawab dalam berinteraksi di dunia digital.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Memahami etika berkomunikasi digital</li>
+                                <li>Melindungi data pribadi online</li>
+                                <li>Mengenali misinformasi dan hoaks</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas1a2.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Lanjutkan
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S1A3 -->
+                <div class="activity-card semester1" data-elemen="3">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-code"></i> Algoritma
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge completed">
+                            <i class="fas fa-check-circle"></i> Selesai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A3</div>
+                        <h3>Flowchart dan Pseudocode</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 3 JP • 
+                            <i class="fas fa-tag"></i> Representasi Algoritma
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Mempelajari cara merepresentasikan algoritma menggunakan flowchart dan pseudocode untuk solusi masalah.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Membaca dan membuat flowchart</li>
+                                <li>Menulis pseudocode sederhana</li>
+                                <li>Mengkonversi masalah ke representasi algoritma</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas1a3.html" class="activity-btn primary">
+                                <i class="fas fa-redo"></i> Ulangi
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-chart-bar"></i> Hasil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S1A4 -->
+                <div class="activity-card semester1" data-elemen="4">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-chart-bar"></i> Analisis Data
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A4</div>
+                        <h3>Pengenalan Data dan Informasi</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 2 JP • 
+                            <i class="fas fa-tag"></i> Konsep Data
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Memahami perbedaan antara data dan informasi, serta proses transformasi data menjadi informasi yang bermakna.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Membedakan data dan informasi</li>
+                                <li>Mengidentifikasi jenis-jenis data</li>
+                                <li>Memahami proses pengolahan data</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas1a4.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Panduan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S1A5 -->
+                <div class="activity-card semester1" data-elemen="5">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-shield-alt"></i> Literasi KA
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A5</div>
+                        <h3>Konsep Dasar Kecerdasan Artifisial</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 3 JP • 
+                            <i class="fas fa-tag"></i> Pengenalan KA
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Memahami sejarah, perkembangan, dan konsep dasar kecerdasan artifisial serta aplikasinya dalam kehidupan sehari-hari.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Memahami sejarah perkembangan KA</li>
+                                <li>Mengidentifikasi jenis-jenis sistem KA</li>
+                                <li>Mengenali aplikasi KA di sekitar</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas1a5.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S1A6 -->
+                <div class="activity-card semester1" data-elemen="6">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-robot"></i> Pengembangan KA
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A6</div>
+                        <h3>Chatbot Sederhana dengan Flow-based</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 4 JP • 
+                            <i class="fas fa-tag"></i> Proyek KA
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Membuat chatbot sederhana menggunakan platform flow-based untuk memahami logika percakapan dalam sistem KA.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Memahami konsep dialog flow</li>
+                                <li>Membuat flowchart percakapan</li>
+                                <li>Mengimplementasikan chatbot sederhana</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas1a6.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Template
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Semester 2 Activities -->
+        <div id="semester2-activities" class="semester-content">
+            <div class="activities-grid">
+                <!-- Aktivitas S2A1 -->
+                <div class="activity-card semester2" data-elemen="3">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-code"></i> Algoritma
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A1</div>
+                        <h3>Pemrograman Dasar dengan Python</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 4 JP • 
+                            <i class="fas fa-tag"></i> Pemrograman
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Mempelajari sintaks dasar Python untuk implementasi algoritma dan penyelesaian masalah komputasional.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Memahami sintaks Python dasar</li>
+                                <li>Menggunakan variabel dan tipe data</li>
+                                <li>Membuat program Python sederhana</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas2a1.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S2A2 -->
+                <div class="activity-card semester2" data-elemen="4">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-chart-bar"></i> Analisis Data
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A2</div>
+                        <h3>Visualisasi Data dengan Spreadsheet</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 3 JP • 
+                            <i class="fas fa-tag"></i> Data Visualization
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Mengolah data dan membuat visualisasi yang informatif menggunakan aplikasi spreadsheet untuk analisis data.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Menginput dan mengolah data</li>
+                                <li>Membuat grafik dan chart</li>
+                                <li>Menganalisis pola dari visualisasi</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas2a2.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Panduan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S2A3 -->
+                <div class="activity-card semester2" data-elemen="5">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-shield-alt"></i> Literasi KA
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A3</div>
+                        <h3>Etika dan Dampak Sosial KA</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 2 JP • 
+                            <i class="fas fa-tag"></i> Etika KA
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Menganalisis isu-isu etika, bias algoritma, dan dampak sosial dari penerapan kecerdasan artifisial.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Memahami bias dalam algoritma KA</li>
+                                <li>Menganalisis dampak sosial KA</li>
+                                <li>Mengembangkan etika penggunaan KA</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas2a3.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Kasus
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S2A4 -->
+                <div class="activity-card semester2" data-elemen="6">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-robot"></i> Pengembangan KA
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A4</div>
+                        <h3>Prompt Engineering untuk KA Generatif</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 3 JP • 
+                            <i class="fas fa-tag"></i> Prompt Engineering
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Mempelajari teknik prompt engineering untuk berinteraksi efektif dengan model KA generatif seperti ChatGPT.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Memahami konsep prompt engineering</li>
+                                <li>Membuat prompt yang efektif</li>
+                                <li>Mengevaluasi respons KA</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas2a4.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Panduan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S2A5 -->
+                <div class="activity-card semester2" data-elemen="2">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-globe"></i> Literasi Digital
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A5</div>
+                        <h3>Konten Digital Kreatif dengan AI Tools</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 4 JP • 
+                            <i class="fas fa-tag"></i> Konten Kreatif
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Membuat konten digital kreatif dengan memanfaatkan tools berbasis kecerdasan artifisial untuk produksi multimedia.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Menggunakan AI tools untuk desain</li>
+                                <li>Membuat konten multimedia dengan AI</li>
+                                <li>Menghasilkan konten digital kreatif</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas2a5.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Tools
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktivitas S2A6 -->
+                <div class="activity-card semester2" data-elemen="1">
+                    <div class="elemen-badge">
+                        <span class="elemen-tag">
+                            <i class="fas fa-brain"></i> Berpikir Komputasional
+                        </span>
+                    </div>
+                    <div class="progress-indicator">
+                        <span class="progress-badge">
+                            <i class="fas fa-clock"></i> Belum dimulai
+                        </span>
+                    </div>
+                    <div class="activity-header">
+                        <div class="activity-number">A6</div>
+                        <h3>Proyek Akhir: Solusi Digital dengan Pendekatan Komputasional</h3>
+                        <div class="activity-meta">
+                            <i class="fas fa-clock"></i> 6 JP • 
+                            <i class="fas fa-tag"></i> Proyek Akhir
+                        </div>
+                    </div>
+                    <div class="activity-content">
+                        <p>Menerapkan seluruh konsep KKA dalam proyek akhir yang mengembangkan solusi digital untuk masalah nyata.</p>
+                        <div class="activity-objectives">
+                            <h4><i class="fas fa-bullseye"></i> Tujuan Pembelajaran</h4>
+                            <ul>
+                                <li>Mengidentifikasi masalah nyata</li>
+                                <li>Merancang solusi dengan pendekatan komputasional</li>
+                                <li>Mengimplementasikan dan mengevaluasi solusi</li>
+                            </ul>
+                        </div>
+                        <div class="activity-actions">
+                            <a href="aktivitas-kkas2a6.html" class="activity-btn primary">
+                                <i class="fas fa-play-circle"></i> Mulai
+                            </a>
+                            <a href="#" class="activity-btn secondary">
+                                <i class="fas fa-info-circle"></i> Template
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Navigation -->
+        <div class="back-navigation">
+            <a href="../index-kka.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda KKA
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Aktivitas KKA</h3>
+                <p><i class="fas fa-download"></i> Download Template Proyek</p>
+                <p><i class="fas fa-video"></i> Tutorial Koding & KA</p>
+                <p><i class="fas fa-question-circle"></i> FAQ Kecerdasan Artifisial</p>
+            </div>
+            <div class="footer-section">
+                <h3>Guru Pengampu</h3>
+                <p>Nama Guru: Pak Budi</p>
+                <p>Email: budi@sekolah.com</p>
+                <p>Konsultasi: Selasa-Kamis, 14:00-16:00</p>
+            </div>
+            <div class="footer-section">
+                <h3>Platform Rekomendasi</h3>
+                <p>Google Colab</p>
+                <p>Replit</p>
+                <p>ChatGPT & Gemini</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Website Pembelajaran - Aktivitas KKA (Koding & Kecerdasan Artifisial) Kelas X</p>
+        </div>
+    </footer>
+
+    <script src="../../script.js"></script>
+    <script>
+        // Semester Tab Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const semesterTabs = document.querySelectorAll('.semester-tab');
+            const semesterContents = document.querySelectorAll('.semester-content');
+            const elemenTabs = document.querySelectorAll('.elemen-tab');
+            const activityCards = document.querySelectorAll('.activity-card');
+            
+            // Semester tab switching
+            semesterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const semester = this.dataset.semester;
+                    
+                    // Remove active class from all semester tabs
+                    semesterTabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all semester contents
+                    semesterContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show selected semester content
+                    document.getElementById(`${semester}-activities`).classList.add('active');
+                    
+                    // Reset elemen filter to "all"
+                    elemenTabs.forEach(et => {
+                        et.classList.remove('active');
+                        if (et.dataset.elemen === 'all') {
+                            et.classList.add('active');
+                        }
+                    });
+                    
+                    // Show all activity cards in selected semester
+                    activityCards.forEach(card => {
+                        if (card.closest(`#${semester}-activities`)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Elemen tab filtering
+            elemenTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const elemen = this.dataset.elemen;
+                    
+                    // Remove active class from all elemen tabs
+                    elemenTabs.forEach(et => et.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Get active semester
+                    const activeSemester = document.querySelector('.semester-tab.active').dataset.semester;
+                    const activeSemesterContent = document.getElementById(`${activeSemester}-activities`);
+                    
+                    // Filter activity cards
+                    activityCards.forEach(card => {
+                        if (card.closest(`#${activeSemester}-activities`)) {
+                            if (elemen === 'all' || card.dataset.elemen === elemen) {
+                                card.style.display = 'block';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            });
+            
+            // Add click effects for activity buttons
+            const activityButtons = document.querySelectorAll('.activity-btn');
+            activityButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                });
+            });
+            
+            // Simulate progress tracking (for demo purposes)
+            const progressBadges = document.querySelectorAll('.progress-badge');
+            progressBadges.forEach(badge => {
+                badge.addEventListener('click', function() {
+                    if (this.classList.contains('completed')) {
+                        this.classList.remove('completed');
+                        this.classList.add('in-progress');
+                        this.innerHTML = '<i class="fas fa-spinner"></i> Dalam Proses';
+                    } else if (this.classList.contains('in-progress')) {
+                        this.classList.remove('in-progress');
+                        this.innerHTML = '<i class="fas fa-clock"></i> Belum dimulai';
+                    } else {
+                        this.classList.add('completed');
+                        this.innerHTML = '<i class="fas fa-check-circle"></i> Selesai';
+                    }
+                });
+            });
+            
+            // Add animation delay for activity cards
+            activityCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
