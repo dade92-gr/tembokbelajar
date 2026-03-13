@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Materi - Aktivitas IPAS</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* IPAS THEME COLORS */
+        :root {
+            --ipas-primary: #2ecc71;
+            --ipas-secondary: #27ae60;
+            --ipas-light: #d5f4e6;
+            --ipas-dark: #229954;
+            --ipas-accent: #3498db;
+            --ipas-orange: #f39c12;
+            --ipas-red: #e74c3c;
+            --ipas-purple: #9b59b6;
+            --ipas-gray: #f5f7fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        /* MAIN CONTENT */
+        .activity-detail-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* CARD STYLE */
+        .ipas-content-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.1);
+            border-left: 5px solid var(--ipas-primary);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .ipas-content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .ipas-content-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .ipas-content-card h2 {
+            color: var(--ipas-dark);
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .ipas-content-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 2px;
+        }
+        
+        .ipas-content-card .subtitle {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .ipas-content-card .subtitle i {
+            color: var(--ipas-primary);
+        }
+        
+        /* LEMBAR AKTIVITAS STYLE */
+        .lembar-aktivitas {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+            border: 1px solid var(--ipas-light);
+            margin: 2rem 0;
+        }
+
+        .lembar-aktivitas h1 {
+            font-size: 2rem;
+            color: var(--ipas-dark);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .lembar-aktivitas h2 {
+            font-size: 1.8rem;
+            color: var(--ipas-primary);
+            text-align: center;
+            margin: 1rem 0 2rem 0;
+        }
+
+        .lembar-aktivitas .garis-judul {
+            border-bottom: 2px dashed var(--ipas-primary);
+            margin: 1rem 0 2rem 0;
+        }
+        
+        .identitas-box {
+            background: var(--ipas-light);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .identitas-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .identitas-item label {
+            font-weight: 600;
+            color: var(--ipas-dark);
+        }
+        
+        .identitas-item input, .identitas-item select {
+            padding: 0.8rem;
+            border: 2px solid white;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .identitas-item input:focus, .identitas-item select:focus {
+            outline: none;
+            border-color: var(--ipas-primary);
+        }
+
+        .review-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .review-card {
+            background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border-left: 5px solid var(--ipas-accent);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .review-card h3 {
+            color: var(--ipas-dark);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-card h3 i {
+            color: var(--ipas-accent);
+            font-size: 1.5rem;
+        }
+
+        .materi-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .materi-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid var(--ipas-light);
+        }
+
+        .materi-item h4 {
+            color: var(--ipas-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .materi-item ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .materi-item li {
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .materi-item li i {
+            color: var(--ipas-primary);
+            font-size: 0.8rem;
+        }
+
+        .highlight-box {
+            background: #fff9e0;
+            border-left: 5px solid #f1c40f;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .highlight-box h4 {
+            color: #856404;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .highlight-box .refleksi-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight-box .refleksi-item label {
+            font-weight: 600;
+            color: var(--ipas-dark);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box .refleksi-item input, 
+        .highlight-box .refleksi-item textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .highlight-box .refleksi-item input:focus,
+        .highlight-box .refleksi-item textarea:focus {
+            outline: none;
+            border-color: var(--ipas-primary);
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            width: fit-content;
+            margin: 2rem auto;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+        
+        .submit-button i {
+            margin-right: 10px;
+        }
+        
+        .submit-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading-message, .success-message, .error-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: none;
+            text-align: center;
+        }
+        
+        .loading-message {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+        
+        /* NAVIGATION */
+        .activity-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--ipas-dark);
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid var(--ipas-light);
+        }
+        
+        .nav-btn:hover {
+            background: var(--ipas-primary);
+            color: white;
+        }
+        
+        .nav-btn.primary {
+            background: var(--ipas-primary);
+            color: white;
+            border: none;
+        }
+        
+        .nav-btn.primary:hover {
+            background: var(--ipas-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .activity-detail-container {
+                padding: 1rem;
+            }
+            
+            .ipas-content-card {
+                padding: 1.5rem;
+            }
+            
+            .ipas-content-card h2 {
+                font-size: 1.8rem;
+            }
+            
+            .lembar-aktivitas {
+                padding: 1.5rem;
+            }
+            
+            .lembar-aktivitas h1 {
+                font-size: 1.5rem;
+            }
+            
+            .lembar-aktivitas h2 {
+                font-size: 1.3rem;
+            }
+            
+            .identitas-box {
+                grid-template-columns: 1fr;
+            }
+            
+            .materi-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .activity-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>TEMBOK BELAJAR - PROJEK IPAS</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index-ipas.html" class="nav-link"><i class="fas fa-flask"></i> Beranda IPAS</a></li>
+                    <li><a href="index-aktifitas-ipas.html" class="nav-link active"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-ipas.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="../penilaian/index-penilaian-ipas.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Activity Detail Content -->
+    <section class="activity-detail-container">
+        <!-- Judul Halaman -->
+        <div class="ipas-content-card">
+            <h2>Review Materi</h2>
+            <div class="subtitle">
+                <span><i class="fas fa-calendar"></i> Minggu 14 • Semester Ganjil</span>
+                <span><i class="fas fa-clock"></i> 6 JP</span>
+            </div>
+            <p>Aktivitas Review Materi dengan studi berbagai literasi dan tanya jawab aspek-aspek yang belum diketahui</p>
+        </div>
+
+        <!-- Loading Message -->
+        <div id="loadingMessage" class="loading-message">
+            <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
+        </div>
+        
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> <span id="errorText"></span>
+        </div>
+
+        <!-- LEMBAR AKTIVITAS REVIEW MATERI -->
+        <div class="lembar-aktivitas" id="worksheetForm">
+            <h1>LEMBAR AKTIVITAS IPAS</h1>
+            <h2>REVIEW MATERI SEMESTER GANJIL</h2>
+            <div class="garis-judul"></div>
+
+            <!-- IDENTITAS KELOMPOK -->
+            <h3 style="color: var(--ipas-dark); margin-bottom: 1rem;"><i class="fas fa-users" style="color: var(--ipas-primary); margin-right: 10px;"></i> IDENTITAS KELOMPOK</h3>
+            
+            <div class="identitas-box">
+                <div class="identitas-item">
+                    <label><i class="fas fa-users"></i> Kelas</label>
+                    <select id="kelas" onchange="updateNamaDropdown()" disabled>
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
+                </div>
+                <div class="identitas-item">
+                    <label><i class="fas fa-user"></i> Nama</label>
+                    <select id="nama" disabled>
+                        <option value="">-- Pilih Nama --</option>
+                    </select>
+                </div>
+                <div class="identitas-item">
+                    <label><i class="fas fa-users"></i> Kelompok</label>
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" disabled>
+                </div>
+                <div class="identitas-item">
+                    <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" disabled>
+                </div>
+            </div>
+
+            <!-- KONTEN REVIEW MATERI -->
+            <div class="review-container">
+                
+                <!-- Ringkasan 7 Aktivitas -->
+                <div class="review-card">
+                    <h3><i class="fas fa-list-ol"></i> RINGKASAN 7 AKTIVITAS PEMBELAJARAN</h3>
+                    <div class="materi-list">
+                        <div class="materi-item">
+                            <h4>Aktivitas 1: Perkenalan IPAS</h4>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> Konsep dasar IPAS</li>
+                                <li><i class="fas fa-check-circle"></i> Metode ilmiah</li>
+                                <li><i class="fas fa-check-circle"></i> Tujuan pembelajaran IPAS</li>
+                                <li><i class="fas fa-check-circle"></i> Karakteristik IPAS</li>
+                                <li><i class="fas fa-check-circle"></i> Enam aspek IPAS</li>
+                            </ul>
+                        </div>
+                        <div class="materi-item">
+                            <h4>Aktivitas 2: Makhluk Hidup & Lingkungan</h4>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> Ekosistem dan interaksinya</li>
+                                <li><i class="fas fa-check-circle"></i> Observasi lingkungan</li>
+                                <li><i class="fas fa-check-circle"></i> Prediksi sederhana</li>
+                                <li><i class="fas fa-check-circle"></i> Pembuktian ilmiah</li>
+                                <li><i class="fas fa-check-circle"></i> Koneksi dengan bidang keahlian</li>
+                            </ul>
+                        </div>
+                        <div class="materi-item">
+                            <h4>Aktivitas 3: Zat & Perubahannya</h4>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> Wujud zat (padat, cair, gas)</li>
+                                <li><i class="fas fa-check-circle"></i> Perubahan fisika & kimia</li>
+                                <li><i class="fas fa-check-circle"></i> Unsur, senyawa, campuran</li>
+                                <li><i class="fas fa-check-circle"></i> Eksperimen sederhana</li>
+                                <li><i class="fas fa-check-circle"></i> Koneksi dengan industri</li>
+                            </ul>
+                        </div>
+                        <div class="materi-item">
+                            <h4>Aktivitas 4: Energi & Perubahannya</h4>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> Bentuk-bentuk energi</li>
+                                <li><i class="fas fa-check-circle"></i> Hukum kekekalan energi</li>
+                                <li><i class="fas fa-check-circle"></i> Sumber energi terbarukan</li>
+                                <li><i class="fas fa-check-circle"></i> Perubahan energi</li>
+                                <li><i class="fas fa-check-circle"></i> Efisiensi energi</li>
+                            </ul>
+                        </div>
+                        <div class="materi-item">
+                            <h4>Aktivitas 5: Keruangan & Konektivitas</h4>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> Konsep ruang dan interaksi</li>
+                                <li><i class="fas fa-check-circle"></i> Konektivitas antar wilayah</li>
+                                <li><i class="fas fa-check-circle"></i> Infrastruktur</li>
+                                <li><i class="fas fa-check-circle"></i> Mobilitas penduduk</li>
+                                <li><i class="fas fa-check-circle"></i> Mitigasi bencana</li>
+                            </ul>
+                        </div>
+                        <div class="materi-item">
+                            <h4>Aktivitas 6: Interaksi Sosial</h4>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> Manusia sebagai makhluk sosial</li>
+                                <li><i class="fas fa-check-circle"></i> Bentuk-bentuk interaksi</li>
+                                <li><i class="fas fa-check-circle"></i> Sosialisasi dan agen sosialisasi</li>
+                                <li><i class="fas fa-check-circle"></i> Institusi sosial</li>
+                                <li><i class="fas fa-check-circle"></i> Nilai dan norma</li>
+                            </ul>
+                        </div>
+                        <div class="materi-item">
+                            <h4>Aktivitas 7: Perilaku Ekonomi</h4>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> Kelangkaan dan pilihan ekonomi</li>
+                                <li><i class="fas fa-check-circle"></i> Kebutuhan (primer, sekunder, tersier)</li>
+                                <li><i class="fas fa-check-circle"></i> Permintaan dan penawaran</li>
+                                <li><i class="fas fa-check-circle"></i> Fungsi uang</li>
+                                <li><i class="fas fa-check-circle"></i> Kegiatan ekonomi</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Peta Konsep -->
+                <div class="review-card">
+                    <h3><i class="fas fa-sitemap"></i> PETA KONSEP IPAS SEMESTER GANJIL</h3>
+                    <div style="text-align: center; padding: 1rem;">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='200' viewBox='0 0 800 200'%3E%3Crect width='800' height='200' fill='%23f5f7fa'/%3E%3Ctext x='400' y='100' font-family='Arial' font-size='24' fill='%232ecc71' text-anchor='middle'%3EPETA KONSEP IPAS%3C/text%3E%3Ctext x='400' y='140' font-family='Arial' font-size='16' fill='%232c3e50' text-anchor='middle'%3E6 Aspek IPAS Terintegrasi dengan Bidang Keahlian%3C/text%3E%3C/svg%3E" alt="Peta Konsep IPAS" style="max-width: 100%; border-radius: 10px;">
+                    </div>
+                </div>
+
+                <!-- Poin-Poin Penting -->
+                <div class="review-card">
+                    <h3><i class="fas fa-star"></i> POIN-POIN PENTING YANG TELAH DIPELAJARI</h3>
+                    <ul style="list-style-type: none; padding-left: 0;">
+                        <li style="margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: var(--ipas-primary); margin-top: 3px;"></i>
+                            <span><strong>Metode Ilmiah:</strong> Observasi, merumuskan masalah, membuat hipotesis, melakukan eksperimen, menganalisis data, menarik kesimpulan.</span>
+                        </li>
+                        <li style="margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: var(--ipas-primary); margin-top: 3px;"></i>
+                            <span><strong>Keterampilan Proses:</strong> Mengamati, mengklasifikasi, memprediksi, membuktikan, mengkomunikasikan.</span>
+                        </li>
+                        <li style="margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: var(--ipas-primary); margin-top: 3px;"></i>
+                            <span><strong>Sikap Ilmiah:</strong> Rasa ingin tahu, jujur, objektif, terbuka, kerja sama, tanggung jawab.</span>
+                        </li>
+                        <li style="margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: var(--ipas-primary); margin-top: 3px;"></i>
+                            <span><strong>Koneksi dengan Dunia Kerja:</strong> Setiap konsep IPAS dapat dihubungkan dengan program keahlian masing-masing.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- REFLEKSI PEMBELAJARAN (DENGAN INPUT FIELD) -->
+                <div class="highlight-box">
+                    <h4><i class="fas fa-pencil-alt"></i> REFLEKSI PEMBELAJARAN</h4>
+                    
+                    <div class="refleksi-item">
+                        <label for="refleksi_berkesan">Hal paling berkesan selama 7 aktivitas:</label>
+                        <textarea id="refleksi_berkesan" rows="2" placeholder="Tulis hal paling berkesan..."></textarea>
+                    </div>
+
+                    <div class="refleksi-item">
+                        <label for="refleksi_keterampilan">Keterampilan baru yang dikuasai:</label>
+                        <textarea id="refleksi_keterampilan" rows="2" placeholder="Tulis keterampilan baru yang dikuasai..."></textarea>
+                    </div>
+
+                    <div class="refleksi-item">
+                        <label for="refleksi_konsep_menarik">Konsep yang paling menarik:</label>
+                        <textarea id="refleksi_konsep_menarik" rows="2" placeholder="Tulis konsep yang paling menarik..."></textarea>
+                    </div>
+
+                    <div class="refleksi-item">
+                        <label for="refleksi_konsep_lanjut">Konsep yang perlu dipelajari lebih lanjut:</label>
+                        <textarea id="refleksi_konsep_lanjut" rows="2" placeholder="Tulis konsep yang ingin dipelajari lebih dalam..."></textarea>
+                    </div>
+
+                    <div class="refleksi-item">
+                        <label for="refleksi_penerapan">Penerapan IPAS di program keahlian:</label>
+                        <textarea id="refleksi_penerapan" rows="3" placeholder="Tulis bagaimana IPAS dapat diterapkan di program keahlian Anda..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Kirim -->
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
+                <i class="fas fa-paper-plane"></i> Kirim Refleksi Review
+            </button>
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i> Refleksi review materi telah terkirim! Terima kasih.
+            </div>
+        </div>
+
+        <!-- Navigasi -->
+        <div class="activity-navigation">
+            <a href="s1-6-eksplorasi-ekonomi.html" class="nav-btn">
+                <i class="fas fa-arrow-left"></i> Kembali ke Aktivitas Sebelumnya
+            </a>
+            <a href="s1-8-evaluasi-akhir.html" class="nav-btn primary">
+                Lanjut ke Evaluasi Akhir <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <script>
+        // ==================== KONFIGURASI URL (SUDAH ANDA PUNYA) ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
+
+        // ==================== KONFIGURASI FORM (UNTUK REVIEW) ====================
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 8 - REVIEW MATERI",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas/Peran",
+                "Hal Paling Berkesan",
+                "Keterampilan Baru",
+                "Konsep Paling Menarik",
+                "Konsep Perlu Dipelajari",
+                "Penerapan di Program Keahlian"
+            ]
+        };
+
+        // ==================== VARIABEL GLOBAL ====================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+
+        // ==================== LOAD DATA SISWA (JSONP) ====================
+        function loadDataFromGoogleSheets() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                
+                const callbackName = 'jsonp_callback_' + Date.now();
+                
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) document.head.removeChild(script);
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        
+                        dataKelas.forEach(kelas => {
+                            if (kelas && kelas.trim() !== '') {
+                                const option = document.createElement('option');
+                                option.value = kelas;
+                                option.textContent = kelas;
+                                kelasSelect.appendChild(option);
+                            }
+                        });
+                        
+                        enableForm();
+                        document.getElementById('loadingMessage').style.display = 'none';
+                    } else {
+                        useFallbackData();
+                    }
+                    
+                    isLoading = false;
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = function() {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) document.head.removeChild(script);
+                    delete window[callbackName];
+                    
+                    useFallbackData();
+                    isLoading = false;
+                };
+                
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                useFallbackData();
+                isLoading = false;
+            }
+        }
+
+        function useFallbackData() {
+            dataKelas = [
+                'X ATPH 1', 'X ATPH 2', 'X TSM 1', 'X TSM 2', 
+                'X AKL 1', 'X AKL 2', 'X TKJ 1', 'X TKJ 2'
+            ];
+            
+            dataSiswa = {
+                'X ATPH 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
+                'X ATPH 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
+                'X TSM 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
+                'X TSM 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
+                'X AKL 1': ['Vina Amalia', 'Wahyu Nugroho', 'Xena Olivia', 'Yusuf Maulana', 'Zahra Aulia'],
+                'X AKL 2': ['Adi Saputra', 'Bella Safira', 'Candra Wijaya', 'Dina Marlina', 'Eko Prasetyo'],
+                'X TKJ 1': ['Faris Akbar', 'Gina Lestari', 'Hendra Kurniawan', 'Indah Permatasari', 'Jefri Nichol'],
+                'X TKJ 2': ['Kiki Amalia', 'Lutfi Ardian', 'Mira Azizah', 'Nando Putra', 'Olivia Dewi']
+            };
+            
+            const kelasSelect = document.getElementById('kelas');
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            
+            dataKelas.forEach(kelas => {
+                const option = document.createElement('option');
+                option.value = kelas;
+                option.textContent = kelas;
+                kelasSelect.appendChild(option);
+            });
+            
+            enableForm();
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = 'Gagal terhubung ke server. Menggunakan data lokal.';
+        }
+
+        function enableForm() {
+            document.getElementById('kelas').disabled = false;
+            document.getElementById('nama').disabled = false;
+            document.getElementById('kelompok').disabled = false;
+            document.getElementById('tugas').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
+
+            loadDataFromGoogleSheets();
+        });
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            
+            const siswaList = dataSiswa[kelas] || [];
+            siswaList.sort().forEach(nama => {
+                if (nama && nama.trim() !== '') {
+                    const option = document.createElement('option');
+                    option.value = nama;
+                    option.textContent = nama;
+                    namaSelect.appendChild(option);
+                }
+            });
+        }
+
+        // ==================== FUNGSI SUBMIT DATA ====================
+        async function submitData() {
+            if (isLoading) {
+                alert('Data masih dimuat. Silakan tunggu beberapa saat.');
+                return;
+            }
+            
+            if (!document.getElementById('kelas').value) {
+                alert('Silakan isi kelas terlebih dahulu');
+                return;
+            }
+            if (!document.getElementById('nama').value) {
+                alert('Silakan isi nama terlebih dahulu');
+                return;
+            }
+            if (!document.getElementById('kelompok').value) {
+                alert('Silakan isi nama kelompok');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                const formData = new URLSearchParams();
+                
+                // Kirim konfigurasi sheet
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                
+                // ==================== IDENTITAS ====================
+                formData.append('Kelas', document.getElementById('kelas').value || '');
+                formData.append('Nama', document.getElementById('nama').value || '');
+                formData.append('Kelompok', document.getElementById('kelompok').value || '');
+                formData.append('Tugas/Peran', document.getElementById('tugas').value || '');
+                
+                // ==================== REFLEKSI ====================
+                formData.append('Hal Paling Berkesan', document.getElementById('refleksi_berkesan')?.value || '');
+                formData.append('Keterampilan Baru', document.getElementById('refleksi_keterampilan')?.value || '');
+                formData.append('Konsep Paling Menarik', document.getElementById('refleksi_konsep_menarik')?.value || '');
+                formData.append('Konsep Perlu Dipelajari', document.getElementById('refleksi_konsep_lanjut')?.value || '');
+                formData.append('Penerapan di Program Keahlian', document.getElementById('refleksi_penerapan')?.value || '');
+
+                // Kirim ke perekap aktivitas
+                await fetch(URL_PEREKAP_AKTIVITAS, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    redirect: 'follow',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+
+                document.getElementById('successMessage').style.display = 'block';
+                
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 5000);
+
+                if (confirm('Refleksi review materi telah terkirim! Ingin mereset form?')) {
+                    location.reload();
+                }
+
+            } catch (error) {
+                alert('Terjadi kesalahan: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Refleksi Review';
+            }
+        }
+    </script>
+</body>
+</html>

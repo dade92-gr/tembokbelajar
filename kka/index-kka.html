@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KKA - Koding & Kecerdasan Artifisial</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* KKA THEME COLORS */
+        :root {
+            --kka-primary: #9b59b6;
+            --kka-secondary: #8e44ad;
+            --kka-light: #f4ecf7;
+            --kka-dark: #6c3483;
+            --kka-accent: #3498db;
+            --kka-secondary-accent: #2ecc71;
+        }
+        
+        /* KKA COURSE CONTENT */
+        .kka-course-content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .kka-content-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.1);
+            border-left: 5px solid var(--kka-primary);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .kka-content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(155, 89, 182, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .kka-content-card h2 {
+            color: var(--kka-dark);
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .kka-content-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--kka-primary), var(--kka-secondary));
+            border-radius: 2px;
+        }
+        
+        .kka-content-card > p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 2.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--kka-light);
+            border-radius: 10px;
+            border-left: 4px solid var(--kka-primary);
+        }
+        
+        /* KKA TUJUAN PEMBELAJARAN GRID */
+        .kka-tujuan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .kka-tujuan-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #f4ecf7;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kka-tujuan-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--kka-primary), var(--kka-secondary));
+        }
+        
+        .kka-tujuan-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(155, 89, 182, 0.15);
+        }
+        
+        .kka-tujuan-item-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--kka-light);
+        }
+        
+        .kka-tujuan-item-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .kka-tujuan-item-title {
+            flex-grow: 1;
+        }
+        
+        .kka-tujuan-item-title h4 {
+            color: var(--kka-dark);
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+        }
+        
+        .kka-tujuan-item-title .kode-tp {
+            color: var(--kka-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: var(--kka-light);
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .kka-tujuan-item p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        /* Warna berbeda untuk setiap elemen */
+        .kka-tujuan-item:nth-child(1) .kka-tujuan-item-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .kka-tujuan-item:nth-child(2) .kka-tujuan-item-icon {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .kka-tujuan-item:nth-child(3) .kka-tujuan-item-icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .kka-tujuan-item:nth-child(4) .kka-tujuan-item-icon {
+            background: linear-gradient(135deg, #f39c12, #d35400);
+        }
+        
+        .kka-tujuan-item:nth-child(5) .kka-tujuan-item-icon {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .kka-tujuan-item:nth-child(6) .kka-tujuan-item-icon {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+        }
+        
+        /* KKA CAPAIAN PEMBELAJARAN */
+        .kka-capaian-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .kka-capaian-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #f4ecf7;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kka-capaian-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--kka-accent);
+        }
+        
+        .kka-capaian-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(155, 89, 182, 0.1);
+        }
+        
+        .kka-capaian-item-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        
+        .kka-capaian-number {
+            background: var(--kka-primary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .kka-capaian-item-header h4 {
+            color: var(--kka-dark);
+            font-size: 1.1rem;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .kka-capaian-item p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+            padding-left: 45px;
+        }
+        
+        /* KKA ELEMEN MATERI */
+        .kka-elemen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .kka-elemen-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kka-elemen-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(155, 89, 182, 0.15);
+            border-color: var(--kka-primary);
+        }
+        
+        .kka-elemen-item h4 {
+            color: var(--kka-dark);
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--kka-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .kka-elemen-item h4 i {
+            color: var(--kka-primary);
+            background: var(--kka-light);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        
+        .kka-elemen-item p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        /* KKA QUICK LINKS */
+        .kka-quick-links {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px dashed #e0e0e0;
+            animation: fadeInUp 0.6s ease-out 0.6s both;
+        }
+        
+        .kka-quick-links h3 {
+            color: var(--kka-dark);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .kka-quick-links h3 i {
+            color: var(--kka-primary);
+            background: var(--kka-light);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+        
+        .kka-quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .kka-quick-link {
+            background: linear-gradient(135deg, var(--kka-primary), var(--kka-secondary));
+            color: white;
+            text-decoration: none;
+            padding: 1.5rem;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            animation: bounceIn 0.6s ease-out both;
+        }
+        
+        .kka-quick-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--kka-secondary), var(--kka-dark));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .kka-quick-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(155, 89, 182, 0.4);
+        }
+        
+        .kka-quick-link:hover::before {
+            opacity: 1;
+        }
+        
+        .kka-quick-link i {
+            font-size: 2.5rem;
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .kka-quick-link span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .kka-quick-link:nth-child(1) {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            animation-delay: 0.1s;
+        }
+        
+        .kka-quick-link:nth-child(2) {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+            animation-delay: 0.2s;
+        }
+        
+        .kka-quick-link:nth-child(3) {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+            animation-delay: 0.3s;
+        }
+        
+        /* KKA FOOTER */
+        .kka-footer {
+            background: linear-gradient(135deg, var(--kka-dark), var(--kka-primary));
+            color: white;
+            padding: 3rem 0;
+            margin-top: 4rem;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .kka-footer .footer-section h3 {
+            color: white;
+        }
+        
+        .kka-footer .footer-section p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Responsive Design for KKA */
+        @media (max-width: 768px) {
+            .kka-course-content {
+                padding: 1rem;
+            }
+            
+            .kka-content-card {
+                padding: 1.5rem;
+            }
+            
+            .kka-content-card h2 {
+                font-size: 1.8rem;
+            }
+            
+            .kka-tujuan-grid,
+            .kka-capaian-grid,
+            .kka-elemen-grid,
+            .kka-quick-links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kka-tujuan-item,
+            .kka-capaian-item,
+            .kka-elemen-item {
+                padding: 1.2rem;
+            }
+            
+            .kka-quick-link {
+                animation-delay: 0s !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .kka-content-card {
+                padding: 1rem;
+            }
+            
+            .kka-content-card h2 {
+                font-size: 1.5rem;
+            }
+            
+            .kka-quick-links h3 {
+                font-size: 1.3rem;
+            }
+            
+            .kka-tujuan-item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .kka-tujuan-item-title h4 {
+                font-size: 1.1rem;
+            }
+            
+            .kka-capaian-item p {
+                padding-left: 0;
+                padding-top: 10px;
+            }
+            
+            .kka-quick-link {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>KKA - KODING & KECERDASAN ARTIFISIAL</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="index-kka.html" class="nav-link active"><i class="fas fa-robot"></i> Beranda KKA</a></li>
+                    <li><a href="aktivitas-pembelajaran/index-aktivitas-kka.html" class="nav-link"><i class="fas fa-tasks"></i> Aktivitas</a></li>
+                    <li><a href="materi-pembelajaran/index-materi-kka.html" class="nav-link"><i class="fas fa-book-open"></i> Materi</a></li>
+                    <li><a href="penilaian/index-penilaian-kka.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Course Content -->
+    <section class="kka-course-content">
+        <div class="kka-content-card">
+            <h2>Deskripsi Mata Pelajaran KKA</h2>
+            <p>Mata pelajaran <strong>Koding dan Kecerdasan Artifisial (KKA)</strong> merupakan pendalaman computer science dengan fokus pada berpikir komputasional, literasi digital, algoritma pemrograman, analisis data, dan etika kecerdasan artifisial. Pembelajaran ini mengembangkan keterampilan abad ke-21 seperti berpikir kritis, kreativitas, dan pemecahan masalah untuk menyiapkan generasi inovatif yang mampu berkontribusi pada ekonomi digital dan pembangunan nasional.</p>
+            
+            <p>Dengan pendekatan <strong>human-centered</strong>, pembelajaran KKA tidak hanya mengembangkan kompetensi teknis tetapi juga membentuk karakter peserta didik sebagai pelajar yang beriman, bernalar kritis, peduli, kreatif, kolaboratif, komunikatif, mandiri, dan sehat. Pembelajaran dapat dilaksanakan secara fleksibel melalui metode internet-based, plugged (dengan perangkat digital), atau unplugged (tanpa perangkat digital).</p>
+
+            <div class="kka-course-info">
+                <h3><i class="fas fa-bullseye"></i> Tujuan Pembelajaran KKA</h3>
+                <div class="kka-tujuan-grid">
+                    <!-- TP 1: Berpikir Komputasional -->
+                    <div class="kka-tujuan-item">
+                        <div class="kka-tujuan-item-header">
+                            <div class="kka-tujuan-item-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="kka-tujuan-item-title">
+                                <h4>Berpikir Komputasional</h4>
+                                <span class="kode-tp">TP.1.1</span>
+                            </div>
+                        </div>
+                        <p>Murid mampu menerapkan konsep berpikir komputasional (dekomposisi, pengenalan pola, abstraksi, dan algoritma) untuk memecahkan permasalahan yang relevan dengan bidang keahlian.</p>
+                    </div>
+                    
+                    <!-- TP 2: Literasi Digital -->
+                    <div class="kka-tujuan-item">
+                        <div class="kka-tujuan-item-header">
+                            <div class="kka-tujuan-item-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <div class="kka-tujuan-item-title">
+                                <h4>Literasi Digital</h4>
+                                <span class="kode-tp">TP.2.1</span>
+                            </div>
+                        </div>
+                        <p>Murid mampu memproduksi dan menyebarkan konten digital dalam bentuk multimedia secara kreatif, etis, aman, dan bertanggung jawab sesuai dengan bidang keahlian.</p>
+                    </div>
+                    
+                    <!-- TP 3: Algoritma Pemrograman -->
+                    <div class="kka-tujuan-item">
+                        <div class="kka-tujuan-item-header">
+                            <div class="kka-tujuan-item-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="kka-tujuan-item-title">
+                                <h4>Algoritma Pemrograman</h4>
+                                <span class="kode-tp">TP.3.1</span>
+                            </div>
+                        </div>
+                        <p>Murid mampu membandingkan beberapa algoritma, lalu menerapkannya dalam bentuk program/aplikasi sederhana sesuai dengan kebutuhan di bidang keahlian.</p>
+                    </div>
+                    
+                    <!-- TP 4: Analisis Data -->
+                    <div class="kka-tujuan-item">
+                        <div class="kka-tujuan-item-header">
+                            <div class="kka-tujuan-item-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="kka-tujuan-item-title">
+                                <h4>Analisis Data</h4>
+                                <span class="kode-tp">TP.4.1</span>
+                            </div>
+                        </div>
+                        <p>Murid mampu memahami konsep dasar basis data serta menerapkan pengolahan data (menginput, mengolah, menganalisis, dan menyajikan) untuk mendukung pengambilan keputusan pada bidang keahlian.</p>
+                    </div>
+                    
+                    <!-- TP 5: Literasi & Etika KA -->
+                    <div class="kka-tujuan-item">
+                        <div class="kka-tujuan-item-header">
+                            <div class="kka-tujuan-item-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="kka-tujuan-item-title">
+                                <h4>Literasi & Etika KA</h4>
+                                <span class="kode-tp">TP.5.1</span>
+                            </div>
+                        </div>
+                        <p>Murid mampu memahami prinsip kerja teknologi kecerdasan artifisial secara tepat guna serta menerapkannya secara bertanggung jawab dengan memperhatikan etika, keamanan data, dan dampak sosial di bidang keahlian.</p>
+                    </div>
+                    
+                    <!-- TP 6: Pemanfaatan & Pengembangan KA -->
+                    <div class="kka-tujuan-item">
+                        <div class="kka-tujuan-item-header">
+                            <div class="kka-tujuan-item-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="kka-tujuan-item-title">
+                                <h4>Pemanfaatan & Pengembangan KA</h4>
+                                <span class="kode-tp">TP.6.1</span>
+                            </div>
+                        </div>
+                        <p>Murid mampu menerapkan prompt engineering pada aplikasi KA generatif untuk merancang, mengevaluasi, dan mengembangkan produk berupa barang/jasa sesuai dengan kebutuhan bidang keahlian.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kka-course-structure">
+                <h3><i class="fas fa-graduation-cap"></i> Capaian Pembelajaran (Fase E)</h3>
+                <div class="kka-capaian-grid">
+                    <!-- CP 1.1 -->
+                    <div class="kka-capaian-item">
+                        <div class="kka-capaian-item-header">
+                            <div class="kka-capaian-number">1.1</div>
+                            <h4>Berpikir Komputasional</h4>
+                        </div>
+                        <p>Menerapkan berpikir komputasional untuk memecahkan permasalahan pada objek sesuai bidang keahlian.</p>
+                    </div>
+                    
+                    <!-- CP 1.2 -->
+                    <div class="kka-capaian-item">
+                        <div class="kka-capaian-item-header">
+                            <div class="kka-capaian-number">1.2</div>
+                            <h4>Literasi Digital</h4>
+                        </div>
+                        <p>Menerapkan produksi dan diseminasi konten digital dalam bentuk sajian multimedia sesuai dengan bidang keahlian.</p>
+                    </div>
+                    
+                    <!-- CP 1.3 -->
+                    <div class="kka-capaian-item">
+                        <div class="kka-capaian-item-header">
+                            <div class="kka-capaian-number">1.3</div>
+                            <h4>Algoritma Pemrograman</h4>
+                        </div>
+                        <p>Membandingkan beberapa algoritma dan menerapkan algoritma pemrograman untuk menghasilkan aplikasi.</p>
+                    </div>
+                    
+                    <!-- CP 1.4 -->
+                    <div class="kka-capaian-item">
+                        <div class="kka-capaian-item-header">
+                            <div class="kka-capaian-number">1.4</div>
+                            <h4>Analisis Data</h4>
+                        </div>
+                        <p>Memahami konsep dasar basis data dan menerapkan pengolahan data pada basis data.</p>
+                    </div>
+                    
+                    <!-- CP 1.5 -->
+                    <div class="kka-capaian-item">
+                        <div class="kka-capaian-item-header">
+                            <div class="kka-capaian-number">1.5</div>
+                            <h4>Literasi & Etika KA</h4>
+                        </div>
+                        <p>Memahami prinsip kerja teknologi kecerdasan artifisial secara tepat guna dan bertanggung jawab pada bidang keahlian dengan memperhatikan aspek etika, keamanan data, dan dampak sosial penggunaannya.</p>
+                    </div>
+                    
+                    <!-- CP 1.6 -->
+                    <div class="kka-capaian-item">
+                        <div class="kka-capaian-item-header">
+                            <div class="kka-capaian-number">1.6</div>
+                            <h4>Pemanfaatan & Pengembangan KA</h4>
+                        </div>
+                        <p>Menerapkan prompt engineering pada KA generatif sebagai evaluasi dari pemahaman rencana proyek, desain, dan pengembangan produk berupa barang/jasa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kka-course-elemen">
+                <h3><i class="fas fa-cogs"></i> Elemen Mata Pelajaran KKA</h3>
+                <div class="kka-elemen-grid">
+                    <!-- Elemen 1 -->
+                    <div class="kka-elemen-item">
+                        <h4><i class="fas fa-brain"></i> Berpikir Komputasional</h4>
+                        <p>Kerangka berpikir sistematis yang menggabungkan dekomposisi, abstraksi, identifikasi pola, dan perancangan algoritma untuk merumuskan solusi permasalahan kompleks yang dapat dijalankan oleh manusia atau mesin.</p>
+                    </div>
+                    
+                    <!-- Elemen 2 -->
+                    <div class="kka-elemen-item">
+                        <h4><i class="fas fa-globe"></i> Literasi Digital</h4>
+                        <p>Kecakapan bermedia digital yang berfokus pada produksi dan diseminasi konten digital dengan memahami etika dan keamanan digital.</p>
+                    </div>
+                    
+                    <!-- Elemen 3 -->
+                    <div class="kka-elemen-item">
+                        <h4><i class="fas fa-code"></i> Algoritma Pemrograman</h4>
+                        <p>Mengembangkan solusi dari berbagai persoalan dengan membaca bermakna dan menulis instruksi yang logis, sistematis, bertahap, konvergen, dan linier berdasarkan paradigma pemrograman yang meningkat secara berjenjang.</p>
+                    </div>
+                    
+                    <!-- Elemen 4 -->
+                    <div class="kka-elemen-item">
+                        <h4><i class="fas fa-chart-bar"></i> Analisis Data</h4>
+                        <p>Kemampuan untuk menstrukturkan, menginput, memproses (antara lain menganalisis, mengambil kesimpulan, membuat keputusan, dan memprediksi), dan menyajikan data secara bermakna.</p>
+                    </div>
+                    
+                    <!-- Elemen 5 -->
+                    <div class="kka-elemen-item">
+                        <h4><i class="fas fa-shield-alt"></i> Literasi dan Etika KA</h4>
+                        <p>Mengetahui konsep dasar KA, bagaimana KA bekerja, manfaat dan dampak KA, serta sikap kritis dan etika dalam pemanfaatan KA.</p>
+                    </div>
+                    
+                    <!-- Elemen 6 -->
+                    <div class="kka-elemen-item">
+                        <h4><i class="fas fa-robot"></i> Pemanfaatan & Pengembangan KA</h4>
+                        <p>Kemampuan memanfaatkan KA untuk penyelesaian masalah dan peningkatan efisiensi pada kehidupan nyata, serta menciptakan dan memperbaiki sistem KA.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kka-quick-links">
+                <h3><i class="fas fa-bolt"></i> Akses Cepat</h3>
+                <div class="kka-quick-links-grid">
+                    <a href="aktivitas-pembelajaran/index-aktivitas-kka.html" class="kka-quick-link">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Mulai Aktivitas</span>
+                    </a>
+                    <a href="materi-pembelajaran/kka-bab-1.html" class="kka-quick-link">
+                        <i class="fas fa-book"></i>
+                        <span>Baca Materi</span>
+                    </a>
+                    <a href="penilaian/cek-nilai-individu-kka.html" class="kka-quick-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Cek Nilai</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="kka-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>KKA Resources</h3>
+                <p><i class="fas fa-download"></i> Download Materi</p>
+                <p><i class="fas fa-video"></i> Tutorial Koding & KA</p>
+                <p><i class="fas fa-robot"></i> Tools Kecerdasan Artifisial</p>
+            </div>
+            <div class="footer-section">
+                <h3>Guru Pengampu</h3>
+                <p>Nama Guru: Pak Budi</p>
+                <p>Email: budi@sekolah.com</p>
+                <p>Konsultasi: Selasa-Kamis, 14:00-16:00</p>
+            </div>
+            <div class="footer-section">
+                <h3>Platform Rekomendasi</h3>
+                <p>Google Colab</p>
+                <p>Replit</p>
+                <p>ChatGPT & Gemini</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Website Pembelajaran - KKA (Koding & Kecerdasan Artifisial) Kelas X</p>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script>
+        // JavaScript untuk interaksi KKA
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effect for tujuan items
+            const tujuanItems = document.querySelectorAll('.kka-tujuan-item');
+            tujuanItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Add hover effect for capaian items
+            const capaianItems = document.querySelectorAll('.kka-capaian-item');
+            capaianItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.01)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Add hover effect for elemen items
+            const elemenItems = document.querySelectorAll('.kka-elemen-item');
+            elemenItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Add click effect for quick links
+            const quickLinks = document.querySelectorAll('.kka-quick-link');
+            quickLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                });
+            });
+            
+            // Add animation delay for items
+            const allItems = document.querySelectorAll('.kka-tujuan-item, .kka-capaian-item, .kka-elemen-item');
+            allItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // Add animation for capaian numbers
+            const capaianNumbers = document.querySelectorAll('.kka-capaian-number');
+            capaianNumbers.forEach((number, index) => {
+                number.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

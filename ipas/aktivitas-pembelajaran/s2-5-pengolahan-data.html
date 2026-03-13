@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktivitas 5: Pengolahan Data (Penyusunan Laporan) - IPAS</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* IPAS THEME COLORS */
+        :root {
+            --ipas-primary: #2ecc71;
+            --ipas-secondary: #27ae60;
+            --ipas-light: #d5f4e6;
+            --ipas-dark: #229954;
+            --ipas-accent: #3498db;
+            --ipas-orange: #f39c12;
+            --ipas-red: #e74c3c;
+            --ipas-purple: #9b59b6;
+            --ipas-gray: #f5f7fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .activity-detail-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .ipas-content-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.1);
+            border-left: 5px solid var(--ipas-primary);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .ipas-content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .ipas-content-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .ipas-content-card h2 {
+            color: var(--ipas-dark);
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .ipas-content-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 2px;
+        }
+        
+        .ipas-content-card .subtitle {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .ipas-content-card .subtitle i {
+            color: var(--ipas-primary);
+        }
+        
+        .lembar-aktivitas {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+            border: 1px solid var(--ipas-light);
+            margin: 2rem 0;
+        }
+
+        /* ===== TAB NAVIGATION ===== */
+        .tab-navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 2rem;
+            background: var(--ipas-gray);
+            padding: 1rem;
+            border-radius: 50px;
+            justify-content: center;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 40px;
+            background: white;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .tab-btn:hover {
+            background: var(--ipas-light);
+            color: var(--ipas-dark);
+        }
+        
+        .tab-btn.active {
+            background: var(--ipas-primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ===== ACCORDION STYLE ===== */
+        .accordion-item {
+            margin-bottom: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+        }
+        
+        .accordion-header i {
+            transition: transform 0.3s ease;
+            color: var(--ipas-primary);
+        }
+        
+        .accordion-header.active i {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .accordion-content.active {
+            padding: 1.5rem;
+            max-height: 5000px;
+        }
+        
+        /* ===== FORM ELEMENTS ===== */
+        .identitas-box {
+            background: var(--ipas-light);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .identitas-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .identitas-item label {
+            font-weight: 600;
+            color: var(--ipas-dark);
+        }
+        
+        .identitas-item input, .identitas-item select {
+            padding: 0.8rem;
+            border: 2px solid white;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .identitas-item input:focus, .identitas-item select:focus {
+            outline: none;
+            border-color: var(--ipas-primary);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: var(--ipas-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* ===== DYNAMIC TABLE ===== */
+        .dynamic-table-container {
+            margin: 1.5rem 0;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .dynamic-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .dynamic-table th {
+            background: var(--ipas-primary);
+            color: white;
+            padding: 12px;
+            font-weight: 600;
+        }
+        
+        .dynamic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .dynamic-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .dynamic-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+        }
+        
+        .btn-add-row {
+            background: var(--ipas-accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-add-row:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-delete-row {
+            background: var(--ipas-red);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-delete-row:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+        
+        /* ===== FILE UPLOAD ===== */
+        .file-upload-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .file-upload-item {
+            border: 2px dashed #ced4da;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-item:hover {
+            border-color: var(--ipas-primary);
+            background: #f8f9fa;
+        }
+        
+        .file-upload-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .file-upload-item input[type="file"] {
+            display: none;
+        }
+        
+        .file-upload-item .file-btn {
+            background: var(--ipas-gray);
+            border: 1px solid #ced4da;
+            padding: 8px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .file-upload-item .file-btn:hover {
+            background: var(--ipas-primary);
+            color: white;
+        }
+        
+        .file-upload-item .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
+            word-break: break-all;
+        }
+        
+        /* ===== RADIO & CHECKBOX ===== */
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 10px 0;
+        }
+        
+        .radio-item, .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .radio-item input, .checkbox-item input {
+            width: auto;
+            margin-right: 5px;
+        }
+        
+        /* ===== PROGRESS BAR ===== */
+        .progress-container {
+            margin: 2rem 0;
+            background: var(--ipas-gray);
+            border-radius: 30px;
+            padding: 1rem;
+            position: sticky;
+            top: 80px;
+            z-index: 99;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* ===== CATATAN PENTING ===== */
+        .catatan-penting {
+            background: #fff9e0;
+            border-left: 5px solid #f1c40f;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
+        
+        /* ===== BUTTONS ===== */
+        .submit-button {
+            background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            width: fit-content;
+            margin: 2rem auto;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+        
+        .submit-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* ===== MESSAGES ===== */
+        .loading-message, .success-message, .error-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: none;
+            text-align: center;
+        }
+        
+        .loading-message {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+        
+        /* ===== NAVIGATION ===== */
+        .activity-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--ipas-dark);
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid var(--ipas-light);
+        }
+        
+        .nav-btn:hover {
+            background: var(--ipas-primary);
+            color: white;
+        }
+        
+        .nav-btn.primary {
+            background: var(--ipas-primary);
+            color: white;
+            border: none;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .activity-detail-container { padding: 1rem; }
+            .lembar-aktivitas { padding: 1rem; }
+            .tab-navigation { flex-direction: column; border-radius: 20px; }
+            .tab-btn { width: 100%; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>TEMBOK BELAJAR - PROJEK IPAS</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index-ipas.html" class="nav-link"><i class="fas fa-flask"></i> Beranda IPAS</a></li>
+                    <li><a href="index-aktifitas-ipas.html" class="nav-link active"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-ipas.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="../penilaian/index-penilaian-ipas.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Activity Detail Content -->
+    <section class="activity-detail-container">
+        <!-- Judul Halaman -->
+        <div class="ipas-content-card">
+            <h2>Aktivitas 5: Pengolahan Data (Penyusunan Laporan)</h2>
+            <div class="subtitle">
+                <span><i class="fas fa-calendar"></i> Minggu 8-9 • Semester Genap</span>
+                <span><i class="fas fa-clock"></i> 12 JP (2 minggu)</span>
+            </div>
+        </div>
+
+        <!-- Loading Message -->
+        <div id="loadingMessage" class="loading-message">
+            <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
+        </div>
+        
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> <span id="errorText"></span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
+        </div>
+
+        <!-- LEMBAR AKTIVITAS UTAMA -->
+        <div class="lembar-aktivitas" id="worksheetForm">
+            <!-- HALO KELOMPOK HEBAT -->
+            <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--ipas-primary);">
+                <i class="fas fa-lightbulb" style="color: var(--ipas-primary); margin-right: 10px;"></i>
+                <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
+                Selamat datang di tahap akhir proyek kalian! Gunakan tab navigasi di bawah untuk mengisi setiap bagian laporan.
+            </div>
+
+            <!-- TAB NAVIGATION -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" onclick="openTab('identitas')">📋 Identitas</button>
+                <button class="tab-btn" onclick="openTab('bab1')">📖 BAB I</button>
+                <button class="tab-btn" onclick="openTab('bab2')">🔧 BAB II</button>
+                <button class="tab-btn" onclick="openTab('bab3')">📊 BAB III</button>
+                <button class="tab-btn" onclick="openTab('bab4')">🏁 BAB IV</button>
+                <button class="tab-btn" onclick="openTab('bab5')">💭 BAB V</button>
+                <button class="tab-btn" onclick="openTab('lampiran')">📎 Lampiran</button>
+            </div>
+
+            <!-- TAB 1: IDENTITAS -->
+            <div id="tab-identitas" class="tab-content active">
+                <h2><i class="fas fa-id-card"></i> IDENTITAS KELOMPOK</h2>
+                
+                <div class="identitas-box">
+                    <div class="identitas-item">
+                        <label><i class="fas fa-users"></i> Kelas</label>
+                        <select id="kelas" onchange="updateNamaDropdown()" disabled>
+                            <option value="">-- Pilih Kelas --</option>
+                        </select>
+                    </div>
+                    <div class="identitas-item">
+                        <label><i class="fas fa-user"></i> Nama</label>
+                        <select id="nama" disabled>
+                            <option value="">-- Pilih Nama --</option>
+                        </select>
+                    </div>
+                    <div class="identitas-item">
+                        <label><i class="fas fa-users"></i> Kelompok</label>
+                        <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" disabled>
+                    </div>
+                    <div class="identitas-item">
+                        <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
+                        <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tanggal Penyusunan Laporan</label>
+                    <input type="date" id="tanggal_laporan">
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span><i class="fas fa-check-circle"></i> Lembar Pengesahan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Judul Proyek</label>
+                            <input type="text" id="judul_proyek" placeholder="Masukkan judul proyek">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Jenis Proyek</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="jenis_produk_fisik"> Produk Fisik
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="jenis_sistem_digital"> Sistem Digital
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="jenis_layanan"> Layanan/Kegiatan
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="jenis_penelitian"> Penelitian
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Guru Pembimbing</label>
+                                <input type="text" id="guru_pembimbing" placeholder="Nama guru">
+                            </div>
+                            <div class="form-group">
+                                <label>NIP Guru</label>
+                                <input type="text" id="nip_guru" placeholder="NIP">
+                            </div>
+                            <div class="form-group">
+                                <label>Ketua Kelompok</label>
+                                <input type="text" id="ketua_kelompok" placeholder="Nama ketua">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span><i class="fas fa-feather-alt"></i> Kata Pengantar</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Kata Pengantar</label>
+                            <textarea id="kata_pengantar" rows="8" placeholder="Tuliskan kata pengantar di sini..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: BAB I PENDAHULUAN -->
+            <div id="tab-bab1" class="tab-content">
+                <h2><i class="fas fa-book-open"></i> BAB I: PENDAHULUAN</h2>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>A. Latar Belakang</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="catatan-penting">
+                            <strong>📝 Penjelasan:</strong> Jelaskan mengapa proyek ini penting dilakukan. Apa masalah yang mendasari?
+                        </div>
+                        <div class="form-group">
+                            <textarea id="latar_belakang" rows="6" placeholder="Tuliskan latar belakang proyek..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>B. Rumusan Masalah</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="catatan-penting">
+                            <strong>📝 Penjelasan:</strong> Tuliskan pertanyaan-pertanyaan yang ingin dijawab.
+                        </div>
+                        <div class="form-group">
+                            <textarea id="rumusan_masalah" rows="4" placeholder="1. ..............."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>C. Tujuan Proyek</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="catatan-penting">
+                            <strong>📝 Penjelasan:</strong> Tuliskan tujuan yang ingin dicapai.
+                        </div>
+                        <div class="form-group">
+                            <textarea id="tujuan_proyek" rows="4" placeholder="1. ................"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>D. Manfaat Proyek</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="catatan-penting">
+                            <strong>📝 Penjelasan:</strong> Jelaskan manfaat dari proyek ini.
+                        </div>
+                        <div class="form-group">
+                            <textarea id="manfaat_proyek" rows="4" placeholder="
+                            a. Bagi siswa
+                               1. ...
+                               2. ...
+                            b. Bagi sekolah
+                               1. ...
+                               2. ...
+                            c. Bagi masyarakat
+                               1. ...
+                               2. ..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: BAB II METODE PELAKSANAAN -->
+            <div id="tab-bab2" class="tab-content">
+                <h2><i class="fas fa-tasks"></i> BAB II: METODE PELAKSANAAN</h2>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>A. Waktu dan Tempat</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Waktu Pelaksanaan</label>
+                                <input type="text" id="waktu_pelaksanaan" placeholder="Contoh: 1-28 Februari 2024">
+                            </div>
+                            <div class="form-group">
+                                <label>Tempat Pelaksanaan</label>
+                                <input type="text" id="tempat_pelaksanaan" placeholder="Contoh: Laboratorium Komputer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>B. Alat dan Bahan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="catatan-penting">
+                            <strong>📝 Penjelasan:</strong> Klik tombol "Tambah Baris" untuk menambah alat/bahan.
+                        </div>
+                        
+                        <div class="dynamic-table-container">
+                            <table class="dynamic-table" id="tableAlatBahan">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Alat/Bahan</th>
+                                        <th>Jumlah</th>
+                                        <th>Spesifikasi</th>
+                                        <th>Fungsi</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alatBahanBody">
+                                    <!-- Baris akan ditambahkan dengan JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <button type="button" class="btn-add-row" onclick="tambahBarisAlatBahan()">
+                            <i class="fas fa-plus"></i> Tambah Baris
+                        </button>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>C. Langkah-Langkah Pelaksanaan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="dynamic-table-container">
+                            <table class="dynamic-table" id="tableLangkah">
+                                <thead>
+                                    <tr>
+                                        <th>Minggu</th>
+                                        <th>Tahap</th>
+                                        <th>Kegiatan 1</th>
+                                        <th>Kegiatan 2</th>
+                                        <th>Penanggung Jawab</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="langkahBody">
+                                    <!-- Baris akan ditambahkan dengan JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <button type="button" class="btn-add-row" onclick="tambahBarisLangkah()">
+                            <i class="fas fa-plus"></i> Tambah Baris
+                        </button>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>D. Teknik Pengumpulan Data</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="dynamic-table-container">
+                            <table class="dynamic-table" id="tableTeknik">
+                                <thead>
+                                    <tr>
+                                        <th>Teknik</th>
+                                        <th>Ya/Tidak</th>
+                                        <th>Keterangan</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teknikBody">
+                                    <!-- Baris akan ditambahkan dengan JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <button type="button" class="btn-add-row" onclick="tambahBarisTeknik()">
+                            <i class="fas fa-plus"></i> Tambah Baris
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: BAB III HASIL DAN PEMBAHASAN -->
+            <div id="tab-bab3" class="tab-content">
+                <h2><i class="fas fa-chart-bar"></i> BAB III: HASIL DAN PEMBAHASAN</h2>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>A. Data Hasil Proyek</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <h4>1. Data Kuantitatif</h4>
+                        <div class="dynamic-table-container">
+                            <table class="dynamic-table" id="tableDataKuantitatif">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Hasil 1</th>
+                                        <th>Hasil 2</th>
+                                        <th>Hasil 3</th>
+                                        <th>Rata-rata</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dataKuantitatifBody">
+                                    <!-- Baris akan ditambahkan dengan JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <button type="button" class="btn-add-row" onclick="tambahBarisDataKuantitatif()">
+                            <i class="fas fa-plus"></i> Tambah Data
+                        </button>
+
+                        <h4 style="margin-top: 2rem;">2. Dokumentasi</h4>
+                        <div class="file-upload-grid" id="dokumentasiGrid">
+                            <!-- Akan diisi JavaScript -->
+                        </div>
+
+                        <h4 style="margin-top: 2rem;">3. Hasil Observasi/Pengamatan</h4>
+                        <div class="form-group">
+                            <textarea id="hasil_observasi" rows="4" placeholder="Tuliskan hasil observasi atau pengamatan selama proyek..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>B. Analisis Data</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="catatan-penting">
+                            <strong>📝 Penjelasan:</strong> Tuliskan analisis data secara keseluruhan. 
+                            Untuk proyek penelitian: bisa mencakup statistik, persentase, pola, tren.
+                            Untuk proyek produk: bisa mencakup analisis fungsi, efisiensi, biaya, kualitas.
+                            Sesuaikan dengan jenis proyek kalian.
+                        </div>
+                        <div class="form-group">
+                            <textarea id="analisis_data" rows="8" placeholder="Tuliskan analisis data di sini...
+                
+Contoh untuk proyek penelitian:
+- Rata-rata pengukuran: ...
+- Persentase keberhasilan: ...
+- Pola yang ditemukan: ...
+- Hubungan antar variabel: ...
+
+Contoh untuk proyek produk:
+- Analisis fungsi produk: ...
+- Efisiensi dan biaya: ...
+- Kualitas dan keandalan: ...
+- Perbandingan dengan produk sejenis: ..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>C. Pembahasan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="catatan-penting">
+                            <strong>📝 Penjelasan:</strong> Jelaskan makna dari data dan analisis yang telah dilakukan. 
+                            Kaitkan dengan tujuan proyek, hipotesis (jika ada), dan teori yang relevan.
+                        </div>
+                        <div class="form-group">
+                            <textarea id="pembahasan" rows="10" placeholder="Tuliskan pembahasan di sini...
+
+Contoh yang bisa dibahas:
+- Pencapaian tujuan proyek
+- Evaluasi hipotesis (jika ada)
+- Penjelasan ilmiah di balik hasil
+- Kelebihan dan kekurangan produk/hasil
+- Keterkaitan dengan bidang keahlian
+- Kendala yang dihadapi dan solusinya
+- Implikasi dari hasil proyek"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: BAB IV KESIMPULAN DAN SARAN -->
+            <div id="tab-bab4" class="tab-content">
+                <h2><i class="fas fa-flag-checkered"></i> BAB IV: KESIMPULAN DAN SARAN</h2>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>A. Kesimpulan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="catatan-penting">
+                            <strong>📝 Penjelasan:</strong> Tuliskan kesimpulan singkat yang menjawab rumusan masalah.
+                        </div>
+                        <div class="form-group">
+                            <textarea id="kesimpulan" rows="5" placeholder="Kesimpulan dari proyek..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>B. Saran</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Saran untuk Pengembangan</label>
+                            <textarea id="saran_pengembangan" rows="3" placeholder="1. ...\n2. ...\n3. ..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Saran untuk Kelompok Lain</label>
+                            <textarea id="saran_kelompok_lain" rows="3" placeholder="1. ...\n2. ...\n3. ..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: BAB V REFLEKSI PROYEK -->
+            <div id="tab-bab5" class="tab-content">
+                <h2><i class="fas fa-smile"></i> BAB V: REFLEKSI PROYEK</h2>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>A. Refleksi Individu</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="dynamic-table-container">
+                            <table class="dynamic-table" id="tableRefleksi">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Anggota</th>
+                                        <th>Pembelajaran</th>
+                                        <th>Tantangan</th>
+                                        <th>Kontribusi</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="refleksiBody">
+                                    <!-- Baris akan ditambahkan dengan JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <button type="button" class="btn-add-row" onclick="tambahBarisRefleksi()">
+                            <i class="fas fa-plus"></i> Tambah Anggota
+                        </button>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>B. Refleksi Kelompok</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Hal Terpenting yang Dipelajari</label>
+                            <textarea id="refleksi_kelompok_hal" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Tantangan Terbesar dan Solusinya</label>
+                            <textarea id="refleksi_kelompok_tantangan" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Jika Bisa Mengulang dari Awal</label>
+                            <textarea id="refleksi_kelompok_mengulang" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>C. Tingkat Kepuasan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Kualitas Produk</label>
+                                <select id="kepuasan_kualitas">
+                                    <option value="5">5 - Sangat Puas</option>
+                                    <option value="4">4 - Puas</option>
+                                    <option value="3">3 - Cukup</option>
+                                    <option value="2">2 - Kurang</option>
+                                    <option value="1">1 - Sangat Kurang</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Kerjasama Tim</label>
+                                <select id="kepuasan_kerjasama">
+                                    <option value="5">5 - Sangat Puas</option>
+                                    <option value="4">4 - Puas</option>
+                                    <option value="3">3 - Cukup</option>
+                                    <option value="2">2 - Kurang</option>
+                                    <option value="1">1 - Sangat Kurang</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Manajemen Waktu</label>
+                                <select id="kepuasan_waktu">
+                                    <option value="5">5 - Sangat Puas</option>
+                                    <option value="4">4 - Puas</option>
+                                    <option value="3">3 - Cukup</option>
+                                    <option value="2">2 - Kurang</option>
+                                    <option value="1">1 - Sangat Kurang</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Penggunaan Anggaran</label>
+                                <select id="kepuasan_anggaran">
+                                    <option value="5">5 - Sangat Puas</option>
+                                    <option value="4">4 - Puas</option>
+                                    <option value="3">3 - Cukup</option>
+                                    <option value="2">2 - Kurang</option>
+                                    <option value="1">1 - Sangat Kurang</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Pembelajaran yang Diperoleh</label>
+                                <select id="kepuasan_pembelajaran">
+                                    <option value="5">5 - Sangat Puas</option>
+                                    <option value="4">4 - Puas</option>
+                                    <option value="3">3 - Cukup</option>
+                                    <option value="2">2 - Kurang</option>
+                                    <option value="1">1 - Sangat Kurang</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Kepuasan Keseluruhan</label>
+                                <select id="kepuasan_total">
+                                    <option value="5">5 - Sangat Puas</option>
+                                    <option value="4">4 - Puas</option>
+                                    <option value="3">3 - Cukup</option>
+                                    <option value="2">2 - Kurang</option>
+                                    <option value="1">1 - Sangat Kurang</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 7: LAMPIRAN -->
+            <div id="tab-lampiran" class="tab-content">
+                <h2><i class="fas fa-paperclip"></i> LAMPIRAN</h2>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Daftar Pustaka</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <textarea id="daftar_pustaka" rows="6" placeholder="1. ...\n2. ...\n3. ..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Upload Dokumen Pendukung</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="file-upload-grid">
+                            <div class="file-upload-item">
+                                <label>Logbook Lengkap</label>
+                                <input type="file" id="lampiran1" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                <label for="lampiran1" class="file-btn"><i class="fas fa-upload"></i> Pilih File</label>
+                                <div class="file-name" id="file1_name"></div>
+                            </div>
+                            
+                            <div class="file-upload-item">
+                                <label>Data Mentah</label>
+                                <input type="file" id="lampiran2" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx">
+                                <label for="lampiran2" class="file-btn"><i class="fas fa-upload"></i> Pilih File</label>
+                                <div class="file-name" id="file2_name"></div>
+                            </div>
+                            
+                            <div class="file-upload-item">
+                                <label>Gambar Desain</label>
+                                <input type="file" id="lampiran3" accept=".jpg,.jpeg,.png,.pdf">
+                                <label for="lampiran3" class="file-btn"><i class="fas fa-upload"></i> Pilih File</label>
+                                <div class="file-name" id="file3_name"></div>
+                            </div>
+                            
+                            <div class="file-upload-item">
+                                <label>Dokumentasi Lain</label>
+                                <input type="file" id="lampiran4" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                <label for="lampiran4" class="file-btn"><i class="fas fa-upload"></i> Pilih File</label>
+                                <div class="file-name" id="file4_name"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="catatan-penting" style="margin-top: 1rem;">
+                            <i class="fas fa-info-circle"></i> Format file yang diterima: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX (maks 5MB per file)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            
+            <!-- Tombol Kirim -->
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
+                <i class="fas fa-paper-plane"></i> Kirim Data Aktivitas 5
+            </button>
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i> Data berhasil dikirim ke Google Spreadsheet
+            </div>
+        </div>
+
+        <!-- Navigasi Bawah -->
+        <div class="activity-navigation">
+            <a href="s2-4-pengembangan-proyek.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Kembali</a>
+            <a href="s2-6-diseminasi-proyek.html" class="nav-btn primary">Lanjut <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <script>
+        // ==================== KONFIGURASI URL ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbysNKxddHUAxYytShCF2Y7o-B7wi1sy83MilbSPOKuIjR9nzeXRvl3XJj7Rd7vVFsM0/exec';
+
+        // ==================== KONFIGURASI FORM (HEADER RINGKAS) ====================
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 5 - PENGOLAHAN DATA LAPORAN",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas/Peran",
+                "Data Identitas",        // JSON: tanggal, judul, jenis proyek, dll
+                "Data Bab1",              // JSON: latar belakang, rumusan, tujuan, manfaat
+                "Data Bab2",              // JSON: waktu, tempat, alatBahan[], langkah[], teknik[]
+                "Data Bab3",              // JSON: dataKuantitatif[], dokumentasi[], analisis, pembahasan
+                "Data Bab4",              // JSON: kesimpulan, saranPengembangan, saranKelompok
+                "Data Bab5",              // JSON: refleksiIndividu[], refleksiKelompok, kepuasan[]
+                "Data Lampiran"            // JSON: daftarPustaka, fileLampiran[]
+            ]
+        };
+
+        // ==================== VARIABEL GLOBAL ====================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+
+        // ==================== INISIALISASI TABEL DINAMIS ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi tabel dengan 1 baris default
+            initTabelDinamis();
+            
+            // Load data siswa
+            loadDataFromGoogleSheets();
+            
+            // Event listener untuk file upload
+            setupFileUploadListeners();
+            
+            // Hamburger menu
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Tambahkan event listener ke semua input untuk update progress
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', updateProgressBar);
+                el.addEventListener('change', updateProgressBar);
+            });
+        });
+
+        function initTabelDinamis() {
+            // Alat Bahan
+            if (!document.getElementById('alatBahanBody').children.length) {
+                tambahBarisAlatBahan();
+            }
+            
+            // Langkah
+            if (!document.getElementById('langkahBody').children.length) {
+                tambahBarisLangkah();
+            }
+            
+            // Teknik
+            if (!document.getElementById('teknikBody').children.length) {
+                tambahBarisTeknik();
+            }
+            
+            // Data Kuantitatif
+            if (!document.getElementById('dataKuantitatifBody').children.length) {
+                tambahBarisDataKuantitatif();
+            }
+            
+            // Refleksi
+            if (!document.getElementById('refleksiBody').children.length) {
+                tambahBarisRefleksi();
+            }
+            
+            // Dokumentasi Grid
+            initDokumentasiGrid();
+        }
+
+        // ==================== FUNGSI TAB ====================
+        function openTab(tabName) {
+            // Sembunyikan semua tab
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Nonaktifkan semua tombol
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Aktifkan tab yang dipilih
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ==================== FUNGSI ACCORDION ====================
+        function toggleAccordion(header) {
+            header.classList.toggle('active');
+            const content = header.nextElementSibling;
+            content.classList.toggle('active');
+        }
+
+        // ==================== FUNGSI TABEL DINAMIS ====================
+        function tambahBarisAlatBahan() {
+            const tbody = document.getElementById('alatBahanBody');
+            const no = tbody.children.length + 1;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${no}</td>
+                <td><input type="text" class="alat_nama" placeholder="Nama alat/bahan"></td>
+                <td><input type="text" class="alat_jumlah" placeholder="Jumlah"></td>
+                <td><input type="text" class="alat_spesifikasi" placeholder="Spesifikasi"></td>
+                <td><input type="text" class="alat_fungsi" placeholder="Fungsi"></td>
+                <td><button type="button" class="btn-delete-row" onclick="hapusBaris(this)"><i class="fas fa-trash"></i></button></td>
+            `;
+            
+            tbody.appendChild(row);
+            updateNomorBaris('alatBahanBody');
+            updateProgressBar();
+        }
+
+        function tambahBarisLangkah() {
+            const tbody = document.getElementById('langkahBody');
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="langkah_minggu" placeholder="Minggu ke-"></td>
+                <td><input type="text" class="langkah_tahap" placeholder="Tahap"></td>
+                <td><input type="text" class="langkah_kegiatan1" placeholder="Kegiatan 1"></td>
+                <td><input type="text" class="langkah_kegiatan2" placeholder="Kegiatan 2"></td>
+                <td><input type="text" class="langkah_pj" placeholder="Penanggung Jawab"></td>
+                <td><button type="button" class="btn-delete-row" onclick="hapusBaris(this)"><i class="fas fa-trash"></i></button></td>
+            `;
+            
+            tbody.appendChild(row);
+            updateProgressBar();
+        }
+
+        function tambahBarisTeknik() {
+            const tbody = document.getElementById('teknikBody');
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="teknik_nama" placeholder="Nama teknik"></td>
+                <td>
+                    <select class="teknik_ya_tidak">
+                        <option value="Ya">Ya</option>
+                        <option value="Tidak">Tidak</option>
+                    </select>
+                </td>
+                <td><input type="text" class="teknik_keterangan" placeholder="Keterangan"></td>
+                <td><button type="button" class="btn-delete-row" onclick="hapusBaris(this)"><i class="fas fa-trash"></i></button></td>
+            `;
+            
+            tbody.appendChild(row);
+            updateProgressBar();
+        }
+
+        function tambahBarisDataKuantitatif() {
+            const tbody = document.getElementById('dataKuantitatifBody');
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="data_param" placeholder="Parameter"></td>
+                <td><input type="text" class="data_hasil1" placeholder="Hasil 1"></td>
+                <td><input type="text" class="data_hasil2" placeholder="Hasil 2"></td>
+                <td><input type="text" class="data_hasil3" placeholder="Hasil 3"></td>
+                <td><input type="text" class="data_rata" placeholder="Rata-rata"></td>
+                <td><button type="button" class="btn-delete-row" onclick="hapusBaris(this)"><i class="fas fa-trash"></i></button></td>
+            `;
+            
+            tbody.appendChild(row);
+            updateProgressBar();
+        }
+
+        function tambahBarisRefleksi() {
+            const tbody = document.getElementById('refleksiBody');
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="refleksi_nama" placeholder="Nama anggota"></td>
+                <td><input type="text" class="refleksi_pembelajaran" placeholder="Pembelajaran"></td>
+                <td><input type="text" class="refleksi_tantangan" placeholder="Tantangan"></td>
+                <td><input type="text" class="refleksi_kontribusi" placeholder="Kontribusi"></td>
+                <td><button type="button" class="btn-delete-row" onclick="hapusBaris(this)"><i class="fas fa-trash"></i></button></td>
+            `;
+            
+            tbody.appendChild(row);
+            updateProgressBar();
+        }
+
+        function hapusBaris(btn) {
+            if (confirm('Hapus baris ini?')) {
+                const row = btn.closest('tr');
+                row.remove();
+                updateNomorBaris('alatBahanBody');
+                updateProgressBar();
+            }
+        }
+
+        function updateNomorBaris(tableBodyId) {
+            const tbody = document.getElementById(tableBodyId);
+            Array.from(tbody.children).forEach((row, index) => {
+                const noCell = row.cells[0];
+                if (noCell && !noCell.querySelector('input')) {
+                    noCell.textContent = index + 1;
+                }
+            });
+        }
+
+        // ==================== FUNGSI FILE UPLOAD ====================
+        function setupFileUploadListeners() {
+            for (let i = 1; i <= 4; i++) {
+                const fileInput = document.getElementById(`lampiran${i}`);
+                if (fileInput) {
+                    fileInput.addEventListener('change', function(e) {
+                        const fileName = e.target.files[0] ? e.target.files[0].name : '';
+                        document.getElementById(`file${i}_name`).textContent = fileName;
+                        
+                        // Konversi ke base64 untuk dikirim
+                        if (e.target.files[0]) {
+                            convertToBase64(e.target.files[0], i);
+                        }
+                    });
+                }
+            }
+        }
+
+        function convertToBase64(file, index) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                window[`lampiran${index}_base64`] = e.target.result.split(',')[1];
+                window[`lampiran${index}_type`] = file.type;
+                window[`lampiran${index}_name`] = file.name;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function initDokumentasiGrid() {
+            const grid = document.getElementById('dokumentasiGrid');
+            const fotoItems = [
+                'Minggu 4', 'Minggu 5', 'Minggu 6', 'Minggu 7',
+                'Tampak Depan', 'Tampak Samping', 'Tampak Atas', 'Saat Digunakan'
+            ];
+            
+            fotoItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'file-upload-item';
+                div.innerHTML = `
+                    <label>${item}</label>
+                    <input type="file" id="foto_${index}" accept=".jpg,.jpeg,.png" onchange="handleFotoUpload(this, ${index})">
+                    <label for="foto_${index}" class="file-btn"><i class="fas fa-camera"></i> Pilih Foto</label>
+                    <div class="file-name" id="foto_${index}_name"></div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function handleFotoUpload(input, index) {
+            const fileName = input.files[0] ? input.files[0].name : '';
+            document.getElementById(`foto_${index}_name`).textContent = fileName;
+            
+            if (input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    window[`foto_${index}_base64`] = e.target.result.split(',')[1];
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // ==================== FUNGSI PROGRESS BAR ====================
+        function updateProgressBar() {
+            const totalFields = document.querySelectorAll('input:not([type=file]), select, textarea').length;
+            const filledFields = Array.from(document.querySelectorAll('input:not([type=file]), select, textarea'))
+                .filter(el => el.value && el.value.trim() !== '').length;
+            
+            const progress = Math.round((filledFields / totalFields) * 100) || 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+        }
+
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
+                
+                const callbackName = 'jsonp_callback_' + Date.now();
+                
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        
+                        dataKelas.forEach(kelas => {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        });
+                        
+                        enableForm();
+                    } else {
+                        useFallbackData();
+                    }
+                    
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    isLoading = false;
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = useFallbackData;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                useFallbackData();
+            }
+        }
+
+        function useFallbackData() {
+            dataKelas = ['X ATPH 1', 'X ATPH 2', 'X TSM 1', 'X TSM 2', 'X AKL 1', 'X AKL 2', 'X TKJ 1', 'X TKJ 2'];
+            
+            dataSiswa = {
+                'X ATPH 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
+                'X ATPH 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
+                'X TSM 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
+                'X TSM 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri']
+            };
+            
+            const kelasSelect = document.getElementById('kelas');
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            dataKelas.forEach(kelas => {
+                const option = document.createElement('option');
+                option.value = kelas;
+                option.textContent = kelas;
+                kelasSelect.appendChild(option);
+            });
+            
+            enableForm();
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = 'Menggunakan data lokal.';
+            isLoading = false;
+        }
+
+        function enableForm() {
+            document.getElementById('kelas').disabled = false;
+            document.getElementById('nama').disabled = false;
+            document.getElementById('kelompok').disabled = false;
+            document.getElementById('tugas').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
+            });
+        }
+
+        // ==================== FUNGSI SUBMIT DATA ====================
+        async function submitData() {
+            if (isLoading) {
+                alert('Data masih dimuat. Silakan tunggu.');
+                return;
+            }
+            
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value || !document.getElementById('kelompok').value) {
+                alert('Lengkapi identitas terlebih dahulu!');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                const formData = new URLSearchParams();
+                
+                // Kirim konfigurasi sheet
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                
+                // ==================== KUMPULKAN DATA ====================
+                // Data Identitas Dasar
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value);
+                formData.append('Tugas/Peran', document.getElementById('tugas').value);
+                
+                // Data Identitas (JSON) - TANPA DAFTAR ISI
+                const dataIdentitas = {
+                    tanggal: document.getElementById('tanggal_laporan').value,
+                    judul: document.getElementById('judul_proyek').value,
+                    jenisProyek: {
+                        produkFisik: document.getElementById('jenis_produk_fisik')?.checked || false,
+                        sistemDigital: document.getElementById('jenis_sistem_digital')?.checked || false,
+                        layanan: document.getElementById('jenis_layanan')?.checked || false,
+                        penelitian: document.getElementById('jenis_penelitian')?.checked || false
+                    },
+                    guru: {
+                        nama: document.getElementById('guru_pembimbing').value,
+                        nip: document.getElementById('nip_guru').value
+                    },
+                    ketua: {
+                        nama: document.getElementById('ketua_kelompok').value
+                    },
+                    kataPengantar: document.getElementById('kata_pengantar').value
+                };
+                formData.append('Data Identitas', JSON.stringify(dataIdentitas));
+                
+                // Data Bab 1 (JSON)
+                const dataBab1 = {
+                    latarBelakang: document.getElementById('latar_belakang').value,
+                    rumusanMasalah: document.getElementById('rumusan_masalah').value,
+                    tujuan: document.getElementById('tujuan_proyek').value,
+                    manfaat: document.getElementById('manfaat_proyek').value
+                };
+                formData.append('Data Bab1', JSON.stringify(dataBab1));
+                
+                // Data Bab 2 (JSON)
+                const dataBab2 = {
+                    waktu: document.getElementById('waktu_pelaksanaan').value,
+                    tempat: document.getElementById('tempat_pelaksanaan').value,
+                    alatBahan: Array.from(document.querySelectorAll('#alatBahanBody tr')).map(row => ({
+                        nama: row.querySelector('.alat_nama')?.value || '',
+                        jumlah: row.querySelector('.alat_jumlah')?.value || '',
+                        spesifikasi: row.querySelector('.alat_spesifikasi')?.value || '',
+                        fungsi: row.querySelector('.alat_fungsi')?.value || ''
+                    })),
+                    langkah: Array.from(document.querySelectorAll('#langkahBody tr')).map(row => ({
+                        minggu: row.querySelector('.langkah_minggu')?.value || '',
+                        tahap: row.querySelector('.langkah_tahap')?.value || '',
+                        kegiatan1: row.querySelector('.langkah_kegiatan1')?.value || '',
+                        kegiatan2: row.querySelector('.langkah_kegiatan2')?.value || '',
+                        pj: row.querySelector('.langkah_pj')?.value || ''
+                    })),
+                    teknik: Array.from(document.querySelectorAll('#teknikBody tr')).map(row => ({
+                        nama: row.querySelector('.teknik_nama')?.value || '',
+                        yaTidak: row.querySelector('.teknik_ya_tidak')?.value || '',
+                        keterangan: row.querySelector('.teknik_keterangan')?.value || ''
+                    }))
+                };
+                formData.append('Data Bab2', JSON.stringify(dataBab2));
+                
+                // Data Bab 3 (JSON) - VERSI SEDERHANA
+                const dataBab3 = {
+                    dataKuantitatif: Array.from(document.querySelectorAll('#dataKuantitatifBody tr')).map(row => ({
+                        param: row.querySelector('.data_param')?.value || '',
+                        hasil1: row.querySelector('.data_hasil1')?.value || '',
+                        hasil2: row.querySelector('.data_hasil2')?.value || '',
+                        hasil3: row.querySelector('.data_hasil3')?.value || '',
+                        rata: row.querySelector('.data_rata')?.value || ''
+                    })),
+                    hasilObservasi: document.getElementById('hasil_observasi')?.value || '',
+                    analisisData: document.getElementById('analisis_data')?.value || '',
+                    pembahasan: document.getElementById('pembahasan')?.value || ''
+                };
+                formData.append('Data Bab3', JSON.stringify(dataBab3)); // HANYA SEKALI
+                
+                // Data Bab 4 (JSON)
+                const dataBab4 = {
+                    kesimpulan: document.getElementById('kesimpulan').value,
+                    saranPengembangan: document.getElementById('saran_pengembangan').value,
+                    saranKelompok: document.getElementById('saran_kelompok_lain').value
+                };
+                formData.append('Data Bab4', JSON.stringify(dataBab4));
+                
+                // Data Bab 5 (JSON)
+                const dataBab5 = {
+                    refleksiIndividu: Array.from(document.querySelectorAll('#refleksiBody tr')).map(row => ({
+                        nama: row.querySelector('.refleksi_nama')?.value || '',
+                        pembelajaran: row.querySelector('.refleksi_pembelajaran')?.value || '',
+                        tantangan: row.querySelector('.refleksi_tantangan')?.value || '',
+                        kontribusi: row.querySelector('.refleksi_kontribusi')?.value || ''
+                    })),
+                    refleksiKelompok: {
+                        halPenting: document.getElementById('refleksi_kelompok_hal')?.value || '',
+                        tantangan: document.getElementById('refleksi_kelompok_tantangan')?.value || '',
+                        mengulang: document.getElementById('refleksi_kelompok_mengulang')?.value || ''
+                    },
+                    kepuasan: {
+                        kualitas: document.getElementById('kepuasan_kualitas')?.value || '',
+                        kerjasama: document.getElementById('kepuasan_kerjasama')?.value || '',
+                        waktu: document.getElementById('kepuasan_waktu')?.value || '',
+                        anggaran: document.getElementById('kepuasan_anggaran')?.value || '',
+                        pembelajaran: document.getElementById('kepuasan_pembelajaran')?.value || '',
+                        total: document.getElementById('kepuasan_total')?.value || ''
+                    }
+                };
+                formData.append('Data Bab5', JSON.stringify(dataBab5));
+                
+                // Data Lampiran (JSON)
+                const dataLampiran = {
+                    daftarPustaka: document.getElementById('daftar_pustaka').value,
+                    fileLampiran: []
+                };
+                
+                // Tambah file lampiran jika ada
+                for (let i = 1; i <= 4; i++) {
+                    if (window[`lampiran${i}_base64`]) {
+                        dataLampiran.fileLampiran.push({
+                            name: window[`lampiran${i}_name`],
+                            type: window[`lampiran${i}_type`],
+                            data: window[`lampiran${i}_base64`]
+                        });
+                    }
+                }
+                formData.append('Data Lampiran', JSON.stringify(dataLampiran));
+                
+                // ==================== KIRIM ====================
+                await fetch(URL_PEREKAP_AKTIVITAS, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 5000);
+
+                if (confirm('Data terkirim! Ingin mereset form?')) {
+                    location.reload();
+                }
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data Aktivitas 5';
+            }
+        }
+    </script>
+</body>
+</html>
