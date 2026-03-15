@@ -503,6 +503,42 @@
             padding: 1.5rem;
             margin: 1.5rem 0;
         }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin: 2rem 0;
+            background: var(--informatika-gray);
+            border-radius: 30px;
+            padding: 1rem;
+            position: sticky;
+            top: 10px;
+            z-index: 99;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--informatika-primary), var(--informatika-secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Catatan Penting */
+        .catatan-penting {
+            background: #fff9e0;
+            border-left: 5px solid #f1c40f;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
 <body>
@@ -544,7 +580,7 @@
 
         <!-- Loading Message -->
         <div id="loadingMessage" class="loading-message">
-            <i class="fas fa-spinner fa-spin"></i> Memuat Lembar Kerja Peserta Didik......
+            <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
         <!-- Error Message -->
@@ -552,8 +588,21 @@
             <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan isi manual.</span>
         </div>
 
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
+        </div>
+
         <!-- Worksheet Container - LKPD Proyek 2 Aktivitas 3 -->
         <div class="worksheet-container" id="worksheetForm">
+            <!-- HALO KELOMPOK HEBAT -->
+            <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--informatika-primary);">
+                <i class="fas fa-lightbulb" style="color: var(--informatika-primary); margin-right: 10px;"></i>
+                <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
+                Silakan isi lembar kerja ini untuk mempelajari pemecahan masalah dengan komputasi mandiri dan kolaboratif.
+            </div>
+
             <h1 class="worksheet-title">LEMBAR KERJA PESERTA DIDIK (LKPD) PROYEK 2 – AKTIVITAS 3</h1>
             <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem; color: var(--informatika-accent);">
                 <strong>PEMECAHAN MASALAH DENGAN KOMPUTASI</strong>
@@ -571,23 +620,23 @@
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-building"></i> Kelas</label>
-                    <input type="text" id="kelas" placeholder="Contoh: X IPA 1" class="answer-field">
+                    <select id="kelas" class="answer-field" onchange="updateNamaDropdown()" disabled>
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama Lengkap</label>
-                    <input type="text" id="nama" placeholder="Contoh: John Doe" class="answer-field">
+                    <select id="nama" class="answer-field" disabled>
+                        <option value="">-- Pilih Nama --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Nama Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Komputasi" class="answer-field">
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Komputasi" class="answer-field" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Analis Data" class="answer-field">
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-calendar"></i> Tanggal</label>
-                    <input type="date" id="tanggal" class="answer-field">
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Analis Data" class="answer-field" disabled>
                 </div>
             </div>
 
@@ -638,32 +687,32 @@
                         <tr>
                             <td>1</td>
                             <td>Apa yang dimaksud dengan proses komputasi?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review1" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Jelaskan perbedaan antara komputasi mandiri dan komputasi kolaboratif!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review2" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Sebutkan 3 contoh komputasi mandiri dalam kehidupan sehari-hari!</td>
-                            <td><textarea class="answer-field large" placeholder="1.&#10;2.&#10;3."></textarea></td>
+                            <td><textarea class="answer-field large" id="review3" placeholder="1.&#10;2.&#10;3."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Sebutkan 3 contoh komputasi kolaboratif dalam kehidupan sehari-hari!</td>
-                            <td><textarea class="answer-field large" placeholder="1.&#10;2.&#10;3."></textarea></td>
+                            <td><textarea class="answer-field large" id="review4" placeholder="1.&#10;2.&#10;3."></textarea></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td>Mengapa data yang berkualitas penting dalam proses komputasi?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review5" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>6</td>
                             <td>Bagaimana cara mendapatkan data yang berkualitas?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review6" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -709,11 +758,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Hitung rata-rata nilai Siswa A!</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>2</td><td>Hitung rata-rata nilai Siswa B!</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>3</td><td>Hitung rata-rata nilai Siswa C!</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>4</td><td>Siapa siswa dengan nilai rata-rata tertinggi?</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>5</td><td>Berapa selisih nilai tertinggi dan terendah?</td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>1</td><td>Hitung rata-rata nilai Siswa A!</td><td><input type="text" class="answer-field" id="mandiri1"></td></tr>
+                        <tr><td>2</td><td>Hitung rata-rata nilai Siswa B!</td><td><input type="text" class="answer-field" id="mandiri2"></td></tr>
+                        <tr><td>3</td><td>Hitung rata-rata nilai Siswa C!</td><td><input type="text" class="answer-field" id="mandiri3"></td></tr>
+                        <tr><td>4</td><td>Siapa siswa dengan nilai rata-rata tertinggi?</td><td><input type="text" class="answer-field" id="mandiri4"></td></tr>
+                        <tr><td>5</td><td>Berapa selisih nilai tertinggi dan terendah?</td><td><input type="text" class="answer-field" id="mandiri5"></td></tr>
                     </tbody>
                 </table>
                 
@@ -729,11 +778,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>2, 4, 6, 8, ...</td><td><input type="text" class="answer-field" placeholder="contoh: 10,12,14"></td></tr>
-                        <tr><td>2</td><td>5, 10, 15, 20, ...</td><td><input type="text" class="answer-field" placeholder="contoh: 25,30,35"></td></tr>
-                        <tr><td>3</td><td>3, 6, 12, 24, ...</td><td><input type="text" class="answer-field" placeholder="contoh: 48,96,192"></td></tr>
-                        <tr><td>4</td><td>1, 4, 9, 16, ...</td><td><input type="text" class="answer-field" placeholder="contoh: 25,36,49"></td></tr>
-                        <tr><td>5</td><td>2, 3, 5, 8, 13, ...</td><td><input type="text" class="answer-field" placeholder="contoh: 21,34,55"></td></tr>
+                        <tr><td>1</td><td>2, 4, 6, 8, ...</td><td><input type="text" class="answer-field" id="pola1" placeholder="contoh: 10,12,14"></td></tr>
+                        <tr><td>2</td><td>5, 10, 15, 20, ...</td><td><input type="text" class="answer-field" id="pola2" placeholder="contoh: 25,30,35"></td></tr>
+                        <tr><td>3</td><td>3, 6, 12, 24, ...</td><td><input type="text" class="answer-field" id="pola3" placeholder="contoh: 48,96,192"></td></tr>
+                        <tr><td>4</td><td>1, 4, 9, 16, ...</td><td><input type="text" class="answer-field" id="pola4" placeholder="contoh: 25,36,49"></td></tr>
+                        <tr><td>5</td><td>2, 3, 5, 8, 13, ...</td><td><input type="text" class="answer-field" id="pola5" placeholder="contoh: 21,34,55"></td></tr>
                     </tbody>
                 </table>
                 
@@ -747,10 +796,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Apakah kamu mengalami kesulitan saat mengerjakan sendiri?</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>2</td><td>Bagaimana caramu memastikan jawabanmu benar?</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>3</td><td>Apa kelebihan bekerja secara mandiri?</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>4</td><td>Apa kekurangan bekerja secara mandiri?</td><td><textarea class="answer-field"></textarea></td></tr>
+                        <tr><td>1</td><td>Apakah kamu mengalami kesulitan saat mengerjakan sendiri?</td><td><textarea class="answer-field" id="refleksi_mandiri1"></textarea></td></tr>
+                        <tr><td>2</td><td>Bagaimana caramu memastikan jawabanmu benar?</td><td><textarea class="answer-field" id="refleksi_mandiri2"></textarea></td></tr>
+                        <tr><td>3</td><td>Apa kelebihan bekerja secara mandiri?</td><td><textarea class="answer-field" id="refleksi_mandiri3"></textarea></td></tr>
+                        <tr><td>4</td><td>Apa kekurangan bekerja secara mandiri?</td><td><textarea class="answer-field" id="refleksi_mandiri4"></textarea></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -775,12 +824,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Rata-rata nilai siswa</td><td>A: <input type="text" style="width:60px"> B: <input type="text" style="width:60px"> C: <input type="text" style="width:60px"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>2</td><td>Pola bilangan 1</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>3</td><td>Pola bilangan 2</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>4</td><td>Pola bilangan 3</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>5</td><td>Pola bilangan 4</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>6</td><td>Pola bilangan 5</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>1</td><td>Rata-rata nilai siswa</td><td>A: <input type="text" style="width:60px" id="diskusi_rataA"> B: <input type="text" style="width:60px" id="diskusi_rataB"> C: <input type="text" style="width:60px" id="diskusi_rataC"></td><td><input type="text" class="answer-field" id="diskusi_kesimpulan_rata"></td></tr>
+                        <tr><td>2</td><td>Pola bilangan 1</td><td><input type="text" class="answer-field" id="diskusi_pola1"></td><td><input type="text" class="answer-field" id="diskusi_kesimpulan1"></td></tr>
+                        <tr><td>3</td><td>Pola bilangan 2</td><td><input type="text" class="answer-field" id="diskusi_pola2"></td><td><input type="text" class="answer-field" id="diskusi_kesimpulan2"></td></tr>
+                        <tr><td>4</td><td>Pola bilangan 3</td><td><input type="text" class="answer-field" id="diskusi_pola3"></td><td><input type="text" class="answer-field" id="diskusi_kesimpulan3"></td></tr>
+                        <tr><td>5</td><td>Pola bilangan 4</td><td><input type="text" class="answer-field" id="diskusi_pola4"></td><td><input type="text" class="answer-field" id="diskusi_kesimpulan4"></td></tr>
+                        <tr><td>6</td><td>Pola bilangan 5</td><td><input type="text" class="answer-field" id="diskusi_pola5"></td><td><input type="text" class="answer-field" id="diskusi_kesimpulan5"></td></tr>
                     </tbody>
                 </table>
                 
@@ -801,12 +850,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Buku tulis</td><td>Rp 5.000</td><td>10</td><td><input type="text" class="answer-field" placeholder="Total"></td></tr>
-                        <tr><td>2</td><td>Pulpen</td><td>Rp 2.500</td><td>15</td><td><input type="text" class="answer-field" placeholder="Total"></td></tr>
-                        <tr><td>3</td><td>Pensil</td><td>Rp 2.000</td><td>10</td><td><input type="text" class="answer-field" placeholder="Total"></td></tr>
-                        <tr><td>4</td><td>Penghapus</td><td>Rp 1.500</td><td>8</td><td><input type="text" class="answer-field" placeholder="Total"></td></tr>
-                        <tr><td>5</td><td>Penggaris</td><td>Rp 3.000</td><td>5</td><td><input type="text" class="answer-field" placeholder="Total"></td></tr>
-                        <tr><td colspan="4" style="text-align: right;"><strong>Total Keseluruhan</strong></td><td><input type="text" class="answer-field" placeholder="Total"></td></tr>
+                        <tr><td>1</td><td>Buku tulis</td><td>Rp 5.000</td><td>10</td><td><input type="text" class="answer-field" id="kasus1_total1" placeholder="Total"></td></tr>
+                        <tr><td>2</td><td>Pulpen</td><td>Rp 2.500</td><td>15</td><td><input type="text" class="answer-field" id="kasus1_total2" placeholder="Total"></td></tr>
+                        <tr><td>3</td><td>Pensil</td><td>Rp 2.000</td><td>10</td><td><input type="text" class="answer-field" id="kasus1_total3" placeholder="Total"></td></tr>
+                        <tr><td>4</td><td>Penghapus</td><td>Rp 1.500</td><td>8</td><td><input type="text" class="answer-field" id="kasus1_total4" placeholder="Total"></td></tr>
+                        <tr><td>5</td><td>Penggaris</td><td>Rp 3.000</td><td>5</td><td><input type="text" class="answer-field" id="kasus1_total5" placeholder="Total"></td></tr>
+                        <tr><td colspan="4" style="text-align: right;"><strong>Total Keseluruhan</strong></td><td><input type="text" class="answer-field" id="kasus1_total" placeholder="Total"></td></tr>
                     </tbody>
                 </table>
                 
@@ -814,8 +863,8 @@
                 <ol style="margin-left: 20px; margin-bottom: 15px;">
                     <li>Hitung total harga untuk setiap barang! (sudah diisi di tabel)</li>
                     <li>Hitung total keseluruhan belanja! (sudah diisi di tabel)</li>
-                    <li>Jika setiap anggota kelompok (6 orang) patungan sama rata, berapa yang harus dibayar per orang? <input type="text" class="answer-field" style="width:150px"></li>
-                    <li>Jika mereka hanya memiliki uang Rp 150.000, apakah cukup? Jika tidak, barang apa yang sebaiknya dikurangi? <textarea class="answer-field"></textarea></li>
+                    <li>Jika setiap anggota kelompok (6 orang) patungan sama rata, berapa yang harus dibayar per orang? <input type="text" class="answer-field" id="kasus1_patungan" style="width:150px"></li>
+                    <li>Jika mereka hanya memiliki uang Rp 150.000, apakah cukup? Jika tidak, barang apa yang sebaiknya dikurangi? <textarea class="answer-field" id="kasus1_saran"></textarea></li>
                 </ol>
                 
                 <p><strong>Kasus 2: Mengatur Jadwal Piket Kelompok</strong></p>
@@ -837,11 +886,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>Senin</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>Selasa</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>Rabu</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>Kamis</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>Jumat</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>Senin</td><td><input type="text" class="answer-field" id="jadwal_senin1"></td><td><input type="text" class="answer-field" id="jadwal_senin2"></td></tr>
+                        <tr><td>Selasa</td><td><input type="text" class="answer-field" id="jadwal_selasa1"></td><td><input type="text" class="answer-field" id="jadwal_selasa2"></td></tr>
+                        <tr><td>Rabu</td><td><input type="text" class="answer-field" id="jadwal_rabu1"></td><td><input type="text" class="answer-field" id="jadwal_rabu2"></td></tr>
+                        <tr><td>Kamis</td><td><input type="text" class="answer-field" id="jadwal_kamis1"></td><td><input type="text" class="answer-field" id="jadwal_kamis2"></td></tr>
+                        <tr><td>Jumat</td><td><input type="text" class="answer-field" id="jadwal_jumat1"></td><td><input type="text" class="answer-field" id="jadwal_jumat2"></td></tr>
                     </tbody>
                 </table>
                 
@@ -869,11 +918,11 @@
                 
                 <p><strong>Pertanyaan:</strong></p>
                 <table class="lkpd-table">
-                    <tr><td>1. Berapa total penjualan Nasi Goreng selama 5 hari?</td><td><input type="text" class="answer-field"></td></tr>
-                    <tr><td>2. Menu apa yang paling laris? Buktikan dengan data!</td><td><textarea class="answer-field"></textarea></td></tr>
-                    <tr><td>3. Menu apa yang paling sedikit diminati?</td><td><input type="text" class="answer-field"></td></tr>
-                    <tr><td>4. Pada hari apa penjualan tertinggi terjadi?</td><td><input type="text" class="answer-field"></td></tr>
-                    <tr><td>5. Buatlah kesimpulan dari data penjualan tersebut!</td><td><textarea class="answer-field"></textarea></td></tr>
+                    <tr><td>1. Berapa total penjualan Nasi Goreng selama 5 hari?</td><td><input type="text" class="answer-field" id="penjualan1"></td></tr>
+                    <tr><td>2. Menu apa yang paling laris? Buktikan dengan data!</td><td><textarea class="answer-field" id="penjualan2"></textarea></td></tr>
+                    <tr><td>3. Menu apa yang paling sedikit diminati?</td><td><input type="text" class="answer-field" id="penjualan3"></td></tr>
+                    <tr><td>4. Pada hari apa penjualan tertinggi terjadi?</td><td><input type="text" class="answer-field" id="penjualan4"></td></tr>
+                    <tr><td>5. Buatlah kesimpulan dari data penjualan tersebut!</td><td><textarea class="answer-field" id="penjualan5"></textarea></td></tr>
                 </table>
             </div>
 
@@ -895,14 +944,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Apakah hasil diskusi kelompok sama dengan hasil pekerjaan mandiri kalian?</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>2</td><td>Jika ada perbedaan, apa penyebabnya?</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>3</td><td>Mana yang lebih cepat: mengerjakan sendiri atau bersama kelompok? Jelaskan!</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>4</td><td>Mana yang lebih akurat: mengerjakan sendiri atau bersama kelompok? Jelaskan!</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>5</td><td>Apa kelebihan komputasi kolaboratif dibanding mandiri?</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>6</td><td>Apa kekurangan komputasi kolaboratif?</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>7</td><td>Kapan sebaiknya kita bekerja mandiri?</td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>8</td><td>Kapan sebaiknya kita bekerja kolaboratif?</td><td><textarea class="answer-field"></textarea></td></tr>
+                        <tr><td>1</td><td>Apakah hasil diskusi kelompok sama dengan hasil pekerjaan mandiri kalian?</td><td><textarea class="answer-field" id="refleksi_banding1"></textarea></td></tr>
+                        <tr><td>2</td><td>Jika ada perbedaan, apa penyebabnya?</td><td><textarea class="answer-field" id="refleksi_banding2"></textarea></td></tr>
+                        <tr><td>3</td><td>Mana yang lebih cepat: mengerjakan sendiri atau bersama kelompok? Jelaskan!</td><td><textarea class="answer-field" id="refleksi_banding3"></textarea></td></tr>
+                        <tr><td>4</td><td>Mana yang lebih akurat: mengerjakan sendiri atau bersama kelompok? Jelaskan!</td><td><textarea class="answer-field" id="refleksi_banding4"></textarea></td></tr>
+                        <tr><td>5</td><td>Apa kelebihan komputasi kolaboratif dibanding mandiri?</td><td><textarea class="answer-field" id="refleksi_banding5"></textarea></td></tr>
+                        <tr><td>6</td><td>Apa kekurangan komputasi kolaboratif?</td><td><textarea class="answer-field" id="refleksi_banding6"></textarea></td></tr>
+                        <tr><td>7</td><td>Kapan sebaiknya kita bekerja mandiri?</td><td><textarea class="answer-field" id="refleksi_banding7"></textarea></td></tr>
+                        <tr><td>8</td><td>Kapan sebaiknya kita bekerja kolaboratif?</td><td><textarea class="answer-field" id="refleksi_banding8"></textarea></td></tr>
                     </tbody>
                 </table>
                 
@@ -913,18 +962,18 @@
                     <div class="mandiri-box">
                         <h5 style="color: #ff9800; margin-bottom: 10px;">🧑‍💻 Komputasi Mandiri</h5>
                         <p><strong>1. Komputasi mandiri lebih cocok digunakan ketika:</strong></p>
-                        <textarea class="answer-field large" placeholder="Tulis kesimpulan..."></textarea>
+                        <textarea class="answer-field large" id="kesimpulan_mandiri" placeholder="Tulis kesimpulan..."></textarea>
                     </div>
                     
                     <div class="kolaboratif-box">
                         <h5 style="color: #4caf50; margin-bottom: 10px;">👥 Komputasi Kolaboratif</h5>
                         <p><strong>2. Komputasi kolaboratif lebih cocok digunakan ketika:</strong></p>
-                        <textarea class="answer-field large" placeholder="Tulis kesimpulan..."></textarea>
+                        <textarea class="answer-field large" id="kesimpulan_kolaboratif" placeholder="Tulis kesimpulan..."></textarea>
                     </div>
                 </div>
                 
                 <p><strong>3. Data berkualitas diperoleh ketika:</strong></p>
-                <textarea class="answer-field large" placeholder="Tulis kesimpulan..."></textarea>
+                <textarea class="answer-field large" id="kesimpulan_data" placeholder="Tulis kesimpulan..."></textarea>
             </div>
 
             <!-- BAGIAN E: STUDI KASUS – MASALAH NYATA -->
@@ -940,8 +989,8 @@
                     <h4 style="color: var(--informatika-dark); margin-bottom: 20px;">FORMULIR PEMECAHAN MASALAH</h4>
                     
                     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-bottom: 15px;">
-                        <div><strong>Kelompok :</strong></div><div><input type="text" class="answer-field"></div>
-                        <div><strong>Tanggal :</strong></div><div><input type="date" class="answer-field"></div>
+                        <div><strong>Kelompok :</strong></div><div><input type="text" class="answer-field" id="studi_kelompok"></div>
+                        <div><strong>Tanggal :</strong></div><div><input type="date" class="answer-field" id="studi_tanggal"></div>
                     </div>
                     
                     <table class="lkpd-table">
@@ -953,13 +1002,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>1</td><td>Masalah yang dihadapi: (jelaskan situasinya)</td><td><textarea class="answer-field large"></textarea></td></tr>
-                            <tr><td>2</td><td>Data apa yang dibutuhkan?</td><td><textarea class="answer-field"></textarea></td></tr>
-                            <tr><td>3</td><td>Bagaimana cara mengumpulkan data?</td><td><textarea class="answer-field"></textarea></td></tr>
-                            <tr><td>4</td><td>Siapa saja yang terlibat?</td><td><textarea class="answer-field"></textarea></td></tr>
-                            <tr><td>5</td><td>Langkah-langkah penyelesaian (algoritma):</td><td><textarea class="answer-field large" placeholder="1.&#10;2.&#10;3.&#10;4.&#10;5."></textarea></td></tr>
-                            <tr><td>6</td><td>Hasil yang diharapkan:</td><td><textarea class="answer-field"></textarea></td></tr>
-                            <tr><td>7</td><td>Bagaimana cara memastikan data berkualitas?</td><td><textarea class="answer-field"></textarea></td></tr>
+                            <tr><td>1</td><td>Masalah yang dihadapi: (jelaskan situasinya)</td><td><textarea class="answer-field large" id="studi_masalah"></textarea></td></tr>
+                            <tr><td>2</td><td>Data apa yang dibutuhkan?</td><td><textarea class="answer-field" id="studi_data"></textarea></td></tr>
+                            <tr><td>3</td><td>Bagaimana cara mengumpulkan data?</td><td><textarea class="answer-field" id="studi_cara"></textarea></td></tr>
+                            <tr><td>4</td><td>Siapa saja yang terlibat?</td><td><textarea class="answer-field" id="studi_terlibat"></textarea></td></tr>
+                            <tr><td>5</td><td>Langkah-langkah penyelesaian (algoritma):</td><td><textarea class="answer-field large" id="studi_langkah" placeholder="1.&#10;2.&#10;3.&#10;4.&#10;5."></textarea></td></tr>
+                            <tr><td>6</td><td>Hasil yang diharapkan:</td><td><textarea class="answer-field" id="studi_hasil"></textarea></td></tr>
+                            <tr><td>7</td><td>Bagaimana cara memastikan data berkualitas?</td><td><textarea class="answer-field" id="studi_kualitas"></textarea></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -974,10 +1023,10 @@
                 
                 <div style="background: var(--informatika-light); padding: 1rem; border-radius: 10px; margin-bottom: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                        <div><strong>Nama:</strong> <input type="text" class="answer-field" placeholder="Nama"></div>
-                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" placeholder="Kelas"></div>
-                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" placeholder="Kelompok"></div>
-                        <div><strong>Peran:</strong> <input type="text" class="answer-field" placeholder="Peran"></div>
+                        <div><strong>Nama:</strong> <input type="text" class="answer-field" id="ref_nama" placeholder="Nama"></div>
+                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="ref_kelas" placeholder="Kelas"></div>
+                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="ref_kelompok" placeholder="Kelompok"></div>
+                        <div><strong>Peran:</strong> <input type="text" class="answer-field" id="ref_peran" placeholder="Peran"></div>
                     </div>
                 </div>
                 
@@ -990,28 +1039,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang komputasi mandiri?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>2</td><td>Hal baru apa yang aku pelajari tentang komputasi kolaboratif?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>3</td><td>Pengalaman apa yang paling berkesan saat bekerja mandiri?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>4</td><td>Pengalaman apa yang paling berkesan saat bekerja kelompok?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>5</td><td>Apakah aku lebih suka bekerja mandiri atau kelompok? Mengapa?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>6</td><td>Bagaimana cara memastikan data yang aku hasilkan berkualitas?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>7</td><td>Apa yang akan aku lakukan berbeda di lain waktu?</td><td><textarea class="answer-field large"></textarea></td></tr>
+                        <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang komputasi mandiri?</td><td><textarea class="answer-field large" id="ref1"></textarea></td></tr>
+                        <tr><td>2</td><td>Hal baru apa yang aku pelajari tentang komputasi kolaboratif?</td><td><textarea class="answer-field large" id="ref2"></textarea></td></tr>
+                        <tr><td>3</td><td>Pengalaman apa yang paling berkesan saat bekerja mandiri?</td><td><textarea class="answer-field large" id="ref3"></textarea></td></tr>
+                        <tr><td>4</td><td>Pengalaman apa yang paling berkesan saat bekerja kelompok?</td><td><textarea class="answer-field large" id="ref4"></textarea></td></tr>
+                        <tr><td>5</td><td>Apakah aku lebih suka bekerja mandiri atau kelompok? Mengapa?</td><td><textarea class="answer-field large" id="ref5"></textarea></td></tr>
+                        <tr><td>6</td><td>Bagaimana cara memastikan data yang aku hasilkan berkualitas?</td><td><textarea class="answer-field large" id="ref6"></textarea></td></tr>
+                        <tr><td>7</td><td>Apa yang akan aku lakukan berbeda di lain waktu?</td><td><textarea class="answer-field large" id="ref7"></textarea></td></tr>
                     </tbody>
                 </table>
                 
                 <div class="checklist-container">
                     <h4 style="margin-bottom: 10px;">Ceklis Pemahaman Akhir:</h4>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah membaca materi "Proses Komputasi Mandiri"</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah membaca materi "Komputasi Kolaboratif"</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah mengerjakan komputasi mandiri</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah berpartisipasi dalam komputasi kolaboratif</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya siap untuk aktivitas berikutnya</div>
+                    <div class="checklist-item"><input type="checkbox" id="check1"> Saya sudah membaca materi "Proses Komputasi Mandiri"</div>
+                    <div class="checklist-item"><input type="checkbox" id="check2"> Saya sudah membaca materi "Komputasi Kolaboratif"</div>
+                    <div class="checklist-item"><input type="checkbox" id="check3"> Saya sudah mengerjakan komputasi mandiri</div>
+                    <div class="checklist-item"><input type="checkbox" id="check4"> Saya sudah berpartisipasi dalam komputasi kolaboratif</div>
+                    <div class="checklist-item"><input type="checkbox" id="check5"> Saya siap untuk aktivitas berikutnya</div>
                 </div>
             </div>
 
             <!-- Tombol Kirim -->
-            <button class="submit-button" id="submitBtn" onclick="submitData()">
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kumpulkan LKPD
             </button>
             <div id="successMessage" class="success-message">
@@ -1032,11 +1081,41 @@
 
     <script src="../../../script.js"></script>
     <script>
-        // Simple Mobile Menu
+        // ==================== KONFIGURASI URL ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbz6oBgz9hrztA6gH8a19LP7gsC5jPZc1O8TbRoO-7L55ySxtIAVxLRMLaeftDnNY4NYzw/exec';
+
+        // ==================== KONFIGURASI FORM ====================
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 3 - PEMECAHAN MASALAH",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas/Peran",
+                "Data Review Materi",
+                "Data Komputasi Mandiri",
+                "Data Komputasi Kolaboratif",
+                "Data Perbandingan",
+                "Data Studi Kasus",
+                "Data Refleksi"
+            ]
+        };
+
+        // ==================== VARIABEL GLOBAL ====================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+
+        // ==================== INISIALISASI ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // Load data siswa
+            loadDataFromGoogleSheets();
+            
+            // Hamburger menu
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
             if (hamburger) {
                 hamburger.addEventListener('click', function() {
                     navMenu.classList.toggle('active');
@@ -1048,23 +1127,304 @@
             inputs.forEach(input => {
                 input.disabled = false;
             });
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Tambahkan event listener ke semua input untuk update progress
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', updateProgressBar);
+                el.addEventListener('change', updateProgressBar);
+            });
         });
 
-        // Fungsi submit (placeholder)
-        function submitData() {
-            // Tampilkan loading
-            document.getElementById('loadingMessage').style.display = 'block';
+        // ==================== FUNGSI PROGRESS BAR ====================
+        function updateProgressBar() {
+            const totalFields = document.querySelectorAll('input:not([type=checkbox]), select, textarea').length;
+            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]), select, textarea'))
+                .filter(el => el.value && el.value.trim() !== '').length;
             
-            // Simulasi pengiriman data
-            setTimeout(function() {
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
+            const progress = Math.round((filledFields / totalFields) * 100) || 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+        }
+
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
                 
-                // Sembunyikan pesan sukses setelah 3 detik
-                setTimeout(function() {
+                const callbackName = 'jsonp_callback_' + Date.now();
+                
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        
+                        dataKelas.forEach(kelas => {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        });
+                        
+                        enableForm();
+                    } else {
+                        useFallbackData();
+                    }
+                    
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    isLoading = false;
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = useFallbackData;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                useFallbackData();
+            }
+        }
+
+        function useFallbackData() {
+            dataKelas = ['X IPA 1', 'X IPA 2', 'X IPS 1', 'X IPS 2', 'X TKJ 1', 'X TKJ 2'];
+            
+            dataSiswa = {
+                'X IPA 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
+                'X IPA 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
+                'X IPS 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
+                'X IPS 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
+                'X TKJ 1': ['Vina Aulia', 'Wahyu Hidayat', 'Xavier Putra', 'Yuni Safitri', 'Zainal Abidin'],
+                'X TKJ 2': ['Aulia Rahman', 'Bagas Pratama', 'Cantika Dewi', 'Doni Saputra', 'Eka Sari']
+            };
+            
+            const kelasSelect = document.getElementById('kelas');
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            dataKelas.forEach(kelas => {
+                const option = document.createElement('option');
+                option.value = kelas;
+                option.textContent = kelas;
+                kelasSelect.appendChild(option);
+            });
+            
+            enableForm();
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = 'Menggunakan data lokal.';
+            isLoading = false;
+        }
+
+        function enableForm() {
+            document.getElementById('kelas').disabled = false;
+            document.getElementById('nama').disabled = false;
+            document.getElementById('kelompok').disabled = false;
+            document.getElementById('tugas').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
+            });
+        }
+
+        // ==================== FUNGSI SUBMIT DATA ====================
+        async function submitData() {
+            if (isLoading) {
+                alert('Data masih dimuat. Silakan tunggu.');
+                return;
+            }
+            
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value || !document.getElementById('kelompok').value) {
+                alert('Lengkapi identitas terlebih dahulu!');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                const formData = new URLSearchParams();
+                
+                // Kirim konfigurasi sheet
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                
+                // ==================== KUMPULKAN DATA ====================
+                // Data Identitas Dasar
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value);
+                formData.append('Tugas/Peran', document.getElementById('tugas').value);
+                
+                // Data Review Materi (Bagian A)
+                const dataReview = {
+                    q1: document.getElementById('review1')?.value || '',
+                    q2: document.getElementById('review2')?.value || '',
+                    q3: document.getElementById('review3')?.value || '',
+                    q4: document.getElementById('review4')?.value || '',
+                    q5: document.getElementById('review5')?.value || '',
+                    q6: document.getElementById('review6')?.value || ''
+                };
+                formData.append('Data Review Materi', JSON.stringify(dataReview));
+                
+                // Data Komputasi Mandiri (Bagian B)
+                const dataMandiri = {
+                    rataA: document.getElementById('mandiri1')?.value || '',
+                    rataB: document.getElementById('mandiri2')?.value || '',
+                    rataC: document.getElementById('mandiri3')?.value || '',
+                    tertinggi: document.getElementById('mandiri4')?.value || '',
+                    selisih: document.getElementById('mandiri5')?.value || '',
+                    pola1: document.getElementById('pola1')?.value || '',
+                    pola2: document.getElementById('pola2')?.value || '',
+                    pola3: document.getElementById('pola3')?.value || '',
+                    pola4: document.getElementById('pola4')?.value || '',
+                    pola5: document.getElementById('pola5')?.value || '',
+                    refleksi1: document.getElementById('refleksi_mandiri1')?.value || '',
+                    refleksi2: document.getElementById('refleksi_mandiri2')?.value || '',
+                    refleksi3: document.getElementById('refleksi_mandiri3')?.value || '',
+                    refleksi4: document.getElementById('refleksi_mandiri4')?.value || ''
+                };
+                formData.append('Data Komputasi Mandiri', JSON.stringify(dataMandiri));
+                
+                // Data Komputasi Kolaboratif (Bagian C)
+                const dataKolaboratif = {
+                    diskusi_rataA: document.getElementById('diskusi_rataA')?.value || '',
+                    diskusi_rataB: document.getElementById('diskusi_rataB')?.value || '',
+                    diskusi_rataC: document.getElementById('diskusi_rataC')?.value || '',
+                    diskusi_kesimpulan_rata: document.getElementById('diskusi_kesimpulan_rata')?.value || '',
+                    diskusi_pola1: document.getElementById('diskusi_pola1')?.value || '',
+                    diskusi_kesimpulan1: document.getElementById('diskusi_kesimpulan1')?.value || '',
+                    diskusi_pola2: document.getElementById('diskusi_pola2')?.value || '',
+                    diskusi_kesimpulan2: document.getElementById('diskusi_kesimpulan2')?.value || '',
+                    diskusi_pola3: document.getElementById('diskusi_pola3')?.value || '',
+                    diskusi_kesimpulan3: document.getElementById('diskusi_kesimpulan3')?.value || '',
+                    diskusi_pola4: document.getElementById('diskusi_pola4')?.value || '',
+                    diskusi_kesimpulan4: document.getElementById('diskusi_kesimpulan4')?.value || '',
+                    diskusi_pola5: document.getElementById('diskusi_pola5')?.value || '',
+                    diskusi_kesimpulan5: document.getElementById('diskusi_kesimpulan5')?.value || '',
+                    kasus1_total1: document.getElementById('kasus1_total1')?.value || '',
+                    kasus1_total2: document.getElementById('kasus1_total2')?.value || '',
+                    kasus1_total3: document.getElementById('kasus1_total3')?.value || '',
+                    kasus1_total4: document.getElementById('kasus1_total4')?.value || '',
+                    kasus1_total5: document.getElementById('kasus1_total5')?.value || '',
+                    kasus1_total: document.getElementById('kasus1_total')?.value || '',
+                    kasus1_patungan: document.getElementById('kasus1_patungan')?.value || '',
+                    kasus1_saran: document.getElementById('kasus1_saran')?.value || '',
+                    jadwal_senin1: document.getElementById('jadwal_senin1')?.value || '',
+                    jadwal_senin2: document.getElementById('jadwal_senin2')?.value || '',
+                    jadwal_selasa1: document.getElementById('jadwal_selasa1')?.value || '',
+                    jadwal_selasa2: document.getElementById('jadwal_selasa2')?.value || '',
+                    jadwal_rabu1: document.getElementById('jadwal_rabu1')?.value || '',
+                    jadwal_rabu2: document.getElementById('jadwal_rabu2')?.value || '',
+                    jadwal_kamis1: document.getElementById('jadwal_kamis1')?.value || '',
+                    jadwal_kamis2: document.getElementById('jadwal_kamis2')?.value || '',
+                    jadwal_jumat1: document.getElementById('jadwal_jumat1')?.value || '',
+                    jadwal_jumat2: document.getElementById('jadwal_jumat2')?.value || '',
+                    penjualan1: document.getElementById('penjualan1')?.value || '',
+                    penjualan2: document.getElementById('penjualan2')?.value || '',
+                    penjualan3: document.getElementById('penjualan3')?.value || '',
+                    penjualan4: document.getElementById('penjualan4')?.value || '',
+                    penjualan5: document.getElementById('penjualan5')?.value || ''
+                };
+                formData.append('Data Komputasi Kolaboratif', JSON.stringify(dataKolaboratif));
+                
+                // Data Perbandingan (Bagian D)
+                const dataPerbandingan = {
+                    banding1: document.getElementById('refleksi_banding1')?.value || '',
+                    banding2: document.getElementById('refleksi_banding2')?.value || '',
+                    banding3: document.getElementById('refleksi_banding3')?.value || '',
+                    banding4: document.getElementById('refleksi_banding4')?.value || '',
+                    banding5: document.getElementById('refleksi_banding5')?.value || '',
+                    banding6: document.getElementById('refleksi_banding6')?.value || '',
+                    banding7: document.getElementById('refleksi_banding7')?.value || '',
+                    banding8: document.getElementById('refleksi_banding8')?.value || '',
+                    kesimpulan_mandiri: document.getElementById('kesimpulan_mandiri')?.value || '',
+                    kesimpulan_kolaboratif: document.getElementById('kesimpulan_kolaboratif')?.value || '',
+                    kesimpulan_data: document.getElementById('kesimpulan_data')?.value || ''
+                };
+                formData.append('Data Perbandingan', JSON.stringify(dataPerbandingan));
+                
+                // Data Studi Kasus (Bagian E)
+                const dataStudi = {
+                    kelompok: document.getElementById('studi_kelompok')?.value || '',
+                    tanggal: document.getElementById('studi_tanggal')?.value || '',
+                    masalah: document.getElementById('studi_masalah')?.value || '',
+                    data: document.getElementById('studi_data')?.value || '',
+                    cara: document.getElementById('studi_cara')?.value || '',
+                    terlibat: document.getElementById('studi_terlibat')?.value || '',
+                    langkah: document.getElementById('studi_langkah')?.value || '',
+                    hasil: document.getElementById('studi_hasil')?.value || '',
+                    kualitas: document.getElementById('studi_kualitas')?.value || ''
+                };
+                formData.append('Data Studi Kasus', JSON.stringify(dataStudi));
+                
+                // Data Refleksi (Bagian F)
+                const dataRefleksi = {
+                    nama: document.getElementById('ref_nama')?.value || '',
+                    kelas: document.getElementById('ref_kelas')?.value || '',
+                    kelompok: document.getElementById('ref_kelompok')?.value || '',
+                    peran: document.getElementById('ref_peran')?.value || '',
+                    q1: document.getElementById('ref1')?.value || '',
+                    q2: document.getElementById('ref2')?.value || '',
+                    q3: document.getElementById('ref3')?.value || '',
+                    q4: document.getElementById('ref4')?.value || '',
+                    q5: document.getElementById('ref5')?.value || '',
+                    q6: document.getElementById('ref6')?.value || '',
+                    q7: document.getElementById('ref7')?.value || '',
+                    check1: document.getElementById('check1')?.checked || false,
+                    check2: document.getElementById('check2')?.checked || false,
+                    check3: document.getElementById('check3')?.checked || false,
+                    check4: document.getElementById('check4')?.checked || false,
+                    check5: document.getElementById('check5')?.checked || false
+                };
+                formData.append('Data Refleksi', JSON.stringify(dataRefleksi));
+                
+                // ==================== KIRIM ====================
+                await fetch(URL_PEREKAP_AKTIVITAS, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
-                }, 3000);
-            }, 1500);
+                }, 5000);
+
+                if (confirm('Data terkirim! Ingin mereset form?')) {
+                    location.reload();
+                }
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan LKPD';
+            }
         }
     </script>
 </body>

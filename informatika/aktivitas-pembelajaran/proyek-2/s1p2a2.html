@@ -483,6 +483,42 @@
             background: var(--informatika-light);
             color: var(--informatika-dark);
         }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin: 2rem 0;
+            background: var(--informatika-gray);
+            border-radius: 30px;
+            padding: 1rem;
+            position: sticky;
+            top: 10px;
+            z-index: 99;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--informatika-primary), var(--informatika-secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Catatan Penting */
+        .catatan-penting {
+            background: #fff9e0;
+            border-left: 5px solid #f1c40f;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
 <body>
@@ -524,7 +560,7 @@
 
         <!-- Loading Message -->
         <div id="loadingMessage" class="loading-message">
-            <i class="fas fa-spinner fa-spin"></i> Memuat Lembar Kerja Peserta Didik......
+            <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
         <!-- Error Message -->
@@ -532,8 +568,21 @@
             <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan isi manual.</span>
         </div>
 
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
+        </div>
+
         <!-- Worksheet Container - LKPD Proyek 2 Aktivitas 2 -->
         <div class="worksheet-container" id="worksheetForm">
+            <!-- HALO KELOMPOK HEBAT -->
+            <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--informatika-primary);">
+                <i class="fas fa-lightbulb" style="color: var(--informatika-primary); margin-right: 10px;"></i>
+                <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
+                Silakan isi lembar kerja ini untuk mempelajari representasi data dan logika dasar.
+            </div>
+
             <h1 class="worksheet-title">LEMBAR KERJA PESERTA DIDIK (LKPD) PROYEK 2 – AKTIVITAS 2</h1>
             <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem; color: var(--informatika-accent);">
                 <strong>REPRESENTASI DATA & LOGIKA DASAR</strong>
@@ -549,23 +598,23 @@
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-building"></i> Kelas</label>
-                    <input type="text" id="kelas" placeholder="Contoh: X IPA 1" class="answer-field">
+                    <select id="kelas" class="answer-field" onchange="updateNamaDropdown()" disabled>
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama Lengkap</label>
-                    <input type="text" id="nama" placeholder="Contoh: John Doe" class="answer-field">
+                    <select id="nama" class="answer-field" disabled>
+                        <option value="">-- Pilih Nama --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Nama Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Data Master" class="answer-field">
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Data Master" class="answer-field" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Analis Data" class="answer-field">
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-calendar"></i> Tanggal</label>
-                    <input type="date" id="tanggal" class="answer-field">
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Analis Data" class="answer-field" disabled>
                 </div>
             </div>
 
@@ -616,32 +665,32 @@
                         <tr>
                             <td>1</td>
                             <td>Apa yang dimaksud dengan tipe data?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review1" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Sebutkan 4 tipe data dasar yang dijelaskan dalam materi!</td>
-                            <td><textarea class="answer-field large" placeholder="1.&#10;2.&#10;3.&#10;4."></textarea></td>
+                            <td><textarea class="answer-field large" id="review2" placeholder="1.&#10;2.&#10;3.&#10;4."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Jelaskan perbedaan antara tipe data Integer dan Float!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review3" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Apa yang dimaksud dengan tipe data Boolean? Berikan contohnya!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review4" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td>Apa itu variabel dalam pemrograman?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review5" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>6</td>
                             <td>Bagaimana cara menyimpan data dalam bentuk tabel?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review6" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -665,7 +714,7 @@
                     <i class="fas fa-database"></i> "Kenali berbagai jenis data!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 1: Klasifikasi Tipe Data</h4>
+                <h4 class="section-subtitle">Kegiatan 1: Klasifikasi Tipe Data</h4>
                 <p>Instruksi: Tentukan tipe data yang tepat untuk setiap data berikut!</p>
                 
                 <table class="lkpd-table">
@@ -677,16 +726,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>25</td><td><input type="text" class="answer-field" placeholder="Contoh: Integer"></td></tr>
-                        <tr><td>2</td><td>"Informatika"</td><td><input type="text" class="answer-field" placeholder="Contoh: String"></td></tr>
-                        <tr><td>3</td><td>3.14</td><td><input type="text" class="answer-field" placeholder="Contoh: Float"></td></tr>
-                        <tr><td>4</td><td>True</td><td><input type="text" class="answer-field" placeholder="Contoh: Boolean"></td></tr>
-                        <tr><td>5</td><td>"2024"</td><td><input type="text" class="answer-field" placeholder="Tipe data..."></td></tr>
-                        <tr><td>6</td><td>17.5</td><td><input type="text" class="answer-field" placeholder="Tipe data..."></td></tr>
-                        <tr><td>7</td><td>False</td><td><input type="text" class="answer-field" placeholder="Tipe data..."></td></tr>
-                        <tr><td>8</td><td>"X TKJ 1"</td><td><input type="text" class="answer-field" placeholder="Tipe data..."></td></tr>
-                        <tr><td>9</td><td>-10</td><td><input type="text" class="answer-field" placeholder="Tipe data..."></td></tr>
-                        <tr><td>10</td><td>"123"</td><td><input type="text" class="answer-field" placeholder="Tipe data..."></td></tr>
+                        <tr><td>1</td><td>25</td><td><input type="text" class="answer-field" id="tipe1" placeholder="Contoh: Integer"></td></tr>
+                        <tr><td>2</td><td>"Informatika"</td><td><input type="text" class="answer-field" id="tipe2" placeholder="Contoh: String"></td></tr>
+                        <tr><td>3</td><td>3.14</td><td><input type="text" class="answer-field" id="tipe3" placeholder="Contoh: Float"></td></tr>
+                        <tr><td>4</td><td>True</td><td><input type="text" class="answer-field" id="tipe4" placeholder="Contoh: Boolean"></td></tr>
+                        <tr><td>5</td><td>"2024"</td><td><input type="text" class="answer-field" id="tipe5" placeholder="Tipe data..."></td></tr>
+                        <tr><td>6</td><td>17.5</td><td><input type="text" class="answer-field" id="tipe6" placeholder="Tipe data..."></td></tr>
+                        <tr><td>7</td><td>False</td><td><input type="text" class="answer-field" id="tipe7" placeholder="Tipe data..."></td></tr>
+                        <tr><td>8</td><td>"X TKJ 1"</td><td><input type="text" class="answer-field" id="tipe8" placeholder="Tipe data..."></td></tr>
+                        <tr><td>9</td><td>-10</td><td><input type="text" class="answer-field" id="tipe9" placeholder="Tipe data..."></td></tr>
+                        <tr><td>10</td><td>"123"</td><td><input type="text" class="answer-field" id="tipe10" placeholder="Tipe data..."></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -698,38 +747,38 @@
                     <i class="fas fa-comments"></i> "Diskusikan dengan kelompokmu!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 2: Mengidentifikasi Tipe Data dalam Kehidupan Sehari-hari</h4>
+                <h4 class="section-subtitle">Kegiatan 2: Mengidentifikasi Tipe Data dalam Kehidupan Sehari-hari</h4>
                 <p>Instruksi: Diskusikan dengan kelompok, lalu isi tabel berikut dengan contoh data yang sesuai!</p>
                 
                 <p><strong>1. Data siswa di sekolah</strong></p>
                 <table class="lkpd-table">
                     <tr><th>Contoh Data</th><th>Tipe Data</th></tr>
-                    <tr><td>Nama: <input type="text" class="answer-field" placeholder="Contoh: Budi"></td><td><input type="text" class="answer-field" placeholder="String"></td></tr>
-                    <tr><td>NIS: <input type="text" class="answer-field" placeholder="Contoh: 12345"></td><td><input type="text" class="answer-field" placeholder="Integer"></td></tr>
-                    <tr><td>Kelas: <input type="text" class="answer-field" placeholder="Contoh: X IPA 1"></td><td><input type="text" class="answer-field" placeholder="String"></td></tr>
-                    <tr><td>Usia: <input type="text" class="answer-field" placeholder="Contoh: 16"></td><td><input type="text" class="answer-field" placeholder="Integer"></td></tr>
-                    <tr><td>Laki-laki/Perempuan: <input type="text" class="answer-field" placeholder="Contoh: Laki-laki"></td><td><input type="text" class="answer-field" placeholder="String/Boolean"></td></tr>
+                    <tr><td>Nama: <input type="text" class="answer-field" id="siswa_nama" placeholder="Contoh: Budi"></td><td><input type="text" class="answer-field" id="siswa_tipe_nama" placeholder="String"></td></tr>
+                    <tr><td>NIS: <input type="text" class="answer-field" id="siswa_nis" placeholder="Contoh: 12345"></td><td><input type="text" class="answer-field" id="siswa_tipe_nis" placeholder="Integer"></td></tr>
+                    <tr><td>Kelas: <input type="text" class="answer-field" id="siswa_kelas" placeholder="Contoh: X IPA 1"></td><td><input type="text" class="answer-field" id="siswa_tipe_kelas" placeholder="String"></td></tr>
+                    <tr><td>Usia: <input type="text" class="answer-field" id="siswa_usia" placeholder="Contoh: 16"></td><td><input type="text" class="answer-field" id="siswa_tipe_usia" placeholder="Integer"></td></tr>
+                    <tr><td>Laki-laki/Perempuan: <input type="text" class="answer-field" id="siswa_gender" placeholder="Contoh: Laki-laki"></td><td><input type="text" class="answer-field" id="siswa_tipe_gender" placeholder="String/Boolean"></td></tr>
                 </table>
                 
                 <p><strong>2. Data barang di kantin</strong></p>
                 <table class="lkpd-table">
                     <tr><th>Contoh Data</th><th>Tipe Data</th></tr>
-                    <tr><td>Nama barang: <input type="text" class="answer-field" placeholder="Contoh: Nasi Goreng"></td><td><input type="text" class="answer-field" placeholder="String"></td></tr>
-                    <tr><td>Harga: <input type="text" class="answer-field" placeholder="Contoh: 15000"></td><td><input type="text" class="answer-field" placeholder="Integer"></td></tr>
-                    <tr><td>Stok: <input type="text" class="answer-field" placeholder="Contoh: 10"></td><td><input type="text" class="answer-field" placeholder="Integer"></td></tr>
-                    <tr><td>Tersedia/Tidak: <input type="text" class="answer-field" placeholder="Contoh: Tersedia"></td><td><input type="text" class="answer-field" placeholder="Boolean"></td></tr>
+                    <tr><td>Nama barang: <input type="text" class="answer-field" id="barang_nama" placeholder="Contoh: Nasi Goreng"></td><td><input type="text" class="answer-field" id="barang_tipe_nama" placeholder="String"></td></tr>
+                    <tr><td>Harga: <input type="text" class="answer-field" id="barang_harga" placeholder="Contoh: 15000"></td><td><input type="text" class="answer-field" id="barang_tipe_harga" placeholder="Integer"></td></tr>
+                    <tr><td>Stok: <input type="text" class="answer-field" id="barang_stok" placeholder="Contoh: 10"></td><td><input type="text" class="answer-field" id="barang_tipe_stok" placeholder="Integer"></td></tr>
+                    <tr><td>Tersedia/Tidak: <input type="text" class="answer-field" id="barang_tersedia" placeholder="Contoh: Tersedia"></td><td><input type="text" class="answer-field" id="barang_tipe_tersedia" placeholder="Boolean"></td></tr>
                 </table>
                 
                 <p><strong>3. Data nilai ulangan</strong></p>
                 <table class="lkpd-table">
                     <tr><th>Contoh Data</th><th>Tipe Data</th></tr>
-                    <tr><td>Nama siswa: <input type="text" class="answer-field" placeholder="Contoh: Ani"></td><td><input type="text" class="answer-field" placeholder="String"></td></tr>
-                    <tr><td>Nilai: <input type="text" class="answer-field" placeholder="Contoh: 85"></td><td><input type="text" class="answer-field" placeholder="Integer/Float"></td></tr>
-                    <tr><td>KKM: 75</td><td><input type="text" class="answer-field" value="Integer" readonly></td></tr>
-                    <tr><td>Lulus/Tidak: <input type="text" class="answer-field" placeholder="Contoh: Lulus"></td><td><input type="text" class="answer-field" placeholder="Boolean"></td></tr>
+                    <tr><td>Nama siswa: <input type="text" class="answer-field" id="nilai_nama" placeholder="Contoh: Ani"></td><td><input type="text" class="answer-field" id="nilai_tipe_nama" placeholder="String"></td></tr>
+                    <tr><td>Nilai: <input type="text" class="answer-field" id="nilai_angka" placeholder="Contoh: 85"></td><td><input type="text" class="answer-field" id="nilai_tipe_angka" placeholder="Integer/Float"></td></tr>
+                    <tr><td>KKM: 75</td><td><input type="text" class="answer-field" id="nilai_tipe_kkm" value="Integer" readonly></td></tr>
+                    <tr><td>Lulus/Tidak: <input type="text" class="answer-field" id="nilai_lulus" placeholder="Contoh: Lulus"></td><td><input type="text" class="answer-field" id="nilai_tipe_lulus" placeholder="Boolean"></td></tr>
                 </table>
                 
-                <h4 class="section-subtitle">Aktivitas 3: Logika Dasar dengan Tipe Data Boolean</h4>
+                <h4 class="section-subtitle">Kegiatan 3: Logika Dasar dengan Tipe Data Boolean</h4>
                 <p>Instruksi: Tentukan nilai Boolean (True/False) untuk pernyataan-pernyataan berikut!</p>
                 
                 <table class="lkpd-table">
@@ -742,56 +791,56 @@
                     </thead>
                     <tbody>
                         <tr><td>1</td><td>10 lebih besar dari 5</td><td>
-                            <select class="answer-field">
+                            <select class="answer-field" id="bool1">
                                 <option value="">Pilih</option>
                                 <option value="True">True</option>
                                 <option value="False">False</option>
                             </select>
                         </td></tr>
                         <tr><td>2</td><td>7 sama dengan 8</td><td>
-                            <select class="answer-field">
+                            <select class="answer-field" id="bool2">
                                 <option value="">Pilih</option>
                                 <option value="True">True</option>
                                 <option value="False">False</option>
                             </select>
                         </td></tr>
                         <tr><td>3</td><td>15 kurang dari atau sama dengan 15</td><td>
-                            <select class="answer-field">
+                            <select class="answer-field" id="bool3">
                                 <option value="">Pilih</option>
                                 <option value="True">True</option>
                                 <option value="False">False</option>
                             </select>
                         </td></tr>
                         <tr><td>4</td><td>"Informatika" sama dengan "informatika"</td><td>
-                            <select class="answer-field">
+                            <select class="answer-field" id="bool4">
                                 <option value="">Pilih</option>
                                 <option value="True">True</option>
                                 <option value="False">False</option>
                             </select>
                         </td></tr>
                         <tr><td>5</td><td>20 tidak sama dengan 10</td><td>
-                            <select class="answer-field">
+                            <select class="answer-field" id="bool5">
                                 <option value="">Pilih</option>
                                 <option value="True">True</option>
                                 <option value="False">False</option>
                             </select>
                         </td></tr>
                         <tr><td>6</td><td>100 dibagi 2 sama dengan 50</td><td>
-                            <select class="answer-field">
+                            <select class="answer-field" id="bool6">
                                 <option value="">Pilih</option>
                                 <option value="True">True</option>
                                 <option value="False">False</option>
                             </select>
                         </td></tr>
                         <tr><td>7</td><td>3 × 4 lebih besar dari 10</td><td>
-                            <select class="answer-field">
+                            <select class="answer-field" id="bool7">
                                 <option value="">Pilih</option>
                                 <option value="True">True</option>
                                 <option value="False">False</option>
                             </select>
                         </td></tr>
                         <tr><td>8</td><td>25 adalah bilangan genap</td><td>
-                            <select class="answer-field">
+                            <select class="answer-field" id="bool8">
                                 <option value="">Pilih</option>
                                 <option value="True">True</option>
                                 <option value="False">False</option>
@@ -808,7 +857,7 @@
                     <i class="fas fa-edit"></i> "Data perlu disusun agar mudah dipahami!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 4: Membuat Tabel Data Siswa</h4>
+                <h4 class="section-subtitle">Kegiatan 4: Membuat Tabel Data Siswa</h4>
                 <p>Instruksi: Buatlah tabel data untuk mencatat informasi 8 orang siswa dengan ketentuan berikut:</p>
                 <p><em>Struktur Tabel: No (Integer), Nama Lengkap (String), Usia (Integer), Kelas (String), Nilai Rata-rata (Float), Status Aktif (Boolean: True = Aktif, False = Tidak Aktif)</em></p>
                 
@@ -823,67 +872,16 @@
                             <th>Status Aktif</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr><td>1</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td>2</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td>3</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td>4</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td>5</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td>6</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td>7</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td>8</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
+                    <tbody id="tabelSiswaBody">
+                        <!-- Baris akan diisi dengan JavaScript -->
                     </tbody>
                 </table>
                 
-                <h4 class="section-subtitle">Aktivitas 5: Membuat Tabel Data Barang</h4>
+                <button type="button" class="submit-button" style="background: var(--informatika-accent); padding: 0.5rem 1rem; font-size: 0.9rem; margin: 0.5rem 0;" onclick="tambahBarisSiswa()">
+                    <i class="fas fa-plus"></i> Tambah Baris Siswa
+                </button>
+                
+                <h4 class="section-subtitle">Kegiatan 5: Membuat Tabel Data Barang</h4>
                 <p>Instruksi: Buatlah tabel data untuk mencatat informasi 6 barang di kantin sekolah!</p>
                 <p><em>Struktur Tabel: ID Barang (Integer), Nama Barang (String), Harga (Integer), Stok (Integer), Tersedia (Boolean)</em></p>
                 
@@ -897,51 +895,14 @@
                             <th>Tersedia</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
-                        <tr><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td>
-                            <select class="answer-field">
-                                <option value="">Pilih</option>
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
-                        </td></tr>
+                    <tbody id="tabelBarangBody">
+                        <!-- Baris akan diisi dengan JavaScript -->
                     </tbody>
                 </table>
+                
+                <button type="button" class="submit-button" style="background: var(--informatika-accent); padding: 0.5rem 1rem; font-size: 0.9rem; margin: 0.5rem 0;" onclick="tambahBarisBarang()">
+                    <i class="fas fa-plus"></i> Tambah Baris Barang
+                </button>
             </div>
 
             <!-- BAGIAN E: ANALISIS DATA -->
@@ -951,7 +912,7 @@
                     <i class="fas fa-search"></i> "Apa yang bisa kita pelajari dari data?"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 6: Menjawab Pertanyaan Berdasarkan Tabel</h4>
+                <h4 class="section-subtitle">Kegiatan 6: Menjawab Pertanyaan Berdasarkan Tabel</h4>
                 <p>Instruksi: Gunakan tabel data siswa yang telah kalian buat untuk menjawab pertanyaan berikut!</p>
                 
                 <table class="lkpd-table">
@@ -963,16 +924,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Berapa jumlah siswa yang usianya di atas 16 tahun?</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>2</td><td>Siapa siswa dengan nilai rata-rata tertinggi?</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>3</td><td>Berapa rata-rata usia semua siswa?</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>4</td><td>Berapa jumlah siswa yang statusnya tidak aktif?</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>5</td><td>Siapa siswa termuda dalam tabel?</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>6</td><td>Berapa jumlah siswa dengan nilai di atas 80?</td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>1</td><td>Berapa jumlah siswa yang usianya di atas 16 tahun?</td><td><input type="text" class="answer-field" id="analisis1"></td></tr>
+                        <tr><td>2</td><td>Siapa siswa dengan nilai rata-rata tertinggi?</td><td><input type="text" class="answer-field" id="analisis2"></td></tr>
+                        <tr><td>3</td><td>Berapa rata-rata usia semua siswa?</td><td><input type="text" class="answer-field" id="analisis3"></td></tr>
+                        <tr><td>4</td><td>Berapa jumlah siswa yang statusnya tidak aktif?</td><td><input type="text" class="answer-field" id="analisis4"></td></tr>
+                        <tr><td>5</td><td>Siapa siswa termuda dalam tabel?</td><td><input type="text" class="answer-field" id="analisis5"></td></tr>
+                        <tr><td>6</td><td>Berapa jumlah siswa dengan nilai di atas 80?</td><td><input type="text" class="answer-field" id="analisis6"></td></tr>
                     </tbody>
                 </table>
                 
-                <h4 class="section-subtitle">Aktivitas 7: Logika Pengolahan Data</h4>
+                <h4 class="section-subtitle">Kegiatan 7: Logika Pengolahan Data</h4>
                 <p>Instruksi: Buatlah algoritma sederhana untuk menyelesaikan tugas berikut!</p>
                 <p><strong>Tugas:</strong> Menentukan siswa yang lulus (nilai ≥ 75) dan tidak lulus (nilai < 75)</p>
                 
@@ -984,14 +945,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td><input type="text" class="answer-field" placeholder="Langkah 1"></td></tr>
-                        <tr><td>2</td><td><input type="text" class="answer-field" placeholder="Langkah 2"></td></tr>
-                        <tr><td>3</td><td><input type="text" class="answer-field" placeholder="Langkah 3"></td></tr>
-                        <tr><td>4</td><td><input type="text" class="answer-field" placeholder="Langkah 4"></td></tr>
-                        <tr><td>5</td><td><input type="text" class="answer-field" placeholder="Langkah 5"></td></tr>
-                        <tr><td>6</td><td><input type="text" class="answer-field" placeholder="Langkah 6"></td></tr>
-                        <tr><td>7</td><td><input type="text" class="answer-field" placeholder="Langkah 7"></td></tr>
-                        <tr><td>8</td><td><input type="text" class="answer-field" placeholder="Langkah 8"></td></tr>
+                        <tr><td>1</td><td><input type="text" class="answer-field" id="algoritma1" placeholder="Langkah 1"></td></tr>
+                        <tr><td>2</td><td><input type="text" class="answer-field" id="algoritma2" placeholder="Langkah 2"></td></tr>
+                        <tr><td>3</td><td><input type="text" class="answer-field" id="algoritma3" placeholder="Langkah 3"></td></tr>
+                        <tr><td>4</td><td><input type="text" class="answer-field" id="algoritma4" placeholder="Langkah 4"></td></tr>
+                        <tr><td>5</td><td><input type="text" class="answer-field" id="algoritma5" placeholder="Langkah 5"></td></tr>
+                        <tr><td>6</td><td><input type="text" class="answer-field" id="algoritma6" placeholder="Langkah 6"></td></tr>
+                        <tr><td>7</td><td><input type="text" class="answer-field" id="algoritma7" placeholder="Langkah 7"></td></tr>
+                        <tr><td>8</td><td><input type="text" class="answer-field" id="algoritma8" placeholder="Langkah 8"></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1026,11 +987,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>2</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>3</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>4</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>5</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>1</td><td><input type="text" class="answer-field" id="kasus_kolom1"></td><td><input type="text" class="answer-field" id="kasus_tipe1"></td><td><input type="text" class="answer-field" id="kasus_ket1"></td></tr>
+                        <tr><td>2</td><td><input type="text" class="answer-field" id="kasus_kolom2"></td><td><input type="text" class="answer-field" id="kasus_tipe2"></td><td><input type="text" class="answer-field" id="kasus_ket2"></td></tr>
+                        <tr><td>3</td><td><input type="text" class="answer-field" id="kasus_kolom3"></td><td><input type="text" class="answer-field" id="kasus_tipe3"></td><td><input type="text" class="answer-field" id="kasus_ket3"></td></tr>
+                        <tr><td>4</td><td><input type="text" class="answer-field" id="kasus_kolom4"></td><td><input type="text" class="answer-field" id="kasus_tipe4"></td><td><input type="text" class="answer-field" id="kasus_ket4"></td></tr>
+                        <tr><td>5</td><td><input type="text" class="answer-field" id="kasus_kolom5"></td><td><input type="text" class="answer-field" id="kasus_tipe5"></td><td><input type="text" class="answer-field" id="kasus_ket5"></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1044,10 +1005,10 @@
                 
                 <div style="background: var(--informatika-light); padding: 1rem; border-radius: 10px; margin-bottom: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                        <div><strong>Nama:</strong> <input type="text" class="answer-field" placeholder="Nama"></div>
-                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" placeholder="Kelas"></div>
-                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" placeholder="Kelompok"></div>
-                        <div><strong>Peran:</strong> <input type="text" class="answer-field" placeholder="Peran"></div>
+                        <div><strong>Nama:</strong> <input type="text" class="answer-field" id="ref_nama" placeholder="Nama"></div>
+                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="ref_kelas" placeholder="Kelas"></div>
+                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="ref_kelompok" placeholder="Kelompok"></div>
+                        <div><strong>Peran:</strong> <input type="text" class="answer-field" id="ref_peran" placeholder="Peran"></div>
                     </div>
                 </div>
                 
@@ -1060,26 +1021,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang tipe data hari ini?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>2</td><td>Tipe data apa yang paling mudah dipahami? Mengapa?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>3</td><td>Tipe data apa yang paling sulit dipahami? Mengapa?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>4</td><td>Bagaimana cara membedakan tipe data Integer dan Float?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>5</td><td>Mengapa penting memahami tipe data dalam pemrograman?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>6</td><td>Apa yang ingin aku pelajari lebih lanjut tentang struktur data?</td><td><textarea class="answer-field large"></textarea></td></tr>
+                        <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang tipe data hari ini?</td><td><textarea class="answer-field large" id="ref1"></textarea></td></tr>
+                        <tr><td>2</td><td>Tipe data apa yang paling mudah dipahami? Mengapa?</td><td><textarea class="answer-field large" id="ref2"></textarea></td></tr>
+                        <tr><td>3</td><td>Tipe data apa yang paling sulit dipahami? Mengapa?</td><td><textarea class="answer-field large" id="ref3"></textarea></td></tr>
+                        <tr><td>4</td><td>Bagaimana cara membedakan tipe data Integer dan Float?</td><td><textarea class="answer-field large" id="ref4"></textarea></td></tr>
+                        <tr><td>5</td><td>Mengapa penting memahami tipe data dalam pemrograman?</td><td><textarea class="answer-field large" id="ref5"></textarea></td></tr>
+                        <tr><td>6</td><td>Apa yang ingin aku pelajari lebih lanjut tentang struktur data?</td><td><textarea class="answer-field large" id="ref6"></textarea></td></tr>
                     </tbody>
                 </table>
                 
                 <div class="checklist-container">
                     <h4 style="margin-bottom: 10px;">Ceklis Pemahaman Akhir:</h4>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah membaca materi "Struktur Data Dasar"</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah bisa mengidentifikasi tipe data</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah bisa membuat tabel data sederhana</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya siap untuk aktivitas berikutnya</div>
+                    <div class="checklist-item"><input type="checkbox" id="check1"> Saya sudah membaca materi "Struktur Data Dasar"</div>
+                    <div class="checklist-item"><input type="checkbox" id="check2"> Saya sudah bisa mengidentifikasi tipe data</div>
+                    <div class="checklist-item"><input type="checkbox" id="check3"> Saya sudah bisa membuat tabel data sederhana</div>
+                    <div class="checklist-item"><input type="checkbox" id="check4"> Saya siap untuk aktivitas berikutnya</div>
                 </div>
             </div>
 
             <!-- Tombol Kirim -->
-            <button class="submit-button" id="submitBtn" onclick="submitData()">
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kumpulkan LKPD
             </button>
             <div id="successMessage" class="success-message">
@@ -1100,11 +1061,46 @@
 
     <script src="../../../script.js"></script>
     <script>
-        // Simple Mobile Menu
+        // ==================== KONFIGURASI URL ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbz6oBgz9hrztA6gH8a19LP7gsC5jPZc1O8TbRoO-7L55ySxtIAVxLRMLaeftDnNY4NYzw/exec';
+
+        // ==================== KONFIGURASI FORM ====================
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 2 - REPRESENTASI DATA",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas/Peran",
+                "Data Review Materi",
+                "Data Tipe Data",
+                "Data Diskusi",
+                "Data Tabel Siswa",
+                "Data Tabel Barang",
+                "Data Analisis",
+                "Data Studi Kasus",
+                "Data Refleksi"
+            ]
+        };
+
+        // ==================== VARIABEL GLOBAL ====================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+
+        // ==================== INISIALISASI ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // Load data siswa
+            loadDataFromGoogleSheets();
+            
+            // Inisialisasi tabel dinamis
+            initTabelDinamis();
+            
+            // Hamburger menu
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
             if (hamburger) {
                 hamburger.addEventListener('click', function() {
                     navMenu.classList.toggle('active');
@@ -1116,23 +1112,392 @@
             inputs.forEach(input => {
                 input.disabled = false;
             });
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Tambahkan event listener ke semua input untuk update progress
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', updateProgressBar);
+                el.addEventListener('change', updateProgressBar);
+            });
         });
 
-        // Fungsi submit (placeholder)
-        function submitData() {
-            // Tampilkan loading
-            document.getElementById('loadingMessage').style.display = 'block';
+        // ==================== FUNGSI TABEL DINAMIS ====================
+        function initTabelDinamis() {
+            // Tabel Siswa - 8 baris default
+            const tbodySiswa = document.getElementById('tabelSiswaBody');
+            tbodySiswa.innerHTML = '';
+            for (let i = 1; i <= 8; i++) {
+                tambahBarisSiswa();
+            }
             
-            // Simulasi pengiriman data
-            setTimeout(function() {
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
+            // Tabel Barang - 6 baris default
+            const tbodyBarang = document.getElementById('tabelBarangBody');
+            tbodyBarang.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                tambahBarisBarang();
+            }
+        }
+
+        function tambahBarisSiswa() {
+            const tbody = document.getElementById('tabelSiswaBody');
+            const no = tbody.children.length + 1;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${no}</td>
+                <td><input type="text" class="answer-field" id="siswa_nama_${no}"></td>
+                <td><input type="text" class="answer-field" id="siswa_usia_${no}"></td>
+                <td><input type="text" class="answer-field" id="siswa_kelas_${no}"></td>
+                <td><input type="text" class="answer-field" id="siswa_nilai_${no}"></td>
+                <td>
+                    <select class="answer-field" id="siswa_status_${no}">
+                        <option value="">Pilih</option>
+                        <option value="True">True (Aktif)</option>
+                        <option value="False">False (Tidak Aktif)</option>
+                    </select>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+        }
+
+        function tambahBarisBarang() {
+            const tbody = document.getElementById('tabelBarangBody');
+            const no = tbody.children.length + 1;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="answer-field" id="barang_id_${no}" value="${no}"></td>
+                <td><input type="text" class="answer-field" id="barang_nama_${no}"></td>
+                <td><input type="text" class="answer-field" id="barang_harga_${no}"></td>
+                <td><input type="text" class="answer-field" id="barang_stok_${no}"></td>
+                <td>
+                    <select class="answer-field" id="barang_tersedia_${no}">
+                        <option value="">Pilih</option>
+                        <option value="True">True (Tersedia)</option>
+                        <option value="False">False (Tidak Tersedia)</option>
+                    </select>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+        }
+
+        // ==================== FUNGSI PROGRESS BAR ====================
+        function updateProgressBar() {
+            const totalFields = document.querySelectorAll('input:not([type=checkbox]), select, textarea').length;
+            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]), select, textarea'))
+                .filter(el => el.value && el.value.trim() !== '').length;
+            
+            const progress = Math.round((filledFields / totalFields) * 100) || 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+        }
+
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
                 
-                // Sembunyikan pesan sukses setelah 3 detik
-                setTimeout(function() {
+                const callbackName = 'jsonp_callback_' + Date.now();
+                
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        
+                        dataKelas.forEach(kelas => {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        });
+                        
+                        enableForm();
+                    } else {
+                        useFallbackData();
+                    }
+                    
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    isLoading = false;
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = useFallbackData;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                useFallbackData();
+            }
+        }
+
+        function useFallbackData() {
+            dataKelas = ['X IPA 1', 'X IPA 2', 'X IPS 1', 'X IPS 2', 'X TKJ 1', 'X TKJ 2'];
+            
+            dataSiswa = {
+                'X IPA 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
+                'X IPA 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
+                'X IPS 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
+                'X IPS 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
+                'X TKJ 1': ['Vina Aulia', 'Wahyu Hidayat', 'Xavier Putra', 'Yuni Safitri', 'Zainal Abidin'],
+                'X TKJ 2': ['Aulia Rahman', 'Bagas Pratama', 'Cantika Dewi', 'Doni Saputra', 'Eka Sari']
+            };
+            
+            const kelasSelect = document.getElementById('kelas');
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            dataKelas.forEach(kelas => {
+                const option = document.createElement('option');
+                option.value = kelas;
+                option.textContent = kelas;
+                kelasSelect.appendChild(option);
+            });
+            
+            enableForm();
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = 'Menggunakan data lokal.';
+            isLoading = false;
+        }
+
+        function enableForm() {
+            document.getElementById('kelas').disabled = false;
+            document.getElementById('nama').disabled = false;
+            document.getElementById('kelompok').disabled = false;
+            document.getElementById('tugas').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
+            });
+        }
+
+        // ==================== FUNGSI SUBMIT DATA ====================
+        async function submitData() {
+            if (isLoading) {
+                alert('Data masih dimuat. Silakan tunggu.');
+                return;
+            }
+            
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value || !document.getElementById('kelompok').value) {
+                alert('Lengkapi identitas terlebih dahulu!');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                const formData = new URLSearchParams();
+                
+                // Kirim konfigurasi sheet
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                
+                // ==================== KUMPULKAN DATA ====================
+                // Data Identitas Dasar
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value);
+                formData.append('Tugas/Peran', document.getElementById('tugas').value);
+                
+                // Data Review Materi (Bagian A)
+                const dataReview = {
+                    q1: document.getElementById('review1')?.value || '',
+                    q2: document.getElementById('review2')?.value || '',
+                    q3: document.getElementById('review3')?.value || '',
+                    q4: document.getElementById('review4')?.value || '',
+                    q5: document.getElementById('review5')?.value || '',
+                    q6: document.getElementById('review6')?.value || ''
+                };
+                formData.append('Data Review Materi', JSON.stringify(dataReview));
+                
+                // Data Tipe Data (Bagian B)
+                const dataTipe = {
+                    tipe1: document.getElementById('tipe1')?.value || '',
+                    tipe2: document.getElementById('tipe2')?.value || '',
+                    tipe3: document.getElementById('tipe3')?.value || '',
+                    tipe4: document.getElementById('tipe4')?.value || '',
+                    tipe5: document.getElementById('tipe5')?.value || '',
+                    tipe6: document.getElementById('tipe6')?.value || '',
+                    tipe7: document.getElementById('tipe7')?.value || '',
+                    tipe8: document.getElementById('tipe8')?.value || '',
+                    tipe9: document.getElementById('tipe9')?.value || '',
+                    tipe10: document.getElementById('tipe10')?.value || ''
+                };
+                formData.append('Data Tipe Data', JSON.stringify(dataTipe));
+                
+                // Data Diskusi (Bagian C)
+                const dataDiskusi = {
+                    siswa_nama: document.getElementById('siswa_nama')?.value || '',
+                    siswa_tipe_nama: document.getElementById('siswa_tipe_nama')?.value || '',
+                    siswa_nis: document.getElementById('siswa_nis')?.value || '',
+                    siswa_tipe_nis: document.getElementById('siswa_tipe_nis')?.value || '',
+                    siswa_kelas: document.getElementById('siswa_kelas')?.value || '',
+                    siswa_tipe_kelas: document.getElementById('siswa_tipe_kelas')?.value || '',
+                    siswa_usia: document.getElementById('siswa_usia')?.value || '',
+                    siswa_tipe_usia: document.getElementById('siswa_tipe_usia')?.value || '',
+                    siswa_gender: document.getElementById('siswa_gender')?.value || '',
+                    siswa_tipe_gender: document.getElementById('siswa_tipe_gender')?.value || '',
+                    barang_nama: document.getElementById('barang_nama')?.value || '',
+                    barang_tipe_nama: document.getElementById('barang_tipe_nama')?.value || '',
+                    barang_harga: document.getElementById('barang_harga')?.value || '',
+                    barang_tipe_harga: document.getElementById('barang_tipe_harga')?.value || '',
+                    barang_stok: document.getElementById('barang_stok')?.value || '',
+                    barang_tipe_stok: document.getElementById('barang_tipe_stok')?.value || '',
+                    barang_tersedia: document.getElementById('barang_tersedia')?.value || '',
+                    barang_tipe_tersedia: document.getElementById('barang_tipe_tersedia')?.value || '',
+                    nilai_nama: document.getElementById('nilai_nama')?.value || '',
+                    nilai_tipe_nama: document.getElementById('nilai_tipe_nama')?.value || '',
+                    nilai_angka: document.getElementById('nilai_angka')?.value || '',
+                    nilai_tipe_angka: document.getElementById('nilai_tipe_angka')?.value || '',
+                    nilai_lulus: document.getElementById('nilai_lulus')?.value || '',
+                    nilai_tipe_lulus: document.getElementById('nilai_tipe_lulus')?.value || '',
+                    bool1: document.getElementById('bool1')?.value || '',
+                    bool2: document.getElementById('bool2')?.value || '',
+                    bool3: document.getElementById('bool3')?.value || '',
+                    bool4: document.getElementById('bool4')?.value || '',
+                    bool5: document.getElementById('bool5')?.value || '',
+                    bool6: document.getElementById('bool6')?.value || '',
+                    bool7: document.getElementById('bool7')?.value || '',
+                    bool8: document.getElementById('bool8')?.value || ''
+                };
+                formData.append('Data Diskusi', JSON.stringify(dataDiskusi));
+                
+                // Data Tabel Siswa (Bagian D)
+                const dataSiswaTabel = [];
+                const jumlahSiswa = document.getElementById('tabelSiswaBody').children.length;
+                for (let i = 1; i <= jumlahSiswa; i++) {
+                    dataSiswaTabel.push({
+                        nama: document.getElementById(`siswa_nama_${i}`)?.value || '',
+                        usia: document.getElementById(`siswa_usia_${i}`)?.value || '',
+                        kelas: document.getElementById(`siswa_kelas_${i}`)?.value || '',
+                        nilai: document.getElementById(`siswa_nilai_${i}`)?.value || '',
+                        status: document.getElementById(`siswa_status_${i}`)?.value || ''
+                    });
+                }
+                formData.append('Data Tabel Siswa', JSON.stringify(dataSiswaTabel));
+                
+                // Data Tabel Barang (Bagian D)
+                const dataBarangTabel = [];
+                const jumlahBarang = document.getElementById('tabelBarangBody').children.length;
+                for (let i = 1; i <= jumlahBarang; i++) {
+                    dataBarangTabel.push({
+                        id: document.getElementById(`barang_id_${i}`)?.value || '',
+                        nama: document.getElementById(`barang_nama_${i}`)?.value || '',
+                        harga: document.getElementById(`barang_harga_${i}`)?.value || '',
+                        stok: document.getElementById(`barang_stok_${i}`)?.value || '',
+                        tersedia: document.getElementById(`barang_tersedia_${i}`)?.value || ''
+                    });
+                }
+                formData.append('Data Tabel Barang', JSON.stringify(dataBarangTabel));
+                
+                // Data Analisis (Bagian E)
+                const dataAnalisis = {
+                    analisis1: document.getElementById('analisis1')?.value || '',
+                    analisis2: document.getElementById('analisis2')?.value || '',
+                    analisis3: document.getElementById('analisis3')?.value || '',
+                    analisis4: document.getElementById('analisis4')?.value || '',
+                    analisis5: document.getElementById('analisis5')?.value || '',
+                    analisis6: document.getElementById('analisis6')?.value || '',
+                    algoritma1: document.getElementById('algoritma1')?.value || '',
+                    algoritma2: document.getElementById('algoritma2')?.value || '',
+                    algoritma3: document.getElementById('algoritma3')?.value || '',
+                    algoritma4: document.getElementById('algoritma4')?.value || '',
+                    algoritma5: document.getElementById('algoritma5')?.value || '',
+                    algoritma6: document.getElementById('algoritma6')?.value || '',
+                    algoritma7: document.getElementById('algoritma7')?.value || '',
+                    algoritma8: document.getElementById('algoritma8')?.value || ''
+                };
+                formData.append('Data Analisis', JSON.stringify(dataAnalisis));
+                
+                // Data Studi Kasus (Bagian F)
+                const dataStudi = {
+                    kolom1: document.getElementById('kasus_kolom1')?.value || '',
+                    tipe1: document.getElementById('kasus_tipe1')?.value || '',
+                    ket1: document.getElementById('kasus_ket1')?.value || '',
+                    kolom2: document.getElementById('kasus_kolom2')?.value || '',
+                    tipe2: document.getElementById('kasus_tipe2')?.value || '',
+                    ket2: document.getElementById('kasus_ket2')?.value || '',
+                    kolom3: document.getElementById('kasus_kolom3')?.value || '',
+                    tipe3: document.getElementById('kasus_tipe3')?.value || '',
+                    ket3: document.getElementById('kasus_ket3')?.value || '',
+                    kolom4: document.getElementById('kasus_kolom4')?.value || '',
+                    tipe4: document.getElementById('kasus_tipe4')?.value || '',
+                    ket4: document.getElementById('kasus_ket4')?.value || '',
+                    kolom5: document.getElementById('kasus_kolom5')?.value || '',
+                    tipe5: document.getElementById('kasus_tipe5')?.value || '',
+                    ket5: document.getElementById('kasus_ket5')?.value || ''
+                };
+                formData.append('Data Studi Kasus', JSON.stringify(dataStudi));
+                
+                // Data Refleksi (Bagian G)
+                const dataRefleksi = {
+                    nama: document.getElementById('ref_nama')?.value || '',
+                    kelas: document.getElementById('ref_kelas')?.value || '',
+                    kelompok: document.getElementById('ref_kelompok')?.value || '',
+                    peran: document.getElementById('ref_peran')?.value || '',
+                    q1: document.getElementById('ref1')?.value || '',
+                    q2: document.getElementById('ref2')?.value || '',
+                    q3: document.getElementById('ref3')?.value || '',
+                    q4: document.getElementById('ref4')?.value || '',
+                    q5: document.getElementById('ref5')?.value || '',
+                    q6: document.getElementById('ref6')?.value || '',
+                    check1: document.getElementById('check1')?.checked || false,
+                    check2: document.getElementById('check2')?.checked || false,
+                    check3: document.getElementById('check3')?.checked || false,
+                    check4: document.getElementById('check4')?.checked || false
+                };
+                formData.append('Data Refleksi', JSON.stringify(dataRefleksi));
+                
+                // ==================== KIRIM ====================
+                await fetch(URL_PEREKAP_AKTIVITAS, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
-                }, 3000);
-            }, 1500);
+                }, 5000);
+
+                if (confirm('Data terkirim! Ingin mereset form?')) {
+                    location.reload();
+                }
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan LKPD';
+            }
         }
     </script>
 </body>

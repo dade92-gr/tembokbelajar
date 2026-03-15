@@ -492,6 +492,42 @@
             padding: 1rem;
             margin: 1rem 0;
         }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin: 2rem 0;
+            background: var(--informatika-gray);
+            border-radius: 30px;
+            padding: 1rem;
+            position: sticky;
+            top: 10px;
+            z-index: 99;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--informatika-primary), var(--informatika-secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Catatan Penting */
+        .catatan-penting {
+            background: #fff9e0;
+            border-left: 5px solid #f1c40f;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
 <body>
@@ -533,7 +569,7 @@
 
         <!-- Loading Message -->
         <div id="loadingMessage" class="loading-message">
-            <i class="fas fa-spinner fa-spin"></i> Memuat Lembar Kerja Peserta Didik......
+            <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
         <!-- Error Message -->
@@ -541,8 +577,21 @@
             <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan isi manual.</span>
         </div>
 
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
+        </div>
+
         <!-- Worksheet Container - LKPD Proyek 2 Aktivitas 4 -->
         <div class="worksheet-container" id="worksheetForm">
+            <!-- HALO KELOMPOK HEBAT -->
+            <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--informatika-primary);">
+                <i class="fas fa-lightbulb" style="color: var(--informatika-primary); margin-right: 10px;"></i>
+                <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
+                Silakan isi lembar kerja ini untuk mempelajari HTML dasar dan pseudocode.
+            </div>
+
             <h1 class="worksheet-title">LEMBAR KERJA PESERTA DIDIK (LKPD) PROYEK 2 – AKTIVITAS 4</h1>
             <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem; color: var(--informatika-accent);">
                 <strong>HTML DASAR DENGAN HTML EDITOR</strong>
@@ -560,19 +609,23 @@
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-building"></i> Kelas</label>
-                    <input type="text" id="kelas" placeholder="Contoh: X IPA 1" class="answer-field">
+                    <select id="kelas" class="answer-field" onchange="updateNamaDropdown()" disabled>
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama Lengkap</label>
-                    <input type="text" id="nama" placeholder="Contoh: John Doe" class="answer-field">
+                    <select id="nama" class="answer-field" disabled>
+                        <option value="">-- Pilih Nama --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Nama Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - HTML Master" class="answer-field">
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - HTML Master" class="answer-field" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Programmer" class="answer-field">
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Programmer" class="answer-field" disabled>
                 </div>
             </div>
 
@@ -624,42 +677,42 @@
                         <tr>
                             <td>1</td>
                             <td>Apa yang dimaksud dengan pseudocode?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review1" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Mengapa pseudocode penting sebelum menulis kode program?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review2" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Sebutkan 3 contoh kata kunci yang sering digunakan dalam pseudocode!</td>
-                            <td><textarea class="answer-field large" placeholder="1.&#10;2.&#10;3."></textarea></td>
+                            <td><textarea class="answer-field large" id="review3" placeholder="1.&#10;2.&#10;3."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Apa kepanjangan dari HTML?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review4" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td>Sebutkan struktur dasar dokumen HTML!</td>
-                            <td><textarea class="answer-field large" placeholder="1.&#10;2.&#10;3."></textarea></td>
+                            <td><textarea class="answer-field large" id="review5" placeholder="1.&#10;2.&#10;3."></textarea></td>
                         </tr>
                         <tr>
                             <td>6</td>
                             <td>Apa fungsi tag &lt;h1&gt; sampai &lt;h6&gt; dalam HTML?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review6" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>7</td>
                             <td>Apa perbedaan tag &lt;p&gt; dan tag &lt;br&gt;?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review7" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>8</td>
                             <td>Bagaimana cara membuat input dalam HTML? Tag apa yang digunakan?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review8" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -739,6 +792,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;_________________________________<br>
                     END
                 </div>
+                <textarea class="answer-field large" id="pseudo2" placeholder="Tulis pseudocode untuk Kasus 2 di sini..."></textarea>
                 
                 <p><strong>Kasus 3: Program Menghitung Rata-rata 3 Bilangan</strong></p>
                 <p>Algoritma:</p>
@@ -764,6 +818,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;_________________________________<br>
                     END
                 </div>
+                <textarea class="answer-field large" id="pseudo3" placeholder="Tulis pseudocode untuk Kasus 3 di sini..."></textarea>
             </div>
 
             <!-- BAGIAN C: DISKUSI PSEUDOCODE -->
@@ -785,12 +840,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td><input type="text" class="answer-field"></td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>2</td><td><input type="text" class="answer-field"></td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>3</td><td><input type="text" class="answer-field"></td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>4</td><td><input type="text" class="answer-field"></td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>5</td><td><input type="text" class="answer-field"></td><td><textarea class="answer-field"></textarea></td></tr>
-                        <tr><td>6</td><td><input type="text" class="answer-field"></td><td><textarea class="answer-field"></textarea></td></tr>
+                        <tr><td>1</td><td><input type="text" class="answer-field" id="review_nama1"></td><td><textarea class="answer-field" id="review_catatan1"></textarea></td></tr>
+                        <tr><td>2</td><td><input type="text" class="answer-field" id="review_nama2"></td><td><textarea class="answer-field" id="review_catatan2"></textarea></td></tr>
+                        <tr><td>3</td><td><input type="text" class="answer-field" id="review_nama3"></td><td><textarea class="answer-field" id="review_catatan3"></textarea></td></tr>
+                        <tr><td>4</td><td><input type="text" class="answer-field" id="review_nama4"></td><td><textarea class="answer-field" id="review_catatan4"></textarea></td></tr>
+                        <tr><td>5</td><td><input type="text" class="answer-field" id="review_nama5"></td><td><textarea class="answer-field" id="review_catatan5"></textarea></td></tr>
+                        <tr><td>6</td><td><input type="text" class="answer-field" id="review_nama6"></td><td><textarea class="answer-field" id="review_catatan6"></textarea></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -820,9 +875,9 @@
                 
                 <p><strong>Pertanyaan:</strong></p>
                 <table class="lkpd-table">
-                    <tr><td>1. Apa yang terjadi ketika kode di atas dijalankan?</td><td><textarea class="answer-field"></textarea></td></tr>
-                    <tr><td>2. Coba ganti teks di dalam tag &lt;h1&gt; dengan nama kelompokmu. Apa yang terjadi?</td><td><textarea class="answer-field"></textarea></td></tr>
-                    <tr><td>3. Coba tambahkan satu paragraf lagi. Tuliskan kodenya!</td><td><textarea class="answer-field"></textarea></td></tr>
+                    <tr><td>1. Apa yang terjadi ketika kode di atas dijalankan?</td><td><textarea class="answer-field" id="html1"></textarea></td></tr>
+                    <tr><td>2. Coba ganti teks di dalam tag &lt;h1&gt; dengan nama kelompokmu. Apa yang terjadi?</td><td><textarea class="answer-field" id="html2"></textarea></td></tr>
+                    <tr><td>3. Coba tambahkan satu paragraf lagi. Tuliskan kodenya!</td><td><textarea class="answer-field" id="html3"></textarea></td></tr>
                 </table>
             </div>
 
@@ -883,8 +938,8 @@
                 <p><strong>Tugas:</strong></p>
                 <ol style="margin-left: 20px; margin-bottom: 15px;">
                     <li>Salin kode di atas ke HTML Editor dan jalankan!</li>
-                    <li>Uji coba dengan memasukkan panjang = 10, lebar = 5. Berapa hasilnya? <input type="text" class="answer-field" style="width:100px"></li>
-                    <li>Uji coba dengan angka lain. Apakah program berjalan dengan baik? <input type="text" class="answer-field"></li>
+                    <li>Uji coba dengan memasukkan panjang = 10, lebar = 5. Berapa hasilnya? <input type="text" class="answer-field" id="kalkulator1" style="width:100px"></li>
+                    <li>Uji coba dengan angka lain. Apakah program berjalan dengan baik? <input type="text" class="answer-field" id="kalkulator2"></li>
                     <li>Jika ada error, diskusikan dengan kelompok dan perbaiki!</li>
                 </ol>
                 
@@ -940,9 +995,9 @@
                 
                 <p><strong>Pertanyaan:</strong></p>
                 <table class="lkpd-table">
-                    <tr><td>1. Operator apa yang digunakan untuk mengetahui sisa pembagian di JavaScript?</td><td><input type="text" class="answer-field"></td></tr>
-                    <tr><td>2. Jika bilangan = 7, apa outputnya?</td><td><input type="text" class="answer-field"></td></tr>
-                    <tr><td>3. Jika bilangan = 10, apa outputnya?</td><td><input type="text" class="answer-field"></td></tr>
+                    <tr><td>1. Operator apa yang digunakan untuk mengetahui sisa pembagian di JavaScript?</td><td><input type="text" class="answer-field" id="ganjil1"></td></tr>
+                    <tr><td>2. Jika bilangan = 7, apa outputnya?</td><td><input type="text" class="answer-field" id="ganjil2"></td></tr>
+                    <tr><td>3. Jika bilangan = 10, apa outputnya?</td><td><input type="text" class="answer-field" id="ganjil3"></td></tr>
                 </table>
                 
                 <h4 class="section-subtitle">Kegiatan 6: Program Menghitung Rata-rata</h4>
@@ -1000,6 +1055,7 @@
                     &lt;/body&gt;<br>
                     &lt;/html&gt;
                 </div>
+                <textarea class="answer-field large" id="rata_html" placeholder="Tulis kode HTML lengkap untuk program rata-rata di sini..."></textarea>
             </div>
 
             <!-- BAGIAN F: IMPLEMENTASI MASALAH NYATA -->
@@ -1022,8 +1078,8 @@
                 
                 <p><strong>Tugas:</strong></p>
                 <ol style="margin-left: 20px; margin-bottom: 15px;">
-                    <li>Buat pseudocode untuk program kasir mini!</li>
-                    <li>Implementasikan ke dalam HTML!</li>
+                    <li>Buat pseudocode untuk program kasir mini! <textarea class="answer-field large" id="kasir_pseudo"></textarea></li>
+                    <li>Implementasikan ke dalam HTML! <textarea class="answer-field large" id="kasir_html"></textarea></li>
                 </ol>
                 
                 <p><strong>Pseudocode:</strong></p>
@@ -1100,10 +1156,10 @@
                 
                 <div style="background: var(--informatika-light); padding: 1rem; border-radius: 10px; margin-bottom: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                        <div><strong>Nama:</strong> <input type="text" class="answer-field" placeholder="Nama"></div>
-                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" placeholder="Kelas"></div>
-                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" placeholder="Kelompok"></div>
-                        <div><strong>Peran:</strong> <input type="text" class="answer-field" placeholder="Peran"></div>
+                        <div><strong>Nama:</strong> <input type="text" class="answer-field" id="ref_nama" placeholder="Nama"></div>
+                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="ref_kelas" placeholder="Kelas"></div>
+                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="ref_kelompok" placeholder="Kelompok"></div>
+                        <div><strong>Peran:</strong> <input type="text" class="answer-field" id="ref_peran" placeholder="Peran"></div>
                     </div>
                 </div>
                 
@@ -1116,28 +1172,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang pseudocode hari ini?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>2</td><td>Hal baru apa yang aku pelajari tentang HTML hari ini?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>3</td><td>Apakah aku merasa kesulitan saat menulis pseudocode?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>4</td><td>Apakah aku merasa kesulitan saat membuat program HTML?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>5</td><td>Bagaimana perasaanku saat pertama kali melihat program buatanku berjalan?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>6</td><td>Apa hubungan antara pseudocode dan program HTML yang sudah dibuat?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>7</td><td>Apa yang ingin aku pelajari lebih lanjut tentang HTML?</td><td><textarea class="answer-field large"></textarea></td></tr>
+                        <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang pseudocode hari ini?</td><td><textarea class="answer-field large" id="ref1"></textarea></td></tr>
+                        <tr><td>2</td><td>Hal baru apa yang aku pelajari tentang HTML hari ini?</td><td><textarea class="answer-field large" id="ref2"></textarea></td></tr>
+                        <tr><td>3</td><td>Apakah aku merasa kesulitan saat menulis pseudocode?</td><td><textarea class="answer-field large" id="ref3"></textarea></td></tr>
+                        <tr><td>4</td><td>Apakah aku merasa kesulitan saat membuat program HTML?</td><td><textarea class="answer-field large" id="ref4"></textarea></td></tr>
+                        <tr><td>5</td><td>Bagaimana perasaanku saat pertama kali melihat program buatanku berjalan?</td><td><textarea class="answer-field large" id="ref5"></textarea></td></tr>
+                        <tr><td>6</td><td>Apa hubungan antara pseudocode dan program HTML yang sudah dibuat?</td><td><textarea class="answer-field large" id="ref6"></textarea></td></tr>
+                        <tr><td>7</td><td>Apa yang ingin aku pelajari lebih lanjut tentang HTML?</td><td><textarea class="answer-field large" id="ref7"></textarea></td></tr>
                     </tbody>
                 </table>
                 
                 <div class="checklist-container">
                     <h4 style="margin-bottom: 10px;">Ceklis Pemahaman Akhir:</h4>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah membaca materi "Pseudocode Dasar"</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah membaca materi "HTML Dasar"</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah bisa menulis pseudocode sederhana</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah bisa membuat program HTML sederhana</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya siap untuk aktivitas berikutnya</div>
+                    <div class="checklist-item"><input type="checkbox" id="check1"> Saya sudah membaca materi "Pseudocode Dasar"</div>
+                    <div class="checklist-item"><input type="checkbox" id="check2"> Saya sudah membaca materi "HTML Dasar"</div>
+                    <div class="checklist-item"><input type="checkbox" id="check3"> Saya sudah bisa menulis pseudocode sederhana</div>
+                    <div class="checklist-item"><input type="checkbox" id="check4"> Saya sudah bisa membuat program HTML sederhana</div>
+                    <div class="checklist-item"><input type="checkbox" id="check5"> Saya siap untuk aktivitas berikutnya</div>
                 </div>
             </div>
 
             <!-- Tombol Kirim -->
-            <button class="submit-button" id="submitBtn" onclick="submitData()">
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kumpulkan LKPD
             </button>
             <div id="successMessage" class="success-message">
@@ -1158,11 +1214,41 @@
 
     <script src="../../../script.js"></script>
     <script>
-        // Simple Mobile Menu
+        // ==================== KONFIGURASI URL ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbz6oBgz9hrztA6gH8a19LP7gsC5jPZc1O8TbRoO-7L55ySxtIAVxLRMLaeftDnNY4NYzw/exec';
+
+        // ==================== KONFIGURASI FORM ====================
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 4 - HTML DASAR",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas/Peran",
+                "Data Review Materi",
+                "Data Pseudocode",
+                "Data Peer Review",
+                "Data HTML Editor",
+                "Data Program Sederhana",
+                "Data Refleksi"
+            ]
+        };
+
+        // ==================== VARIABEL GLOBAL ====================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+
+        // ==================== INISIALISASI ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // Load data siswa
+            loadDataFromGoogleSheets();
+            
+            // Hamburger menu
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
             if (hamburger) {
                 hamburger.addEventListener('click', function() {
                     navMenu.classList.toggle('active');
@@ -1174,23 +1260,254 @@
             inputs.forEach(input => {
                 input.disabled = false;
             });
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Tambahkan event listener ke semua input untuk update progress
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', updateProgressBar);
+                el.addEventListener('change', updateProgressBar);
+            });
         });
 
-        // Fungsi submit (placeholder)
-        function submitData() {
-            // Tampilkan loading
-            document.getElementById('loadingMessage').style.display = 'block';
+        // ==================== FUNGSI PROGRESS BAR ====================
+        function updateProgressBar() {
+            const totalFields = document.querySelectorAll('input:not([type=checkbox]), select, textarea').length;
+            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]), select, textarea'))
+                .filter(el => el.value && el.value.trim() !== '').length;
             
-            // Simulasi pengiriman data
-            setTimeout(function() {
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
+            const progress = Math.round((filledFields / totalFields) * 100) || 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+        }
+
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
                 
-                // Sembunyikan pesan sukses setelah 3 detik
-                setTimeout(function() {
+                const callbackName = 'jsonp_callback_' + Date.now();
+                
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        
+                        dataKelas.forEach(kelas => {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        });
+                        
+                        enableForm();
+                    } else {
+                        useFallbackData();
+                    }
+                    
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    isLoading = false;
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = useFallbackData;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                useFallbackData();
+            }
+        }
+
+        function useFallbackData() {
+            dataKelas = ['X IPA 1', 'X IPA 2', 'X IPS 1', 'X IPS 2', 'X TKJ 1', 'X TKJ 2'];
+            
+            dataSiswa = {
+                'X IPA 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
+                'X IPA 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
+                'X IPS 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
+                'X IPS 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
+                'X TKJ 1': ['Vina Aulia', 'Wahyu Hidayat', 'Xavier Putra', 'Yuni Safitri', 'Zainal Abidin'],
+                'X TKJ 2': ['Aulia Rahman', 'Bagas Pratama', 'Cantika Dewi', 'Doni Saputra', 'Eka Sari']
+            };
+            
+            const kelasSelect = document.getElementById('kelas');
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            dataKelas.forEach(kelas => {
+                const option = document.createElement('option');
+                option.value = kelas;
+                option.textContent = kelas;
+                kelasSelect.appendChild(option);
+            });
+            
+            enableForm();
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = 'Menggunakan data lokal.';
+            isLoading = false;
+        }
+
+        function enableForm() {
+            document.getElementById('kelas').disabled = false;
+            document.getElementById('nama').disabled = false;
+            document.getElementById('kelompok').disabled = false;
+            document.getElementById('tugas').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
+            });
+        }
+
+        // ==================== FUNGSI SUBMIT DATA ====================
+        async function submitData() {
+            if (isLoading) {
+                alert('Data masih dimuat. Silakan tunggu.');
+                return;
+            }
+            
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value || !document.getElementById('kelompok').value) {
+                alert('Lengkapi identitas terlebih dahulu!');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                const formData = new URLSearchParams();
+                
+                // Kirim konfigurasi sheet
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                
+                // ==================== KUMPULKAN DATA ====================
+                // Data Identitas Dasar
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value);
+                formData.append('Tugas/Peran', document.getElementById('tugas').value);
+                
+                // Data Review Materi (Bagian A)
+                const dataReview = {
+                    q1: document.getElementById('review1')?.value || '',
+                    q2: document.getElementById('review2')?.value || '',
+                    q3: document.getElementById('review3')?.value || '',
+                    q4: document.getElementById('review4')?.value || '',
+                    q5: document.getElementById('review5')?.value || '',
+                    q6: document.getElementById('review6')?.value || '',
+                    q7: document.getElementById('review7')?.value || '',
+                    q8: document.getElementById('review8')?.value || ''
+                };
+                formData.append('Data Review Materi', JSON.stringify(dataReview));
+                
+                // Data Pseudocode (Bagian B)
+                const dataPseudocode = {
+                    pseudo2: document.getElementById('pseudo2')?.value || '',
+                    pseudo3: document.getElementById('pseudo3')?.value || ''
+                };
+                formData.append('Data Pseudocode', JSON.stringify(dataPseudocode));
+                
+                // Data Peer Review (Bagian C)
+                const dataPeerReview = [];
+                for (let i = 1; i <= 6; i++) {
+                    const nama = document.getElementById(`review_nama${i}`)?.value || '';
+                    const catatan = document.getElementById(`review_catatan${i}`)?.value || '';
+                    if (nama || catatan) {
+                        dataPeerReview.push({ nama, catatan });
+                    }
+                }
+                formData.append('Data Peer Review', JSON.stringify(dataPeerReview));
+                
+                // Data HTML Editor (Bagian D)
+                const dataHtmlEditor = {
+                    q1: document.getElementById('html1')?.value || '',
+                    q2: document.getElementById('html2')?.value || '',
+                    q3: document.getElementById('html3')?.value || ''
+                };
+                formData.append('Data HTML Editor', JSON.stringify(dataHtmlEditor));
+                
+                // Data Program Sederhana (Bagian E & F)
+                const dataProgram = {
+                    kalkulator1: document.getElementById('kalkulator1')?.value || '',
+                    kalkulator2: document.getElementById('kalkulator2')?.value || '',
+                    ganjil1: document.getElementById('ganjil1')?.value || '',
+                    ganjil2: document.getElementById('ganjil2')?.value || '',
+                    ganjil3: document.getElementById('ganjil3')?.value || '',
+                    rata_html: document.getElementById('rata_html')?.value || '',
+                    kasir_pseudo: document.getElementById('kasir_pseudo')?.value || '',
+                    kasir_html: document.getElementById('kasir_html')?.value || ''
+                };
+                formData.append('Data Program', JSON.stringify(dataProgram));
+                
+                // Data Refleksi (Bagian G)
+                const dataRefleksi = {
+                    nama: document.getElementById('ref_nama')?.value || '',
+                    kelas: document.getElementById('ref_kelas')?.value || '',
+                    kelompok: document.getElementById('ref_kelompok')?.value || '',
+                    peran: document.getElementById('ref_peran')?.value || '',
+                    q1: document.getElementById('ref1')?.value || '',
+                    q2: document.getElementById('ref2')?.value || '',
+                    q3: document.getElementById('ref3')?.value || '',
+                    q4: document.getElementById('ref4')?.value || '',
+                    q5: document.getElementById('ref5')?.value || '',
+                    q6: document.getElementById('ref6')?.value || '',
+                    q7: document.getElementById('ref7')?.value || '',
+                    check1: document.getElementById('check1')?.checked || false,
+                    check2: document.getElementById('check2')?.checked || false,
+                    check3: document.getElementById('check3')?.checked || false,
+                    check4: document.getElementById('check4')?.checked || false,
+                    check5: document.getElementById('check5')?.checked || false
+                };
+                formData.append('Data Refleksi', JSON.stringify(dataRefleksi));
+                
+                // ==================== KIRIM ====================
+                await fetch(URL_PEREKAP_AKTIVITAS, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
-                }, 3000);
-            }, 1500);
+                }, 5000);
+
+                if (confirm('Data terkirim! Ingin mereset form?')) {
+                    location.reload();
+                }
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan LKPD';
+            }
         }
     </script>
 </body>
