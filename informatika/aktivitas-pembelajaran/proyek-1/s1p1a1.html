@@ -472,6 +472,42 @@
             display: inline-block;
             margin-left: 1rem;
         }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin: 2rem 0;
+            background: var(--informatika-gray);
+            border-radius: 30px;
+            padding: 1rem;
+            position: sticky;
+            top: 10px;
+            z-index: 99;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--informatika-primary), var(--informatika-secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Catatan Penting */
+        .catatan-penting {
+            background: #fff9e0;
+            border-left: 5px solid #f1c40f;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
 <body>
@@ -513,7 +549,7 @@
 
         <!-- Loading Message -->
         <div id="loadingMessage" class="loading-message">
-            <i class="fas fa-spinner fa-spin"></i> Memuat Lembar Kerja Peserta Didik......
+            <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
         <!-- Error Message -->
@@ -521,8 +557,21 @@
             <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan isi manual.</span>
         </div>
 
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
+        </div>
+
         <!-- Worksheet Container - LKPD Aktivitas 1 -->
         <div class="worksheet-container" id="worksheetForm">
+            <!-- HALO KELOMPOK HEBAT -->
+            <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--informatika-primary);">
+                <i class="fas fa-lightbulb" style="color: var(--informatika-primary); margin-right: 10px;"></i>
+                <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
+                Silakan isi lembar kerja ini untuk mempelajari literasi digital dan mengenali hoaks.
+            </div>
+
             <h1 class="worksheet-title">LEMBAR KERJA PESERTA DIDIK (LKPD) PROYEK 1 – AKTIVITAS 1</h1>
             <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem; color: var(--informatika-accent);">
                 <strong>PENGANTAR LITERASI INFORMASI & ISU VIRAL</strong>
@@ -538,19 +587,23 @@
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-building"></i> Kelas</label>
-                    <input type="text" id="kelas" placeholder="Contoh: X IPA 1" class="answer-field">
+                    <select id="kelas" class="answer-field" onchange="updateNamaDropdown()" disabled>
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama Lengkap</label>
-                    <input type="text" id="nama" placeholder="Contoh: John Doe" class="answer-field">
+                    <select id="nama" class="answer-field" disabled>
+                        <option value="">-- Pilih Nama --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Nama Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Detektif Digital" class="answer-field">
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Detektif Digital" class="answer-field" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok / Sekretaris" class="answer-field">
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok / Sekretaris" class="answer-field" disabled>
                 </div>
             </div>
 
@@ -602,30 +655,30 @@
                         <tr>
                             <td>1</td>
                             <td>Berdasarkan materi yang kamu baca, apa definisi literasi digital?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review1" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Apa yang dimaksud dengan hoaks menurut materi tersebut?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review2" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Sebutkan 3 ciri-ciri hoaks yang dijelaskan dalam materi!</td>
                             <td>
-                                <textarea class="answer-field large" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+                                <textarea class="answer-field large" id="review3" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
                             </td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Mengapa hoaks bisa menyebar dengan cepat di media sosial? (Jawab berdasarkan materi)</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review4" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td>Apa dampak negatif hoaks yang disebutkan dalam materi? Sebutkan minimal 3!</td>
                             <td>
-                                <textarea class="answer-field large" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+                                <textarea class="answer-field large" id="review5" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
                             </td>
                         </tr>
                     </tbody>
@@ -665,29 +718,29 @@
                             <td>Dari mana saja kamu biasanya mendapatkan informasi? (Beri tanda ✔)</td>
                             <td>
                                 <div class="checkbox-group">
-                                    <label class="checkbox-item"><input type="checkbox"> Media sosial (IG/TikTok/FB)</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Grup WhatsApp</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Portal berita online</label>
-                                    <label class="checkbox-item"><input type="checkbox"> YouTube</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Koran/majalah</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Lainnya: <input type="text" style="width: 150px; margin-left: 5px;" placeholder="sebutkan"></label>
+                                    <label class="checkbox-item"><input type="checkbox" id="sumber_medsos"> Media sosial (IG/TikTok/FB)</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="sumber_wa"> Grup WhatsApp</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="sumber_berita"> Portal berita online</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="sumber_youtube"> YouTube</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="sumber_koran"> Koran/majalah</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="sumber_lainnya"> Lainnya: <input type="text" id="sumber_lainnya_teks" style="width: 150px; margin-left: 5px;" placeholder="sebutkan"></label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Pernahkah kamu menerima informasi yang ternyata hoaks? Ceritakan secara singkat!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis cerita singkatmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="refleksi_hoaks" placeholder="Tulis cerita singkatmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Apakah kamu pernah membagikan informasi yang ternyata salah? Jika ya, bagaimana perasaanmu?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="refleksi_bagikan" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Setelah membaca materi, apakah pemahamanmu tentang hoaks berubah? Jelaskan!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="refleksi_pemahaman" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -700,7 +753,7 @@
                     <i class="fas fa-comments"></i> "Diskusikan dengan kelompokmu!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 1: Ciri-Ciri Informasi Hoaks</h4>
+                <h4 class="section-subtitle">Kegiatan 1: Ciri-Ciri Informasi Hoaks</h4>
                 <p>Instruksi: Amati contoh-contoh informasi berikut (guru akan menampilkan 3-4 contoh berita hoaks dan fakta). Diskusikan dengan kelompokmu, lalu lengkapi tabel di bawah ini!</p>
                 
                 <table class="lkpd-table">
@@ -712,15 +765,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td><textarea class="answer-field" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" placeholder="Tulis ciri fakta..."></textarea></td></tr>
-                        <tr><td>2</td><td><textarea class="answer-field" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" placeholder="Tulis ciri fakta..."></textarea></td></tr>
-                        <tr><td>3</td><td><textarea class="answer-field" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" placeholder="Tulis ciri fakta..."></textarea></td></tr>
-                        <tr><td>4</td><td><textarea class="answer-field" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" placeholder="Tulis ciri fakta..."></textarea></td></tr>
-                        <tr><td>5</td><td><textarea class="answer-field" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" placeholder="Tulis ciri fakta..."></textarea></td></tr>
+                        <tr><td>1</td><td><textarea class="answer-field" id="ciri_hoaks1" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" id="ciri_fakta1" placeholder="Tulis ciri fakta..."></textarea></td></tr>
+                        <tr><td>2</td><td><textarea class="answer-field" id="ciri_hoaks2" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" id="ciri_fakta2" placeholder="Tulis ciri fakta..."></textarea></td></tr>
+                        <tr><td>3</td><td><textarea class="answer-field" id="ciri_hoaks3" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" id="ciri_fakta3" placeholder="Tulis ciri fakta..."></textarea></td></tr>
+                        <tr><td>4</td><td><textarea class="answer-field" id="ciri_hoaks4" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" id="ciri_fakta4" placeholder="Tulis ciri fakta..."></textarea></td></tr>
+                        <tr><td>5</td><td><textarea class="answer-field" id="ciri_hoaks5" placeholder="Tulis ciri hoaks..."></textarea></td><td><textarea class="answer-field" id="ciri_fakta5" placeholder="Tulis ciri fakta..."></textarea></td></tr>
                     </tbody>
                 </table>
                 
-                <h4 class="section-subtitle">Aktivitas 2: Faktor Penyebaran Hoaks</h4>
+                <h4 class="section-subtitle">Kegiatan 2: Faktor Penyebaran Hoaks</h4>
                 <p>Diskusikan: Mengapa hoaks mudah menyebar di media sosial? Hubungkan dengan materi yang telah kamu baca!</p>
                 
                 <table class="lkpd-table">
@@ -731,11 +784,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1.</td><td><textarea class="answer-field" placeholder="Faktor..."></textarea></td></tr>
-                        <tr><td>2.</td><td><textarea class="answer-field" placeholder="Faktor..."></textarea></td></tr>
-                        <tr><td>3.</td><td><textarea class="answer-field" placeholder="Faktor..."></textarea></td></tr>
-                        <tr><td>4.</td><td><textarea class="answer-field" placeholder="Faktor..."></textarea></td></tr>
-                        <tr><td>5.</td><td><textarea class="answer-field" placeholder="Faktor..."></textarea></td></tr>
+                        <tr><td>1.</td><td><textarea class="answer-field" id="faktor1" placeholder="Faktor..."></textarea></td></tr>
+                        <tr><td>2.</td><td><textarea class="answer-field" id="faktor2" placeholder="Faktor..."></textarea></td></tr>
+                        <tr><td>3.</td><td><textarea class="answer-field" id="faktor3" placeholder="Faktor..."></textarea></td></tr>
+                        <tr><td>4.</td><td><textarea class="answer-field" id="faktor4" placeholder="Faktor..."></textarea></td></tr>
+                        <tr><td>5.</td><td><textarea class="answer-field" id="faktor5" placeholder="Faktor..."></textarea></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -747,17 +800,17 @@
                     <i class="fas fa-film"></i> "Memperkaya pemahaman dari video!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 3: Menonton dan Menganalisis Video</h4>
+                <h4 class="section-subtitle">Kegiatan 3: Menonton dan Menganalisis Video</h4>
                 <p>Instruksi: Tonton video tentang literasi digital dan bahaya hoaks yang ditayangkan guru. Catat hal-hal penting dari video dan hubungkan dengan materi yang sudah kamu baca!</p>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
                         <label><strong>Judul Video:</strong></label>
-                        <input type="text" class="answer-field" placeholder="Tulis judul video...">
+                        <input type="text" class="answer-field" id="video_judul" placeholder="Tulis judul video...">
                     </div>
                     <div>
                         <label><strong>Sumber Video:</strong></label>
-                        <input type="text" class="answer-field" placeholder="Tulis sumber video...">
+                        <input type="text" class="answer-field" id="video_sumber" placeholder="Tulis sumber video...">
                     </div>
                 </div>
                 
@@ -769,11 +822,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td><textarea class="answer-field" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" placeholder="Keterkaitan..."></textarea></td></tr>
-                        <tr><td><textarea class="answer-field" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" placeholder="Keterkaitan..."></textarea></td></tr>
-                        <tr><td><textarea class="answer-field" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" placeholder="Keterkaitan..."></textarea></td></tr>
-                        <tr><td><textarea class="answer-field" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" placeholder="Keterkaitan..."></textarea></td></tr>
-                        <tr><td><textarea class="answer-field" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" placeholder="Keterkaitan..."></textarea></td></tr>
+                        <tr><td><textarea class="answer-field" id="video_penting1" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" id="video_kait1" placeholder="Keterkaitan..."></textarea></td></tr>
+                        <tr><td><textarea class="answer-field" id="video_penting2" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" id="video_kait2" placeholder="Keterkaitan..."></textarea></td></tr>
+                        <tr><td><textarea class="answer-field" id="video_penting3" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" id="video_kait3" placeholder="Keterkaitan..."></textarea></td></tr>
+                        <tr><td><textarea class="answer-field" id="video_penting4" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" id="video_kait4" placeholder="Keterkaitan..."></textarea></td></tr>
+                        <tr><td><textarea class="answer-field" id="video_penting5" placeholder="Hal penting..."></textarea></td><td><textarea class="answer-field" id="video_kait5" placeholder="Keterkaitan..."></textarea></td></tr>
                     </tbody>
                 </table>
                 
@@ -790,22 +843,22 @@
                         <tr>
                             <td>1</td>
                             <td>Apa pesan utama dari video tersebut?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban kelompok..."></textarea></td>
+                            <td><textarea class="answer-field large" id="video_pesan" placeholder="Tulis jawaban kelompok..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Apakah ada informasi baru di video yang tidak ada di materi? Sebutkan!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban kelompok..."></textarea></td>
+                            <td><textarea class="answer-field large" id="video_infobaru" placeholder="Tulis jawaban kelompok..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Bagaimana cara membedakan informasi hoaks dan fakta menurut video? Apakah sama dengan materi?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban kelompok..."></textarea></td>
+                            <td><textarea class="answer-field large" id="video_cara" placeholder="Tulis jawaban kelompok..."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Apa yang harus dilakukan sebelum membagikan informasi? (Gabungkan dari materi dan video)</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban kelompok..."></textarea></td>
+                            <td><textarea class="answer-field large" id="video_tindakan" placeholder="Tulis jawaban kelompok..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -818,23 +871,23 @@
                     <i class="fas fa-shield-alt"></i> "Senjata utama detektif digital!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 4: Eksplorasi Mesin Pencari</h4>
+                <h4 class="section-subtitle">Kegiatan 4: Eksplorasi Mesin Pencari</h4>
                 <p>Instruksi: Gunakan smartphone/laptop untuk mengakses mesin pencari. Jawab pertanyaan berikut berdasarkan praktik langsung!</p>
                 
                 <ol style="margin-left: 20px; margin-bottom: 20px;">
                     <li style="margin-bottom: 15px;">
                         <strong>Mesin pencari apa yang biasa kamu gunakan?</strong><br>
                         <div class="radio-group">
-                            <label class="radio-item"><input type="radio" name="searchEngine"> Google</label>
-                            <label class="radio-item"><input type="radio" name="searchEngine"> Bing</label>
-                            <label class="radio-item"><input type="radio" name="searchEngine"> Yahoo</label>
-                            <label class="radio-item"><input type="radio" name="searchEngine"> DuckDuckGo</label>
-                            <label class="radio-item"><input type="radio" name="searchEngine"> Lainnya: <input type="text" style="width: 150px; margin-left: 5px;" placeholder="sebutkan"></label>
+                            <label class="radio-item"><input type="radio" name="searchEngine" id="search_google" value="Google"> Google</label>
+                            <label class="radio-item"><input type="radio" name="searchEngine" id="search_bing" value="Bing"> Bing</label>
+                            <label class="radio-item"><input type="radio" name="searchEngine" id="search_yahoo" value="Yahoo"> Yahoo</label>
+                            <label class="radio-item"><input type="radio" name="searchEngine" id="search_duck" value="DuckDuckGo"> DuckDuckGo</label>
+                            <label class="radio-item"><input type="radio" name="searchEngine" id="search_lainnya" value="Lainnya"> Lainnya: <input type="text" id="search_lainnya_teks" style="width: 150px; margin-left: 5px;" placeholder="sebutkan"></label>
                         </div>
                     </li>
                     <li style="margin-bottom: 15px;">
                         <strong>Apakah semua informasi yang muncul di mesin pencari bisa dipercaya? Jelaskan!</strong><br>
-                        <textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea>
+                        <textarea class="answer-field large" id="search_kepercayaan" placeholder="Tulis jawaban..."></textarea>
                     </li>
                 </ol>
                 
@@ -852,20 +905,20 @@
                         <tr>
                             <td>1</td>
                             <td>Cari: "vaksin covid-19"</td>
-                            <td><input type="text" class="answer-field" placeholder="Judul artikel..."></td>
-                            <td><input type="text" class="answer-field" placeholder="Sumber..."></td>
+                            <td><input type="text" class="answer-field" id="cari1_judul" placeholder="Judul artikel..."></td>
+                            <td><input type="text" class="answer-field" id="cari1_sumber" placeholder="Sumber..."></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Cari: "vaksin covid-19" site:who.int</td>
-                            <td><input type="text" class="answer-field" placeholder="Judul artikel..."></td>
-                            <td><input type="text" class="answer-field" placeholder="Sumber..."></td>
+                            <td><input type="text" class="answer-field" id="cari2_judul" placeholder="Judul artikel..."></td>
+                            <td><input type="text" class="answer-field" id="cari2_sumber" placeholder="Sumber..."></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Cari: "vaksin covid-19" -hoaks</td>
-                            <td><input type="text" class="answer-field" placeholder="Judul artikel..."></td>
-                            <td><input type="text" class="answer-field" placeholder="Sumber..."></td>
+                            <td><input type="text" class="answer-field" id="cari3_judul" placeholder="Judul artikel..."></td>
+                            <td><input type="text" class="answer-field" id="cari3_sumber" placeholder="Sumber..."></td>
                         </tr>
                     </tbody>
                 </table>
@@ -883,22 +936,22 @@
                         <tr>
                             <td>1</td>
                             <td>Bandingkan hasil nomor 1 dan 2. Mana yang lebih kredibel? Mengapa?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="analisis1" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Apa fungsi penambahan site:who.int pada pencarian?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="analisis2" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Apa fungsi tanda minus (-) pada pencarian nomor 3?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="analisis3" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Apa yang dapat kamu simpulkan tentang cara menggunakan mesin pencari secara efektif?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis kesimpulan..."></textarea></td>
+                            <td><textarea class="answer-field large" id="analisis4" placeholder="Tulis kesimpulan..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -915,9 +968,9 @@
                 <h4 class="section-subtitle">FORMULIR PEMILIHAN ISU VIRAL</h4>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                    <div><strong>Kelompok:</strong> <input type="text" class="answer-field" placeholder="Nama kelompok"></div>
-                    <div><strong>Kelas:</strong> <input type="text" class="answer-field" placeholder="Kelas"></div>
-                    <div><strong>Tanggal:</strong> <input type="date" class="answer-field"></div>
+                    <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="isu_kelompok" placeholder="Nama kelompok"></div>
+                    <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="isu_kelas" placeholder="Kelas"></div>
+                    <div><strong>Tanggal:</strong> <input type="date" class="answer-field" id="isu_tanggal"></div>
                 </div>
                 
                 <table class="lkpd-table">
@@ -932,57 +985,57 @@
                         <tr>
                             <td>1</td>
                             <td>Judul/Tema isu yang kami pilih:</td>
-                            <td><input type="text" class="answer-field" placeholder="Contoh: Isu vaksin COVID-19"></td>
+                            <td><input type="text" class="answer-field" id="isu_judul" placeholder="Contoh: Isu vaksin COVID-19"></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Dari mana kami pertama kali tahu isu ini?</td>
                             <td>
                                 <div class="checkbox-group">
-                                    <label class="checkbox-item"><input type="checkbox"> TikTok</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Instagram</label>
-                                    <label class="checkbox-item"><input type="checkbox"> WhatsApp</label>
-                                    <label class="checkbox-item"><input type="checkbox"> YouTube</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Portal Berita</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Lainnya: <input type="text" style="width: 100px;"></label>
+                                    <label class="checkbox-item"><input type="checkbox" id="isu_sumber_tiktok"> TikTok</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="isu_sumber_ig"> Instagram</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="isu_sumber_wa"> WhatsApp</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="isu_sumber_yt"> YouTube</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="isu_sumber_berita"> Portal Berita</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="isu_sumber_lainnya"> Lainnya: <input type="text" id="isu_sumber_lainnya_teks" style="width: 100px;"></label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Kapan pertama kali kami mendengar isu ini?</td>
-                            <td><input type="text" class="answer-field" placeholder="Contoh: Bulan Januari 2024"></td>
+                            <td><input type="text" class="answer-field" id="isu_waktu" placeholder="Contoh: Bulan Januari 2024"></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Mengapa kami tertarik menyelidiki isu ini? (Sebutkan minimal 2 alasan)</td>
-                            <td><textarea class="answer-field large" placeholder="1. ...&#10;2. ..."></textarea></td>
+                            <td><textarea class="answer-field large" id="isu_alasan" placeholder="1. ...&#10;2. ..."></textarea></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td>Dugaan awal kami:</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="dugaan"> Fakta</label>
-                                    <label class="radio-item"><input type="radio" name="dugaan"> Hoaks</label>
-                                    <label class="radio-item"><input type="radio" name="dugaan"> Masih ragu (perlu penyelidikan)</label>
+                                    <label class="radio-item"><input type="radio" name="dugaan" id="dugaan_fakta" value="Fakta"> Fakta</label>
+                                    <label class="radio-item"><input type="radio" name="dugaan" id="dugaan_hoaks" value="Hoaks"> Hoaks</label>
+                                    <label class="radio-item"><input type="radio" name="dugaan" id="dugaan_ragu" value="Masih ragu"> Masih ragu (perlu penyelidikan)</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>6</td>
                             <td>Apa yang sudah kami ketahui tentang isu ini?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis pengetahuan awal..."></textarea></td>
+                            <td><textarea class="answer-field large" id="isu_diketahui" placeholder="Tulis pengetahuan awal..."></textarea></td>
                         </tr>
                         <tr>
                             <td>7</td>
                             <td>Apa yang belum kami ketahui dan ingin kami cari tahu?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis hal-hal yang ingin diketahui..."></textarea></td>
+                            <td><textarea class="answer-field large" id="isu_belum" placeholder="Tulis hal-hal yang ingin diketahui..."></textarea></td>
                         </tr>
                         <tr>
                             <td>8</td>
                             <td>Pertanyaan utama yang ingin kami jawab melalui investigasi: (Buat minimal 3 pertanyaan)</td>
-                            <td><textarea class="answer-field large" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea></td>
+                            <td><textarea class="answer-field large" id="isu_pertanyaan" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -997,10 +1050,10 @@
                 
                 <div style="background: var(--informatika-light); padding: 1rem; border-radius: 10px; margin-bottom: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                        <div><strong>Nama:</strong> <input type="text" class="answer-field" placeholder="Nama"></div>
-                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" placeholder="Kelas"></div>
-                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" placeholder="Kelompok"></div>
-                        <div><strong>Peran:</strong> <input type="text" class="answer-field" placeholder="Peran"></div>
+                        <div><strong>Nama:</strong> <input type="text" class="answer-field" id="ref_nama" placeholder="Nama"></div>
+                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="ref_kelas" placeholder="Kelas"></div>
+                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="ref_kelompok" placeholder="Kelompok"></div>
+                        <div><strong>Peran:</strong> <input type="text" class="answer-field" id="ref_peran" placeholder="Peran"></div>
                     </div>
                 </div>
                 
@@ -1016,47 +1069,47 @@
                         <tr>
                             <td>1</td>
                             <td>Hal baru apa yang aku pelajari dari materi tentang literasi digital?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref1" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Hal baru apa yang aku pelajari dari video yang ditayangkan?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref2" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Apakah materi dan video saling melengkapi? Jelaskan!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref3" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Mengapa isu yang kelompok kami pilih penting untuk dikaji?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref4" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td>Tantangan apa yang mungkin kami hadapi dalam menyelidiki isu ini?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref5" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>6</td>
                             <td>Apa komitmenku sebagai pengguna media sosial yang bertanggung jawab?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis komitmenmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref6" placeholder="Tulis komitmenmu..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
                 
                 <div class="checklist-container">
                     <h4 style="margin-bottom: 10px;">Ceklis Pemahaman Akhir:</h4>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah membaca materi "Pengantar Literasi Digital"</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah menonton video edukatif</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah berdiskusi dengan kelompok</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah memilih isu untuk investigasi</div>
+                    <div class="checklist-item"><input type="checkbox" id="check1"> Saya sudah membaca materi "Pengantar Literasi Digital"</div>
+                    <div class="checklist-item"><input type="checkbox" id="check2"> Saya sudah menonton video edukatif</div>
+                    <div class="checklist-item"><input type="checkbox" id="check3"> Saya sudah berdiskusi dengan kelompok</div>
+                    <div class="checklist-item"><input type="checkbox" id="check4"> Saya sudah memilih isu untuk investigasi</div>
                 </div>
             </div>
 
             <!-- Tombol Kirim -->
-            <button class="submit-button" id="submitBtn" onclick="submitData()">
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kumpulkan LKPD
             </button>
             <div id="successMessage" class="success-message">
@@ -1077,11 +1130,42 @@
 
     <script src="../../../script.js"></script>
     <script>
-        // Simple Mobile Menu
+        // ==================== KONFIGURASI URL ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbzKGEcwDHHjWza6iSghSDtgwahTIClGQsDmCjVqVzQPuovu82XUkchCigSSZMxcYjmRkw/exec';
+
+        // ==================== KONFIGURASI FORM ====================
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 1 - PENGANTAR LITERASI INFORMASI",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas/Peran",
+                "Data Review Materi",
+                "Data Refleksi Diri",
+                "Data Diskusi Hoaks",
+                "Data Video",
+                "Data Mesin Pencari",
+                "Data Isu Viral",
+                "Data Refleksi Akhir"
+            ]
+        };
+
+        // ==================== VARIABEL GLOBAL ====================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+
+        // ==================== INISIALISASI ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // Load data siswa
+            loadDataFromGoogleSheets();
+            
+            // Hamburger menu
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
             if (hamburger) {
                 hamburger.addEventListener('click', function() {
                     navMenu.classList.toggle('active');
@@ -1093,23 +1177,319 @@
             inputs.forEach(input => {
                 input.disabled = false;
             });
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Tambahkan event listener ke semua input untuk update progress
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', updateProgressBar);
+                el.addEventListener('change', updateProgressBar);
+            });
         });
 
-        // Fungsi submit (placeholder)
-        function submitData() {
-            // Tampilkan loading
-            document.getElementById('loadingMessage').style.display = 'block';
+        // ==================== FUNGSI PROGRESS BAR ====================
+        function updateProgressBar() {
+            const totalFields = document.querySelectorAll('input:not([type=checkbox]), select, textarea').length;
+            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]), select, textarea'))
+                .filter(el => el.value && el.value.trim() !== '').length;
             
-            // Simulasi pengiriman data
-            setTimeout(function() {
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
+            const progress = Math.round((filledFields / totalFields) * 100) || 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+        }
+
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
                 
-                // Sembunyikan pesan sukses setelah 3 detik
-                setTimeout(function() {
+                const callbackName = 'jsonp_callback_' + Date.now();
+                
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        
+                        dataKelas.forEach(kelas => {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        });
+                        
+                        enableForm();
+                    } else {
+                        useFallbackData();
+                    }
+                    
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    isLoading = false;
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = useFallbackData;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                useFallbackData();
+            }
+        }
+
+        function useFallbackData() {
+            dataKelas = ['X IPA 1', 'X IPA 2', 'X IPS 1', 'X IPS 2', 'X TKJ 1', 'X TKJ 2'];
+            
+            dataSiswa = {
+                'X IPA 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
+                'X IPA 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
+                'X IPS 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
+                'X IPS 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
+                'X TKJ 1': ['Vina Aulia', 'Wahyu Hidayat', 'Xavier Putra', 'Yuni Safitri', 'Zainal Abidin'],
+                'X TKJ 2': ['Aulia Rahman', 'Bagas Pratama', 'Cantika Dewi', 'Doni Saputra', 'Eka Sari']
+            };
+            
+            const kelasSelect = document.getElementById('kelas');
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            dataKelas.forEach(kelas => {
+                const option = document.createElement('option');
+                option.value = kelas;
+                option.textContent = kelas;
+                kelasSelect.appendChild(option);
+            });
+            
+            enableForm();
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = 'Menggunakan data lokal.';
+            isLoading = false;
+        }
+
+        function enableForm() {
+            document.getElementById('kelas').disabled = false;
+            document.getElementById('nama').disabled = false;
+            document.getElementById('kelompok').disabled = false;
+            document.getElementById('tugas').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
+            });
+        }
+
+        // ==================== FUNGSI SUBMIT DATA ====================
+        async function submitData() {
+            if (isLoading) {
+                alert('Data masih dimuat. Silakan tunggu.');
+                return;
+            }
+            
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value || !document.getElementById('kelompok').value) {
+                alert('Lengkapi identitas terlebih dahulu!');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                const formData = new URLSearchParams();
+                
+                // Kirim konfigurasi sheet
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                
+                // ==================== KUMPULKAN DATA ====================
+                // Data Identitas Dasar
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value);
+                formData.append('Tugas/Peran', document.getElementById('tugas').value);
+                
+                // Data Review Materi (Bagian A)
+                const dataReview = {
+                    q1: document.getElementById('review1')?.value || '',
+                    q2: document.getElementById('review2')?.value || '',
+                    q3: document.getElementById('review3')?.value || '',
+                    q4: document.getElementById('review4')?.value || '',
+                    q5: document.getElementById('review5')?.value || '',
+                    bacaMateri: document.getElementById('bacaMateri')?.checked || false,
+                    tanggalBaca: document.getElementById('tanggalBaca')?.value || ''
+                };
+                formData.append('Data Review Materi', JSON.stringify(dataReview));
+                
+                // Data Refleksi Diri (Bagian B)
+                const dataRefleksiDiri = {
+                    sumber_medsos: document.getElementById('sumber_medsos')?.checked || false,
+                    sumber_wa: document.getElementById('sumber_wa')?.checked || false,
+                    sumber_berita: document.getElementById('sumber_berita')?.checked || false,
+                    sumber_youtube: document.getElementById('sumber_youtube')?.checked || false,
+                    sumber_koran: document.getElementById('sumber_koran')?.checked || false,
+                    sumber_lainnya: document.getElementById('sumber_lainnya')?.checked || false,
+                    sumber_lainnya_teks: document.getElementById('sumber_lainnya_teks')?.value || '',
+                    refleksi_hoaks: document.getElementById('refleksi_hoaks')?.value || '',
+                    refleksi_bagikan: document.getElementById('refleksi_bagikan')?.value || '',
+                    refleksi_pemahaman: document.getElementById('refleksi_pemahaman')?.value || ''
+                };
+                formData.append('Data Refleksi Diri', JSON.stringify(dataRefleksiDiri));
+                
+                // Data Diskusi Hoaks (Bagian C)
+                const dataDiskusi = {
+                    ciri_hoaks1: document.getElementById('ciri_hoaks1')?.value || '',
+                    ciri_fakta1: document.getElementById('ciri_fakta1')?.value || '',
+                    ciri_hoaks2: document.getElementById('ciri_hoaks2')?.value || '',
+                    ciri_fakta2: document.getElementById('ciri_fakta2')?.value || '',
+                    ciri_hoaks3: document.getElementById('ciri_hoaks3')?.value || '',
+                    ciri_fakta3: document.getElementById('ciri_fakta3')?.value || '',
+                    ciri_hoaks4: document.getElementById('ciri_hoaks4')?.value || '',
+                    ciri_fakta4: document.getElementById('ciri_fakta4')?.value || '',
+                    ciri_hoaks5: document.getElementById('ciri_hoaks5')?.value || '',
+                    ciri_fakta5: document.getElementById('ciri_fakta5')?.value || '',
+                    faktor1: document.getElementById('faktor1')?.value || '',
+                    faktor2: document.getElementById('faktor2')?.value || '',
+                    faktor3: document.getElementById('faktor3')?.value || '',
+                    faktor4: document.getElementById('faktor4')?.value || '',
+                    faktor5: document.getElementById('faktor5')?.value || ''
+                };
+                formData.append('Data Diskusi Hoaks', JSON.stringify(dataDiskusi));
+                
+                // Data Video (Bagian D)
+                const dataVideo = {
+                    judul: document.getElementById('video_judul')?.value || '',
+                    sumber: document.getElementById('video_sumber')?.value || '',
+                    penting1: document.getElementById('video_penting1')?.value || '',
+                    kait1: document.getElementById('video_kait1')?.value || '',
+                    penting2: document.getElementById('video_penting2')?.value || '',
+                    kait2: document.getElementById('video_kait2')?.value || '',
+                    penting3: document.getElementById('video_penting3')?.value || '',
+                    kait3: document.getElementById('video_kait3')?.value || '',
+                    penting4: document.getElementById('video_penting4')?.value || '',
+                    kait4: document.getElementById('video_kait4')?.value || '',
+                    penting5: document.getElementById('video_penting5')?.value || '',
+                    kait5: document.getElementById('video_kait5')?.value || '',
+                    pesan: document.getElementById('video_pesan')?.value || '',
+                    infobaru: document.getElementById('video_infobaru')?.value || '',
+                    cara: document.getElementById('video_cara')?.value || '',
+                    tindakan: document.getElementById('video_tindakan')?.value || ''
+                };
+                formData.append('Data Video', JSON.stringify(dataVideo));
+                
+                // Data Mesin Pencari (Bagian E)
+                let searchEngine = '';
+                if (document.getElementById('search_google')?.checked) searchEngine = 'Google';
+                else if (document.getElementById('search_bing')?.checked) searchEngine = 'Bing';
+                else if (document.getElementById('search_yahoo')?.checked) searchEngine = 'Yahoo';
+                else if (document.getElementById('search_duck')?.checked) searchEngine = 'DuckDuckGo';
+                else if (document.getElementById('search_lainnya')?.checked) searchEngine = 'Lainnya: ' + (document.getElementById('search_lainnya_teks')?.value || '');
+                
+                const dataMesin = {
+                    searchEngine: searchEngine,
+                    kepercayaan: document.getElementById('search_kepercayaan')?.value || '',
+                    cari1_judul: document.getElementById('cari1_judul')?.value || '',
+                    cari1_sumber: document.getElementById('cari1_sumber')?.value || '',
+                    cari2_judul: document.getElementById('cari2_judul')?.value || '',
+                    cari2_sumber: document.getElementById('cari2_sumber')?.value || '',
+                    cari3_judul: document.getElementById('cari3_judul')?.value || '',
+                    cari3_sumber: document.getElementById('cari3_sumber')?.value || '',
+                    analisis1: document.getElementById('analisis1')?.value || '',
+                    analisis2: document.getElementById('analisis2')?.value || '',
+                    analisis3: document.getElementById('analisis3')?.value || '',
+                    analisis4: document.getElementById('analisis4')?.value || ''
+                };
+                formData.append('Data Mesin Pencari', JSON.stringify(dataMesin));
+                
+                // Data Isu Viral (Bagian F)
+                let dugaan = '';
+                if (document.getElementById('dugaan_fakta')?.checked) dugaan = 'Fakta';
+                else if (document.getElementById('dugaan_hoaks')?.checked) dugaan = 'Hoaks';
+                else if (document.getElementById('dugaan_ragu')?.checked) dugaan = 'Masih ragu';
+                
+                const dataIsu = {
+                    kelompok: document.getElementById('isu_kelompok')?.value || '',
+                    kelas: document.getElementById('isu_kelas')?.value || '',
+                    tanggal: document.getElementById('isu_tanggal')?.value || '',
+                    judul: document.getElementById('isu_judul')?.value || '',
+                    sumber_tiktok: document.getElementById('isu_sumber_tiktok')?.checked || false,
+                    sumber_ig: document.getElementById('isu_sumber_ig')?.checked || false,
+                    sumber_wa: document.getElementById('isu_sumber_wa')?.checked || false,
+                    sumber_yt: document.getElementById('isu_sumber_yt')?.checked || false,
+                    sumber_berita: document.getElementById('isu_sumber_berita')?.checked || false,
+                    sumber_lainnya: document.getElementById('isu_sumber_lainnya')?.checked || false,
+                    sumber_lainnya_teks: document.getElementById('isu_sumber_lainnya_teks')?.value || '',
+                    waktu: document.getElementById('isu_waktu')?.value || '',
+                    alasan: document.getElementById('isu_alasan')?.value || '',
+                    dugaan: dugaan,
+                    diketahui: document.getElementById('isu_diketahui')?.value || '',
+                    belum: document.getElementById('isu_belum')?.value || '',
+                    pertanyaan: document.getElementById('isu_pertanyaan')?.value || ''
+                };
+                formData.append('Data Isu Viral', JSON.stringify(dataIsu));
+                
+                // Data Refleksi Akhir (Bagian G)
+                const dataRefleksi = {
+                    nama: document.getElementById('ref_nama')?.value || '',
+                    kelas: document.getElementById('ref_kelas')?.value || '',
+                    kelompok: document.getElementById('ref_kelompok')?.value || '',
+                    peran: document.getElementById('ref_peran')?.value || '',
+                    q1: document.getElementById('ref1')?.value || '',
+                    q2: document.getElementById('ref2')?.value || '',
+                    q3: document.getElementById('ref3')?.value || '',
+                    q4: document.getElementById('ref4')?.value || '',
+                    q5: document.getElementById('ref5')?.value || '',
+                    q6: document.getElementById('ref6')?.value || '',
+                    check1: document.getElementById('check1')?.checked || false,
+                    check2: document.getElementById('check2')?.checked || false,
+                    check3: document.getElementById('check3')?.checked || false,
+                    check4: document.getElementById('check4')?.checked || false
+                };
+                formData.append('Data Refleksi Akhir', JSON.stringify(dataRefleksi));
+                
+                // ==================== KIRIM ====================
+                await fetch(URL_PEREKAP_AKTIVITAS, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
-                }, 3000);
-            }, 1500);
+                }, 5000);
+
+                if (confirm('Data terkirim! Ingin mereset form?')) {
+                    location.reload();
+                }
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan LKPD';
+            }
         }
     </script>
 </body>
