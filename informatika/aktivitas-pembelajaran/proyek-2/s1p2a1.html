@@ -572,7 +572,7 @@
         
         <!-- Error Message -->
         <div id="errorMessage" class="error-message" style="display: none;">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan isi manual.</span>
+            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan cek koneksi internet Anda dan refresh halaman.</span>
         </div>
 
         <!-- Progress Bar -->
@@ -1139,6 +1139,77 @@
         let dataSiswa = {};
         let isLoading = true;
 
+        // ==================== FUNGSI LOCALSTORAGE ====================
+        const STORAGE_KEY = 'proyek2_aktivitas1';
+
+        function saveToLocalStorage() {
+            const formData = {};
+            
+            // Kumpulkan semua input text, textarea, select
+            document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').forEach(el => {
+                if (el.id) {
+                    formData[el.id] = el.value;
+                }
+            });
+            
+            // Kumpulkan checkbox
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                if (el.id) {
+                    formData[el.id] = el.checked;
+                }
+            });
+            
+            // Kumpulkan radio button
+            document.querySelectorAll('input[type="radio"]').forEach(el => {
+                if (el.name && !formData[`radio_${el.name}`]) {
+                    const checkedRadio = document.querySelector(`input[name="${el.name}"]:checked`);
+                    formData[`radio_${el.name}`] = checkedRadio ? checkedRadio.value : '';
+                }
+            });
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (!savedData) return;
+            
+            try {
+                const formData = JSON.parse(savedData);
+                
+                // Isi kembali semua input
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = formData[key];
+                        } else if (element.type === 'radio') {
+                            // Untuk radio, perlu pendekatan khusus
+                        } else {
+                            element.value = formData[key];
+                        }
+                    }
+                    
+                    // Handle radio buttons
+                    if (key.startsWith('radio_')) {
+                        const radioName = key.replace('radio_', '');
+                        const radioToCheck = document.querySelector(`input[name="${radioName}"][value="${formData[key]}"]`);
+                        if (radioToCheck) {
+                            radioToCheck.checked = true;
+                        }
+                    }
+                });
+                
+                updateProgressBar();
+            } catch (e) {
+                console.error('Gagal memuat data dari localStorage', e);
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
         // ==================== INISIALISASI ====================
         document.addEventListener('DOMContentLoaded', function() {
             // Load data siswa
@@ -1156,13 +1227,22 @@
                 });
             }
             
+            // Load data dari localStorage
+            loadFromLocalStorage();
+            
             // Update progress bar
             updateProgressBar();
             
-            // Tambahkan event listener ke semua input untuk update progress
+            // Tambahkan event listener untuk auto-save dan update progress
             document.querySelectorAll('input, select, textarea').forEach(el => {
-                el.addEventListener('input', updateProgressBar);
-                el.addEventListener('change', updateProgressBar);
+                el.addEventListener('input', function() {
+                    saveToLocalStorage();
+                    updateProgressBar();
+                });
+                el.addEventListener('change', function() {
+                    saveToLocalStorage();
+                    updateProgressBar();
+                });
             });
         });
 
@@ -1236,50 +1316,56 @@
                         });
                         
                         enableForm();
+                        document.getElementById('loadingMessage').style.display = 'none';
                     } else {
-                        useFallbackData();
+                        // TIDAK MENGGUNAKAN FALLBACK DATA
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        document.getElementById('errorMessage').style.display = 'block';
+                        document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan cek koneksi internet Anda dan refresh halaman.';
+                        
+                        // Disable form karena data tidak bisa dimuat
+                        document.getElementById('kelas').disabled = true;
+                        document.getElementById('nama').disabled = true;
+                        document.getElementById('kelompok').disabled = true;
+                        document.getElementById('tugas').disabled = true;
+                        document.getElementById('submitBtn').disabled = true;
                     }
                     
-                    document.getElementById('loadingMessage').style.display = 'none';
                     isLoading = false;
                 };
                 
                 const script = document.createElement('script');
                 script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = useFallbackData;
+                script.onerror = function() {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan cek koneksi internet Anda dan refresh halaman.';
+                    
+                    // Disable form
+                    document.getElementById('kelas').disabled = true;
+                    document.getElementById('nama').disabled = true;
+                    document.getElementById('kelompok').disabled = true;
+                    document.getElementById('tugas').disabled = true;
+                    document.getElementById('submitBtn').disabled = true;
+                    
+                    isLoading = false;
+                };
                 document.head.appendChild(script);
                 
             } catch (error) {
-                useFallbackData();
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Terjadi kesalahan. Silakan cek koneksi internet Anda dan refresh halaman.';
+                
+                // Disable form
+                document.getElementById('kelas').disabled = true;
+                document.getElementById('nama').disabled = true;
+                document.getElementById('kelompok').disabled = true;
+                document.getElementById('tugas').disabled = true;
+                document.getElementById('submitBtn').disabled = true;
+                
+                isLoading = false;
             }
-        }
-
-        function useFallbackData() {
-            dataKelas = ['X IPA 1', 'X IPA 2', 'X IPS 1', 'X IPS 2', 'X TKJ 1', 'X TKJ 2'];
-            
-            dataSiswa = {
-                'X IPA 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
-                'X IPA 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
-                'X IPS 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
-                'X IPS 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
-                'X TKJ 1': ['Vina Aulia', 'Wahyu Hidayat', 'Xavier Putra', 'Yuni Safitri', 'Zainal Abidin'],
-                'X TKJ 2': ['Aulia Rahman', 'Bagas Pratama', 'Cantika Dewi', 'Doni Saputra', 'Eka Sari']
-            };
-            
-            const kelasSelect = document.getElementById('kelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            dataKelas.forEach(kelas => {
-                const option = document.createElement('option');
-                option.value = kelas;
-                option.textContent = kelas;
-                kelasSelect.appendChild(option);
-            });
-            
-            enableForm();
-            document.getElementById('loadingMessage').style.display = 'none';
-            document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('errorText').textContent = 'Menggunakan data lokal.';
-            isLoading = false;
         }
 
         function enableForm() {
@@ -1345,7 +1431,9 @@
                     q3: document.getElementById('review3')?.value || '',
                     q4: document.getElementById('review4')?.value || '',
                     q5: document.getElementById('review5')?.value || '',
-                    q6: document.getElementById('review6')?.value || ''
+                    q6: document.getElementById('review6')?.value || '',
+                    bacaMateri: document.getElementById('bacaMateri')?.checked || false,
+                    tanggalBaca: document.getElementById('tanggalBaca')?.value || ''
                 };
                 formData.append('Data Review Materi', JSON.stringify(dataReview));
                 
@@ -1452,6 +1540,7 @@
                 });
 
                 document.getElementById('successMessage').style.display = 'block';
+                clearLocalStorage(); // Hapus data yang tersimpan karena sudah terkirim
                 setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
                 }, 5000);

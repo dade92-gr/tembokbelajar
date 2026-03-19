@@ -121,6 +121,29 @@
             font-weight: 600;
         }
         
+        /* Progress Bar Styles */
+        .progress-container {
+            margin: 20px 0 30px 0;
+            background: #f0f0f0;
+            border-radius: 25px;
+            padding: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            height: 25px;
+            border-radius: 25px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 30px;
+        }
+        
         .identitas-box {
             background: var(--ipas-light);
             border-radius: 15px;
@@ -489,9 +512,39 @@
             padding: 1rem;
             border-radius: 10px;
             margin: 1rem 0;
-            display: none;
+            display: block;
             text-align: center;
             border-left: 5px solid #dc3545;
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.offline {
+            background: #dc3545;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
         }
         
         .activity-navigation {
@@ -530,6 +583,12 @@
             background: var(--ipas-secondary);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
         }
         
         @media (max-width: 768px) {
@@ -607,6 +666,12 @@
             <p>Aktivitas pengantar untuk memahami konsep dasar IPAS, metode ilmiah, dan pengenalan proyek pembelajaran selama satu semester.</p>
         </div>
 
+        <!-- Connection Status -->
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Memeriksa koneksi...</span>
+        </div>
+
         <!-- Loading Message -->
         <div id="loadingMessage" class="loading-message">
             <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
@@ -614,13 +679,23 @@
         
         <!-- Error Message -->
         <div id="errorMessage" class="error-message" style="display: none;">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan isi manual.</span>
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span id="errorText">Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.</span>
+            <br>
+            <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-sync-alt"></i> Refresh Halaman
+            </button>
         </div>
 
         <!-- Worksheet Container -->
         <div class="worksheet-container" id="worksheetForm">
             <h1 class="worksheet-title">LEMBAR AKTIVITAS PERTEMUAN 1: PERKENALAN IPAS</h1>
             <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem; color: var(--ipas-accent);">"Memahami Projek IPAS untuk Dua Semester ke Depan"</p>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+            </div>
 
             <!-- A. PETUNJUK PENGGUNAAN -->
             <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem;">
@@ -629,7 +704,7 @@
                     <li>Baca dan pelajari materi <strong>Bab 1: Pengenalan IPAS</strong> yang tersedia di menu <strong>Daftar Materi</strong>.</li>
                     <li>Lembar aktivitas ini akan memandu kalian untuk memahami materi dan mempersiapkan proyek selama dua semester.</li>
                     <li>Isi semua bagian yang tersedia, beri tanda ✅ pada kotak ceklis jika sudah memahami atau menyelesaikan tugas.</li>
-                    <li>Diskusikan jawaban dengan kelompok, lalu tuliskan hasil kesepakatan.</li>
+                    <li>Data akan <strong>tersimpan otomatis</strong> di browser Anda.</li>
                     <li>Klik tombol <strong>Kirim</strong> di bagian bawah untuk mengirimkan data ke Google Spreadsheet.</li>
                 </ol>
             </div>
@@ -638,23 +713,23 @@
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelas</label>
-                    <select id="kelas" onchange="updateNamaDropdown()" disabled>
+                    <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Kelas --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama</label>
-                    <select id="nama" disabled>
+                    <select id="nama" onchange="saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Nama --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" disabled>
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" disabled>
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
             </div>
 
@@ -749,13 +824,13 @@
                         <td><strong>Semester Ganjil</strong></td>
                         <td>Mempelajari 6 aspek IPAS</td>
                         <td>• Membaca materi<br>• Diskusi kelompok<br>• Latihan soal<br>• Pembuktian Ilmiah</td>
-                        <td><textarea id="target_ganjil" rows="3" placeholder="Target yang ingin dicapai..."></textarea></td>
+                        <td><textarea id="target_ganjil" rows="3" placeholder="Target yang ingin dicapai..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
                     </tr>
                     <tr>
                         <td><strong>Semester Genap</strong></td>
                         <td>Praktik Proyek Nyata</td>
                         <td>• Identifikasi masalah<br>• Menentukan solusi<br>• Perancangan proyek<br>• Pelaksanaan<br>• Pengolahan data<br>• Pelaporan<br>• Presentasi</td>
-                        <td><textarea id="target_genap" rows="3" placeholder="Target yang ingin dicapai..."></textarea></td>
+                        <td><textarea id="target_genap" rows="3" placeholder="Target yang ingin dicapai..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
                     </tr>
                 </tbody>
             </table>
@@ -805,18 +880,18 @@
             <a href="index-aktifitas-ipas.html" class="nav-btn">
                 <i class="fas fa-arrow-left"></i> Kembali ke Daftar Aktivitas
             </a>
-            <a href="s1-1-eksplorasi-makhluk-hidup.html" class="nav-btn primary">
+            <a href="s1-1-eksplorasi-makhluk-hidup.html" class="nav-btn primary" id="nextBtn">
                 Lanjut ke Aktivitas Berikutnya <i class="fas fa-arrow-right"></i>
             </a>
         </div>
     </section>
 
     <script>
-        // ==================== KONFIGURASI URL (SUDAH ANDA PUNYA) ====================
+        // ==================== KONFIGURASI URL ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
 
-        // ==================== KONFIGURASI FORM (DIBUAT OLEH AI) ====================
+        // ==================== KONFIGURASI FORM DENGAN HEADER PER BAGIAN ====================
         const FORM_CONFIG = {
             sheetName: "AKTIVITAS 1 - PERKENALAN IPAS",
             headers: [
@@ -824,50 +899,14 @@
                 "Kelas",
                 "Nama",
                 "Kelompok",
-                "Tugas/Peran",
-                "Baca 1",
-                "Paham 1",
-                "Baca 2",
-                "Paham 2",
-                "Baca 3",
-                "Paham 3",
-                "Baca 4",
-                "Paham 4",
-                "Baca 5",
-                "Paham 5",
-                "Baca 6",
-                "Paham 6",
-                "Baca 7",
-                "Paham 7",
-                "Baca 8",
-                "Paham 8",
-                "Jawab 1.1 - Saya",
-                "Jawab 1.1 - Kelompok",
-                "Jawab 1.2 - Saya",
-                "Jawab 1.2 - Kelompok",
-                "Jawab 1.3 - Saya",
-                "Jawab 1.3 - Kelompok",
-                "Jawab 1.4 - Saya",
-                "Jawab 1.4 - Kelompok",
-                "Jawab 2.1 - Saya",
-                "Jawab 2.1 - Kelompok",
-                "Jawab 2.2 - Saya",
-                "Jawab 2.2 - Kelompok",
-                "Jawab 2.3 - Saya",
-                "Jawab 2.3 - Kelompok",
-                "Hasil Pencocokan",
-                "Target Ganjil",
-                "Target Genap",
-                "Refleksi 1",
-                "Refleksi 2",
-                "Refleksi 3",
-                "Refleksi 4",
-                "Refleksi 5",
-                "Nilai 1",
-                "Nilai 2",
-                "Nilai 3",
-                "Nilai 4",
-                "Nilai 5"
+                "Tugas_Peran",
+                "data_ceklis_materi",           // JSON string untuk semua ceklis
+                "data_aktivitas1_bagian1",       // JSON string untuk pertanyaan bagian 1
+                "data_aktivitas1_bagian2",       // JSON string untuk pertanyaan bagian 2
+                "data_matching_aspek",            // JSON string untuk hasil drag & drop
+                "data_target_semester",           // JSON string untuk target ganjil & genap
+                "data_refleksi",                   // JSON string untuk semua refleksi
+                "data_penilaian_diri"              // JSON string untuk semua nilai
             ]
         };
 
@@ -876,6 +915,8 @@
         let dataSiswa = {};
         let isLoading = true;
         let matches = {};
+        let isOnline = true;
+        let autoSaveTimeout;
 
         // Data aspek IPAS
         const aspekData = [
@@ -887,8 +928,51 @@
             { id: 6, nama: "Perilaku Ekonomi dan Kesejahteraan", deskripsi: "Mempelajari peran diri, masyarakat, dan negara dalam memenuhi kebutuhan" }
         ];
 
+        // ==================== CEK KONEKSI INTERNET ====================
+        function checkConnection() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            if (navigator.onLine) {
+                statusIndicator.classList.remove('offline');
+                connectionStatus.innerHTML = 'Terhubung ke internet';
+                isOnline = true;
+            } else {
+                statusIndicator.classList.add('offline');
+                connectionStatus.innerHTML = 'Tidak terhubung ke internet';
+                isOnline = false;
+                showConnectionError();
+            }
+        }
+
+        window.addEventListener('online', checkConnection);
+        window.addEventListener('offline', checkConnection);
+
+        function showConnectionError() {
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').innerHTML = 'Tidak ada koneksi internet. Silakan refresh halaman setelah koneksi pulih.';
+            disableAllInputs(true);
+        }
+
+        function disableAllInputs(disabled) {
+            const inputs = document.querySelectorAll('input, select, textarea, button');
+            inputs.forEach(input => {
+                if (input.id !== 'errorMessage' && input.id !== 'loadingMessage') {
+                    input.disabled = disabled;
+                }
+            });
+        }
+
         // ==================== LOAD DATA SISWA ====================
         function loadDataFromGoogleSheets() {
+            checkConnection();
+            
+            if (!navigator.onLine) {
+                showConnectionError();
+                document.getElementById('loadingMessage').style.display = 'none';
+                return;
+            }
+
             document.getElementById('loadingMessage').style.display = 'block';
             
             const callbackName = 'jsonp_callback_' + Date.now();
@@ -916,7 +1000,10 @@
                     
                     enableForm();
                 } else {
-                    useManualMode();
+                    // TIDAK ADA FALLBACK - Tampilkan error
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                    disableAllInputs(true);
                 }
                 
                 document.getElementById('loadingMessage').style.display = 'none';
@@ -930,7 +1017,10 @@
                 if (script) document.head.removeChild(script);
                 delete window[callbackName];
                 
-                useManualMode();
+                // TIDAK ADA FALLBACK - Tampilkan error
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.';
+                disableAllInputs(true);
                 document.getElementById('loadingMessage').style.display = 'none';
                 isLoading = false;
             };
@@ -938,33 +1028,271 @@
             document.head.appendChild(script);
         }
 
-        function useManualMode() {
-            const kelasSelect = document.getElementById('kelas');
-            const namaSelect = document.getElementById('nama');
-            
-            const kelasInput = document.createElement('input');
-            kelasInput.type = 'text';
-            kelasInput.id = 'kelas';
-            kelasInput.placeholder = 'Contoh: X IPA 1';
-            
-            const namaInput = document.createElement('input');
-            namaInput.type = 'text';
-            namaInput.id = 'nama';
-            namaInput.placeholder = 'Contoh: John Doe';
-            
-            kelasSelect.parentNode.replaceChild(kelasInput, kelasSelect);
-            namaSelect.parentNode.replaceChild(namaInput, namaSelect);
-            
-            enableForm();
-            document.getElementById('errorMessage').style.display = 'block';
+        function enableForm() {
+            if (isOnline) {
+                document.getElementById('kelas').disabled = false;
+                document.getElementById('nama').disabled = false;
+                document.getElementById('kelompok').disabled = false;
+                document.getElementById('tugas').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                
+                // Load data dari localStorage setelah form di-enable
+                loadFromLocalStorage();
+            }
         }
 
-        function enableForm() {
-            document.getElementById('kelas').disabled = false;
-            document.getElementById('nama').disabled = false;
-            document.getElementById('kelompok').disabled = false;
-            document.getElementById('tugas').disabled = false;
-            document.getElementById('submitBtn').disabled = false;
+        // ==================== LOCALSTORAGE AUTO-SAVE ====================
+        function saveToLocalStorage() {
+            if (!isOnline) return;
+            
+            // Clear timeout sebelumnya
+            if (autoSaveTimeout) {
+                clearTimeout(autoSaveTimeout);
+            }
+            
+            // Debounce save untuk performa
+            autoSaveTimeout = setTimeout(() => {
+                const formData = collectAllFormData();
+                localStorage.setItem('ipas_aktivitas1_draft', JSON.stringify(formData));
+                
+                // Tampilkan notifikasi save (opsional)
+                console.log('Data tersimpan otomatis', new Date().toLocaleTimeString());
+            }, 1000);
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('ipas_aktivitas1_draft');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    populateFormData(data);
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('ipas_aktivitas1_draft');
+        }
+
+        // ==================== PROGRESS BAR ====================
+        function updateProgress() {
+            let totalFields = 0;
+            let filledFields = 0;
+
+            // Hitung total field yang harus diisi
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const textareas = document.querySelectorAll('textarea');
+            const selects = document.querySelectorAll('select');
+            const textInputs = document.querySelectorAll('input[type="text"]');
+
+            // Checkboxes (setiap checkbox dihitung)
+            checkboxes.forEach(checkbox => {
+                totalFields++;
+                if (checkbox.checked) filledFields++;
+            });
+
+            // Textareas
+            textareas.forEach(textarea => {
+                totalFields++;
+                if (textarea.value && textarea.value.trim() !== '') filledFields++;
+            });
+
+            // Selects (kecuali yang hidden)
+            selects.forEach(select => {
+                if (select.id !== 'matchingResult') {
+                    totalFields++;
+                    if (select.value && select.value !== '') filledFields++;
+                }
+            });
+
+            // Text inputs
+            textInputs.forEach(input => {
+                if (input.id !== 'matchingResult') {
+                    totalFields++;
+                    if (input.value && input.value.trim() !== '') filledFields++;
+                }
+            });
+
+            // Drag & drop matches
+            totalFields += 6; // 6 aspek
+            filledFields += Object.keys(matches).length;
+
+            const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.innerHTML = percentage + '%';
+        }
+
+        // ==================== COLLECT FORM DATA PER BAGIAN ====================
+        function collectAllFormData() {
+            return {
+                // Data identitas (disimpan di kolom terpisah)
+                identitas: {
+                    kelas: document.getElementById('kelas')?.value || '',
+                    nama: document.getElementById('nama')?.value || '',
+                    kelompok: document.getElementById('kelompok')?.value || '',
+                    tugas: document.getElementById('tugas')?.value || ''
+                },
+                
+                // Data per bagian (akan di-JSON string per kolom)
+                ceklis_materi: collectCeklisData(),
+                aktivitas1_bagian1: collectAktivitas1Bagian1(),
+                aktivitas1_bagian2: collectAktivitas1Bagian2(),
+                matching_aspek: matches,
+                target_semester: {
+                    ganjil: document.getElementById('target_ganjil')?.value || '',
+                    genap: document.getElementById('target_genap')?.value || ''
+                },
+                refleksi: collectRefleksiData(),
+                penilaian_diri: collectPenilaianData()
+            };
+        }
+
+        function collectCeklisData() {
+            const data = {};
+            for (let i = 1; i <= 8; i++) {
+                data[`baca${i}`] = document.getElementById(`baca${i}`)?.checked || false;
+                data[`paham${i}`] = document.getElementById(`paham${i}`)?.checked || false;
+            }
+            return data;
+        }
+
+        function collectAktivitas1Bagian1() {
+            const data = {};
+            for (let i = 1; i <= 4; i++) {
+                data[`q${i}_saya`] = document.getElementById(`jwb1_${i}_saya`)?.value || '';
+                data[`q${i}_kelompok`] = document.getElementById(`jwb1_${i}_kel`)?.value || '';
+            }
+            return data;
+        }
+
+        function collectAktivitas1Bagian2() {
+            const data = {};
+            for (let i = 1; i <= 3; i++) {
+                data[`q${i+4}_saya`] = document.getElementById(`jwb2_${i}_saya`)?.value || '';
+                data[`q${i+4}_kelompok`] = document.getElementById(`jwb2_${i}_kel`)?.value || '';
+            }
+            return data;
+        }
+
+        function collectRefleksiData() {
+            const data = {};
+            for (let i = 1; i <= 5; i++) {
+                data[`refleksi${i}`] = document.getElementById(`refleksi${i}`)?.value || '';
+            }
+            return data;
+        }
+
+        function collectPenilaianData() {
+            const data = {};
+            for (let i = 1; i <= 5; i++) {
+                data[`nilai${i}`] = document.getElementById(`nilai${i}`)?.value || '3';
+            }
+            return data;
+        }
+
+        function populateFormData(savedData) {
+            // Isi identitas
+            if (savedData.identitas) {
+                if (savedData.identitas.kelas) {
+                    const kelasSelect = document.getElementById('kelas');
+                    if (kelasSelect) {
+                        kelasSelect.value = savedData.identitas.kelas;
+                        updateNamaDropdown();
+                    }
+                }
+                
+                if (savedData.identitas.nama) {
+                    setTimeout(() => {
+                        const namaSelect = document.getElementById('nama');
+                        if (namaSelect) namaSelect.value = savedData.identitas.nama;
+                    }, 500);
+                }
+
+                document.getElementById('kelompok').value = savedData.identitas.kelompok || '';
+                document.getElementById('tugas').value = savedData.identitas.tugas || '';
+            }
+
+            // Isi ceklis
+            if (savedData.ceklis_materi) {
+                const ceklis = savedData.ceklis_materi;
+                for (let i = 1; i <= 8; i++) {
+                    const baca = document.getElementById(`baca${i}`);
+                    const paham = document.getElementById(`paham${i}`);
+                    if (baca) baca.checked = ceklis[`baca${i}`] || false;
+                    if (paham) paham.checked = ceklis[`paham${i}`] || false;
+                }
+            }
+
+            // Isi aktivitas 1 bagian 1
+            if (savedData.aktivitas1_bagian1) {
+                const bagian1 = savedData.aktivitas1_bagian1;
+                for (let i = 1; i <= 4; i++) {
+                    const jwbSaya = document.getElementById(`jwb1_${i}_saya`);
+                    const jwbKel = document.getElementById(`jwb1_${i}_kel`);
+                    if (jwbSaya) jwbSaya.value = bagian1[`q${i}_saya`] || '';
+                    if (jwbKel) jwbKel.value = bagian1[`q${i}_kelompok`] || '';
+                }
+            }
+
+            // Isi aktivitas 1 bagian 2
+            if (savedData.aktivitas1_bagian2) {
+                const bagian2 = savedData.aktivitas1_bagian2;
+                for (let i = 1; i <= 3; i++) {
+                    const jwbSaya = document.getElementById(`jwb2_${i}_saya`);
+                    const jwbKel = document.getElementById(`jwb2_${i}_kel`);
+                    if (jwbSaya) jwbSaya.value = bagian2[`q${i+4}_saya`] || '';
+                    if (jwbKel) jwbKel.value = bagian2[`q${i+4}_kelompok`] || '';
+                }
+            }
+
+            // Isi matching
+            if (savedData.matching_aspek) {
+                matches = savedData.matching_aspek;
+                setTimeout(() => {
+                    Object.keys(matches).forEach(aspekId => {
+                        const deskripsiId = matches[aspekId];
+                        const dropZone = document.getElementById(`dropzone-${aspekId}`);
+                        const deskripsiEl = document.getElementById(`deskripsi-${deskripsiId}`);
+                        
+                        if (dropZone && deskripsiEl) {
+                            dropZone.innerHTML = deskripsiEl.textContent;
+                            dropZone.classList.add('filled');
+                            deskripsiEl.style.display = 'none';
+                        }
+                    });
+                    updateMatchingResult();
+                }, 500);
+            }
+
+            // Isi target semester
+            if (savedData.target_semester) {
+                document.getElementById('target_ganjil').value = savedData.target_semester.ganjil || '';
+                document.getElementById('target_genap').value = savedData.target_semester.genap || '';
+            }
+
+            // Isi refleksi
+            if (savedData.refleksi) {
+                const refleksi = savedData.refleksi;
+                for (let i = 1; i <= 5; i++) {
+                    const ref = document.getElementById(`refleksi${i}`);
+                    if (ref) ref.value = refleksi[`refleksi${i}`] || '';
+                }
+            }
+
+            // Isi penilaian
+            if (savedData.penilaian_diri) {
+                const penilaian = savedData.penilaian_diri;
+                for (let i = 1; i <= 5; i++) {
+                    const nilai = document.getElementById(`nilai${i}`);
+                    if (nilai) nilai.value = penilaian[`nilai${i}`] || '3';
+                }
+            }
+
+            updateProgress();
         }
 
         // ==================== INIT ====================
@@ -978,9 +1306,20 @@
                 });
             }
 
+            // Cek koneksi awal
+            checkConnection();
+            
+            // Load data dari server
             loadDataFromGoogleSheets();
+            
+            // Inisialisasi tabel
             initTables();
+            
+            // Inisialisasi game matching
             initMatchingGame();
+            
+            // Set interval untuk cek koneksi
+            setInterval(checkConnection, 5000);
         });
 
         function updateNamaDropdown() {
@@ -1024,8 +1363,8 @@
                     <td>${index+1}</td>
                     <td>${item}</td>
                     <td class="checkbox-item">
-                        <label><input type="checkbox" id="baca${index+1}"> Sudah Dibaca</label>
-                        <label><input type="checkbox" id="paham${index+1}"> Sudah Dipahami</label>
+                        <label><input type="checkbox" id="baca${index+1}" onchange="saveToLocalStorage(); updateProgress();"> Sudah Dibaca</label>
+                        <label><input type="checkbox" id="paham${index+1}" onchange="saveToLocalStorage(); updateProgress();"> Sudah Dipahami</label>
                     </td>
                 </tr>`;
             });
@@ -1044,8 +1383,8 @@
                 htmlPertanyaan1 += `<tr>
                     <td>${index+1}</td>
                     <td>${item}</td>
-                    <td><textarea id="jwb1_${index+1}_saya" rows="2" placeholder="Jawaban saya..."></textarea></td>
-                    <td><textarea id="jwb1_${index+1}_kel" rows="2" placeholder="Jawaban kelompok..."></textarea></td>
+                    <td><textarea id="jwb1_${index+1}_saya" rows="2" placeholder="Jawaban saya..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
+                    <td><textarea id="jwb1_${index+1}_kel" rows="2" placeholder="Jawaban kelompok..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
                 </tr>`;
             });
             document.getElementById('pertanyaan1Table').innerHTML = htmlPertanyaan1;
@@ -1062,8 +1401,8 @@
                 htmlPertanyaan2 += `<tr>
                     <td>${index+5}</td>
                     <td>${item}</td>
-                    <td><textarea id="jwb2_${index+1}_saya" rows="2" placeholder="Jawaban saya..."></textarea></td>
-                    <td><textarea id="jwb2_${index+1}_kel" rows="2" placeholder="Jawaban kelompok..."></textarea></td>
+                    <td><textarea id="jwb2_${index+1}_saya" rows="2" placeholder="Jawaban saya..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
+                    <td><textarea id="jwb2_${index+1}_kel" rows="2" placeholder="Jawaban kelompok..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
                 </tr>`;
             });
             document.getElementById('pertanyaan2Table').innerHTML = htmlPertanyaan2;
@@ -1082,7 +1421,7 @@
                 htmlRefleksi += `<tr>
                     <td>${index+1}</td>
                     <td>${item}</td>
-                    <td><textarea id="refleksi${index+1}" rows="2" placeholder="Jawaban kelompok..."></textarea></td>
+                    <td><textarea id="refleksi${index+1}" rows="2" placeholder="Jawaban kelompok..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
                 </tr>`;
             });
             document.getElementById('refleksiTable').innerHTML = htmlRefleksi;
@@ -1102,7 +1441,7 @@
                     <td>${index+1}</td>
                     <td>${item}</td>
                     <td>
-                        <select id="nilai${index+1}">
+                        <select id="nilai${index+1}" onchange="saveToLocalStorage(); updateProgress();">
                             <option value="1">1 - Kurang</option>
                             <option value="2">2 - Cukup</option>
                             <option value="3" selected>3 - Baik</option>
@@ -1178,6 +1517,8 @@
             draggedElement.style.display = 'none';
             
             updateMatchingResult();
+            saveToLocalStorage();
+            updateProgress();
         }
 
         function resetMatching() {
@@ -1194,6 +1535,9 @@
                     dropZone.classList.remove('filled');
                 }
             }
+            
+            saveToLocalStorage();
+            updateProgress();
         }
 
         function updateMatchingResult() {
@@ -1206,6 +1550,11 @@
 
         // ==================== SUBMIT DATA ====================
         async function submitData() {
+            if (!isOnline) {
+                alert('Tidak ada koneksi internet. Silakan periksa koneksi Anda dan refresh halaman.');
+                return;
+            }
+
             if (isLoading) {
                 alert('Data masih dimuat. Silakan tunggu beberapa saat.');
                 return;
@@ -1231,50 +1580,30 @@
             try {
                 const formData = new URLSearchParams();
                 
+                // Kumpulkan semua data form
+                const allData = collectAllFormData();
+                
                 // Kirim konfigurasi sheet
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
                 
-                // Data identitas (sesuai nama header)
-                formData.append('Kelas', document.getElementById('kelas').value || '');
-                formData.append('Nama', document.getElementById('nama').value || '');
-                formData.append('Kelompok', document.getElementById('kelompok').value || '');
-                formData.append('Tugas/Peran', document.getElementById('tugas').value || '');
+                // Data identitas (kolom terpisah)
+                formData.append('Kelas', allData.identitas.kelas);
+                formData.append('Nama', allData.identitas.nama);
+                formData.append('Kelompok', allData.identitas.kelompok);
+                formData.append('Tugas_Peran', allData.identitas.tugas);
                 
-                // Ceklis
-                for (let i = 1; i <= 8; i++) {
-                    formData.append(`Baca ${i}`, document.getElementById(`baca${i}`).checked ? '✅' : '☐');
-                    formData.append(`Paham ${i}`, document.getElementById(`paham${i}`).checked ? '✅' : '☐');
-                }
+                // Data per bagian sebagai JSON string
+                formData.append('data_ceklis_materi', JSON.stringify(allData.ceklis_materi));
+                formData.append('data_aktivitas1_bagian1', JSON.stringify(allData.aktivitas1_bagian1));
+                formData.append('data_aktivitas1_bagian2', JSON.stringify(allData.aktivitas1_bagian2));
+                formData.append('data_matching_aspek', JSON.stringify(allData.matching_aspek));
+                formData.append('data_target_semester', JSON.stringify(allData.target_semester));
+                formData.append('data_refleksi', JSON.stringify(allData.refleksi));
+                formData.append('data_penilaian_diri', JSON.stringify(allData.penilaian_diri));
                 
-                // Jawaban bagian 1
-                for (let i = 1; i <= 4; i++) {
-                    formData.append(`Jawab 1.${i} - Saya`, document.getElementById(`jwb1_${i}_saya`).value || '');
-                    formData.append(`Jawab 1.${i} - Kelompok`, document.getElementById(`jwb1_${i}_kel`).value || '');
-                }
-                
-                // Jawaban bagian 2
-                for (let i = 1; i <= 3; i++) {
-                    formData.append(`Jawab 2.${i} - Saya`, document.getElementById(`jwb2_${i}_saya`).value || '');
-                    formData.append(`Jawab 2.${i} - Kelompok`, document.getElementById(`jwb2_${i}_kel`).value || '');
-                }
-                
-                // Pencocokan
-                formData.append('Hasil Pencocokan', document.getElementById('matchingResult').value || '');
-                
-                // Target
-                formData.append('Target Ganjil', document.getElementById('target_ganjil').value || '');
-                formData.append('Target Genap', document.getElementById('target_genap').value || '');
-                
-                // Refleksi
-                for (let i = 1; i <= 5; i++) {
-                    formData.append(`Refleksi ${i}`, document.getElementById(`refleksi${i}`).value || '');
-                }
-                
-                // Nilai
-                for (let i = 1; i <= 5; i++) {
-                    formData.append(`Nilai ${i}`, document.getElementById(`nilai${i}`).value || '3');
-                }
+                // Tambahkan timestamp
+                formData.append('Timestamp', new Date().toISOString());
 
                 // Kirim ke perekap aktivitas
                 await fetch(URL_PEREKAP_AKTIVITAS, {
@@ -1286,6 +1615,9 @@
                     },
                     body: formData
                 });
+
+                // Hapus data dari localStorage setelah berhasil dikirim
+                clearLocalStorage();
 
                 document.getElementById('successMessage').style.display = 'block';
                 

@@ -516,6 +516,42 @@
             padding: 10px;
             border: 1px solid #ddd;
         }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin: 2rem 0;
+            background: var(--informatika-gray);
+            border-radius: 30px;
+            padding: 1rem;
+            position: sticky;
+            top: 10px;
+            z-index: 99;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--informatika-primary), var(--informatika-secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Catatan Penting */
+        .catatan-penting {
+            background: #fff9e0;
+            border-left: 5px solid #f1c40f;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
 <body>
@@ -557,16 +593,29 @@
 
         <!-- Loading Message -->
         <div id="loadingMessage" class="loading-message">
-            <i class="fas fa-spinner fa-spin"></i> Memuat Lembar Kerja Peserta Didik......
+            <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
         <!-- Error Message -->
         <div id="errorMessage" class="error-message" style="display: none;">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan isi manual.</span>
+            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan cek koneksi internet Anda dan refresh halaman.</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
         </div>
 
         <!-- Worksheet Container - LKPD Aktivitas 4 -->
         <div class="worksheet-container" id="worksheetForm">
+            <!-- HALO KELOMPOK HEBAT -->
+            <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--informatika-primary);">
+                <i class="fas fa-lightbulb" style="color: var(--informatika-primary); margin-right: 10px;"></i>
+                <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
+                Silakan isi lembar kerja ini untuk merancang poster edukatif berdasarkan hasil investigasi kalian.
+            </div>
+
             <h1 class="worksheet-title">LEMBAR KERJA PESERTA DIDIK (LKPD) PROYEK 1 – AKTIVITAS 4</h1>
             <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem; color: var(--informatika-accent);">
                 <strong>MERANCANG POSTER EDUKATIF</strong>
@@ -582,19 +631,23 @@
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-building"></i> Kelas</label>
-                    <input type="text" id="kelas" placeholder="Contoh: X IPA 1" class="answer-field">
+                    <select id="kelas" class="answer-field" onchange="updateNamaDropdown()" disabled>
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama Lengkap</label>
-                    <input type="text" id="nama" placeholder="Contoh: John Doe" class="answer-field">
+                    <select id="nama" class="answer-field" disabled>
+                        <option value="">-- Pilih Nama --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Nama Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Edukator Digital" class="answer-field">
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Edukator Digital" class="answer-field" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Desainer / Peneliti" class="answer-field">
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Desainer / Peneliti" class="answer-field" disabled>
                 </div>
             </div>
 
@@ -646,39 +699,39 @@
                         <tr>
                             <td>1</td>
                             <td>Apa yang dimaksud dengan strategi membaca lateral?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review1" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Sebutkan 5 langkah membaca lateral yang sudah kamu pelajari!</td>
-                            <td><textarea class="answer-field large" placeholder="1. ...&#10;2. ...&#10;3. ...&#10;4. ...&#10;5. ..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review2" placeholder="1. ...&#10;2. ...&#10;3. ...&#10;4. ...&#10;5. ..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Mengapa membaca lateral penting dilakukan sebelum menyimpulkan kredibilitas suatu informasi?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review3" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Dari Aktivitas 3, isu apa yang sudah kelompok kalian analisis?</td>
-                            <td><input type="text" class="answer-field" placeholder="Tulis isu..."></td>
+                            <td><input type="text" class="answer-field" id="review_isu" placeholder="Tulis isu..."></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td>Apa kesimpulan akhir kelompok kalian tentang isu tersebut? (Fakta/Hoaks/Misinformasi/Disinformasi)</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="kesimpulan"> Fakta</label>
-                                    <label class="radio-item"><input type="radio" name="kesimpulan"> Hoaks</label>
-                                    <label class="radio-item"><input type="radio" name="kesimpulan"> Misinformasi</label>
-                                    <label class="radio-item"><input type="radio" name="kesimpulan"> Disinformasi</label>
+                                    <label class="radio-item"><input type="radio" name="kesimpulan" id="kesimpulan_fakta" value="Fakta"> Fakta</label>
+                                    <label class="radio-item"><input type="radio" name="kesimpulan" id="kesimpulan_hoaks" value="Hoaks"> Hoaks</label>
+                                    <label class="radio-item"><input type="radio" name="kesimpulan" id="kesimpulan_misinformasi" value="Misinformasi"> Misinformasi</label>
+                                    <label class="radio-item"><input type="radio" name="kesimpulan" id="kesimpulan_disinformasi" value="Disinformasi"> Disinformasi</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>6</td>
                             <td>Sebutkan 3 bukti terkuat yang mendukung kesimpulan kalian!</td>
-                            <td><textarea class="answer-field large" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review_bukti" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -706,21 +759,21 @@
                     <i class="fas fa-bullhorn"></i> "Apa pesan utama yang ingin kalian sampaikan?"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 1: Merumuskan Pesan Inti</h4>
+                <h4 class="section-subtitle">Kegiatan 1: Merumuskan Pesan Inti</h4>
                 <p>Instruksi: Berdasarkan hasil analisis kalian, rumuskan pesan edukatif yang akan disampaikan kepada publik melalui poster/presentasi!</p>
                 
                 <div style="margin-bottom: 15px;">
-                    <strong>Isu yang Dianalisis:</strong> <input type="text" class="answer-field" placeholder="Tulis isu...">
+                    <strong>Isu yang Dianalisis:</strong> <input type="text" class="answer-field" id="pesan_isu" placeholder="Tulis isu...">
                 </div>
                 
                 <div style="margin-bottom: 15px;">
                     <strong>Kesimpulan Hasil Analisis</strong><br>
                     <div class="radio-group">
-                        <label class="radio-item"><input type="radio" name="status"> FAKTA</label>
-                        <label class="radio-item"><input type="radio" name="status"> HOAKS</label>
-                        <label class="radio-item"><input type="radio" name="status"> MISINFORMASI</label>
-                        <label class="radio-item"><input type="radio" name="status"> DISINFORMASI</label>
-                        <label class="radio-item"><input type="radio" name="status"> BELUM DAPAT DIPASTIKAN</label>
+                        <label class="radio-item"><input type="radio" name="status" id="status_fakta" value="FAKTA"> FAKTA</label>
+                        <label class="radio-item"><input type="radio" name="status" id="status_hoaks" value="HOAKS"> HOAKS</label>
+                        <label class="radio-item"><input type="radio" name="status" id="status_misinformasi" value="MISINFORMASI"> MISINFORMASI</label>
+                        <label class="radio-item"><input type="radio" name="status" id="status_disinformasi" value="DISINFORMASI"> DISINFORMASI</label>
+                        <label class="radio-item"><input type="radio" name="status" id="status_belum" value="BELUM DAPAT DIPASTIKAN"> BELUM DAPAT DIPASTIKAN</label>
                     </div>
                 </div>
                 
@@ -733,15 +786,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Judul Pesan (menarik, tegas, mencerminkan isu)</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>2</td><td>Fakta Utama (2-3 fakta penting yang ingin ditonjolkan)</td><td><textarea class="answer-field" placeholder="1.&#10;2.&#10;3."></textarea></td></tr>
-                        <tr><td>3</td><td>Bukti Pendukung (hasil cek fakta, sumber kredibel)</td><td><textarea class="answer-field" placeholder="1.&#10;2.&#10;3."></textarea></td></tr>
-                        <tr><td>4</td><td>Ajakan Positif / Call to Action</td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>5</td><td>Tagline (slogan pendek yang mudah diingat)</td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>1</td><td>Judul Pesan (menarik, tegas, mencerminkan isu)</td><td><input type="text" class="answer-field" id="pesan_judul"></td></tr>
+                        <tr><td>2</td><td>Fakta Utama (2-3 fakta penting yang ingin ditonjolkan)</td><td><textarea class="answer-field" id="pesan_fakta" placeholder="1.&#10;2.&#10;3."></textarea></td></tr>
+                        <tr><td>3</td><td>Bukti Pendukung (hasil cek fakta, sumber kredibel)</td><td><textarea class="answer-field" id="pesan_bukti" placeholder="1.&#10;2.&#10;3."></textarea></td></tr>
+                        <tr><td>4</td><td>Ajakan Positif / Call to Action</td><td><input type="text" class="answer-field" id="pesan_ajakan"></td></tr>
+                        <tr><td>5</td><td>Tagline (slogan pendek yang mudah diingat)</td><td><input type="text" class="answer-field" id="pesan_tagline"></td></tr>
                     </tbody>
                 </table>
                 
-                <h4 class="section-subtitle">Aktivitas 2: Menentukan Sumber Rujukan</h4>
+                <h4 class="section-subtitle">Kegiatan 2: Menentukan Sumber Rujukan</h4>
                 <p>Instruksi: Cantumkan sumber-sumber kredibel yang akan dirujuk dalam poster/presentasi kalian!</p>
                 
                 <table class="lkpd-table">
@@ -754,11 +807,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Situs Cek Fakta</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>2</td><td>Situs Resmi/Lembaga</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>3</td><td>Media Kredibel</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>4</td><td>Jurnal/Artikel Ilmiah</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>5</td><td>Sumber Lainnya</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>1</td><td>Situs Cek Fakta</td><td><input type="text" class="answer-field" id="sumber1_detail"></td><td><input type="text" class="answer-field" id="sumber1_alasan"></td></tr>
+                        <tr><td>2</td><td>Situs Resmi/Lembaga</td><td><input type="text" class="answer-field" id="sumber2_detail"></td><td><input type="text" class="answer-field" id="sumber2_alasan"></td></tr>
+                        <tr><td>3</td><td>Media Kredibel</td><td><input type="text" class="answer-field" id="sumber3_detail"></td><td><input type="text" class="answer-field" id="sumber3_alasan"></td></tr>
+                        <tr><td>4</td><td>Jurnal/Artikel Ilmiah</td><td><input type="text" class="answer-field" id="sumber4_detail"></td><td><input type="text" class="answer-field" id="sumber4_alasan"></td></tr>
+                        <tr><td>5</td><td>Sumber Lainnya</td><td><input type="text" class="answer-field" id="sumber5_detail"></td><td><input type="text" class="answer-field" id="sumber5_alasan"></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -770,7 +823,7 @@
                     <i class="fas fa-lightbulb"></i> "Tuangkan ide kalian dalam bentuk visual!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 3: Sketsa Awal (Rough Sketch)</h4>
+                <h4 class="section-subtitle">Kegiatan 3: Sketsa Awal (Rough Sketch)</h4>
                 <p>Instruksi: Buat sketsa kasar tata letak poster kalian di kotak di bawah ini. Tentukan di mana posisi judul, gambar, fakta, sumber, dan ajakan!</p>
                 
                 <div class="sketch-box">
@@ -797,7 +850,7 @@
                 </div>
                 <p style="text-align: center;"><i>Gunakan kotak di atas sebagai panduan, buat sketsa sebenarnya di kertas/Canva</i></p>
                 
-                <h4 class="section-subtitle">Aktivitas 4: Menentukan Elemen Visual</h4>
+                <h4 class="section-subtitle">Kegiatan 4: Menentukan Elemen Visual</h4>
                 <table class="lkpd-table">
                     <tr><th style="width:30%">No</th><th style="width:30%">Elemen Visual</th><th>Rencana Kelompok</th></tr>
                     <tr>
@@ -805,25 +858,25 @@
                         <td>Warna Dominan</td>
                         <td>
                             <div class="checkbox-group">
-                                <label class="checkbox-item"><input type="checkbox"> Biru (tepercaya)</label>
-                                <label class="checkbox-item"><input type="checkbox"> Hijau (edukatif)</label>
-                                <label class="checkbox-item"><input type="checkbox"> Merah (peringatan)</label>
-                                <label class="checkbox-item"><input type="checkbox"> Kuning (perhatian)</label>
-                                <label class="checkbox-item"><input type="checkbox"> Kombinasi: <input type="text" style="width:150px;"></label>
+                                <label class="checkbox-item"><input type="checkbox" id="warna_biru"> Biru (tepercaya)</label>
+                                <label class="checkbox-item"><input type="checkbox" id="warna_hijau"> Hijau (edukatif)</label>
+                                <label class="checkbox-item"><input type="checkbox" id="warna_merah"> Merah (peringatan)</label>
+                                <label class="checkbox-item"><input type="checkbox" id="warna_kuning"> Kuning (perhatian)</label>
+                                <label class="checkbox-item"><input type="checkbox" id="warna_kombinasi"> Kombinasi: <input type="text" id="warna_kombinasi_teks" style="width:150px;"></label>
                             </div>
                         </td>
                     </tr>
-                    <tr><td>2</td><td>Alasan Pemilihan Warna</td><td><textarea class="answer-field"></textarea></td></tr>
+                    <tr><td>2</td><td>Alasan Pemilihan Warna</td><td><textarea class="answer-field" id="warna_alasan"></textarea></td></tr>
                     <tr>
                         <td>3</td>
                         <td>Ikon/Gambar Utama</td>
                         <td>
                             <div class="checkbox-group">
-                                <label class="checkbox-item"><input type="checkbox"> Ikon ceklis (✓) untuk fakta</label>
-                                <label class="checkbox-item"><input type="checkbox"> Ikon silang (✗) untuk hoaks</label>
-                                <label class="checkbox-item"><input type="checkbox"> Gambar ilustrasi terkait isu</label>
-                                <label class="checkbox-item"><input type="checkbox"> Infografis</label>
-                                <label class="checkbox-item"><input type="checkbox"> Lainnya: <input type="text" style="width:150px;"></label>
+                                <label class="checkbox-item"><input type="checkbox" id="ikon_ceklis"> Ikon ceklis (✓) untuk fakta</label>
+                                <label class="checkbox-item"><input type="checkbox" id="ikon_silang"> Ikon silang (✗) untuk hoaks</label>
+                                <label class="checkbox-item"><input type="checkbox" id="ikon_ilustrasi"> Gambar ilustrasi terkait isu</label>
+                                <label class="checkbox-item"><input type="checkbox" id="ikon_infografis"> Infografis</label>
+                                <label class="checkbox-item"><input type="checkbox" id="ikon_lainnya"> Lainnya: <input type="text" id="ikon_lainnya_teks" style="width:150px;"></label>
                             </div>
                         </td>
                     </tr>
@@ -832,9 +885,9 @@
                         <td>Tipografi (Jenis Huruf)</td>
                         <td>
                             <div class="checkbox-group">
-                                <label class="checkbox-item"><input type="checkbox"> Huruf tebal untuk judul</label>
-                                <label class="checkbox-item"><input type="checkbox"> Huruf mudah dibaca untuk isi</label>
-                                <label class="checkbox-item"><input type="checkbox"> Kombinasi</label>
+                                <label class="checkbox-item"><input type="checkbox" id="tipografi_tebal"> Huruf tebal untuk judul</label>
+                                <label class="checkbox-item"><input type="checkbox" id="tipografi_mudah"> Huruf mudah dibaca untuk isi</label>
+                                <label class="checkbox-item"><input type="checkbox" id="tipografi_kombinasi"> Kombinasi</label>
                             </div>
                         </td>
                     </tr>
@@ -843,29 +896,29 @@
                         <td>Tata Letak</td>
                         <td>
                             <div class="checkbox-group">
-                                <label class="checkbox-item"><input type="checkbox"> Vertikal (portrait)</label>
-                                <label class="checkbox-item"><input type="checkbox"> Horizontal (landscape)</label>
-                                <label class="checkbox-item"><input type="checkbox"> Poster</label>
-                                <label class="checkbox-item"><input type="checkbox"> Infografis</label>
+                                <label class="checkbox-item"><input type="checkbox" id="layout_vertikal"> Vertikal (portrait)</label>
+                                <label class="checkbox-item"><input type="checkbox" id="layout_horizontal"> Horizontal (landscape)</label>
+                                <label class="checkbox-item"><input type="checkbox" id="layout_poster"> Poster</label>
+                                <label class="checkbox-item"><input type="checkbox" id="layout_infografis"> Infografis</label>
                             </div>
                         </td>
                     </tr>
                 </table>
                 
-                <h4 class="section-subtitle">Aktivitas 5: Menyusun Konten Poster</h4>
+                <h4 class="section-subtitle">Kegiatan 5: Menyusun Konten Poster</h4>
                 <p>Instruksi: Tuliskan konten yang akan dimasukkan ke dalam poster secara lengkap!</p>
                 
                 <table class="lkpd-table">
                     <tr><th style="width:40%">Bagian Poster</th><th>Konten yang Akan Ditulis</th></tr>
-                    <tr><td>Judul</td><td><input type="text" class="answer-field"></td></tr>
-                    <tr><td>Subjudul/Pembuka</td><td><input type="text" class="answer-field"></td></tr>
-                    <tr><td>Fakta 1</td><td><textarea class="answer-field"></textarea></td></tr>
-                    <tr><td>Fakta 2</td><td><textarea class="answer-field"></textarea></td></tr>
-                    <tr><td>Fakta 3</td><td><textarea class="answer-field"></textarea></td></tr>
-                    <tr><td>Kutipan/Sumber</td><td><input type="text" class="answer-field"></td></tr>
-                    <tr><td>Ajakan (CTA)</td><td><input type="text" class="answer-field"></td></tr>
-                    <tr><td>Sumber Rujukan</td><td><textarea class="answer-field" placeholder="1.&#10;2.&#10;3."></textarea></td></tr>
-                    <tr><td>Identitas Kelompok</td><td><input type="text" class="answer-field"></td></tr>
+                    <tr><td>Judul</td><td><input type="text" class="answer-field" id="konten_judul"></td></tr>
+                    <tr><td>Subjudul/Pembuka</td><td><input type="text" class="answer-field" id="konten_subjudul"></td></tr>
+                    <tr><td>Fakta 1</td><td><textarea class="answer-field" id="konten_fakta1"></textarea></td></tr>
+                    <tr><td>Fakta 2</td><td><textarea class="answer-field" id="konten_fakta2"></textarea></td></tr>
+                    <tr><td>Fakta 3</td><td><textarea class="answer-field" id="konten_fakta3"></textarea></td></tr>
+                    <tr><td>Kutipan/Sumber</td><td><input type="text" class="answer-field" id="konten_kutipan"></td></tr>
+                    <tr><td>Ajakan (CTA)</td><td><input type="text" class="answer-field" id="konten_ajakan"></td></tr>
+                    <tr><td>Sumber Rujukan</td><td><textarea class="answer-field" id="konten_sumber" placeholder="1.&#10;2.&#10;3."></textarea></td></tr>
+                    <tr><td>Identitas Kelompok</td><td><input type="text" class="answer-field" id="konten_identitas"></td></tr>
                 </table>
             </div>
 
@@ -876,16 +929,16 @@
                     <i class="fas fa-comments"></i> "Minta masukan dari kelompok lain untuk menyempurnakan karyamu!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 6: Review oleh Kelompok Lain</h4>
+                <h4 class="section-subtitle">Kegiatan 6: Review oleh Kelompok Lain</h4>
                 <p>Instruksi: Tampilkan rancangan poster kalian kepada kelompok lain. Minta mereka mengisi formulir review di bawah ini. Setelah itu, berikan review untuk kelompok lain.</p>
                 
                 <div class="peer-review-box">
                     <h5 style="color: var(--informatika-dark); margin-bottom: 15px;">FORMULIR PEER REVIEW – POSTER EDUKATIF</h5>
                     
                     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-bottom: 15px;">
-                        <div><strong>Kelompok Reviewer :</strong></div><div><input type="text" class="answer-field"></div>
-                        <div><strong>Kelompok yang Direview :</strong></div><div><input type="text" class="answer-field"></div>
-                        <div><strong>Tanggal :</strong></div><div><input type="date" class="answer-field"></div>
+                        <div><strong>Kelompok Reviewer :</strong></div><div><input type="text" class="answer-field" id="review_reviewer"></div>
+                        <div><strong>Kelompok yang Direview :</strong></div><div><input type="text" class="answer-field" id="review_direview"></div>
+                        <div><strong>Tanggal :</strong></div><div><input type="date" class="answer-field" id="review_tanggal"></div>
                     </div>
                     
                     <table class="lkpd-table">
@@ -893,27 +946,27 @@
                             <tr><th>No</th><th>Aspek yang Dinilai</th><th>Indikator</th><th>Skor (1-4)</th><th>Catatan/Saran</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>1</td><td>Isi / Konten Edukatif</td><td>Fakta/hoaks sesuai hasil analisis, akurat, tidak menyesatkan</td><td><input type="number" min="1" max="4" class="answer-field" style="width:60px"></td><td><input type="text" class="answer-field"></td></tr>
-                            <tr><td>2</td><td>Kejelasan Pesan</td><td>Pesan mudah dipahami, ada ajakan positif, bahasa komunikatif</td><td><input type="number" min="1" max="4" class="answer-field" style="width:60px"></td><td><input type="text" class="answer-field"></td></tr>
-                            <tr><td>3</td><td>Kredibilitas Sumber</td><td>Sumber kredibel dicantumkan dengan jelas (cek fakta/media resmi)</td><td><input type="number" min="1" max="4" class="answer-field" style="width:60px"></td><td><input type="text" class="answer-field"></td></tr>
-                            <tr><td>4</td><td>Desain Visual</td><td>Tata letak, warna, ikon mendukung isi dan menarik</td><td><input type="number" min="1" max="4" class="answer-field" style="width:60px"></td><td><input type="text" class="answer-field"></td></tr>
-                            <tr><td>5</td><td>Orisinalitas</td><td>Karya asli hasil pemikiran kelompok, bukan copy-paste</td><td><input type="number" min="1" max="4" class="answer-field" style="width:60px"></td><td><input type="text" class="answer-field"></td></tr>
+                            <tr><td>1</td><td>Isi / Konten Edukatif</td><td>Fakta/hoaks sesuai hasil analisis, akurat, tidak menyesatkan</td><td><input type="number" min="1" max="4" class="answer-field" id="review_skor1" style="width:60px"></td><td><input type="text" class="answer-field" id="review_catatan1"></td></tr>
+                            <tr><td>2</td><td>Kejelasan Pesan</td><td>Pesan mudah dipahami, ada ajakan positif, bahasa komunikatif</td><td><input type="number" min="1" max="4" class="answer-field" id="review_skor2" style="width:60px"></td><td><input type="text" class="answer-field" id="review_catatan2"></td></tr>
+                            <tr><td>3</td><td>Kredibilitas Sumber</td><td>Sumber kredibel dicantumkan dengan jelas (cek fakta/media resmi)</td><td><input type="number" min="1" max="4" class="answer-field" id="review_skor3" style="width:60px"></td><td><input type="text" class="answer-field" id="review_catatan3"></td></tr>
+                            <tr><td>4</td><td>Desain Visual</td><td>Tata letak, warna, ikon mendukung isi dan menarik</td><td><input type="number" min="1" max="4" class="answer-field" id="review_skor4" style="width:60px"></td><td><input type="text" class="answer-field" id="review_catatan4"></td></tr>
+                            <tr><td>5</td><td>Orisinalitas</td><td>Karya asli hasil pemikiran kelompok, bukan copy-paste</td><td><input type="number" min="1" max="4" class="answer-field" id="review_skor5" style="width:60px"></td><td><input type="text" class="answer-field" id="review_catatan5"></td></tr>
                         </tbody>
                     </table>
                     
-                    <p><strong>Skor Total: _______________ / 20</strong></p>
+                    <p><strong>Skor Total: <span id="review_total">0</span> / 20</strong></p>
                     
                     <p><strong>Kekuatan Karya Ini:</strong></p>
-                    <textarea class="answer-field large" placeholder="Tulis kekuatan..."></textarea>
+                    <textarea class="answer-field large" id="review_kekuatan" placeholder="Tulis kekuatan..."></textarea>
                     
                     <p><strong>Saran Perbaikan:</strong></p>
-                    <textarea class="answer-field large" placeholder="Tulis saran perbaikan..."></textarea>
+                    <textarea class="answer-field large" id="review_saran" placeholder="Tulis saran perbaikan..."></textarea>
                     
                     <p><strong>Komentar Tambahan:</strong></p>
-                    <textarea class="answer-field large" placeholder="Tulis komentar..."></textarea>
+                    <textarea class="answer-field large" id="review_komentar" placeholder="Tulis komentar..."></textarea>
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 7: Catatan Perbaikan</h4>
+                <h4 class="section-subtitle">Kegiatan 7: Catatan Perbaikan</h4>
                 <p>Instruksi: Berdasarkan review dari kelompok lain, catat hal-hal yang perlu diperbaiki dari poster kalian!</p>
                 
                 <table class="lkpd-table">
@@ -921,11 +974,11 @@
                         <tr><th>No</th><th>Saran Perbaikan</th><th>Rencana Tindak Lanjut</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>2</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>3</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>4</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>5</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>1</td><td><input type="text" class="answer-field" id="perbaikan_saran1"></td><td><input type="text" class="answer-field" id="perbaikan_rencana1"></td></tr>
+                        <tr><td>2</td><td><input type="text" class="answer-field" id="perbaikan_saran2"></td><td><input type="text" class="answer-field" id="perbaikan_rencana2"></td></tr>
+                        <tr><td>3</td><td><input type="text" class="answer-field" id="perbaikan_saran3"></td><td><input type="text" class="answer-field" id="perbaikan_rencana3"></td></tr>
+                        <tr><td>4</td><td><input type="text" class="answer-field" id="perbaikan_saran4"></td><td><input type="text" class="answer-field" id="perbaikan_rencana4"></td></tr>
+                        <tr><td>5</td><td><input type="text" class="answer-field" id="perbaikan_saran5"></td><td><input type="text" class="answer-field" id="perbaikan_rencana5"></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -937,51 +990,51 @@
                     <i class="fas fa-microphone"></i> "Persiapkan diri untuk presentasi!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 8: Pembagian Tugas Finalisasi</h4>
+                <h4 class="section-subtitle">Kegiatan 8: Pembagian Tugas Finalisasi</h4>
                 <table class="lkpd-table">
                     <thead>
                         <tr><th>No</th><th>Tugas</th><th>Penanggung Jawab</th><th>Target Selesai</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Membuat poster digital di Canva/Google Slides</td><td><input type="text" class="answer-field"></td><td><input type="date" class="answer-field"></td></tr>
-                        <tr><td>2</td><td>Menyusun naskah presentasi</td><td><input type="text" class="answer-field"></td><td><input type="date" class="answer-field"></td></tr>
-                        <tr><td>3</td><td>Menyiapkan slide presentasi (jika berbeda dengan poster)</td><td><input type="text" class="answer-field"></td><td><input type="date" class="answer-field"></td></tr>
-                        <tr><td>4</td><td>Menyiapkan bukti-bukti pendukung (screenshot hasil cek fakta, dll)</td><td><input type="text" class="answer-field"></td><td><input type="date" class="answer-field"></td></tr>
-                        <tr><td>5</td><td>Koordinator/Leader</td><td><input type="text" class="answer-field"></td><td><input type="date" class="answer-field"></td></tr>
+                        <tr><td>1</td><td>Membuat poster digital di Canva/Google Slides</td><td><input type="text" class="answer-field" id="tugas1_pj"></td><td><input type="date" class="answer-field" id="tugas1_target"></td></tr>
+                        <tr><td>2</td><td>Menyusun naskah presentasi</td><td><input type="text" class="answer-field" id="tugas2_pj"></td><td><input type="date" class="answer-field" id="tugas2_target"></td></tr>
+                        <tr><td>3</td><td>Menyiapkan slide presentasi (jika berbeda dengan poster)</td><td><input type="text" class="answer-field" id="tugas3_pj"></td><td><input type="date" class="answer-field" id="tugas3_target"></td></tr>
+                        <tr><td>4</td><td>Menyiapkan bukti-bukti pendukung (screenshot hasil cek fakta, dll)</td><td><input type="text" class="answer-field" id="tugas4_pj"></td><td><input type="date" class="answer-field" id="tugas4_target"></td></tr>
+                        <tr><td>5</td><td>Koordinator/Leader</td><td><input type="text" class="answer-field" id="tugas5_pj"></td><td><input type="date" class="answer-field" id="tugas5_target"></td></tr>
                     </tbody>
                 </table>
                 
-                <h4 class="section-subtitle">Aktivitas 9: Persiapan Presentasi</h4>
+                <h4 class="section-subtitle">Kegiatan 9: Persiapan Presentasi</h4>
                 <table class="lkpd-table">
                     <tr><th style="width:40%">Pertanyaan</th><th>Jawaban Kelompok</th></tr>
                     <tr>
                         <td>Media apa yang akan digunakan untuk presentasi?</td>
                         <td>
                             <div class="checkbox-group">
-                                <label class="checkbox-item"><input type="checkbox"> Poster digital</label>
-                                <label class="checkbox-item"><input type="checkbox"> Slide PowerPoint/Google Slides</label>
-                                <label class="checkbox-item"><input type="checkbox"> Video singkat</label>
-                                <label class="checkbox-item"><input type="checkbox"> Kombinasi</label>
+                                <label class="checkbox-item"><input type="checkbox" id="media_poster"> Poster digital</label>
+                                <label class="checkbox-item"><input type="checkbox" id="media_slide"> Slide PowerPoint/Google Slides</label>
+                                <label class="checkbox-item"><input type="checkbox" id="media_video"> Video singkat</label>
+                                <label class="checkbox-item"><input type="checkbox" id="media_kombinasi"> Kombinasi</label>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>Siapa yang akan menjadi presenter?</td>
-                        <td><input type="text" class="answer-field" placeholder="1. 2. 3."></td>
+                        <td><input type="text" class="answer-field" id="presenter" placeholder="1. 2. 3."></td>
                     </tr>
                     <tr>
                         <td>Berapa durasi presentasi yang direncanakan?</td>
                         <td>
                             <div class="radio-group">
-                                <label class="radio-item"><input type="radio" name="durasi"> 3 menit</label>
-                                <label class="radio-item"><input type="radio" name="durasi"> 5 menit</label>
-                                <label class="radio-item"><input type="radio" name="durasi"> 7 menit</label>
+                                <label class="radio-item"><input type="radio" name="durasi" id="durasi_3" value="3 menit"> 3 menit</label>
+                                <label class="radio-item"><input type="radio" name="durasi" id="durasi_5" value="5 menit"> 5 menit</label>
+                                <label class="radio-item"><input type="radio" name="durasi" id="durasi_7" value="7 menit"> 7 menit</label>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>Apa poin-poin utama yang akan disampaikan dalam presentasi?</td>
-                        <td><textarea class="answer-field" placeholder="1.&#10;2.&#10;3.&#10;4.&#10;5."></textarea></td>
+                        <td><textarea class="answer-field" id="poin_presentasi" placeholder="1.&#10;2.&#10;3.&#10;4.&#10;5."></textarea></td>
                     </tr>
                 </table>
             </div>
@@ -995,10 +1048,10 @@
                 
                 <div style="background: var(--informatika-light); padding: 1rem; border-radius: 10px; margin-bottom: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                        <div><strong>Nama:</strong> <input type="text" class="answer-field" placeholder="Nama"></div>
-                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" placeholder="Kelas"></div>
-                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" placeholder="Kelompok"></div>
-                        <div><strong>Peran:</strong> <input type="text" class="answer-field" placeholder="Peran"></div>
+                        <div><strong>Nama:</strong> <input type="text" class="answer-field" id="ref_nama" placeholder="Nama"></div>
+                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="ref_kelas" placeholder="Kelas"></div>
+                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="ref_kelompok" placeholder="Kelompok"></div>
+                        <div><strong>Peran:</strong> <input type="text" class="answer-field" id="ref_peran" placeholder="Peran"></div>
                     </div>
                 </div>
                 
@@ -1007,26 +1060,26 @@
                         <tr><th>No</th><th>Pertanyaan</th><th>Jawabanku</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang merancang poster edukatif?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>2</td><td>Bagaimana perasaanku saat melihat hasil karya kelompokku?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>3</td><td>Saran dari kelompok reviewer mana yang paling berguna menurutku?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>4</td><td>Kesulitan apa yang aku alami saat merancang poster?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>5</td><td>Apakah menurutku poster kelompokku sudah cukup menarik dan informatif?</td><td><textarea class="answer-field large"></textarea></td></tr>
-                        <tr><td>6</td><td>Apa yang ingin aku tingkatkan untuk presentasi minggu depan?</td><td><textarea class="answer-field large"></textarea></td></tr>
+                        <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang merancang poster edukatif?</td><td><textarea class="answer-field large" id="ref1"></textarea></td></tr>
+                        <tr><td>2</td><td>Bagaimana perasaanku saat melihat hasil karya kelompokku?</td><td><textarea class="answer-field large" id="ref2"></textarea></td></tr>
+                        <tr><td>3</td><td>Saran dari kelompok reviewer mana yang paling berguna menurutku?</td><td><textarea class="answer-field large" id="ref3"></textarea></td></tr>
+                        <tr><td>4</td><td>Kesulitan apa yang aku alami saat merancang poster?</td><td><textarea class="answer-field large" id="ref4"></textarea></td></tr>
+                        <tr><td>5</td><td>Apakah menurutku poster kelompokku sudah cukup menarik dan informatif?</td><td><textarea class="answer-field large" id="ref5"></textarea></td></tr>
+                        <tr><td>6</td><td>Apa yang ingin aku tingkatkan untuk presentasi minggu depan?</td><td><textarea class="answer-field large" id="ref6"></textarea></td></tr>
                     </tbody>
                 </table>
                 
                 <div class="checklist-container">
                     <h4 style="margin-bottom: 10px;">Ceklis Pemahaman Akhir:</h4>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah membaca materi "Membaca Lateral"</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah merancang poster edukatif</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah melakukan peer review dengan kelompok lain</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah menyusun rencana finalisasi poster</div>
+                    <div class="checklist-item"><input type="checkbox" id="check1"> Saya sudah membaca materi "Membaca Lateral"</div>
+                    <div class="checklist-item"><input type="checkbox" id="check2"> Saya sudah merancang poster edukatif</div>
+                    <div class="checklist-item"><input type="checkbox" id="check3"> Saya sudah melakukan peer review dengan kelompok lain</div>
+                    <div class="checklist-item"><input type="checkbox" id="check4"> Saya sudah menyusun rencana finalisasi poster</div>
                 </div>
             </div>
 
             <!-- Tombol Kirim -->
-            <button class="submit-button" id="submitBtn" onclick="submitData()">
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kumpulkan LKPD
             </button>
             <div id="successMessage" class="success-message">
@@ -1047,39 +1100,466 @@
 
     <script src="../../../script.js"></script>
     <script>
-        // Simple Mobile Menu
+        // ==================== KONFIGURASI URL ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbzKGEcwDHHjWza6iSghSDtgwahTIClGQsDmCjVqVzQPuovu82XUkchCigSSZMxcYjmRkw/exec';
+
+        // ==================== KONFIGURASI FORM ====================
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 4 - MERANCANG POSTER EDUKATIF",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas/Peran",
+                "Data Review Materi",
+                "Data Pesan Edukatif",
+                "Data Perancangan Poster",
+                "Data Peer Review",
+                "Data Rencana Presentasi",
+                "Data Refleksi"
+            ]
+        };
+
+        // ==================== VARIABEL GLOBAL ====================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+
+        // ==================== FUNGSI LOCALSTORAGE ====================
+        const STORAGE_KEY = 'proyek1_aktivitas4';
+
+        function saveToLocalStorage() {
+            const formData = {};
+            
+            // Kumpulkan semua input text, textarea, select
+            document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').forEach(el => {
+                if (el.id) {
+                    formData[el.id] = el.value;
+                }
+            });
+            
+            // Kumpulkan checkbox
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                if (el.id) {
+                    formData[el.id] = el.checked;
+                }
+            });
+            
+            // Kumpulkan radio button
+            document.querySelectorAll('input[type="radio"]').forEach(el => {
+                if (el.name && !formData[`radio_${el.name}`]) {
+                    const checkedRadio = document.querySelector(`input[name="${el.name}"]:checked`);
+                    formData[`radio_${el.name}`] = checkedRadio ? checkedRadio.value : '';
+                }
+            });
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (!savedData) return;
+            
+            try {
+                const formData = JSON.parse(savedData);
+                
+                // Isi kembali semua input
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = formData[key];
+                        } else if (element.type === 'radio') {
+                            // Untuk radio, perlu pendekatan khusus
+                        } else {
+                            element.value = formData[key];
+                        }
+                    }
+                    
+                    // Handle radio buttons
+                    if (key.startsWith('radio_')) {
+                        const radioName = key.replace('radio_', '');
+                        const radioToCheck = document.querySelector(`input[name="${radioName}"][value="${formData[key]}"]`);
+                        if (radioToCheck) {
+                            radioToCheck.checked = true;
+                        }
+                    }
+                });
+                
+                updateProgressBar();
+            } catch (e) {
+                console.error('Gagal memuat data dari localStorage', e);
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
+        // ==================== INISIALISASI ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // Load data siswa
+            loadDataFromGoogleSheets();
+            
+            // Hamburger menu
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
             if (hamburger) {
                 hamburger.addEventListener('click', function() {
                     navMenu.classList.toggle('active');
                 });
             }
             
-            // Enable all form inputs
-            const inputs = document.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                input.disabled = false;
+            // Load data dari localStorage
+            loadFromLocalStorage();
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Tambahkan event listener untuk auto-save dan update progress
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', function() {
+                    saveToLocalStorage();
+                    updateProgressBar();
+                });
+                el.addEventListener('change', function() {
+                    saveToLocalStorage();
+                    updateProgressBar();
+                });
             });
+            
+            // Event listener untuk menghitung total skor peer review
+            for (let i = 1; i <= 5; i++) {
+                const skorInput = document.getElementById(`review_skor${i}`);
+                if (skorInput) {
+                    skorInput.addEventListener('change', function() {
+                        let total = 0;
+                        for (let j = 1; j <= 5; j++) {
+                            const skor = parseInt(document.getElementById(`review_skor${j}`)?.value) || 0;
+                            total += skor;
+                        }
+                        document.getElementById('review_total').textContent = total;
+                    });
+                }
+            }
         });
 
-        // Fungsi submit (placeholder)
-        function submitData() {
-            // Tampilkan loading
-            document.getElementById('loadingMessage').style.display = 'block';
+        // ==================== FUNGSI PROGRESS BAR ====================
+        function updateProgressBar() {
+            const totalFields = document.querySelectorAll('input:not([type=checkbox]), select, textarea').length;
+            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]), select, textarea'))
+                .filter(el => el.value && el.value.trim() !== '').length;
             
-            // Simulasi pengiriman data
-            setTimeout(function() {
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
+            const progress = Math.round((filledFields / totalFields) * 100) || 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+        }
+
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
                 
-                // Sembunyikan pesan sukses setelah 3 detik
-                setTimeout(function() {
+                const callbackName = 'jsonp_callback_' + Date.now();
+                
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        
+                        dataKelas.forEach(kelas => {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        });
+                        
+                        enableForm();
+                        document.getElementById('loadingMessage').style.display = 'none';
+                    } else {
+                        // TIDAK MENGGUNAKAN FALLBACK DATA
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        document.getElementById('errorMessage').style.display = 'block';
+                        document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan cek koneksi internet Anda dan refresh halaman.';
+                        
+                        // Disable form karena data tidak bisa dimuat
+                        document.getElementById('kelas').disabled = true;
+                        document.getElementById('nama').disabled = true;
+                        document.getElementById('kelompok').disabled = true;
+                        document.getElementById('tugas').disabled = true;
+                        document.getElementById('submitBtn').disabled = true;
+                    }
+                    
+                    isLoading = false;
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = function() {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan cek koneksi internet Anda dan refresh halaman.';
+                    
+                    // Disable form
+                    document.getElementById('kelas').disabled = true;
+                    document.getElementById('nama').disabled = true;
+                    document.getElementById('kelompok').disabled = true;
+                    document.getElementById('tugas').disabled = true;
+                    document.getElementById('submitBtn').disabled = true;
+                    
+                    isLoading = false;
+                };
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Terjadi kesalahan. Silakan cek koneksi internet Anda dan refresh halaman.';
+                
+                // Disable form
+                document.getElementById('kelas').disabled = true;
+                document.getElementById('nama').disabled = true;
+                document.getElementById('kelompok').disabled = true;
+                document.getElementById('tugas').disabled = true;
+                document.getElementById('submitBtn').disabled = true;
+                
+                isLoading = false;
+            }
+        }
+
+        function enableForm() {
+            document.getElementById('kelas').disabled = false;
+            document.getElementById('nama').disabled = false;
+            document.getElementById('kelompok').disabled = false;
+            document.getElementById('tugas').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
+            });
+        }
+
+        // ==================== FUNGSI SUBMIT DATA ====================
+        async function submitData() {
+            if (isLoading) {
+                alert('Data masih dimuat. Silakan tunggu.');
+                return;
+            }
+            
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value || !document.getElementById('kelompok').value) {
+                alert('Lengkapi identitas terlebih dahulu!');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                const formData = new URLSearchParams();
+                
+                // Kirim konfigurasi sheet
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                
+                // ==================== KUMPULKAN DATA ====================
+                // Data Identitas Dasar
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value);
+                formData.append('Tugas/Peran', document.getElementById('tugas').value);
+                
+                // Data Review Materi (Bagian A)
+                const dataReview = {
+                    q1: document.getElementById('review1')?.value || '',
+                    q2: document.getElementById('review2')?.value || '',
+                    q3: document.getElementById('review3')?.value || '',
+                    isu: document.getElementById('review_isu')?.value || '',
+                    kesimpulan: document.querySelector('input[name="kesimpulan"]:checked')?.value || '',
+                    bukti: document.getElementById('review_bukti')?.value || '',
+                    bacaMateri: document.getElementById('bacaMateri')?.checked || false,
+                    bawaAnalisis: document.getElementById('bawaAnalisis')?.checked || false,
+                    tanggalBaca: document.getElementById('tanggalBaca')?.value || ''
+                };
+                formData.append('Data Review Materi', JSON.stringify(dataReview));
+                
+                // Data Pesan Edukatif (Bagian B)
+                const dataPesan = {
+                    isu: document.getElementById('pesan_isu')?.value || '',
+                    status: document.querySelector('input[name="status"]:checked')?.value || '',
+                    judul: document.getElementById('pesan_judul')?.value || '',
+                    fakta: document.getElementById('pesan_fakta')?.value || '',
+                    bukti: document.getElementById('pesan_bukti')?.value || '',
+                    ajakan: document.getElementById('pesan_ajakan')?.value || '',
+                    tagline: document.getElementById('pesan_tagline')?.value || '',
+                    sumber1_detail: document.getElementById('sumber1_detail')?.value || '',
+                    sumber1_alasan: document.getElementById('sumber1_alasan')?.value || '',
+                    sumber2_detail: document.getElementById('sumber2_detail')?.value || '',
+                    sumber2_alasan: document.getElementById('sumber2_alasan')?.value || '',
+                    sumber3_detail: document.getElementById('sumber3_detail')?.value || '',
+                    sumber3_alasan: document.getElementById('sumber3_alasan')?.value || '',
+                    sumber4_detail: document.getElementById('sumber4_detail')?.value || '',
+                    sumber4_alasan: document.getElementById('sumber4_alasan')?.value || '',
+                    sumber5_detail: document.getElementById('sumber5_detail')?.value || '',
+                    sumber5_alasan: document.getElementById('sumber5_alasan')?.value || ''
+                };
+                formData.append('Data Pesan Edukatif', JSON.stringify(dataPesan));
+                
+                // Data Perancangan Poster (Bagian C)
+                const dataPerancangan = {
+                    warna_biru: document.getElementById('warna_biru')?.checked || false,
+                    warna_hijau: document.getElementById('warna_hijau')?.checked || false,
+                    warna_merah: document.getElementById('warna_merah')?.checked || false,
+                    warna_kuning: document.getElementById('warna_kuning')?.checked || false,
+                    warna_kombinasi: document.getElementById('warna_kombinasi')?.checked || false,
+                    warna_kombinasi_teks: document.getElementById('warna_kombinasi_teks')?.value || '',
+                    warna_alasan: document.getElementById('warna_alasan')?.value || '',
+                    ikon_ceklis: document.getElementById('ikon_ceklis')?.checked || false,
+                    ikon_silang: document.getElementById('ikon_silang')?.checked || false,
+                    ikon_ilustrasi: document.getElementById('ikon_ilustrasi')?.checked || false,
+                    ikon_infografis: document.getElementById('ikon_infografis')?.checked || false,
+                    ikon_lainnya: document.getElementById('ikon_lainnya')?.checked || false,
+                    ikon_lainnya_teks: document.getElementById('ikon_lainnya_teks')?.value || '',
+                    tipografi_tebal: document.getElementById('tipografi_tebal')?.checked || false,
+                    tipografi_mudah: document.getElementById('tipografi_mudah')?.checked || false,
+                    tipografi_kombinasi: document.getElementById('tipografi_kombinasi')?.checked || false,
+                    layout_vertikal: document.getElementById('layout_vertikal')?.checked || false,
+                    layout_horizontal: document.getElementById('layout_horizontal')?.checked || false,
+                    layout_poster: document.getElementById('layout_poster')?.checked || false,
+                    layout_infografis: document.getElementById('layout_infografis')?.checked || false,
+                    konten_judul: document.getElementById('konten_judul')?.value || '',
+                    konten_subjudul: document.getElementById('konten_subjudul')?.value || '',
+                    konten_fakta1: document.getElementById('konten_fakta1')?.value || '',
+                    konten_fakta2: document.getElementById('konten_fakta2')?.value || '',
+                    konten_fakta3: document.getElementById('konten_fakta3')?.value || '',
+                    konten_kutipan: document.getElementById('konten_kutipan')?.value || '',
+                    konten_ajakan: document.getElementById('konten_ajakan')?.value || '',
+                    konten_sumber: document.getElementById('konten_sumber')?.value || '',
+                    konten_identitas: document.getElementById('konten_identitas')?.value || ''
+                };
+                formData.append('Data Perancangan Poster', JSON.stringify(dataPerancangan));
+                
+                // Data Peer Review (Bagian D)
+                const dataPeer = {
+                    reviewer: document.getElementById('review_reviewer')?.value || '',
+                    direview: document.getElementById('review_direview')?.value || '',
+                    tanggal: document.getElementById('review_tanggal')?.value || '',
+                    skor1: document.getElementById('review_skor1')?.value || '',
+                    catatan1: document.getElementById('review_catatan1')?.value || '',
+                    skor2: document.getElementById('review_skor2')?.value || '',
+                    catatan2: document.getElementById('review_catatan2')?.value || '',
+                    skor3: document.getElementById('review_skor3')?.value || '',
+                    catatan3: document.getElementById('review_catatan3')?.value || '',
+                    skor4: document.getElementById('review_skor4')?.value || '',
+                    catatan4: document.getElementById('review_catatan4')?.value || '',
+                    skor5: document.getElementById('review_skor5')?.value || '',
+                    catatan5: document.getElementById('review_catatan5')?.value || '',
+                    total: document.getElementById('review_total')?.textContent || '0',
+                    kekuatan: document.getElementById('review_kekuatan')?.value || '',
+                    saran: document.getElementById('review_saran')?.value || '',
+                    komentar: document.getElementById('review_komentar')?.value || '',
+                    perbaikan_saran1: document.getElementById('perbaikan_saran1')?.value || '',
+                    perbaikan_rencana1: document.getElementById('perbaikan_rencana1')?.value || '',
+                    perbaikan_saran2: document.getElementById('perbaikan_saran2')?.value || '',
+                    perbaikan_rencana2: document.getElementById('perbaikan_rencana2')?.value || '',
+                    perbaikan_saran3: document.getElementById('perbaikan_saran3')?.value || '',
+                    perbaikan_rencana3: document.getElementById('perbaikan_rencana3')?.value || '',
+                    perbaikan_saran4: document.getElementById('perbaikan_saran4')?.value || '',
+                    perbaikan_rencana4: document.getElementById('perbaikan_rencana4')?.value || '',
+                    perbaikan_saran5: document.getElementById('perbaikan_saran5')?.value || '',
+                    perbaikan_rencana5: document.getElementById('perbaikan_rencana5')?.value || ''
+                };
+                formData.append('Data Peer Review', JSON.stringify(dataPeer));
+                
+                // Data Rencana Presentasi (Bagian E)
+                const dataRencana = {
+                    tugas1_pj: document.getElementById('tugas1_pj')?.value || '',
+                    tugas1_target: document.getElementById('tugas1_target')?.value || '',
+                    tugas2_pj: document.getElementById('tugas2_pj')?.value || '',
+                    tugas2_target: document.getElementById('tugas2_target')?.value || '',
+                    tugas3_pj: document.getElementById('tugas3_pj')?.value || '',
+                    tugas3_target: document.getElementById('tugas3_target')?.value || '',
+                    tugas4_pj: document.getElementById('tugas4_pj')?.value || '',
+                    tugas4_target: document.getElementById('tugas4_target')?.value || '',
+                    tugas5_pj: document.getElementById('tugas5_pj')?.value || '',
+                    tugas5_target: document.getElementById('tugas5_target')?.value || '',
+                    media_poster: document.getElementById('media_poster')?.checked || false,
+                    media_slide: document.getElementById('media_slide')?.checked || false,
+                    media_video: document.getElementById('media_video')?.checked || false,
+                    media_kombinasi: document.getElementById('media_kombinasi')?.checked || false,
+                    presenter: document.getElementById('presenter')?.value || '',
+                    durasi: document.querySelector('input[name="durasi"]:checked')?.value || '',
+                    poin_presentasi: document.getElementById('poin_presentasi')?.value || ''
+                };
+                formData.append('Data Rencana Presentasi', JSON.stringify(dataRencana));
+                
+                // Data Refleksi (Bagian F)
+                const dataRefleksi = {
+                    nama: document.getElementById('ref_nama')?.value || '',
+                    kelas: document.getElementById('ref_kelas')?.value || '',
+                    kelompok: document.getElementById('ref_kelompok')?.value || '',
+                    peran: document.getElementById('ref_peran')?.value || '',
+                    q1: document.getElementById('ref1')?.value || '',
+                    q2: document.getElementById('ref2')?.value || '',
+                    q3: document.getElementById('ref3')?.value || '',
+                    q4: document.getElementById('ref4')?.value || '',
+                    q5: document.getElementById('ref5')?.value || '',
+                    q6: document.getElementById('ref6')?.value || '',
+                    check1: document.getElementById('check1')?.checked || false,
+                    check2: document.getElementById('check2')?.checked || false,
+                    check3: document.getElementById('check3')?.checked || false,
+                    check4: document.getElementById('check4')?.checked || false
+                };
+                formData.append('Data Refleksi', JSON.stringify(dataRefleksi));
+                
+                // ==================== KIRIM ====================
+                await fetch(URL_PEREKAP_AKTIVITAS, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                document.getElementById('successMessage').style.display = 'block';
+                clearLocalStorage(); // Hapus data yang tersimpan karena sudah terkirim
+                setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
-                }, 3000);
-            }, 1500);
+                }, 5000);
+
+                if (confirm('Data terkirim! Ingin mereset form?')) {
+                    location.reload();
+                }
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan LKPD';
+            }
         }
     </script>
 </body>

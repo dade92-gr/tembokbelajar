@@ -490,6 +490,42 @@
             padding: 8px;
             border: 1px solid #ddd;
         }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin: 2rem 0;
+            background: var(--informatika-gray);
+            border-radius: 30px;
+            padding: 1rem;
+            position: sticky;
+            top: 10px;
+            z-index: 99;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--informatika-primary), var(--informatika-secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Catatan Penting */
+        .catatan-penting {
+            background: #fff9e0;
+            border-left: 5px solid #f1c40f;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
 <body>
@@ -531,16 +567,29 @@
 
         <!-- Loading Message -->
         <div id="loadingMessage" class="loading-message">
-            <i class="fas fa-spinner fa-spin"></i> Memuat Lembar Kerja Peserta Didik......
+            <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
         <!-- Error Message -->
         <div id="errorMessage" class="error-message" style="display: none;">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan isi manual.</span>
+            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan cek koneksi internet Anda dan refresh halaman.</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
         </div>
 
         <!-- Worksheet Container - LKPD Aktivitas 2 -->
         <div class="worksheet-container" id="worksheetForm">
+            <!-- HALO KELOMPOK HEBAT -->
+            <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--informatika-primary);">
+                <i class="fas fa-lightbulb" style="color: var(--informatika-primary); margin-right: 10px;"></i>
+                <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
+                Silakan isi lembar kerja ini untuk mempelajari strategi mencari informasi menggunakan operator pencarian.
+            </div>
+
             <h1 class="worksheet-title">LEMBAR KERJA PESERTA DIDIK (LKPD) PROYEK 1 – AKTIVITAS 2</h1>
             <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem; color: var(--informatika-accent);">
                 <strong>STRATEGI MENCARI INFORMASI</strong>
@@ -556,19 +605,23 @@
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-building"></i> Kelas</label>
-                    <input type="text" id="kelas" placeholder="Contoh: X IPA 1" class="answer-field">
+                    <select id="kelas" class="answer-field" onchange="updateNamaDropdown()" disabled>
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama Lengkap</label>
-                    <input type="text" id="nama" placeholder="Contoh: John Doe" class="answer-field">
+                    <select id="nama" class="answer-field" disabled>
+                        <option value="">-- Pilih Nama --</option>
+                    </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Nama Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Digital Detektif" class="answer-field">
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Digital Detektif" class="answer-field" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Sekretaris" class="answer-field">
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua / Sekretaris" class="answer-field" disabled>
                 </div>
             </div>
 
@@ -620,7 +673,7 @@
                         <tr>
                             <td>1</td>
                             <td>Apa yang dimaksud dengan operator pencarian (search operator)?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawabanmu..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review1" placeholder="Tulis jawabanmu..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
@@ -628,33 +681,33 @@
                             <td>
                                 <table class="operator-mini-table">
                                     <tr><th>Operator</th><th>Fungsi</th></tr>
-                                    <tr><td>1. <input type="text" class="answer-field" placeholder="Operator"></td><td><input type="text" class="answer-field" placeholder="Fungsinya"></td></tr>
-                                    <tr><td>2. <input type="text" class="answer-field" placeholder="Operator"></td><td><input type="text" class="answer-field" placeholder="Fungsinya"></td></tr>
-                                    <tr><td>3. <input type="text" class="answer-field" placeholder="Operator"></td><td><input type="text" class="answer-field" placeholder="Fungsinya"></td></tr>
-                                    <tr><td>4. <input type="text" class="answer-field" placeholder="Operator"></td><td><input type="text" class="answer-field" placeholder="Fungsinya"></td></tr>
-                                    <tr><td>5. <input type="text" class="answer-field" placeholder="Operator"></td><td><input type="text" class="answer-field" placeholder="Fungsinya"></td></tr>
+                                    <tr><td>1. <input type="text" class="answer-field" id="operator1" placeholder="Operator"></td><td><input type="text" class="answer-field" id="fungsi1" placeholder="Fungsinya"></td></tr>
+                                    <tr><td>2. <input type="text" class="answer-field" id="operator2" placeholder="Operator"></td><td><input type="text" class="answer-field" id="fungsi2" placeholder="Fungsinya"></td></tr>
+                                    <tr><td>3. <input type="text" class="answer-field" id="operator3" placeholder="Operator"></td><td><input type="text" class="answer-field" id="fungsi3" placeholder="Fungsinya"></td></tr>
+                                    <tr><td>4. <input type="text" class="answer-field" id="operator4" placeholder="Operator"></td><td><input type="text" class="answer-field" id="fungsi4" placeholder="Fungsinya"></td></tr>
+                                    <tr><td>5. <input type="text" class="answer-field" id="operator5" placeholder="Operator"></td><td><input type="text" class="answer-field" id="fungsi5" placeholder="Fungsinya"></td></tr>
                                 </table>
                             </td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Apa fungsi tanda kutip (" ") dalam pencarian? Berikan contoh!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban dan contoh..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review3" placeholder="Tulis jawaban dan contoh..."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Apa fungsi operator site: dalam pencarian? Berikan contoh!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban dan contoh..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review4" placeholder="Tulis jawaban dan contoh..."></textarea></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td>Bagaimana cara mengecualikan kata tertentu dari hasil pencarian?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review5" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>6</td>
                             <td>Apa yang dimaksud dengan sumber kredibel? Sebutkan ciri-cirinya menurut materi!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="review6" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -692,11 +745,11 @@
                             <td>Mesin pencari apa yang paling sering kamu gunakan?</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="searchEngine"> Google</label>
-                                    <label class="radio-item"><input type="radio" name="searchEngine"> Bing</label>
-                                    <label class="radio-item"><input type="radio" name="searchEngine"> Yahoo</label>
-                                    <label class="radio-item"><input type="radio" name="searchEngine"> DuckDuckGo</label>
-                                    <label class="radio-item"><input type="radio" name="searchEngine"> Lainnya: <input type="text" style="width: 100px;"></label>
+                                    <label class="radio-item"><input type="radio" name="searchEngine" id="search_google" value="Google"> Google</label>
+                                    <label class="radio-item"><input type="radio" name="searchEngine" id="search_bing" value="Bing"> Bing</label>
+                                    <label class="radio-item"><input type="radio" name="searchEngine" id="search_yahoo" value="Yahoo"> Yahoo</label>
+                                    <label class="radio-item"><input type="radio" name="searchEngine" id="search_duck" value="DuckDuckGo"> DuckDuckGo</label>
+                                    <label class="radio-item"><input type="radio" name="searchEngine" id="search_lainnya" value="Lainnya"> Lainnya: <input type="text" id="search_lainnya_teks" style="width: 100px;"></label>
                                 </div>
                             </td>
                         </tr>
@@ -705,9 +758,9 @@
                             <td>Dalam 1 hari, berapa kali rata-rata kamu mencari informasi di internet?</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="frekuensi"> 1-5 kali</label>
-                                    <label class="radio-item"><input type="radio" name="frekuensi"> 6-10 kali</label>
-                                    <label class="radio-item"><input type="radio" name="frekuensi"> >10 kali</label>
+                                    <label class="radio-item"><input type="radio" name="frekuensi" id="frekuensi1" value="1-5 kali"> 1-5 kali</label>
+                                    <label class="radio-item"><input type="radio" name="frekuensi" id="frekuensi2" value="6-10 kali"> 6-10 kali</label>
+                                    <label class="radio-item"><input type="radio" name="frekuensi" id="frekuensi3" value=">10 kali"> >10 kali</label>
                                 </div>
                             </td>
                         </tr>
@@ -716,16 +769,16 @@
                             <td>Apakah selama ini kamu merasa informasi yang kamu dapatkan selalu akurat?</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="akurat"> Ya, selalu</label>
-                                    <label class="radio-item"><input type="radio" name="akurat"> Kadang-kadang</label>
-                                    <label class="radio-item"><input type="radio" name="akurat"> Sering tidak akurat</label>
+                                    <label class="radio-item"><input type="radio" name="akurat" id="akurat1" value="Ya, selalu"> Ya, selalu</label>
+                                    <label class="radio-item"><input type="radio" name="akurat" id="akurat2" value="Kadang-kadang"> Kadang-kadang</label>
+                                    <label class="radio-item"><input type="radio" name="akurat" id="akurat3" value="Sering tidak akurat"> Sering tidak akurat</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Bagaimana caramu selama ini memilah informasi yang benar?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis caramu memilah informasi..."></textarea></td>
+                            <td><textarea class="answer-field large" id="refleksi_memilah" placeholder="Tulis caramu memilah informasi..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -738,7 +791,7 @@
                     <i class="fas fa-laptop"></i> "Praktik langsung menggunakan operator pencarian!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 1: Mencoba Berbagai Operator Pencarian</h4>
+                <h4 class="section-subtitle">Kegiatan 1: Mencoba Berbagai Operator Pencarian</h4>
                 <p>Instruksi: Gunakan Google Search atau mesin pencari lain untuk mencoba setiap operator di bawah ini. Catat perbedaan hasil yang kamu dapatkan!</p>
                 
                 <table class="lkpd-table">
@@ -752,23 +805,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Kata kunci biasa</td><td>vaksin covid</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>2</td><td>Tanda kutip (" ")</td><td>"vaksin covid"</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>3</td><td>site:</td><td>site:who.int vaksin</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>4</td><td>Minus (-)</td><td>vaksin -hoaks -mitos</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>5</td><td>filetype:</td><td>vaksin filetype:pdf</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>6</td><td>related:</td><td>related:kompas.com</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>7</td><td>intitle:</td><td>intitle:vaksin</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>8</td><td>Kombinasi</td><td>site:who.int "vaksin covid" -hoaks</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>1</td><td>Kata kunci biasa</td><td>vaksin covid</td><td><input type="text" class="answer-field" id="eksplorasi1_hasil"></td><td><input type="text" class="answer-field" id="eksplorasi1_catatan"></td></tr>
+                        <tr><td>2</td><td>Tanda kutip (" ")</td><td>"vaksin covid"</td><td><input type="text" class="answer-field" id="eksplorasi2_hasil"></td><td><input type="text" class="answer-field" id="eksplorasi2_catatan"></td></tr>
+                        <tr><td>3</td><td>site:</td><td>site:who.int vaksin</td><td><input type="text" class="answer-field" id="eksplorasi3_hasil"></td><td><input type="text" class="answer-field" id="eksplorasi3_catatan"></td></tr>
+                        <tr><td>4</td><td>Minus (-)</td><td>vaksin -hoaks -mitos</td><td><input type="text" class="answer-field" id="eksplorasi4_hasil"></td><td><input type="text" class="answer-field" id="eksplorasi4_catatan"></td></tr>
+                        <tr><td>5</td><td>filetype:</td><td>vaksin filetype:pdf</td><td><input type="text" class="answer-field" id="eksplorasi5_hasil"></td><td><input type="text" class="answer-field" id="eksplorasi5_catatan"></td></tr>
+                        <tr><td>6</td><td>related:</td><td>related:kompas.com</td><td><input type="text" class="answer-field" id="eksplorasi6_hasil"></td><td><input type="text" class="answer-field" id="eksplorasi6_catatan"></td></tr>
+                        <tr><td>7</td><td>intitle:</td><td>intitle:vaksin</td><td><input type="text" class="answer-field" id="eksplorasi7_hasil"></td><td><input type="text" class="answer-field" id="eksplorasi7_catatan"></td></tr>
+                        <tr><td>8</td><td>Kombinasi</td><td>site:who.int "vaksin covid" -hoaks</td><td><input type="text" class="answer-field" id="eksplorasi8_hasil"></td><td><input type="text" class="answer-field" id="eksplorasi8_catatan"></td></tr>
                     </tbody>
                 </table>
                 
-                <h4 class="section-subtitle">Aktivitas 2: Menerapkan pada Isu Kelompok</h4>
+                <h4 class="section-subtitle">Kegiatan 2: Menerapkan pada Isu Kelompok</h4>
                 <p>Instruksi: Gunakan isu yang sudah kalian pilih pada Aktivitas 1. Terapkan berbagai operator pencarian untuk mendapatkan informasi yang lebih spesifik!</p>
                 
                 <div style="margin-bottom: 15px;">
                     <strong>Isu Kelompok Kami:</strong> 
-                    <input type="text" class="answer-field" placeholder="Tulis isu yang dipilih dari Aktivitas 1" style="width: 100%;">
+                    <input type="text" class="answer-field" id="isu_kelompok" placeholder="Tulis isu yang dipilih dari Aktivitas 1" style="width: 100%;">
                 </div>
                 
                 <table class="lkpd-table">
@@ -782,12 +835,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>Kata kunci biasa</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>2</td><td>Tanda kutip</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>3</td><td>site: (situs resmi)</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>4</td><td>Minus kata negatif</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>5</td><td>filetype:pdf</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
-                        <tr><td>6</td><td>Kombinasi 2 operator</td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td><td><input type="text" class="answer-field"></td></tr>
+                        <tr><td>1</td><td>Kata kunci biasa</td><td><input type="text" class="answer-field" id="isu_rumus1"></td><td><input type="text" class="answer-field" id="isu_hasil1"></td><td><input type="text" class="answer-field" id="isu_relevan1"></td></tr>
+                        <tr><td>2</td><td>Tanda kutip</td><td><input type="text" class="answer-field" id="isu_rumus2"></td><td><input type="text" class="answer-field" id="isu_hasil2"></td><td><input type="text" class="answer-field" id="isu_relevan2"></td></tr>
+                        <tr><td>3</td><td>site: (situs resmi)</td><td><input type="text" class="answer-field" id="isu_rumus3"></td><td><input type="text" class="answer-field" id="isu_hasil3"></td><td><input type="text" class="answer-field" id="isu_relevan3"></td></tr>
+                        <tr><td>4</td><td>Minus kata negatif</td><td><input type="text" class="answer-field" id="isu_rumus4"></td><td><input type="text" class="answer-field" id="isu_hasil4"></td><td><input type="text" class="answer-field" id="isu_relevan4"></td></tr>
+                        <tr><td>5</td><td>filetype:pdf</td><td><input type="text" class="answer-field" id="isu_rumus5"></td><td><input type="text" class="answer-field" id="isu_hasil5"></td><td><input type="text" class="answer-field" id="isu_relevan5"></td></tr>
+                        <tr><td>6</td><td>Kombinasi 2 operator</td><td><input type="text" class="answer-field" id="isu_rumus6"></td><td><input type="text" class="answer-field" id="isu_hasil6"></td><td><input type="text" class="answer-field" id="isu_relevan6"></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -799,7 +852,7 @@
                     <i class="fas fa-exclamation-triangle"></i> "Tidak semua sumber bisa dipercaya!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 3: Menganalisis Kredibilitas Situs</h4>
+                <h4 class="section-subtitle">Kegiatan 3: Menganalisis Kredibilitas Situs</h4>
                 <p>Instruksi: Pilih 3 situs berbeda yang muncul dari pencarian kalian. Analisis kredibilitasnya menggunakan tabel di bawah ini!</p>
                 
                 <!-- Situs 1 -->
@@ -807,50 +860,50 @@
                     <h5 style="color: var(--informatika-dark); margin-bottom: 10px;">Situs 1:</h5>
                     <table class="lkpd-table">
                         <tr><th style="width: 30%;">Aspek</th><th style="width: 30%;">Penilaian</th><th>Catatan</th></tr>
-                        <tr><td>Nama Situs/URL</td><td colspan="2"><input type="text" class="answer-field" placeholder="Contoh: kompas.com"></td></tr>
+                        <tr><td>Nama Situs/URL</td><td colspan="2"><input type="text" class="answer-field" id="situs1_url" placeholder="Contoh: kompas.com"></td></tr>
                         <tr>
                             <td>Domain</td>
                             <td>
                                 <div class="checkbox-group">
-                                    <label class="checkbox-item"><input type="checkbox"> .go.id</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .ac.id</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .org</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .com</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .net</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Lainnya: <input type="text" style="width: 80px;"></label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_domain_goid"> .go.id</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_domain_ac"> .ac.id</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_domain_org"> .org</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_domain_com"> .com</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_domain_net"> .net</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_domain_lain"> Lainnya: <input type="text" id="situs1_domain_lain_teks" style="width: 80px;"></label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Catatan"></td>
+                            <td><input type="text" class="answer-field" id="situs1_domain_catatan" placeholder="Catatan"></td>
                         </tr>
                         <tr>
                             <td>Penulis Jelas</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="penulis1"> Ya</label>
-                                    <label class="radio-item"><input type="radio" name="penulis1"> Tidak</label>
+                                    <label class="radio-item"><input type="radio" name="situs1_penulis" id="situs1_penulis_ya" value="Ya"> Ya</label>
+                                    <label class="radio-item"><input type="radio" name="situs1_penulis" id="situs1_penulis_tidak" value="Tidak"> Tidak</label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Nama penulis jika ada"></td>
+                            <td><input type="text" class="answer-field" id="situs1_penulis_nama" placeholder="Nama penulis jika ada"></td>
                         </tr>
-                        <tr><td>Tanggal Publikasi</td><td colspan="2"><input type="text" class="answer-field" placeholder="Contoh: 15 Jan 2024"></td></tr>
+                        <tr><td>Tanggal Publikasi</td><td colspan="2"><input type="text" class="answer-field" id="situs1_tanggal" placeholder="Contoh: 15 Jan 2024"></td></tr>
                         <tr>
                             <td>Sumber Data Disebutkan</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="sumber1"> Ya</label>
-                                    <label class="radio-item"><input type="radio" name="sumber1"> Tidak</label>
+                                    <label class="radio-item"><input type="radio" name="situs1_sumber" id="situs1_sumber_ya" value="Ya"> Ya</label>
+                                    <label class="radio-item"><input type="radio" name="situs1_sumber" id="situs1_sumber_tidak" value="Tidak"> Tidak</label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Catatan"></td>
+                            <td><input type="text" class="answer-field" id="situs1_sumber_catatan" placeholder="Catatan"></td>
                         </tr>
                         <tr>
                             <td>Tujuan Artikel</td>
                             <td colspan="2">
                                 <div class="checkbox-group">
-                                    <label class="checkbox-item"><input type="checkbox"> Informasi</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Opini</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Iklan</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Propaganda</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_tujuan_informasi"> Informasi</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_tujuan_opini"> Opini</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_tujuan_iklan"> Iklan</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs1_tujuan_propaganda"> Propaganda</label>
                                 </div>
                             </td>
                         </tr>
@@ -858,12 +911,12 @@
                             <td>Kesimpulan</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="kesimpulan1"> Kredibel</label>
-                                    <label class="radio-item"><input type="radio" name="kesimpulan1"> Meragukan</label>
-                                    <label class="radio-item"><input type="radio" name="kesimpulan1"> Tidak Kredibel</label>
+                                    <label class="radio-item"><input type="radio" name="situs1_kesimpulan" id="situs1_kesimpulan_kredibel" value="Kredibel"> Kredibel</label>
+                                    <label class="radio-item"><input type="radio" name="situs1_kesimpulan" id="situs1_kesimpulan_ragu" value="Meragukan"> Meragukan</label>
+                                    <label class="radio-item"><input type="radio" name="situs1_kesimpulan" id="situs1_kesimpulan_tidak" value="Tidak Kredibel"> Tidak Kredibel</label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Skor: /6"></td>
+                            <td><input type="text" class="answer-field" id="situs1_skor" placeholder="Skor: /6"></td>
                         </tr>
                     </table>
                 </div>
@@ -873,50 +926,50 @@
                     <h5 style="color: var(--informatika-dark); margin-bottom: 10px;">Situs 2:</h5>
                     <table class="lkpd-table">
                         <tr><th style="width: 30%;">Aspek</th><th style="width: 30%;">Penilaian</th><th>Catatan</th></tr>
-                        <tr><td>Nama Situs/URL</td><td colspan="2"><input type="text" class="answer-field" placeholder="Contoh: kompas.com"></td></tr>
+                        <tr><td>Nama Situs/URL</td><td colspan="2"><input type="text" class="answer-field" id="situs2_url" placeholder="Contoh: kompas.com"></td></tr>
                         <tr>
                             <td>Domain</td>
                             <td>
                                 <div class="checkbox-group">
-                                    <label class="checkbox-item"><input type="checkbox"> .go.id</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .ac.id</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .org</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .com</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .net</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Lainnya: <input type="text" style="width: 80px;"></label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_domain_goid"> .go.id</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_domain_ac"> .ac.id</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_domain_org"> .org</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_domain_com"> .com</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_domain_net"> .net</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_domain_lain"> Lainnya: <input type="text" id="situs2_domain_lain_teks" style="width: 80px;"></label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Catatan"></td>
+                            <td><input type="text" class="answer-field" id="situs2_domain_catatan" placeholder="Catatan"></td>
                         </tr>
                         <tr>
                             <td>Penulis Jelas</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="penulis2"> Ya</label>
-                                    <label class="radio-item"><input type="radio" name="penulis2"> Tidak</label>
+                                    <label class="radio-item"><input type="radio" name="situs2_penulis" id="situs2_penulis_ya" value="Ya"> Ya</label>
+                                    <label class="radio-item"><input type="radio" name="situs2_penulis" id="situs2_penulis_tidak" value="Tidak"> Tidak</label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Nama penulis jika ada"></td>
+                            <td><input type="text" class="answer-field" id="situs2_penulis_nama" placeholder="Nama penulis jika ada"></td>
                         </tr>
-                        <tr><td>Tanggal Publikasi</td><td colspan="2"><input type="text" class="answer-field" placeholder="Contoh: 15 Jan 2024"></td></tr>
+                        <tr><td>Tanggal Publikasi</td><td colspan="2"><input type="text" class="answer-field" id="situs2_tanggal" placeholder="Contoh: 15 Jan 2024"></td></tr>
                         <tr>
                             <td>Sumber Data Disebutkan</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="sumber2"> Ya</label>
-                                    <label class="radio-item"><input type="radio" name="sumber2"> Tidak</label>
+                                    <label class="radio-item"><input type="radio" name="situs2_sumber" id="situs2_sumber_ya" value="Ya"> Ya</label>
+                                    <label class="radio-item"><input type="radio" name="situs2_sumber" id="situs2_sumber_tidak" value="Tidak"> Tidak</label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Catatan"></td>
+                            <td><input type="text" class="answer-field" id="situs2_sumber_catatan" placeholder="Catatan"></td>
                         </tr>
                         <tr>
                             <td>Tujuan Artikel</td>
                             <td colspan="2">
                                 <div class="checkbox-group">
-                                    <label class="checkbox-item"><input type="checkbox"> Informasi</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Opini</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Iklan</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Propaganda</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_tujuan_informasi"> Informasi</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_tujuan_opini"> Opini</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_tujuan_iklan"> Iklan</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs2_tujuan_propaganda"> Propaganda</label>
                                 </div>
                             </td>
                         </tr>
@@ -924,12 +977,12 @@
                             <td>Kesimpulan</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="kesimpulan2"> Kredibel</label>
-                                    <label class="radio-item"><input type="radio" name="kesimpulan2"> Meragukan</label>
-                                    <label class="radio-item"><input type="radio" name="kesimpulan2"> Tidak Kredibel</label>
+                                    <label class="radio-item"><input type="radio" name="situs2_kesimpulan" id="situs2_kesimpulan_kredibel" value="Kredibel"> Kredibel</label>
+                                    <label class="radio-item"><input type="radio" name="situs2_kesimpulan" id="situs2_kesimpulan_ragu" value="Meragukan"> Meragukan</label>
+                                    <label class="radio-item"><input type="radio" name="situs2_kesimpulan" id="situs2_kesimpulan_tidak" value="Tidak Kredibel"> Tidak Kredibel</label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Skor: /6"></td>
+                            <td><input type="text" class="answer-field" id="situs2_skor" placeholder="Skor: /6"></td>
                         </tr>
                     </table>
                 </div>
@@ -939,50 +992,50 @@
                     <h5 style="color: var(--informatika-dark); margin-bottom: 10px;">Situs 3:</h5>
                     <table class="lkpd-table">
                         <tr><th style="width: 30%;">Aspek</th><th style="width: 30%;">Penilaian</th><th>Catatan</th></tr>
-                        <tr><td>Nama Situs/URL</td><td colspan="2"><input type="text" class="answer-field" placeholder="Contoh: kompas.com"></td></tr>
+                        <tr><td>Nama Situs/URL</td><td colspan="2"><input type="text" class="answer-field" id="situs3_url" placeholder="Contoh: kompas.com"></td></tr>
                         <tr>
                             <td>Domain</td>
                             <td>
                                 <div class="checkbox-group">
-                                    <label class="checkbox-item"><input type="checkbox"> .go.id</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .ac.id</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .org</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .com</label>
-                                    <label class="checkbox-item"><input type="checkbox"> .net</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Lainnya: <input type="text" style="width: 80px;"></label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_domain_goid"> .go.id</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_domain_ac"> .ac.id</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_domain_org"> .org</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_domain_com"> .com</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_domain_net"> .net</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_domain_lain"> Lainnya: <input type="text" id="situs3_domain_lain_teks" style="width: 80px;"></label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Catatan"></td>
+                            <td><input type="text" class="answer-field" id="situs3_domain_catatan" placeholder="Catatan"></td>
                         </tr>
                         <tr>
                             <td>Penulis Jelas</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="penulis3"> Ya</label>
-                                    <label class="radio-item"><input type="radio" name="penulis3"> Tidak</label>
+                                    <label class="radio-item"><input type="radio" name="situs3_penulis" id="situs3_penulis_ya" value="Ya"> Ya</label>
+                                    <label class="radio-item"><input type="radio" name="situs3_penulis" id="situs3_penulis_tidak" value="Tidak"> Tidak</label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Nama penulis jika ada"></td>
+                            <td><input type="text" class="answer-field" id="situs3_penulis_nama" placeholder="Nama penulis jika ada"></td>
                         </tr>
-                        <tr><td>Tanggal Publikasi</td><td colspan="2"><input type="text" class="answer-field" placeholder="Contoh: 15 Jan 2024"></td></tr>
+                        <tr><td>Tanggal Publikasi</td><td colspan="2"><input type="text" class="answer-field" id="situs3_tanggal" placeholder="Contoh: 15 Jan 2024"></td></tr>
                         <tr>
                             <td>Sumber Data Disebutkan</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="sumber3"> Ya</label>
-                                    <label class="radio-item"><input type="radio" name="sumber3"> Tidak</label>
+                                    <label class="radio-item"><input type="radio" name="situs3_sumber" id="situs3_sumber_ya" value="Ya"> Ya</label>
+                                    <label class="radio-item"><input type="radio" name="situs3_sumber" id="situs3_sumber_tidak" value="Tidak"> Tidak</label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Catatan"></td>
+                            <td><input type="text" class="answer-field" id="situs3_sumber_catatan" placeholder="Catatan"></td>
                         </tr>
                         <tr>
                             <td>Tujuan Artikel</td>
                             <td colspan="2">
                                 <div class="checkbox-group">
-                                    <label class="checkbox-item"><input type="checkbox"> Informasi</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Opini</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Iklan</label>
-                                    <label class="checkbox-item"><input type="checkbox"> Propaganda</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_tujuan_informasi"> Informasi</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_tujuan_opini"> Opini</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_tujuan_iklan"> Iklan</label>
+                                    <label class="checkbox-item"><input type="checkbox" id="situs3_tujuan_propaganda"> Propaganda</label>
                                 </div>
                             </td>
                         </tr>
@@ -990,17 +1043,17 @@
                             <td>Kesimpulan</td>
                             <td>
                                 <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="kesimpulan3"> Kredibel</label>
-                                    <label class="radio-item"><input type="radio" name="kesimpulan3"> Meragukan</label>
-                                    <label class="radio-item"><input type="radio" name="kesimpulan3"> Tidak Kredibel</label>
+                                    <label class="radio-item"><input type="radio" name="situs3_kesimpulan" id="situs3_kesimpulan_kredibel" value="Kredibel"> Kredibel</label>
+                                    <label class="radio-item"><input type="radio" name="situs3_kesimpulan" id="situs3_kesimpulan_ragu" value="Meragukan"> Meragukan</label>
+                                    <label class="radio-item"><input type="radio" name="situs3_kesimpulan" id="situs3_kesimpulan_tidak" value="Tidak Kredibel"> Tidak Kredibel</label>
                                 </div>
                             </td>
-                            <td><input type="text" class="answer-field" placeholder="Skor: /6"></td>
+                            <td><input type="text" class="answer-field" id="situs3_skor" placeholder="Skor: /6"></td>
                         </tr>
                     </table>
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 4: Perbandingan Sumber</h4>
+                <h4 class="section-subtitle">Kegiatan 4: Perbandingan Sumber</h4>
                 <table class="lkpd-table">
                     <thead>
                         <tr>
@@ -1013,22 +1066,22 @@
                         <tr>
                             <td>1</td>
                             <td>Dari ketiga situs yang dianalisis, mana yang paling kredibel? Mengapa?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="perbandingan1" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Domain apa yang paling terpercaya menurut kalian? Urutkan dari yang paling terpercaya!</td>
-                            <td><textarea class="answer-field large" placeholder="1. ...&#10;2. ...&#10;3. ...&#10;4. ..."></textarea></td>
+                            <td><textarea class="answer-field large" id="perbandingan2" placeholder="1. ...&#10;2. ...&#10;3. ...&#10;4. ..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Apakah situs berita mainstream (Kompas, Detik, Tempo) selalu kredibel? Jelaskan!</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="perbandingan3" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Bagaimana cara mengecek kredibilitas penulis sebuah artikel?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="perbandingan4" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
@@ -1041,7 +1094,7 @@
                     <i class="fas fa-puzzle-piece"></i> "Memadukan berbagai teknik untuk hasil maksimal!"
                 </div>
                 
-                <h4 class="section-subtitle">Aktivitas 5: Merancang Pencarian Kompleks</h4>
+                <h4 class="section-subtitle">Kegiatan 5: Merancang Pencarian Kompleks</h4>
                 <p>Instruksi: Buatlah rumus pencarian kompleks untuk menemukan informasi yang sangat spesifik tentang isu kalian!</p>
                 
                 <table class="lkpd-table">
@@ -1054,23 +1107,23 @@
                     <tbody>
                         <tr>
                             <td>Menemukan artikel dari situs pemerintah tentang isu kalian</td>
-                            <td><input type="text" class="answer-field" placeholder="Contoh: site:go.id vaksin covid"></td>
+                            <td><input type="text" class="answer-field" id="kompleks1" placeholder="Contoh: site:go.id vaksin covid"></td>
                         </tr>
                         <tr>
                             <td>Menemukan jurnal ilmiah (PDF) tentang isu kalian</td>
-                            <td><input type="text" class="answer-field" placeholder="Contoh: vaksin filetype:pdf"></td>
+                            <td><input type="text" class="answer-field" id="kompleks2" placeholder="Contoh: vaksin filetype:pdf"></td>
                         </tr>
                         <tr>
                             <td>Menemukan berita dari Kompas tentang isu kalian, tetapi tidak termasuk opini</td>
-                            <td><input type="text" class="answer-field" placeholder="Contoh: site:kompas.com vaksin -opini"></td>
+                            <td><input type="text" class="answer-field" id="kompleks3" placeholder="Contoh: site:kompas.com vaksin -opini"></td>
                         </tr>
                         <tr>
                             <td>Menemukan informasi dari WHO tentang isu kalian dalam bentuk PDF</td>
-                            <td><input type="text" class="answer-field" placeholder="Contoh: site:who.int vaksin filetype:pdf"></td>
+                            <td><input type="text" class="answer-field" id="kompleks4" placeholder="Contoh: site:who.int vaksin filetype:pdf"></td>
                         </tr>
                         <tr>
                             <td>Menemukan artikel yang membantah hoaks terkait isu kalian</td>
-                            <td><input type="text" class="answer-field" placeholder="Contoh: vaksin hoaks -mitos"></td>
+                            <td><input type="text" class="answer-field" id="kompleks5" placeholder="Contoh: vaksin hoaks -mitos"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -1085,10 +1138,10 @@
                 
                 <div style="background: var(--informatika-light); padding: 1rem; border-radius: 10px; margin-bottom: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                        <div><strong>Nama:</strong> <input type="text" class="answer-field" placeholder="Nama"></div>
-                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" placeholder="Kelas"></div>
-                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" placeholder="Kelompok"></div>
-                        <div><strong>Peran:</strong> <input type="text" class="answer-field" placeholder="Peran"></div>
+                        <div><strong>Nama:</strong> <input type="text" class="answer-field" id="ref_nama" placeholder="Nama"></div>
+                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="ref_kelas" placeholder="Kelas"></div>
+                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="ref_kelompok" placeholder="Kelompok"></div>
+                        <div><strong>Peran:</strong> <input type="text" class="answer-field" id="ref_peran" placeholder="Peran"></div>
                     </div>
                 </div>
                 
@@ -1104,47 +1157,47 @@
                         <tr>
                             <td>1</td>
                             <td>Hal baru apa yang aku pelajari dari materi tentang teknik pencarian informasi?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref1" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>2</td>
                             <td>Operator pencarian apa yang paling berguna menurutku? Mengapa?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref2" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>3</td>
                             <td>Kesalahan apa yang sering dilakukan orang saat mencari informasi di internet?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref3" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td>Bagaimana cara membedakan sumber kredibel dan tidak kredibel?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref4" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td>Jika aku menemukan hoaks di internet, apa tindakan bijak yang akan aku lakukan?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref5" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                         <tr>
                             <td>6</td>
                             <td>Apa tantangan terbesar dalam menggunakan mesin pencari secara efektif?</td>
-                            <td><textarea class="answer-field large" placeholder="Tulis jawaban..."></textarea></td>
+                            <td><textarea class="answer-field large" id="ref6" placeholder="Tulis jawaban..."></textarea></td>
                         </tr>
                     </tbody>
                 </table>
                 
                 <div class="checklist-container">
                     <h4 style="margin-bottom: 10px;">Ceklis Pemahaman Akhir:</h4>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah membaca materi "Teknik Pencarian Informasi"</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah mempraktikkan minimal 5 operator pencarian</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah mengevaluasi 3 sumber informasi</div>
-                    <div class="checklist-item"><input type="checkbox"> Saya sudah merancang pencarian kompleks untuk isu kelompok</div>
+                    <div class="checklist-item"><input type="checkbox" id="check1"> Saya sudah membaca materi "Teknik Pencarian Informasi"</div>
+                    <div class="checklist-item"><input type="checkbox" id="check2"> Saya sudah mempraktikkan minimal 5 operator pencarian</div>
+                    <div class="checklist-item"><input type="checkbox" id="check3"> Saya sudah mengevaluasi 3 sumber informasi</div>
+                    <div class="checklist-item"><input type="checkbox" id="check4"> Saya sudah merancang pencarian kompleks untuk isu kelompok</div>
                 </div>
             </div>
 
             <!-- Tombol Kirim -->
-            <button class="submit-button" id="submitBtn" onclick="submitData()">
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kumpulkan LKPD
             </button>
             <div id="successMessage" class="success-message">
@@ -1165,11 +1218,112 @@
 
     <script src="../../../script.js"></script>
     <script>
-        // Simple Mobile Menu
+        // ==================== KONFIGURASI URL ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbzKGEcwDHHjWza6iSghSDtgwahTIClGQsDmCjVqVzQPuovu82XUkchCigSSZMxcYjmRkw/exec';
+
+        // ==================== KONFIGURASI FORM ====================
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 2 - STRATEGI MENCARI INFORMASI",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas/Peran",
+                "Data Review Materi",
+                "Data Refleksi Awal",
+                "Data Eksplorasi",
+                "Data Evaluasi Sumber",
+                "Data Pencarian Kompleks",
+                "Data Refleksi Akhir"
+            ]
+        };
+
+        // ==================== VARIABEL GLOBAL ====================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+
+        // ==================== FUNGSI LOCALSTORAGE ====================
+        const STORAGE_KEY = 'proyek1_aktivitas2';
+
+        function saveToLocalStorage() {
+            const formData = {};
+            
+            // Kumpulkan semua input text, textarea, select
+            document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').forEach(el => {
+                if (el.id) {
+                    formData[el.id] = el.value;
+                }
+            });
+            
+            // Kumpulkan checkbox
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                if (el.id) {
+                    formData[el.id] = el.checked;
+                }
+            });
+            
+            // Kumpulkan radio button
+            document.querySelectorAll('input[type="radio"]').forEach(el => {
+                if (el.name && !formData[`radio_${el.name}`]) {
+                    const checkedRadio = document.querySelector(`input[name="${el.name}"]:checked`);
+                    formData[`radio_${el.name}`] = checkedRadio ? checkedRadio.value : '';
+                }
+            });
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (!savedData) return;
+            
+            try {
+                const formData = JSON.parse(savedData);
+                
+                // Isi kembali semua input
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = formData[key];
+                        } else if (element.type === 'radio') {
+                            // Untuk radio, perlu pendekatan khusus
+                        } else {
+                            element.value = formData[key];
+                        }
+                    }
+                    
+                    // Handle radio buttons
+                    if (key.startsWith('radio_')) {
+                        const radioName = key.replace('radio_', '');
+                        const radioToCheck = document.querySelector(`input[name="${radioName}"][value="${formData[key]}"]`);
+                        if (radioToCheck) {
+                            radioToCheck.checked = true;
+                        }
+                    }
+                });
+                
+                updateProgressBar();
+            } catch (e) {
+                console.error('Gagal memuat data dari localStorage', e);
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
+        // ==================== INISIALISASI ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // Load data siswa
+            loadDataFromGoogleSheets();
+            
+            // Hamburger menu
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
             if (hamburger) {
                 hamburger.addEventListener('click', function() {
                     navMenu.classList.toggle('active');
@@ -1181,23 +1335,386 @@
             inputs.forEach(input => {
                 input.disabled = false;
             });
+            
+            // Load data dari localStorage
+            loadFromLocalStorage();
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Tambahkan event listener untuk auto-save dan update progress
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', function() {
+                    saveToLocalStorage();
+                    updateProgressBar();
+                });
+                el.addEventListener('change', function() {
+                    saveToLocalStorage();
+                    updateProgressBar();
+                });
+            });
         });
 
-        // Fungsi submit (placeholder)
-        function submitData() {
-            // Tampilkan loading
-            document.getElementById('loadingMessage').style.display = 'block';
+        // ==================== FUNGSI PROGRESS BAR ====================
+        function updateProgressBar() {
+            const totalFields = document.querySelectorAll('input:not([type=checkbox]), select, textarea').length;
+            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]), select, textarea'))
+                .filter(el => el.value && el.value.trim() !== '').length;
             
-            // Simulasi pengiriman data
-            setTimeout(function() {
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
+            const progress = Math.round((filledFields / totalFields) * 100) || 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+        }
+
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
                 
-                // Sembunyikan pesan sukses setelah 3 detik
-                setTimeout(function() {
+                const callbackName = 'jsonp_callback_' + Date.now();
+                
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        
+                        dataKelas.forEach(kelas => {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        });
+                        
+                        enableForm();
+                        document.getElementById('loadingMessage').style.display = 'none';
+                    } else {
+                        // TIDAK MENGGUNAKAN FALLBACK DATA
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        document.getElementById('errorMessage').style.display = 'block';
+                        document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan cek koneksi internet Anda dan refresh halaman.';
+                        
+                        // Disable form karena data tidak bisa dimuat
+                        document.getElementById('kelas').disabled = true;
+                        document.getElementById('nama').disabled = true;
+                        document.getElementById('kelompok').disabled = true;
+                        document.getElementById('tugas').disabled = true;
+                        document.getElementById('submitBtn').disabled = true;
+                    }
+                    
+                    isLoading = false;
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = function() {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan cek koneksi internet Anda dan refresh halaman.';
+                    
+                    // Disable form
+                    document.getElementById('kelas').disabled = true;
+                    document.getElementById('nama').disabled = true;
+                    document.getElementById('kelompok').disabled = true;
+                    document.getElementById('tugas').disabled = true;
+                    document.getElementById('submitBtn').disabled = true;
+                    
+                    isLoading = false;
+                };
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Terjadi kesalahan. Silakan cek koneksi internet Anda dan refresh halaman.';
+                
+                // Disable form
+                document.getElementById('kelas').disabled = true;
+                document.getElementById('nama').disabled = true;
+                document.getElementById('kelompok').disabled = true;
+                document.getElementById('tugas').disabled = true;
+                document.getElementById('submitBtn').disabled = true;
+                
+                isLoading = false;
+            }
+        }
+
+        function enableForm() {
+            document.getElementById('kelas').disabled = false;
+            document.getElementById('nama').disabled = false;
+            document.getElementById('kelompok').disabled = false;
+            document.getElementById('tugas').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
+            });
+        }
+
+        // ==================== FUNGSI SUBMIT DATA ====================
+        async function submitData() {
+            if (isLoading) {
+                alert('Data masih dimuat. Silakan tunggu.');
+                return;
+            }
+            
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value || !document.getElementById('kelompok').value) {
+                alert('Lengkapi identitas terlebih dahulu!');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                const formData = new URLSearchParams();
+                
+                // Kirim konfigurasi sheet
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                
+                // ==================== KUMPULKAN DATA ====================
+                // Data Identitas Dasar
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value);
+                formData.append('Tugas/Peran', document.getElementById('tugas').value);
+                
+                // Data Review Materi (Bagian A)
+                const dataReview = {
+                    q1: document.getElementById('review1')?.value || '',
+                    operator1: document.getElementById('operator1')?.value || '',
+                    fungsi1: document.getElementById('fungsi1')?.value || '',
+                    operator2: document.getElementById('operator2')?.value || '',
+                    fungsi2: document.getElementById('fungsi2')?.value || '',
+                    operator3: document.getElementById('operator3')?.value || '',
+                    fungsi3: document.getElementById('fungsi3')?.value || '',
+                    operator4: document.getElementById('operator4')?.value || '',
+                    fungsi4: document.getElementById('fungsi4')?.value || '',
+                    operator5: document.getElementById('operator5')?.value || '',
+                    fungsi5: document.getElementById('fungsi5')?.value || '',
+                    q3: document.getElementById('review3')?.value || '',
+                    q4: document.getElementById('review4')?.value || '',
+                    q5: document.getElementById('review5')?.value || '',
+                    q6: document.getElementById('review6')?.value || '',
+                    bacaMateri: document.getElementById('bacaMateri')?.checked || false,
+                    tanggalBaca: document.getElementById('tanggalBaca')?.value || ''
+                };
+                formData.append('Data Review Materi', JSON.stringify(dataReview));
+                
+                // Data Refleksi Awal (Bagian B)
+                let searchEngine = '';
+                if (document.getElementById('search_google')?.checked) searchEngine = 'Google';
+                else if (document.getElementById('search_bing')?.checked) searchEngine = 'Bing';
+                else if (document.getElementById('search_yahoo')?.checked) searchEngine = 'Yahoo';
+                else if (document.getElementById('search_duck')?.checked) searchEngine = 'DuckDuckGo';
+                else if (document.getElementById('search_lainnya')?.checked) searchEngine = 'Lainnya: ' + (document.getElementById('search_lainnya_teks')?.value || '');
+                
+                let frekuensi = '';
+                if (document.getElementById('frekuensi1')?.checked) frekuensi = '1-5 kali';
+                else if (document.getElementById('frekuensi2')?.checked) frekuensi = '6-10 kali';
+                else if (document.getElementById('frekuensi3')?.checked) frekuensi = '>10 kali';
+                
+                let akurat = '';
+                if (document.getElementById('akurat1')?.checked) akurat = 'Ya, selalu';
+                else if (document.getElementById('akurat2')?.checked) akurat = 'Kadang-kadang';
+                else if (document.getElementById('akurat3')?.checked) akurat = 'Sering tidak akurat';
+                
+                const dataRefleksiAwal = {
+                    searchEngine: searchEngine,
+                    frekuensi: frekuensi,
+                    akurat: akurat,
+                    memilah: document.getElementById('refleksi_memilah')?.value || ''
+                };
+                formData.append('Data Refleksi Awal', JSON.stringify(dataRefleksiAwal));
+                
+                // Data Eksplorasi (Bagian C)
+                const dataEksplorasi = {
+                    eksplorasi1_hasil: document.getElementById('eksplorasi1_hasil')?.value || '',
+                    eksplorasi1_catatan: document.getElementById('eksplorasi1_catatan')?.value || '',
+                    eksplorasi2_hasil: document.getElementById('eksplorasi2_hasil')?.value || '',
+                    eksplorasi2_catatan: document.getElementById('eksplorasi2_catatan')?.value || '',
+                    eksplorasi3_hasil: document.getElementById('eksplorasi3_hasil')?.value || '',
+                    eksplorasi3_catatan: document.getElementById('eksplorasi3_catatan')?.value || '',
+                    eksplorasi4_hasil: document.getElementById('eksplorasi4_hasil')?.value || '',
+                    eksplorasi4_catatan: document.getElementById('eksplorasi4_catatan')?.value || '',
+                    eksplorasi5_hasil: document.getElementById('eksplorasi5_hasil')?.value || '',
+                    eksplorasi5_catatan: document.getElementById('eksplorasi5_catatan')?.value || '',
+                    eksplorasi6_hasil: document.getElementById('eksplorasi6_hasil')?.value || '',
+                    eksplorasi6_catatan: document.getElementById('eksplorasi6_catatan')?.value || '',
+                    eksplorasi7_hasil: document.getElementById('eksplorasi7_hasil')?.value || '',
+                    eksplorasi7_catatan: document.getElementById('eksplorasi7_catatan')?.value || '',
+                    eksplorasi8_hasil: document.getElementById('eksplorasi8_hasil')?.value || '',
+                    eksplorasi8_catatan: document.getElementById('eksplorasi8_catatan')?.value || '',
+                    isu_kelompok: document.getElementById('isu_kelompok')?.value || '',
+                    isu_rumus1: document.getElementById('isu_rumus1')?.value || '',
+                    isu_hasil1: document.getElementById('isu_hasil1')?.value || '',
+                    isu_relevan1: document.getElementById('isu_relevan1')?.value || '',
+                    isu_rumus2: document.getElementById('isu_rumus2')?.value || '',
+                    isu_hasil2: document.getElementById('isu_hasil2')?.value || '',
+                    isu_relevan2: document.getElementById('isu_relevan2')?.value || '',
+                    isu_rumus3: document.getElementById('isu_rumus3')?.value || '',
+                    isu_hasil3: document.getElementById('isu_hasil3')?.value || '',
+                    isu_relevan3: document.getElementById('isu_relevan3')?.value || '',
+                    isu_rumus4: document.getElementById('isu_rumus4')?.value || '',
+                    isu_hasil4: document.getElementById('isu_hasil4')?.value || '',
+                    isu_relevan4: document.getElementById('isu_relevan4')?.value || '',
+                    isu_rumus5: document.getElementById('isu_rumus5')?.value || '',
+                    isu_hasil5: document.getElementById('isu_hasil5')?.value || '',
+                    isu_relevan5: document.getElementById('isu_relevan5')?.value || '',
+                    isu_rumus6: document.getElementById('isu_rumus6')?.value || '',
+                    isu_hasil6: document.getElementById('isu_hasil6')?.value || '',
+                    isu_relevan6: document.getElementById('isu_relevan6')?.value || ''
+                };
+                formData.append('Data Eksplorasi', JSON.stringify(dataEksplorasi));
+                
+                // Data Evaluasi Sumber (Bagian D)
+                const dataEvaluasi = {
+                    situs1_url: document.getElementById('situs1_url')?.value || '',
+                    situs1_domain_goid: document.getElementById('situs1_domain_goid')?.checked || false,
+                    situs1_domain_ac: document.getElementById('situs1_domain_ac')?.checked || false,
+                    situs1_domain_org: document.getElementById('situs1_domain_org')?.checked || false,
+                    situs1_domain_com: document.getElementById('situs1_domain_com')?.checked || false,
+                    situs1_domain_net: document.getElementById('situs1_domain_net')?.checked || false,
+                    situs1_domain_lain: document.getElementById('situs1_domain_lain')?.checked || false,
+                    situs1_domain_lain_teks: document.getElementById('situs1_domain_lain_teks')?.value || '',
+                    situs1_domain_catatan: document.getElementById('situs1_domain_catatan')?.value || '',
+                    situs1_penulis: document.querySelector('input[name="situs1_penulis"]:checked')?.value || '',
+                    situs1_penulis_nama: document.getElementById('situs1_penulis_nama')?.value || '',
+                    situs1_tanggal: document.getElementById('situs1_tanggal')?.value || '',
+                    situs1_sumber: document.querySelector('input[name="situs1_sumber"]:checked')?.value || '',
+                    situs1_sumber_catatan: document.getElementById('situs1_sumber_catatan')?.value || '',
+                    situs1_tujuan_informasi: document.getElementById('situs1_tujuan_informasi')?.checked || false,
+                    situs1_tujuan_opini: document.getElementById('situs1_tujuan_opini')?.checked || false,
+                    situs1_tujuan_iklan: document.getElementById('situs1_tujuan_iklan')?.checked || false,
+                    situs1_tujuan_propaganda: document.getElementById('situs1_tujuan_propaganda')?.checked || false,
+                    situs1_kesimpulan: document.querySelector('input[name="situs1_kesimpulan"]:checked')?.value || '',
+                    situs1_skor: document.getElementById('situs1_skor')?.value || '',
+                    
+                    situs2_url: document.getElementById('situs2_url')?.value || '',
+                    situs2_domain_goid: document.getElementById('situs2_domain_goid')?.checked || false,
+                    situs2_domain_ac: document.getElementById('situs2_domain_ac')?.checked || false,
+                    situs2_domain_org: document.getElementById('situs2_domain_org')?.checked || false,
+                    situs2_domain_com: document.getElementById('situs2_domain_com')?.checked || false,
+                    situs2_domain_net: document.getElementById('situs2_domain_net')?.checked || false,
+                    situs2_domain_lain: document.getElementById('situs2_domain_lain')?.checked || false,
+                    situs2_domain_lain_teks: document.getElementById('situs2_domain_lain_teks')?.value || '',
+                    situs2_domain_catatan: document.getElementById('situs2_domain_catatan')?.value || '',
+                    situs2_penulis: document.querySelector('input[name="situs2_penulis"]:checked')?.value || '',
+                    situs2_penulis_nama: document.getElementById('situs2_penulis_nama')?.value || '',
+                    situs2_tanggal: document.getElementById('situs2_tanggal')?.value || '',
+                    situs2_sumber: document.querySelector('input[name="situs2_sumber"]:checked')?.value || '',
+                    situs2_sumber_catatan: document.getElementById('situs2_sumber_catatan')?.value || '',
+                    situs2_tujuan_informasi: document.getElementById('situs2_tujuan_informasi')?.checked || false,
+                    situs2_tujuan_opini: document.getElementById('situs2_tujuan_opini')?.checked || false,
+                    situs2_tujuan_iklan: document.getElementById('situs2_tujuan_iklan')?.checked || false,
+                    situs2_tujuan_propaganda: document.getElementById('situs2_tujuan_propaganda')?.checked || false,
+                    situs2_kesimpulan: document.querySelector('input[name="situs2_kesimpulan"]:checked')?.value || '',
+                    situs2_skor: document.getElementById('situs2_skor')?.value || '',
+                    
+                    situs3_url: document.getElementById('situs3_url')?.value || '',
+                    situs3_domain_goid: document.getElementById('situs3_domain_goid')?.checked || false,
+                    situs3_domain_ac: document.getElementById('situs3_domain_ac')?.checked || false,
+                    situs3_domain_org: document.getElementById('situs3_domain_org')?.checked || false,
+                    situs3_domain_com: document.getElementById('situs3_domain_com')?.checked || false,
+                    situs3_domain_net: document.getElementById('situs3_domain_net')?.checked || false,
+                    situs3_domain_lain: document.getElementById('situs3_domain_lain')?.checked || false,
+                    situs3_domain_lain_teks: document.getElementById('situs3_domain_lain_teks')?.value || '',
+                    situs3_domain_catatan: document.getElementById('situs3_domain_catatan')?.value || '',
+                    situs3_penulis: document.querySelector('input[name="situs3_penulis"]:checked')?.value || '',
+                    situs3_penulis_nama: document.getElementById('situs3_penulis_nama')?.value || '',
+                    situs3_tanggal: document.getElementById('situs3_tanggal')?.value || '',
+                    situs3_sumber: document.querySelector('input[name="situs3_sumber"]:checked')?.value || '',
+                    situs3_sumber_catatan: document.getElementById('situs3_sumber_catatan')?.value || '',
+                    situs3_tujuan_informasi: document.getElementById('situs3_tujuan_informasi')?.checked || false,
+                    situs3_tujuan_opini: document.getElementById('situs3_tujuan_opini')?.checked || false,
+                    situs3_tujuan_iklan: document.getElementById('situs3_tujuan_iklan')?.checked || false,
+                    situs3_tujuan_propaganda: document.getElementById('situs3_tujuan_propaganda')?.checked || false,
+                    situs3_kesimpulan: document.querySelector('input[name="situs3_kesimpulan"]:checked')?.value || '',
+                    situs3_skor: document.getElementById('situs3_skor')?.value || '',
+                    
+                    perbandingan1: document.getElementById('perbandingan1')?.value || '',
+                    perbandingan2: document.getElementById('perbandingan2')?.value || '',
+                    perbandingan3: document.getElementById('perbandingan3')?.value || '',
+                    perbandingan4: document.getElementById('perbandingan4')?.value || ''
+                };
+                formData.append('Data Evaluasi Sumber', JSON.stringify(dataEvaluasi));
+                
+                // Data Pencarian Kompleks (Bagian E)
+                const dataKompleks = {
+                    kompleks1: document.getElementById('kompleks1')?.value || '',
+                    kompleks2: document.getElementById('kompleks2')?.value || '',
+                    kompleks3: document.getElementById('kompleks3')?.value || '',
+                    kompleks4: document.getElementById('kompleks4')?.value || '',
+                    kompleks5: document.getElementById('kompleks5')?.value || ''
+                };
+                formData.append('Data Pencarian Kompleks', JSON.stringify(dataKompleks));
+                
+                // Data Refleksi Akhir (Bagian F)
+                const dataRefleksi = {
+                    nama: document.getElementById('ref_nama')?.value || '',
+                    kelas: document.getElementById('ref_kelas')?.value || '',
+                    kelompok: document.getElementById('ref_kelompok')?.value || '',
+                    peran: document.getElementById('ref_peran')?.value || '',
+                    q1: document.getElementById('ref1')?.value || '',
+                    q2: document.getElementById('ref2')?.value || '',
+                    q3: document.getElementById('ref3')?.value || '',
+                    q4: document.getElementById('ref4')?.value || '',
+                    q5: document.getElementById('ref5')?.value || '',
+                    q6: document.getElementById('ref6')?.value || '',
+                    check1: document.getElementById('check1')?.checked || false,
+                    check2: document.getElementById('check2')?.checked || false,
+                    check3: document.getElementById('check3')?.checked || false,
+                    check4: document.getElementById('check4')?.checked || false
+                };
+                formData.append('Data Refleksi Akhir', JSON.stringify(dataRefleksi));
+                
+                // ==================== KIRIM ====================
+                await fetch(URL_PEREKAP_AKTIVITAS, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                document.getElementById('successMessage').style.display = 'block';
+                clearLocalStorage(); // Hapus data yang tersimpan karena sudah terkirim
+                setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
-                }, 3000);
-            }, 1500);
+                }, 5000);
+
+                if (confirm('Data terkirim! Ingin mereset form?')) {
+                    location.reload();
+                }
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan LKPD';
+            }
         }
     </script>
 </body>
