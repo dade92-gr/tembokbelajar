@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* IPAS THEME COLORS */
         :root {
             --ipas-primary: #2ecc71;
             --ipas-secondary: #27ae60;
@@ -59,6 +58,11 @@
             height: 150px;
             background: radial-gradient(circle, rgba(46, 204, 113, 0.1) 0%, transparent 70%);
             z-index: 0;
+        }
+        
+        .ipas-content-card > * {
+            position: relative;
+            z-index: 1;
         }
         
         .ipas-content-card h2 {
@@ -142,6 +146,28 @@
             margin: 1rem 0 2rem 0;
         }
 
+        .progress-container {
+            margin: 20px 0 30px 0;
+            background: #f0f0f0;
+            border-radius: 25px;
+            padding: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            height: 25px;
+            border-radius: 25px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 30px;
+        }
+
         .lembar-aktivitas table {
             width: 100%;
             border-collapse: collapse;
@@ -163,8 +189,6 @@
             vertical-align: top;
         }
 
-        .lembar-aktivitas td:first-child { font-weight: 500; background-color: #fafafa; }
-
         .lembar-aktivitas input[type=text], .lembar-aktivitas textarea, .lembar-aktivitas select {
             width: 100%;
             padding: 8px 12px;
@@ -174,11 +198,11 @@
             margin: 5px 0;
         }
 
-        .lembar-aktivitas .isian-kosong {
-            display: inline-block;
-            min-width: 150px;
-            border-bottom: 1px solid #aaa;
-            margin: 0 5px;
+        .lembar-aktivitas input[type=number] {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
         }
 
         .lembar-aktivitas .checkbox-list {
@@ -248,16 +272,6 @@
             border-color: var(--ipas-primary);
         }
         
-        .btn-small {
-            background: var(--ipas-accent);
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            cursor: default;
-        }
-        
         .loading-message, .success-message, .error-message {
             padding: 1rem;
             border-radius: 10px;
@@ -282,6 +296,36 @@
             background: #f8d7da;
             color: #721c24;
             border-left: 5px solid #dc3545;
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.offline {
+            background: #dc3545;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
         }
         
         .submit-button {
@@ -353,6 +397,12 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
         }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
         @media (max-width: 768px) {
             .activity-detail-container { padding: 1rem; }
@@ -360,11 +410,11 @@
             .identitas-box { grid-template-columns: 1fr; }
             .activity-navigation { flex-direction: column; gap: 1rem; }
             .nav-btn { width: 100%; justify-content: center; }
+            .checkbox-list { flex-direction: column; gap: 8px; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <nav class="navbar">
             <div class="nav-container">
@@ -388,9 +438,7 @@
         </nav>
     </header>
 
-    <!-- Activity Detail Content -->
     <section class="activity-detail-container">
-        <!-- Judul Halaman -->
         <div class="ipas-content-card">
             <h2>Eksplorasi Interaksi Sosial</h2>
             <div class="subtitle">
@@ -400,368 +448,357 @@
             <p>Lembar aktivitas lengkap: eksplorasi interaksi, komunikasi, dan dinamika sosial dengan pendekatan ilmiah dan kontekstual.</p>
         </div>
 
-        <!-- Loading Message -->
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Memeriksa koneksi...</span>
+        </div>
+
         <div id="loadingMessage" class="loading-message">
             <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
-        <!-- Error Message -->
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText"></span>
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span id="errorText">Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.</span>
+            <br>
+            <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-sync-alt"></i> Refresh Halaman
+            </button>
         </div>
 
-        <!-- LEMBAR AKTIVITAS UTAMA -->
         <div class="lembar-aktivitas" id="worksheetForm">
-
             <h1 style="font-weight: 700;">LEMBAR AKTIVITAS IPAS</h1>
             <p style="text-align: center; font-size: 1.3rem; color: var(--ipas-secondary);">EKSPLORASI INTERAKSI, KOMUNIKASI, DAN DINAMIKA SOSIAL</p>
             <div class="garis-judul"></div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+            </div>
 
-            <!-- IDENTITAS KELOMPOK (FORMAT BARU) -->
-            <h3 class="worksheet-subtitle"><i class="fas fa-users" style="margin-right: 10px;"></i> IDENTITAS KELOMPOK</h3>
+            <h3><i class="fas fa-users" style="margin-right: 10px;"></i> IDENTITAS KELOMPOK</h3>
             
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelas</label>
-                    <select id="kelas" onchange="updateNamaDropdown()" disabled>
+                    <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Kelas --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama</label>
-                    <select id="nama" disabled>
+                    <select id="nama" onchange="saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Nama --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" disabled>
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" disabled>
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
             </div>
 
-            <!-- ANGGOTA KELOMPOK -->
             <table style="margin-top: 0;">
                 <tr><th colspan="3" style="background: var(--ipas-light);">ANGGOTA KELOMPOK</th></tr>
                 <tr><th>Nama Anggota</th><th>Peran</th><th></th></tr>
-                <tr><td>1. <input type="text" id="anggota1" placeholder="nama"></td><td>Ketua</td><td></td></tr>
-                <tr><td>2. <input type="text" id="anggota2" placeholder="nama"></td><td>Sekretaris</td><td></td></tr>
-                <tr><td>3. <input type="text" id="anggota3" placeholder="nama"></td><td>Presenter</td><td></td></tr>
-                <tr><td>4. <input type="text" id="anggota4" placeholder="nama"></td><td>Observer</td><td></td></tr>
-                <tr><td>5. <input type="text" id="anggota5" placeholder="nama"></td><td>Logistik</td><td></td></tr>
+                <tr><td>1. <input type="text" id="anggota1" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></td><td>Ketua</td><td></td></tr>
+                <tr><td>2. <input type="text" id="anggota2" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></td><td>Sekretaris</td><td></td></tr>
+                <tr><td>3. <input type="text" id="anggota3" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></td><td>Presenter</td><td></td></tr>
+                <tr><td>4. <input type="text" id="anggota4" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></td><td>Observer</td><td></td></tr>
+                <tr><td>5. <input type="text" id="anggota5" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></td><td>Logistik</td><td></td></tr>
             </table>
 
-            <!-- LITERASI AWAL -->
             <h2><i class="fas fa-book-open"></i> LITERASI: BEKAL PENGETAHUAN AWAL</h2>
             <p><strong>1. Mengapa manusia disebut makhluk sosial? Jelaskan dengan bahasamu sendiri!</strong></p>
-            <input type="text" id="literasi_makhluk_sosial" style="width:100%" placeholder="________________________________________">
+            <input type="text" id="literasi_makhluk_sosial" style="width:100%" oninput="saveToLocalStorage(); updateProgress();">
             
             <p><strong>2. Sebutkan 3 bentuk interaksi sosial yang kamu temukan dalam materi! Berikan contohnya!</strong></p>
             <table>
                 <tr><th>No</th><th>Bentuk Interaksi</th><th>Contoh dalam Kehidupan Sehari-hari</th></tr>
-                <tr><td>a.</td><td><input type="text" id="interaksi1_bentuk" placeholder="_______________"></td><td><input type="text" id="interaksi1_contoh" placeholder="_________________________________"></td></tr>
-                <tr><td>b.</td><td><input type="text" id="interaksi2_bentuk" placeholder="_______________"></td><td><input type="text" id="interaksi2_contoh" placeholder="_________________________________"></td></tr>
-                <tr><td>c.</td><td><input type="text" id="interaksi3_bentuk" placeholder="_______________"></td><td><input type="text" id="interaksi3_contoh" placeholder="_________________________________"></td></tr>
+                <tr><td>a.</td><td><input type="text" id="interaksi1_bentuk" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="interaksi1_contoh" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>b.</td><td><input type="text" id="interaksi2_bentuk" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="interaksi2_contoh" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>c.</td><td><input type="text" id="interaksi3_bentuk" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="interaksi3_contoh" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
             </table>
 
-            <p><strong>3. Apa yang dimaksud dengan sosialisasi? Sebutkan agen-agen sosialisasi yang mempengaruhi pembentukan kepribadian seseorang!</strong></p>
+            <p><strong>3. Apa yang dimaksud dengan sosialisasi? Sebutkan agen-agen sosialisasi!</strong></p>
             <table>
                 <tr><th>Istilah</th><th>Pengertian</th></tr>
-                <tr><td>Sosialisasi</td><td><input type="text" id="sosialisasi_pengertian" placeholder="__________________________________________________________________"></td></tr>
+                <tr><td>Sosialisasi</td><td><input type="text" id="sosialisasi_pengertian" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
             </table>
             <p>Agen-agen sosialisasi:</p>
-            <input type="text" id="agen1" style="width:100%; margin-bottom:5px;" placeholder="1. ________________________________________"><br>
-            <input type="text" id="agen2" style="width:100%; margin-bottom:5px;" placeholder="2. ________________________________________"><br>
-            <input type="text" id="agen3" style="width:100%; margin-bottom:5px;" placeholder="3. ________________________________________"><br>
-            <input type="text" id="agen4" style="width:100%; margin-bottom:5px;" placeholder="4. ________________________________________">
+            <input type="text" id="agen1" style="width:100%; margin-bottom:5px;" placeholder="1. Keluarga" oninput="saveToLocalStorage(); updateProgress();"><br>
+            <input type="text" id="agen2" style="width:100%; margin-bottom:5px;" placeholder="2. Sekolah" oninput="saveToLocalStorage(); updateProgress();"><br>
+            <input type="text" id="agen3" style="width:100%; margin-bottom:5px;" placeholder="3. Teman sebaya" oninput="saveToLocalStorage(); updateProgress();"><br>
+            <input type="text" id="agen4" style="width:100%;" placeholder="4. Media massa" oninput="saveToLocalStorage(); updateProgress();">
 
-            <p><strong>4. Sebutkan 3 institusi sosial dan jelaskan peran masing-masing dalam masyarakat!</strong></p>
+            <p><strong>4. Sebutkan 3 institusi sosial dan perannya!</strong></p>
             <table>
                 <tr><th>No</th><th>Institusi Sosial</th><th>Peran dalam Masyarakat</th></tr>
-                <tr><td>a.</td><td><input type="text" id="institusi1_nama"></td><td><input type="text" id="institusi1_peran"></td></tr>
-                <tr><td>b.</td><td><input type="text" id="institusi2_nama"></td><td><input type="text" id="institusi2_peran"></td></tr>
-                <tr><td>c.</td><td><input type="text" id="institusi3_nama"></td><td><input type="text" id="institusi3_peran"></td></tr>
+                <tr><td>a.</td><td><input type="text" id="institusi1_nama" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="institusi1_peran" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>b.</td><td><input type="text" id="institusi2_nama" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="institusi2_peran" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>c.</td><td><input type="text" id="institusi3_nama" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="institusi3_peran" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
             </table>
             
-            <!-- PERTEMUAN 1 -->
             <h2><i class="fas fa-sun"></i> PERTEMUAN 1 (6 JP): MENGAMATI & MERAMALKAN</h2>
             <h3>TP 1.1: Menjelaskan Pengetahuan Ilmiah</h3>
             <h4>A. OBSERVASI LINGKUNGAN SOSIAL (90 Menit)</h4>
             <table>
                 <tr><th>No</th><th>Tempat/Lokasi</th><th>Bentuk Interaksi</th><th>Siapa yang Terlibat?</th><th>Apa yang Terjadi?</th><th>Tujuan Interaksi</th></tr>
-                <tr><td>1</td><td><input type="text" id="obs1_lokasi"></td><td><input type="text" id="obs1_bentuk"></td><td><input type="text" id="obs1_terlibat"></td><td><input type="text" id="obs1_terjadi"></td><td><input type="text" id="obs1_tujuan"></td></tr>
-                <tr><td>2</td><td><input type="text" id="obs2_lokasi"></td><td><input type="text" id="obs2_bentuk"></td><td><input type="text" id="obs2_terlibat"></td><td><input type="text" id="obs2_terjadi"></td><td><input type="text" id="obs2_tujuan"></td></tr>
-                <tr><td>3</td><td><input type="text" id="obs3_lokasi"></td><td><input type="text" id="obs3_bentuk"></td><td><input type="text" id="obs3_terlibat"></td><td><input type="text" id="obs3_terjadi"></td><td><input type="text" id="obs3_tujuan"></td></tr>
-                <tr><td>4</td><td><input type="text" id="obs4_lokasi"></td><td><input type="text" id="obs4_bentuk"></td><td><input type="text" id="obs4_terlibat"></td><td><input type="text" id="obs4_terjadi"></td><td><input type="text" id="obs4_tujuan"></td></tr>
-                <tr><td>5</td><td><input type="text" id="obs5_lokasi"></td><td><input type="text" id="obs5_bentuk"></td><td><input type="text" id="obs5_terlibat"></td><td><input type="text" id="obs5_terjadi"></td><td><input type="text" id="obs5_tujuan"></td></tr>
+                <tr><td>1</td><td><input type="text" id="obs1_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs1_bentuk" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs1_terlibat" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs1_terjadi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs1_tujuan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>2</td><td><input type="text" id="obs2_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs2_bentuk" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs2_terlibat" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs2_terjadi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs2_tujuan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>3</td><td><input type="text" id="obs3_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs3_bentuk" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs3_terlibat" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs3_terjadi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs3_tujuan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>4</td><td><input type="text" id="obs4_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs4_bentuk" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs4_terlibat" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs4_terjadi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs4_tujuan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>5</td><td><input type="text" id="obs5_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs5_bentuk" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs5_terlibat" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs5_terjadi" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs5_tujuan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
             </table>
 
             <h4>B. KLASIFIKASI DAN JELASKAN! (45 Menit)</h4>
             <p>Klasifikasi Interaksi yang Kami Temukan:</p>
             <table>
                 <tr><th>Jenis Interaksi</th><th>Jumlah</th><th>Nomor Interaksi</th></tr>
-                <tr><td>Kerja sama</td><td><input type="text" id="klas_kerjasama_jml" style="width:50px"></td><td><input type="text" id="klas_kerjasama_no"></td></tr>
-                <tr><td>Persaingan</td><td><input type="text" id="klas_persaingan_jml" style="width:50px"></td><td><input type="text" id="klas_persaingan_no"></td></tr>
-                <tr><td>Konflik</td><td><input type="text" id="klas_konflik_jml" style="width:50px"></td><td><input type="text" id="klas_konflik_no"></td></tr>
-                <tr><td>Akomodasi</td><td><input type="text" id="klas_akomodasi_jml" style="width:50px"></td><td><input type="text" id="klas_akomodasi_no"></td></tr>
-                <tr><td>Jual-beli</td><td><input type="text" id="klas_jualbeli_jml" style="width:50px"></td><td><input type="text" id="klas_jualbeli_no"></td></tr>
-                <tr><td>Diskusi</td><td><input type="text" id="klas_diskusi_jml" style="width:50px"></td><td><input type="text" id="klas_diskusi_no"></td></tr>
-                <tr><td>Lainnya: <input type="text" id="klas_lainnya_nama" style="width:100px;"></td><td><input type="text" id="klas_lainnya_jml" style="width:50px"></td><td><input type="text" id="klas_lainnya_no"></td></tr>
+                <tr><td>Kerja sama</td><td><input type="text" id="klas_kerjasama_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="klas_kerjasama_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Persaingan</td><td><input type="text" id="klas_persaingan_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="klas_persaingan_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Konflik</td><td><input type="text" id="klas_konflik_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="klas_konflik_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Akomodasi</td><td><input type="text" id="klas_akomodasi_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="klas_akomodasi_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Jual-beli</td><td><input type="text" id="klas_jualbeli_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="klas_jualbeli_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Diskusi</td><td><input type="text" id="klas_diskusi_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="klas_diskusi_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Lainnya: <input type="text" id="klas_lainnya_nama" style="width:120px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="klas_lainnya_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="klas_lainnya_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
             </table>
 
-            <p><strong>Interaksi Pilihan Saya:</strong> <input type="text" id="interaksi_pilihan" style="width:70%"></p>
+            <p><strong>Interaksi Pilihan Saya:</strong> <input type="text" id="interaksi_pilihan" style="width:70%" oninput="saveToLocalStorage(); updateProgress();"></p>
             <table>
                 <tr><th>Aspek</th><th>Penjelasan</th></tr>
-                <tr><td>Siapa saja yang terlibat</td><td><input type="text" id="pilihan_terlibat"></td></tr>
-                <tr><td>Apa latar belakang terjadinya</td><td><input type="text" id="pilihan_latar"></td></tr>
-                <tr><td>Bagaimana prosesnya (langkah-langkah interaksi)</td><td><input type="text" id="pilihan_proses"></td></tr>
-                <tr><td>Apa tujuannya</td><td><input type="text" id="pilihan_tujuan"></td></tr>
-                <tr><td>Nilai sosial apa yang tercermin</td><td><input type="text" id="pilihan_nilai"></td></tr>
-                <tr><td>Apakah ada aturan (tertulis/tidak tertulis) yang mengatur interaksi ini?</td><td><input type="text" id="pilihan_aturan"></td></tr>
+                <tr><td>Siapa saja yang terlibat</td><td><input type="text" id="pilihan_terlibat" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Apa latar belakang terjadinya</td><td><input type="text" id="pilihan_latar" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Bagaimana prosesnya</td><td><input type="text" id="pilihan_proses" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Apa tujuannya</td><td><input type="text" id="pilihan_tujuan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Nilai sosial apa yang tercermin</td><td><input type="text" id="pilihan_nilai" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                <tr><td>Apakah ada aturan yang mengatur</td><td><input type="text" id="pilihan_aturan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
             </table>
-            <p>Penjelasan ilmiah secara lengkap: <input type="text" id="penjelasan_ilmiah" style="width:100%"></p>
+            <p>Penjelasan ilmiah: <input type="text" id="penjelasan_ilmiah" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
             
             <div class="checkbox-list">
-                <span class="checkbox-item"><input type="checkbox" id="istilah_interaksi_sosial"> Interaksi sosial</span> 
-                <span class="checkbox-item"><input type="checkbox" id="istilah_kerjasama"> Kerja sama</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_persaingan"> Persaingan</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_konflik"> Konflik</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_akomodasi"> Akomodasi</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_komunikasi"> Komunikasi</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_peran_sosial"> Peran sosial</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_norma"> Norma</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_status"> Status sosial</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_kelompok"> Kelompok sosial</span>
-                <span class="checkbox-item">Lainnya: <input type="text" id="istilah_lainnya" style="width:100px;"></span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_interaksi_sosial" onchange="saveToLocalStorage(); updateProgress();"> Interaksi sosial</span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_kerjasama" onchange="saveToLocalStorage(); updateProgress();"> Kerja sama</span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_persaingan" onchange="saveToLocalStorage(); updateProgress();"> Persaingan</span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_konflik" onchange="saveToLocalStorage(); updateProgress();"> Konflik</span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_akomodasi" onchange="saveToLocalStorage(); updateProgress();"> Akomodasi</span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_komunikasi" onchange="saveToLocalStorage(); updateProgress();"> Komunikasi</span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_peran_sosial" onchange="saveToLocalStorage(); updateProgress();"> Peran sosial</span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_norma" onchange="saveToLocalStorage(); updateProgress();"> Norma</span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_status" onchange="saveToLocalStorage(); updateProgress();"> Status sosial</span>
+                <span class="checkbox-item"><input type="checkbox" id="istilah_kelompok" onchange="saveToLocalStorage(); updateProgress();"> Kelompok sosial</span>
+                <span class="checkbox-item">Lainnya: <input type="text" id="istilah_lainnya" style="width:100px;" oninput="saveToLocalStorage(); updateProgress();"></span>
             </div>
 
             <h3>TP 1.2: Membuat Prediksi Sederhana</h3>
             <h4>C. OBSERVASI DETAIL (60 Menit)</h4>
-            <p>Lokasi/Interaksi yang diamati: <input type="text" id="observasi_lokasi" style="width:60%"></p>
-            <p>Waktu mulai: <input type="text" id="observasi_mulai" style="width:150px">  Waktu selesai: <input type="text" id="observasi_selesai" style="width:150px"></p>
+            <p>Lokasi/Interaksi yang diamati: <input type="text" id="observasi_lokasi" style="width:60%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>Waktu mulai: <input type="text" id="observasi_mulai" style="width:150px" oninput="saveToLocalStorage(); updateProgress();"> Waktu selesai: <input type="text" id="observasi_selesai" style="width:150px" oninput="saveToLocalStorage(); updateProgress();"></p>
             
             <table>
                 <tr><th>Waktu (menit)</th><th>Aktivitas yang Terjadi</th><th>Jumlah Orang Terlibat</th><th>Suasana</th></tr>
-                <tr><td>0</td><td><input type="text" id="obsdet0_aktivitas"></td><td><input type="text" id="obsdet0_jumlah"></td><td><input type="text" id="obsdet0_suasana"></td></tr>
-                <tr><td>5</td><td><input type="text" id="obsdet5_aktivitas"></td><td><input type="text" id="obsdet5_jumlah"></td><td><input type="text" id="obsdet5_suasana"></td></tr>
-                <tr><td>10</td><td><input type="text" id="obsdet10_aktivitas"></td><td><input type="text" id="obsdet10_jumlah"></td><td><input type="text" id="obsdet10_suasana"></td></tr>
-                <tr><td>15</td><td><input type="text" id="obsdet15_aktivitas"></td><td><input type="text" id="obsdet15_jumlah"></td><td><input type="text" id="obsdet15_suasana"></td></tr>
-                <tr><td>20</td><td><input type="text" id="obsdet20_aktivitas"></td><td><input type="text" id="obsdet20_jumlah"></td><td><input type="text" id="obsdet20_suasana"></td></tr>
-                <tr><td>25</td><td><input type="text" id="obsdet25_aktivitas"></td><td><input type="text" id="obsdet25_jumlah"></td><td><input type="text" id="obsdet25_suasana"></td></tr>
-                <tr><td>30</td><td><input type="text" id="obsdet30_aktivitas"></td><td><input type="text" id="obsdet30_jumlah"></td><td><input type="text" id="obsdet30_suasana"></td></tr>
-            </table>
-            <p>Catatan khusus: <input type="text" id="observasi_catatan" style="width:100%"></p>
+                <tr><td>0</td><td><input type="text" id="obsdet0_aktivitas" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet0_jumlah" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet0_suasana" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>5</td><td><input type="text" id="obsdet5_aktivitas" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet5_jumlah" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet5_suasana" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>10</td><td><input type="text" id="obsdet10_aktivitas" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet10_jumlah" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet10_suasana" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>15</td><td><input type="text" id="obsdet15_aktivitas" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet15_jumlah" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet15_suasana" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>20</td><td><input type="text" id="obsdet20_aktivitas" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet20_jumlah" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet20_suasana" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>25</td><td><input type="text" id="obsdet25_aktivitas" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet25_jumlah" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet25_suasana" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>30</td><td><input type="text" id="obsdet30_aktivitas" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet30_jumlah" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obsdet30_suasana" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+             </table>
+            <p>Catatan khusus: <input type="text" id="observasi_catatan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
 
             <h4>D. CARI POLA! (20 Menit)</h4>
-            <p>Pola yang saya temukan: <input type="text" id="pola" style="width:100%"></p>
-            <p>Waktu paling ramai: <input type="text" id="waktu_ramai">  Waktu paling sepi: <input type="text" id="waktu_sepi"></p>
-            <p>Faktor yang mempengaruhi: <input type="text" id="faktor" style="width:100%"></p>
+            <p>Pola yang saya temukan: <input type="text" id="pola" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>Waktu paling ramai: <input type="text" id="waktu_ramai" oninput="saveToLocalStorage(); updateProgress();"> Waktu paling sepi: <input type="text" id="waktu_sepi" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>Faktor yang mempengaruhi: <input type="text" id="faktor" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
 
             <h4>E. BUAT 2 PREDIKSI! (25 Menit)</h4>
             <p><strong>PREDIKSI 1 (Pola di Waktu Berbeda)</strong><br>
             Skenario perbandingan: 
-            <input type="radio" name="prediksi1_skenario" value="Hari berbeda" id="pred1_hari"> <label for="pred1_hari">Hari berbeda</label>
-            <input type="radio" name="prediksi1_skenario" value="Waktu berbeda" id="pred1_waktu"> <label for="pred1_waktu">Waktu berbeda</label>
-            <input type="radio" name="prediksi1_skenario" value="Kondisi berbeda" id="pred1_kondisi"> <label for="pred1_kondisi">Kondisi berbeda</label><br>
+            <label><input type="radio" name="prediksi1_skenario" value="Hari berbeda" onchange="saveToLocalStorage(); updateProgress();"> Hari berbeda</label>
+            <label><input type="radio" name="prediksi1_skenario" value="Waktu berbeda" onchange="saveToLocalStorage(); updateProgress();"> Waktu berbeda</label>
+            <label><input type="radio" name="prediksi1_skenario" value="Kondisi berbeda" onchange="saveToLocalStorage(); updateProgress();"> Kondisi berbeda</label><br>
             Prediksi: 
-            <input type="radio" name="prediksi1_hasil" value="Sama" id="pred1_sama"> <label for="pred1_sama">Sama</label>
-            <input type="radio" name="prediksi1_hasil" value="Berbeda" id="pred1_berbeda"> <label for="pred1_berbeda">Berbeda</label>: <input type="text" id="prediksi1_berbeda_isi"><br>
-            Alasan: <input type="text" id="prediksi1_alasan" style="width:100%"></p>
+            <label><input type="radio" name="prediksi1_hasil" value="Sama" onchange="saveToLocalStorage(); updateProgress();"> Sama</label>
+            <label><input type="radio" name="prediksi1_hasil" value="Berbeda" onchange="saveToLocalStorage(); updateProgress();"> Berbeda</label>: <input type="text" id="prediksi1_berbeda_isi" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Alasan: <input type="text" id="prediksi1_alasan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
             
             <p><strong>PREDIKSI 2 (Jika Ada Perubahan Sosial)</strong><br>
             Skenario perubahan: 
-            <input type="radio" name="prediksi2_skenario" value="harga naik" id="pred2_harga"> <label for="pred2_harga">harga naik</label>
-            <input type="radio" name="prediksi2_skenario" value="aturan baru" id="pred2_aturan"> <label for="pred2_aturan">aturan baru</label>
-            <input type="radio" name="prediksi2_skenario" value="acara khusus" id="pred2_acara"> <label for="pred2_acara">acara khusus</label>
-            <input type="radio" name="prediksi2_skenario" value="cuaca buruk" id="pred2_cuaca"> <label for="pred2_cuaca">cuaca buruk</label>
-            <input type="radio" name="prediksi2_skenario" value="petugas baru" id="pred2_petugas"> <label for="pred2_petugas">petugas baru</label>
-            <input type="radio" name="prediksi2_skenario" value="lain" id="pred2_lain"> <label for="pred2_lain">lainnya</label>: <input type="text" id="prediksi2_lainnya"><br>
-            Prediksi: <input type="text" id="prediksi2_hasil" style="width:100%"><br>
-            Alasan: <input type="text" id="prediksi2_alasan" style="width:100%"></p>
+            <label><input type="radio" name="prediksi2_skenario" value="harga naik" onchange="saveToLocalStorage(); updateProgress();"> harga naik</label>
+            <label><input type="radio" name="prediksi2_skenario" value="aturan baru" onchange="saveToLocalStorage(); updateProgress();"> aturan baru</label>
+            <label><input type="radio" name="prediksi2_skenario" value="acara khusus" onchange="saveToLocalStorage(); updateProgress();"> acara khusus</label>
+            <label><input type="radio" name="prediksi2_skenario" value="cuaca buruk" onchange="saveToLocalStorage(); updateProgress();"> cuaca buruk</label>
+            <label><input type="radio" name="prediksi2_skenario" value="petugas baru" onchange="saveToLocalStorage(); updateProgress();"> petugas baru</label>
+            <label><input type="radio" name="prediksi2_skenario" value="lain" onchange="saveToLocalStorage(); updateProgress();"> lainnya</label>: <input type="text" id="prediksi2_lainnya" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Prediksi: <input type="text" id="prediksi2_hasil" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Alasan: <input type="text" id="prediksi2_alasan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
 
             <div class="catatan-penting"><i class="fas fa-mug-hot"></i> ⏸️ ISTIRAHAT 15 MENIT</div>
 
-            <!-- PERTEMUAN 2 -->
             <h2><i class="fas fa-flask"></i> PERTEMUAN 2 (6 JP): MEMBUKTIKAN & MENGKAITKAN</h2>
             <h3>TP 1.3: Pembuktian Sederhana</h3>
             <h4>F. KENALI FENOMENA SOSIAL KELOMPOKMU</h4>
             <p>Tipe interaksi kelompok kami: 
-                <input type="radio" name="tipe_interaksi" value="Interaksi ekonomi" id="tipe_ekonomi"> <label for="tipe_ekonomi">Interaksi ekonomi</label>
-                <input type="radio" name="tipe_interaksi" value="Interaksi pendidikan" id="tipe_pendidikan"> <label for="tipe_pendidikan">Interaksi pendidikan</label>
-                <input type="radio" name="tipe_interaksi" value="Interaksi sosial budaya" id="tipe_budaya"> <label for="tipe_budaya">Interaksi sosial budaya</label>
-                <input type="radio" name="tipe_interaksi" value="Interaksi konflik" id="tipe_konflik"> <label for="tipe_konflik">Interaksi konflik</label>
-                <input type="radio" name="tipe_interaksi" value="Interaksi kelembagaan" id="tipe_lembaga"> <label for="tipe_lembaga">Interaksi kelembagaan</label>
+                <label><input type="radio" name="tipe_interaksi" value="Interaksi ekonomi" onchange="saveToLocalStorage(); updateProgress();"> Interaksi ekonomi</label>
+                <label><input type="radio" name="tipe_interaksi" value="Interaksi pendidikan" onchange="saveToLocalStorage(); updateProgress();"> Interaksi pendidikan</label>
+                <label><input type="radio" name="tipe_interaksi" value="Interaksi sosial budaya" onchange="saveToLocalStorage(); updateProgress();"> Interaksi sosial budaya</label>
+                <label><input type="radio" name="tipe_interaksi" value="Interaksi konflik" onchange="saveToLocalStorage(); updateProgress();"> Interaksi konflik</label>
+                <label><input type="radio" name="tipe_interaksi" value="Interaksi kelembagaan" onchange="saveToLocalStorage(); updateProgress();"> Interaksi kelembagaan</label>
             </p>
             
             <table>
                 <tr><th>Aspek</th><th>Deskripsi</th></tr>
-                <tr><td>Lokasi</td><td><input type="text" id="fenomena_lokasi"></td></tr>
-                <tr><td>Pelaku utama</td><td><input type="text" id="fenomena_pelaku"></td></tr>
-                <tr><td>Aktivitas utama</td><td><input type="text" id="fenomena_aktivitas"></td></tr>
-                <tr><td>Aturan tidak tertulis</td><td><input type="text" id="fenomena_aturan"></td></tr>
-                <tr><td>Hal unik</td><td><input type="text" id="fenomena_unik"></td></tr>
-            </table>
+                <tr><td>Lokasi</td><td><input type="text" id="fenomena_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>Pelaku utama</td><td><input type="text" id="fenomena_pelaku" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>Aktivitas utama</td><td><input type="text" id="fenomena_aktivitas" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>Aturan tidak tertulis</td><td><input type="text" id="fenomena_aturan" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                 <tr><td>Hal unik</td><td><input type="text" id="fenomena_unik" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+             </table>
 
             <h4>G. PILIH PREDIKSI YANG AKAN DIBUKTIKAN</h4>
             <p>
-                <input type="radio" name="pilihan_prediksi" value="Prediksi 1" id="pilih_pred1"> <label for="pilih_pred1">Prediksi 1</label>
-                <input type="radio" name="pilihan_prediksi" value="Prediksi 2" id="pilih_pred2"> <label for="pilih_pred2">Prediksi 2</label><br>
-                Tulis ulang prediksi: <input type="text" id="prediksi_terpilih" style="width:100%">
+                <label><input type="radio" name="pilihan_prediksi" value="Prediksi 1" onchange="saveToLocalStorage(); updateProgress();"> Prediksi 1</label>
+                <label><input type="radio" name="pilihan_prediksi" value="Prediksi 2" onchange="saveToLocalStorage(); updateProgress();"> Prediksi 2</label><br>
+                Tulis ulang prediksi: <input type="text" id="prediksi_terpilih" style="width:100%" oninput="saveToLocalStorage(); updateProgress();">
             </p>
 
             <h4>H. RANCANG CARA PEMBUKTIAN</h4>
             <div class="checkbox-list">
-                <span class="checkbox-item"><input type="checkbox" id="cara1"> CARA 1: Observasi ulang waktu berbeda</span>
-                <span class="checkbox-item"><input type="checkbox" id="cara2"> CARA 2: Wawancara sederhana</span>
-                <span class="checkbox-item"><input type="checkbox" id="cara3"> CARA 3: Studi kasus sederhana</span>
+                <span class="checkbox-item"><input type="checkbox" id="cara1" onchange="saveToLocalStorage(); updateProgress();"> CARA 1: Observasi ulang waktu berbeda</span>
+                <span class="checkbox-item"><input type="checkbox" id="cara2" onchange="saveToLocalStorage(); updateProgress();"> CARA 2: Wawancara sederhana</span>
+                <span class="checkbox-item"><input type="checkbox" id="cara3" onchange="saveToLocalStorage(); updateProgress();"> CARA 3: Studi kasus sederhana</span>
             </div>
             
             <p>Langkah-langkah: <br>
-            <input type="text" id="langkah1" style="width:100%; margin:2px">
-            <input type="text" id="langkah2" style="width:100%"></p>
+            <input type="text" id="langkah1" style="width:100%; margin:2px" oninput="saveToLocalStorage(); updateProgress();">
+            <input type="text" id="langkah2" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
             
-            <p>Daftar pertanyaan wawancara (jika memilih cara 2):</p>
-            <table>
-                <tr><th>No</th><th>Pertanyaan</th><th>Tujuan</th></tr>
-                <tr><td>1</td><td><input type="text" id="wawancara_pertanyaan1" value="Apakah biasanya begini setiap hari?"></td><td><input type="text" id="wawancara_tujuan1" value="Mengetahui pola rutin"></td></tr>
-                <tr><td>2</td><td><input type="text" id="wawancara_pertanyaan2" value="Kapan waktu paling ramai di sini?"></td><td><input type="text" id="wawancara_tujuan2" value="Mengetahui pola waktu"></td></tr>
-                <tr><td>3</td><td><input type="text" id="wawancara_pertanyaan3" value="Apakah pernah ada perubahan suasana?"></td><td><input type="text" id="wawancara_tujuan3" value="Mengetahui faktor perubahan"></td></tr>
-                <tr><td>4</td><td><input type="text" id="wawancara_pertanyaan4" value="Bagaimana aturan tidak tertulis di sini?"></td><td><input type="text" id="wawancara_tujuan4" value="Mengetahui norma sosial"></td></tr>
-                <tr><td>5</td><td><input type="text" id="wawancara_pertanyaan5" value="Apa yang membuat interaksi menyenangkan?"></td><td><input type="text" id="wawancara_tujuan5" value="Mengetahui kualitas interaksi"></td></tr>
-            </table>
+            <p>Daftar pertanyaan wawancara:</p>
+             <table>
+                 <tr><th>No</th><th>Pertanyaan</th><th>Tujuan</th></tr>
+                 <tr><td>1</td><td><input type="text" id="wawancara_pertanyaan1" value="Apakah biasanya begini setiap hari?" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="wawancara_tujuan1" value="Mengetahui pola rutin" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>2</td><td><input type="text" id="wawancara_pertanyaan2" value="Kapan waktu paling ramai di sini?" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="wawancara_tujuan2" value="Mengetahui pola waktu" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>3</td><td><input type="text" id="wawancara_pertanyaan3" value="Apakah pernah ada perubahan suasana?" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="wawancara_tujuan3" value="Mengetahui faktor perubahan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>4</td><td><input type="text" id="wawancara_pertanyaan4" value="Bagaimana aturan tidak tertulis di sini?" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="wawancara_tujuan4" value="Mengetahui norma sosial" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>5</td><td><input type="text" id="wawancara_pertanyaan5" value="Apa yang membuat interaksi menyenangkan?" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="wawancara_tujuan5" value="Mengetahui kualitas interaksi" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+             </table>
 
-            <table>
-                <tr><th>No</th><th>Alat/Bahan</th><th>Kegunaan</th><th>Ketersediaan</th></tr>
-                <tr>
-                    <td>1</td>
-                    <td>Alat tulis dan buku catatan</td>
-                    <td>Mencatat hasil</td>
-                    <td><input type="checkbox" id="alat_tulis_ada"> Ada / <input type="checkbox" id="alat_tulis_siap"> Siapkan</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Handphone</td>
-                    <td>Dokumentasi, rekaman</td>
-                    <td><input type="checkbox" id="hp_ada"> Ada / <input type="checkbox" id="hp_siap"> Siapkan</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Lembar wawancara</td>
-                    <td>Panduan bertanya</td>
-                    <td><input type="checkbox" id="lembar_siap"> Siapkan</td>
-                </tr>
-            </table>
+             <table>
+                 <tr><th>No</th><th>Alat/Bahan</th><th>Kegunaan</th><th>Ketersediaan</th></tr>
+                 <tr><td>1</td><td>Alat tulis dan buku catatan</td><td>Mencatat hasil</td><td><label><input type="checkbox" id="alat_tulis_ada" onchange="saveToLocalStorage(); updateProgress();"> Ada</label> / <label><input type="checkbox" id="alat_tulis_siap" onchange="saveToLocalStorage(); updateProgress();"> Siapkan</label></td></tr>
+                 <tr><td>2</td><td>Handphone</td><td>Dokumentasi, rekaman</td><td><label><input type="checkbox" id="hp_ada" onchange="saveToLocalStorage(); updateProgress();"> Ada</label> / <label><input type="checkbox" id="hp_siap" onchange="saveToLocalStorage(); updateProgress();"> Siapkan</label></td></tr>
+                 <tr><td>3</td><td>Lembar wawancara</td><td>Panduan bertanya</td><td><label><input type="checkbox" id="lembar_siap" onchange="saveToLocalStorage(); updateProgress();"> Siapkan</label></td></tr>
+             </table>
 
             <div class="kotak-checklist">
                 <p>ETIKA (centang): 
-                    <input type="checkbox" id="etik_izin"> minta izin
-                    <input type="checkbox" id="etik_tujuan"> jelaskan tujuan
-                    <input type="checkbox" id="etik_ganggu"> tidak ganggu
-                    <input type="checkbox" id="etik_sopan"> sopan
-                    <input type="checkbox" id="etik_nama_sekolah"> jaga nama sekolah
-                    <input type="checkbox" id="etik_jujur"> jujur
-                    <input type="checkbox" id="etik_terimakasih"> ucap terima kasih
-                    <input type="checkbox" id="etik_sampah"> buang sampah
+                    <label><input type="checkbox" id="etik_izin" onchange="saveToLocalStorage(); updateProgress();"> minta izin</label>
+                    <label><input type="checkbox" id="etik_tujuan" onchange="saveToLocalStorage(); updateProgress();"> jelaskan tujuan</label>
+                    <label><input type="checkbox" id="etik_ganggu" onchange="saveToLocalStorage(); updateProgress();"> tidak ganggu</label>
+                    <label><input type="checkbox" id="etik_sopan" onchange="saveToLocalStorage(); updateProgress();"> sopan</label>
+                    <label><input type="checkbox" id="etik_nama_sekolah" onchange="saveToLocalStorage(); updateProgress();"> jaga nama sekolah</label>
+                    <label><input type="checkbox" id="etik_jujur" onchange="saveToLocalStorage(); updateProgress();"> jujur</label>
+                    <label><input type="checkbox" id="etik_terimakasih" onchange="saveToLocalStorage(); updateProgress();"> ucap terima kasih</label>
+                    <label><input type="checkbox" id="etik_sampah" onchange="saveToLocalStorage(); updateProgress();"> buang sampah</label>
                 </p>
             </div>
 
             <h4>I. LAKUKAN PEMBUKTIAN! (60 Menit)</h4>
             <p>Hasil Observasi Ulang:</p>
-            <table>
-                <tr><th>Waktu/Lokasi</th><th>Hasil</th><th>Jumlah Orang</th><th>Suasana</th><th>Perbandingan</th></tr>
-                <tr><td><input type="text" id="bukti1_waktu"></td><td><input type="text" id="bukti1_hasil"></td><td><input type="text" id="bukti1_jumlah"></td><td><input type="text" id="bukti1_suasana"></td><td><input type="text" id="bukti1_banding"></td></tr>
-                <tr><td><input type="text" id="bukti2_waktu"></td><td><input type="text" id="bukti2_hasil"></td><td><input type="text" id="bukti2_jumlah"></td><td><input type="text" id="bukti2_suasana"></td><td><input type="text" id="bukti2_banding"></td></tr>
-            </table>
+             <table>
+                 <tr><th>Waktu/Lokasi</th><th>Hasil</th><th>Jumlah Orang</th><th>Suasana</th><th>Perbandingan</th></tr>
+                 <tr><td><input type="text" id="bukti1_waktu" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="bukti1_hasil" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="bukti1_jumlah" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="bukti1_suasana" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="bukti1_banding" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td><input type="text" id="bukti2_waktu" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="bukti2_hasil" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="bukti2_jumlah" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="bukti2_suasana" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="bukti2_banding" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+             </table>
             
             <p>Hasil Wawancara:</p>
-            <table>
-                <tr><th>No</th><th>Nama</th><th>Pekerjaan/Peran</th><th>Pendapat/Jawaban</th></tr>
-                <tr><td>1</td><td><input type="text" id="wawancara_nama1"></td><td><input type="text" id="wawancara_pekerjaan1"></td><td><input type="text" id="wawancara_jawaban1"></td></tr>
-                <tr><td>2</td><td><input type="text" id="wawancara_nama2"></td><td><input type="text" id="wawancara_pekerjaan2"></td><td><input type="text" id="wawancara_jawaban2"></td></tr>
-            </table>
+             <table>
+                 <tr><th>No</th><th>Nama</th><th>Pekerjaan/Peran</th><th>Pendapat/Jawaban</th></tr>
+                 <tr><td>1</td><td><input type="text" id="wawancara_nama1" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="wawancara_pekerjaan1" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="wawancara_jawaban1" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>2</td><td><input type="text" id="wawancara_nama2" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="wawancara_pekerjaan2" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="wawancara_jawaban2" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+             </table>
             
-            <p>Dokumentasi: <input type="text" id="dokumentasi" style="width:100%" placeholder="tempel foto/sketsa"></p>
+            <p>Dokumentasi: <input type="text" id="dokumentasi" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
 
             <h4>J. ANALISIS HASIL</h4>
             <p>1. Apakah sesuai prediksi? 
-                <input type="radio" name="kesesuaian" value="Sesuai" id="sesuai"> <label for="sesuai">Sesuai</label>
-                <input type="radio" name="kesesuaian" value="Tidak sesuai" id="tidak_sesuai"> <label for="tidak_sesuai">Tidak sesuai</label>
-                <input type="radio" name="kesesuaian" value="Sebagian sesuai" id="sebagian"> <label for="sebagian">Sebagian sesuai</label>
+                <label><input type="radio" name="kesesuaian" value="Sesuai" onchange="saveToLocalStorage(); updateProgress();"> Sesuai</label>
+                <label><input type="radio" name="kesesuaian" value="Tidak sesuai" onchange="saveToLocalStorage(); updateProgress();"> Tidak sesuai</label>
+                <label><input type="radio" name="kesesuaian" value="Sebagian sesuai" onchange="saveToLocalStorage(); updateProgress();"> Sebagian sesuai</label>
             </p>
-            <p>2. Data yang diperoleh: <input type="text" id="analisis_data" style="width:100%"></p>
-            <p>3. Penjelasan ilmiah: <input type="text" id="analisis_penjelasan" style="width:100%"></p>
+            <p>2. Data yang diperoleh: <input type="text" id="analisis_data" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>3. Penjelasan ilmiah: <input type="text" id="analisis_penjelasan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
             
-            <table>
-                <tr><th>Faktor</th><th>Pengaruhnya terhadap Interaksi</th></tr>
-                <tr><td>Waktu</td><td><input type="text" id="faktor_waktu"></td></tr>
-                <tr><td>Aturan/norma</td><td><input type="text" id="faktor_aturan"></td></tr>
-                <tr><td>Kondisi ekonomi</td><td><input type="text" id="faktor_ekonomi"></td></tr>
-                <tr><td>Acara khusus</td><td><input type="text" id="faktor_acara"></td></tr>
-                <tr><td>Kondisi fisik</td><td><input type="text" id="faktor_fisik"></td></tr>
-            </table>
-            <p>5. Nilai-nilai sosial yang ditemukan: <input type="text" id="nilai_sosial" style="width:100%"></p>
-            <p>6. Kesimpulan: <input type="text" id="kesimpulan" style="width:100%"></p>
+             <table>
+                 <tr><th>Faktor</th><th>Pengaruhnya terhadap Interaksi</th></tr>
+                 <tr><td>Waktu</td><td><input type="text" id="faktor_waktu" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Aturan/norma</td><td><input type="text" id="faktor_aturan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Kondisi ekonomi</td><td><input type="text" id="faktor_ekonomi" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Acara khusus</td><td><input type="text" id="faktor_acara" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Kondisi fisik</td><td><input type="text" id="faktor_fisik" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+             </table>
+            <p>5. Nilai-nilai sosial yang ditemukan: <input type="text" id="nilai_sosial" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>6. Kesimpulan: <input type="text" id="kesimpulan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
 
             <h3>TP 1.4: Koneksi dengan Bidang Keahlian</h3>
             <h4>K. HUBUNGKAN DENGAN PROGRAM KEAHLIANMU!</h4>
             <p>Program Keahlian Kami: 
-                <input type="radio" name="jurusan" value="ATPH" id="jurusan_atph"> <label for="jurusan_atph">ATPH</label>
-                <input type="radio" name="jurusan" value="TSM" id="jurusan_tsm"> <label for="jurusan_tsm">TSM</label>
-                <input type="radio" name="jurusan" value="AKL" id="jurusan_akl"> <label for="jurusan_akl">AKL</label>
-                <input type="radio" name="jurusan" value="TKJ" id="jurusan_tkj"> <label for="jurusan_tkj">TKJ</label>
-                <input type="radio" name="jurusan" value="TATA BOGA" id="jurusan_boga"> <label for="jurusan_boga">TATA BOGA</label>
-                <input type="radio" name="jurusan" value="TATA BUSANA" id="jurusan_busana"> <label for="jurusan_busana">TATA BUSANA</label>
-                <input type="radio" name="jurusan" value="DKV" id="jurusan_dkv"> <label for="jurusan_dkv">DKV</label>
-                <input type="radio" name="jurusan" value="TEI" id="jurusan_tei"> <label for="jurusan_tei">TEI</label>
-                <input type="radio" name="jurusan" value="lain" id="jurusan_lain"> <label for="jurusan_lain">Lainnya</label>: <input type="text" id="jurusan_lainnya" style="width:150px;">
+                <label><input type="radio" name="jurusan" value="ATPH" onchange="saveToLocalStorage(); updateProgress();"> ATPH</label>
+                <label><input type="radio" name="jurusan" value="TSM" onchange="saveToLocalStorage(); updateProgress();"> TSM</label>
+                <label><input type="radio" name="jurusan" value="AKL" onchange="saveToLocalStorage(); updateProgress();"> AKL</label>
+                <label><input type="radio" name="jurusan" value="TKJ" onchange="saveToLocalStorage(); updateProgress();"> TKJ</label>
+                <label><input type="radio" name="jurusan" value="TATA BOGA" onchange="saveToLocalStorage(); updateProgress();"> TATA BOGA</label>
+                <label><input type="radio" name="jurusan" value="TATA BUSANA" onchange="saveToLocalStorage(); updateProgress();"> TATA BUSANA</label>
+                <label><input type="radio" name="jurusan" value="DKV" onchange="saveToLocalStorage(); updateProgress();"> DKV</label>
+                <label><input type="radio" name="jurusan" value="TEI" onchange="saveToLocalStorage(); updateProgress();"> TEI</label>
+                <label><input type="radio" name="jurusan" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya</label>: <input type="text" id="jurusan_lainnya" oninput="saveToLocalStorage(); updateProgress();">
             </p>
             
-            <table>
-                <tr><th>Aspek Interaksi Sosial</th><th>Penjelasan</th></tr>
-                <tr><td>Dengan pelanggan/klien</td><td><input type="text" id="aspek_pelanggan"></td></tr>
-                <tr><td>Dengan pemasok/supplier</td><td><input type="text" id="aspek_pemasok"></td></tr>
-                <tr><td>Dengan rekan kerja/tim</td><td><input type="text" id="aspek_rekan"></td></tr>
-                <tr><td>Dengan masyarakat sekitar</td><td><input type="text" id="aspek_masyarakat"></td></tr>
-                <tr><td>Dengan institusi terkait</td><td><input type="text" id="aspek_institusi"></td></tr>
-            </table>
+             <table>
+                 <tr><th>Aspek Interaksi Sosial</th><th>Penjelasan</th></tr>
+                 <tr><td>Dengan pelanggan/klien</td><td><input type="text" id="aspek_pelanggan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Dengan pemasok/supplier</td><td><input type="text" id="aspek_pemasok" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Dengan rekan kerja/tim</td><td><input type="text" id="aspek_rekan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Dengan masyarakat sekitar</td><td><input type="text" id="aspek_masyarakat" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Dengan institusi terkait</td><td><input type="text" id="aspek_institusi" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+             </table>
 
             <h4>L. AMATI DAN BERI SOLUSI!</h4>
-            <p>Masalah interaksi sosial: <input type="text" id="solusi_masalah"><br>
-            Lokasi: <input type="text" id="solusi_lokasi"><br>
-            Pihak terlibat: <input type="text" id="solusi_pihak"><br>
-            Penyebab: <input type="text" id="solusi_penyebab"><br>
-            Dampak: <input type="text" id="solusi_dampak"><br>
-            Ide solusi: <input type="text" id="solusi_ide"><br>
-            Penerapan: <input type="text" id="solusi_penerapan"><br>
-            Nilai sosial yang perlu ditingkatkan: <input type="text" id="solusi_nilai"></p>
+            <p>Masalah interaksi sosial: <input type="text" id="solusi_masalah" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Lokasi: <input type="text" id="solusi_lokasi" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Pihak terlibat: <input type="text" id="solusi_pihak" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Penyebab: <input type="text" id="solusi_penyebab" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Dampak: <input type="text" id="solusi_dampak" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Ide solusi: <input type="text" id="solusi_ide" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Penerapan: <input type="text" id="solusi_penerapan" oninput="saveToLocalStorage(); updateProgress();"><br>
+            Nilai sosial yang perlu ditingkatkan: <input type="text" id="solusi_nilai" oninput="saveToLocalStorage(); updateProgress();"></p>
 
             <h4>M. REFLEKSI PEMBELAJARAN</h4>
-            <table>
-                <tr><th>Pertanyaan</th><th>Jawaban</th></tr>
-                <tr><td>Hal paling menarik?</td><td><input type="text" id="refleksi1"></td></tr>
-                <tr><td>Hal baru yang saya pahami?</td><td><input type="text" id="refleksi2"></td></tr>
-                <tr><td>Kebiasaan interaksi yang perlu diperbaiki?</td><td><input type="text" id="refleksi3"></td></tr>
-                <tr><td>Nilai sosial yang akan diterapkan?</td><td><input type="text" id="refleksi4"></td></tr>
-            </table>
+             <table>
+                 <tr><th>Pertanyaan</th><th>Jawaban</th></tr>
+                 <tr><td>Hal paling menarik?</td><td><input type="text" id="refleksi1" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Hal baru yang saya pahami?</td><td><input type="text" id="refleksi2" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Kebiasaan interaksi yang perlu diperbaiki?</td><td><input type="text" id="refleksi3" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>Nilai sosial yang akan diterapkan?</td><td><input type="text" id="refleksi4" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+             </table>
 
             <h4>N. PENILAIAN DIRI KELOMPOK</h4>
-            <table>
-                <tr><th>No</th><th>Aspek</th><th>Nilai (1-4)</th></tr>
-                <tr><td>1</td><td>Semua anggota ikut observasi</td><td><input type="number" id="nilai1" min="1" max="4" value="3" style="width:50px"></td></tr>
-                <tr><td>2</td><td>Semua anggota ikut diskusi</td><td><input type="number" id="nilai2" min="1" max="4" value="3" style="width:50px"></td></tr>
-                <tr><td>3</td><td>Selesai tepat waktu</td><td><input type="number" id="nilai3" min="1" max="4" value="3" style="width:50px"></td></tr>
-                <tr><td>4</td><td>Bekerja sama dengan baik</td><td><input type="number" id="nilai4" min="1" max="4" value="3" style="width:50px"></td></tr>
-                <tr><td>5</td><td>Bersikap sopan saat observasi/wawancara</td><td><input type="number" id="nilai5" min="1" max="4" value="3" style="width:50px"></td></tr>
-                <tr><td>6</td><td>Berani bertanya/mewawancarai orang</td><td><input type="number" id="nilai6" min="1" max="4" value="3" style="width:50px"></td></tr>
-            </table>
+             <table>
+                 <tr><th>No</th><th>Aspek</th><th>Nilai (1-4)</th></tr>
+                 <tr><td>1</td><td>Semua anggota ikut observasi</td><td><input type="number" id="nilai1" min="1" max="4" value="3" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>2</td><td>Semua anggota ikut diskusi</td><td><input type="number" id="nilai2" min="1" max="4" value="3" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>3</td><td>Selesai tepat waktu</td><td><input type="number" id="nilai3" min="1" max="4" value="3" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>4</td><td>Bekerja sama dengan baik</td><td><input type="number" id="nilai4" min="1" max="4" value="3" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>5</td><td>Bersikap sopan saat observasi/wawancara</td><td><input type="number" id="nilai5" min="1" max="4" value="3" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                 <tr><td>6</td><td>Berani bertanya/mewawancarai orang</td><td><input type="number" id="nilai6" min="1" max="4" value="3" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+             </table>
             <p>Keterangan: 1=Kurang, 2=Cukup, 3=Baik, 4=Sangat Baik</p>
             
             <hr>
             
-            <!-- Tombol Kirim -->
             <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kirim Data
             </button>
@@ -772,7 +809,6 @@
             <p style="text-align: right;"><i class="fas fa-check-circle" style="color:var(--ipas-primary);"></i> Selesai, selamat mempresentasikan hasil eksplorasi interaksi sosial!</p>
         </div>
 
-        <!-- Navigasi Bawah -->
         <div class="activity-navigation">
             <a href="s1-4-eksplorasi-keruangan.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Kembali ke Aktivitas Sebelumnya</a>
             <a href="s1-6-eksplorasi-ekonomi.html" class="nav-btn primary">Lanjut ke Aktivitas Berikutnya <i class="fas fa-arrow-right"></i></a>
@@ -780,360 +816,780 @@
     </section>
 
     <script>
-        // ==================== KONFIGURASI URL (SUDAH ANDA PUNYA) ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
 
-        // ==================== KONFIGURASI FORM (DIBUAT OLEH AI) ====================
         const FORM_CONFIG = {
             sheetName: "AKTIVITAS 6 - INTERAKSI SOSIAL",
             headers: [
-                "Timestamp",
-                "Kelas",
-                "Nama",
-                "Kelompok",
-                "Tugas/Peran",
-                "Anggota 1",
-                "Anggota 2",
-                "Anggota 3",
-                "Anggota 4",
-                "Anggota 5",
-                "Literasi Makhluk Sosial",
-                "Interaksi 1 Bentuk",
-                "Interaksi 1 Contoh",
-                "Interaksi 2 Bentuk",
-                "Interaksi 2 Contoh",
-                "Interaksi 3 Bentuk",
-                "Interaksi 3 Contoh",
-                "Sosialisasi Pengertian",
-                "Agen 1",
-                "Agen 2",
-                "Agen 3",
-                "Agen 4",
-                "Institusi 1 Nama",
-                "Institusi 1 Peran",
-                "Institusi 2 Nama",
-                "Institusi 2 Peran",
-                "Institusi 3 Nama",
-                "Institusi 3 Peran",
-                "Obs 1 Lokasi",
-                "Obs 1 Bentuk",
-                "Obs 1 Terlibat",
-                "Obs 1 Terjadi",
-                "Obs 1 Tujuan",
-                "Obs 2 Lokasi",
-                "Obs 2 Bentuk",
-                "Obs 2 Terlibat",
-                "Obs 2 Terjadi",
-                "Obs 2 Tujuan",
-                "Obs 3 Lokasi",
-                "Obs 3 Bentuk",
-                "Obs 3 Terlibat",
-                "Obs 3 Terjadi",
-                "Obs 3 Tujuan",
-                "Obs 4 Lokasi",
-                "Obs 4 Bentuk",
-                "Obs 4 Terlibat",
-                "Obs 4 Terjadi",
-                "Obs 4 Tujuan",
-                "Obs 5 Lokasi",
-                "Obs 5 Bentuk",
-                "Obs 5 Terlibat",
-                "Obs 5 Terjadi",
-                "Obs 5 Tujuan",
-                "Klas Kerjasama Jml",
-                "Klas Kerjasama No",
-                "Klas Persaingan Jml",
-                "Klas Persaingan No",
-                "Klas Konflik Jml",
-                "Klas Konflik No",
-                "Klas Akomodasi Jml",
-                "Klas Akomodasi No",
-                "Klas Jualbeli Jml",
-                "Klas Jualbeli No",
-                "Klas Diskusi Jml",
-                "Klas Diskusi No",
-                "Klas Lainnya Nama",
-                "Klas Lainnya Jml",
-                "Klas Lainnya No",
-                "Interaksi Pilihan",
-                "Pilihan Terlibat",
-                "Pilihan Latar",
-                "Pilihan Proses",
-                "Pilihan Tujuan",
-                "Pilihan Nilai",
-                "Pilihan Aturan",
-                "Penjelasan Ilmiah",
-                "Istilah Interaksi Sosial",
-                "Istilah Kerjasama",
-                "Istilah Persaingan",
-                "Istilah Konflik",
-                "Istilah Akomodasi",
-                "Istilah Komunikasi",
-                "Istilah Peran Sosial",
-                "Istilah Norma",
-                "Istilah Status",
-                "Istilah Kelompok",
-                "Istilah Lainnya",
-                "Observasi Lokasi",
-                "Observasi Mulai",
-                "Observasi Selesai",
-                "Obsdet0 Aktivitas",
-                "Obsdet0 Jumlah",
-                "Obsdet0 Suasana",
-                "Obsdet5 Aktivitas",
-                "Obsdet5 Jumlah",
-                "Obsdet5 Suasana",
-                "Obsdet10 Aktivitas",
-                "Obsdet10 Jumlah",
-                "Obsdet10 Suasana",
-                "Obsdet15 Aktivitas",
-                "Obsdet15 Jumlah",
-                "Obsdet15 Suasana",
-                "Obsdet20 Aktivitas",
-                "Obsdet20 Jumlah",
-                "Obsdet20 Suasana",
-                "Obsdet25 Aktivitas",
-                "Obsdet25 Jumlah",
-                "Obsdet25 Suasana",
-                "Obsdet30 Aktivitas",
-                "Obsdet30 Jumlah",
-                "Obsdet30 Suasana",
-                "Observasi Catatan",
-                "Pola",
-                "Waktu Ramai",
-                "Waktu Sepi",
-                "Faktor",
-                "Prediksi1 Skenario",
-                "Prediksi1 Hasil",
-                "Prediksi1 Berbeda Isi",
-                "Prediksi1 Alasan",
-                "Prediksi2 Skenario",
-                "Prediksi2 Lainnya",
-                "Prediksi2 Hasil",
-                "Prediksi2 Alasan",
-                "Tipe Interaksi",
-                "Fenomena Lokasi",
-                "Fenomena Pelaku",
-                "Fenomena Aktivitas",
-                "Fenomena Aturan",
-                "Fenomena Unik",
-                "Pilihan Prediksi",
-                "Prediksi Terpilih",
-                "Cara 1",
-                "Cara 2",
-                "Cara 3",
-                "Langkah 1",
-                "Langkah 2",
-                "Wawancara Pertanyaan1",
-                "Wawancara Tujuan1",
-                "Wawancara Pertanyaan2",
-                "Wawancara Tujuan2",
-                "Wawancara Pertanyaan3",
-                "Wawancara Tujuan3",
-                "Wawancara Pertanyaan4",
-                "Wawancara Tujuan4",
-                "Wawancara Pertanyaan5",
-                "Wawancara Tujuan5",
-                "Alat Tulis Ada",
-                "Alat Tulis Siap",
-                "HP Ada",
-                "HP Siap",
-                "Lembar Siap",
-                "Etik Izin",
-                "Etik Tujuan",
-                "Etik Ganggu",
-                "Etik Sopan",
-                "Etik Nama Sekolah",
-                "Etik Jujur",
-                "Etik Terimakasih",
-                "Etik Sampah",
-                "Bukti 1 Waktu",
-                "Bukti 1 Hasil",
-                "Bukti 1 Jumlah",
-                "Bukti 1 Suasana",
-                "Bukti 1 Banding",
-                "Bukti 2 Waktu",
-                "Bukti 2 Hasil",
-                "Bukti 2 Jumlah",
-                "Bukti 2 Suasana",
-                "Bukti 2 Banding",
-                "Wawancara Nama1",
-                "Wawancara Pekerjaan1",
-                "Wawancara Jawaban1",
-                "Wawancara Nama2",
-                "Wawancara Pekerjaan2",
-                "Wawancara Jawaban2",
-                "Dokumentasi",
-                "Kesesuaian",
-                "Analisis Data",
-                "Analisis Penjelasan",
-                "Faktor Waktu",
-                "Faktor Aturan",
-                "Faktor Ekonomi",
-                "Faktor Acara",
-                "Faktor Fisik",
-                "Nilai Sosial",
-                "Kesimpulan",
-                "Jurusan",
-                "Jurusan Lainnya",
-                "Aspek Pelanggan",
-                "Aspek Pemasok",
-                "Aspek Rekan",
-                "Aspek Masyarakat",
-                "Aspek Institusi",
-                "Solusi Masalah",
-                "Solusi Lokasi",
-                "Solusi Pihak",
-                "Solusi Penyebab",
-                "Solusi Dampak",
-                "Solusi Ide",
-                "Solusi Penerapan",
-                "Solusi Nilai",
-                "Refleksi 1",
-                "Refleksi 2",
-                "Refleksi 3",
-                "Refleksi 4",
-                "Nilai 1",
-                "Nilai 2",
-                "Nilai 3",
-                "Nilai 4",
-                "Nilai 5",
-                "Nilai 6"
+                "Timestamp", "Kelas", "Nama", "Kelompok", "Tugas_Peran",
+                "data_identitas", "data_anggota", "data_literasi", "data_observasi_awal",
+                "data_klasifikasi", "data_pilihan_interaksi", "data_istilah", "data_observasi_detail",
+                "data_pola", "data_prediksi1", "data_prediksi2", "data_fenomena",
+                "data_pilihan_prediksi", "data_cara_pembuktian", "data_wawancara", "data_alat",
+                "data_etika", "data_hasil_pembuktian", "data_analisis", "data_jurusan",
+                "data_aspek_jurusan", "data_solusi", "data_refleksi", "data_penilaian_diri"
             ]
         };
 
-        // ==================== VARIABEL GLOBAL ====================
         let dataKelas = [];
         let dataSiswa = {};
         let isLoading = true;
+        let isOnline = true;
+        let autoSaveTimeout;
 
-        // ==================== LOAD DATA SISWA (JSONP) ====================
-        function loadDataFromGoogleSheets() {
-            try {
-                document.getElementById('loadingMessage').style.display = 'block';
-                document.getElementById('errorMessage').style.display = 'none';
-                
-                const callbackName = 'jsonp_callback_' + Date.now();
-                
-                window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    if (result && result.success) {
-                        dataKelas = result.kelasList || [];
-                        dataSiswa = result.siswaPerKelas || {};
-                        
-                        const kelasSelect = document.getElementById('kelas');
-                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-                        
-                        dataKelas.forEach(kelas => {
-                            if (kelas && kelas.trim() !== '') {
-                                const option = document.createElement('option');
-                                option.value = kelas;
-                                option.textContent = kelas;
-                                kelasSelect.appendChild(option);
-                            }
-                        });
-                        
-                        enableForm();
-                        document.getElementById('loadingMessage').style.display = 'none';
-                    } else {
-                        useFallbackData();
-                    }
-                    
-                    isLoading = false;
-                };
-                
-                const script = document.createElement('script');
-                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = function() {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    useFallbackData();
-                    isLoading = false;
-                };
-                
-                document.head.appendChild(script);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                useFallbackData();
-                isLoading = false;
+        function checkConnection() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                statusIndicator.classList.remove('offline');
+                connectionStatus.innerHTML = 'Terhubung ke internet';
+                isOnline = true;
+            } else {
+                statusIndicator.classList.add('offline');
+                connectionStatus.innerHTML = 'Tidak terhubung ke internet';
+                isOnline = false;
+                showConnectionError();
             }
         }
 
-        function useFallbackData() {
-            dataKelas = [
-                'X ATPH 1', 'X ATPH 2', 'X TSM 1', 'X TSM 2', 
-                'X AKL 1', 'X AKL 2', 'X TKJ 1', 'X TKJ 2'
-            ];
-            
-            dataSiswa = {
-                'X ATPH 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
-                'X ATPH 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
-                'X TSM 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
-                'X TSM 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
-                'X AKL 1': ['Vina Amalia', 'Wahyu Nugroho', 'Xena Olivia', 'Yusuf Maulana', 'Zahra Aulia'],
-                'X AKL 2': ['Adi Saputra', 'Bella Safira', 'Candra Wijaya', 'Dina Marlina', 'Eko Prasetyo'],
-                'X TKJ 1': ['Faris Akbar', 'Gina Lestari', 'Hendra Kurniawan', 'Indah Permatasari', 'Jefri Nichol'],
-                'X TKJ 2': ['Kiki Amalia', 'Lutfi Ardian', 'Mira Azizah', 'Nando Putra', 'Olivia Dewi']
-            };
-            
-            const kelasSelect = document.getElementById('kelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            
-            dataKelas.forEach(kelas => {
-                const option = document.createElement('option');
-                option.value = kelas;
-                option.textContent = kelas;
-                kelasSelect.appendChild(option);
-            });
-            
-            enableForm();
-            document.getElementById('loadingMessage').style.display = 'none';
+        window.addEventListener('online', checkConnection);
+        window.addEventListener('offline', checkConnection);
+
+        function showConnectionError() {
             document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('errorText').textContent = 'Gagal terhubung ke server. Menggunakan data lokal.';
+            document.getElementById('errorText').innerHTML = 'Tidak ada koneksi internet. Silakan refresh halaman setelah koneksi pulih.';
+            disableAllInputs(true);
+        }
+
+        function disableAllInputs(disabled) {
+            const inputs = document.querySelectorAll('input, select, textarea, button');
+            inputs.forEach(input => {
+                if (input.id !== 'errorMessage' && input.id !== 'loadingMessage') {
+                    input.disabled = disabled;
+                }
+            });
+        }
+
+        function loadDataFromGoogleSheets() {
+            checkConnection();
+            if (!navigator.onLine) {
+                showConnectionError();
+                document.getElementById('loadingMessage').style.display = 'none';
+                return;
+            }
+            document.getElementById('loadingMessage').style.display = 'block';
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(result) {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                if (result && result.success) {
+                    dataKelas = result.kelasList || [];
+                    dataSiswa = result.siswaPerKelas || {};
+                    const kelasSelect = document.getElementById('kelas');
+                    kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                    dataKelas.forEach(kelas => {
+                        if (kelas && kelas.trim() !== '') {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        }
+                    });
+                    enableForm();
+                } else {
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                    disableAllInputs(true);
+                }
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            const script = document.createElement('script');
+            script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+            script.onerror = function() {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.';
+                disableAllInputs(true);
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            document.head.appendChild(script);
         }
 
         function enableForm() {
-            document.getElementById('kelas').disabled = false;
-            document.getElementById('nama').disabled = false;
-            document.getElementById('kelompok').disabled = false;
-            document.getElementById('tugas').disabled = false;
-            document.getElementById('submitBtn').disabled = false;
+            if (isOnline) {
+                document.getElementById('kelas').disabled = false;
+                document.getElementById('nama').disabled = false;
+                document.getElementById('kelompok').disabled = false;
+                document.getElementById('tugas').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                loadFromLocalStorage();
+            }
         }
 
-        // ==================== INIT ====================
+        function saveToLocalStorage() {
+            if (!isOnline) return;
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const formData = collectAllFormData();
+                localStorage.setItem('ipas_aktivitas6_draft', JSON.stringify(formData));
+                console.log('Data tersimpan otomatis');
+            }, 1000);
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('ipas_aktivitas6_draft');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    populateFormData(data);
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('ipas_aktivitas6_draft');
+        }
+
+        function updateProgress() {
+            let totalFields = 0;
+            let filledFields = 0;
+            const textInputs = document.querySelectorAll('input[type="text"]');
+            const textareas = document.querySelectorAll('textarea');
+            const numberInputs = document.querySelectorAll('input[type="number"]');
+            const selects = document.querySelectorAll('select');
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const radioGroups = ['prediksi1_skenario', 'prediksi1_hasil', 'prediksi2_skenario', 'tipe_interaksi', 'pilihan_prediksi', 'kesesuaian', 'jurusan'];
+            
+            textInputs.forEach(input => { totalFields++; if (input.value && input.value.trim() !== '') filledFields++; });
+            textareas.forEach(textarea => { totalFields++; if (textarea.value && textarea.value.trim() !== '') filledFields++; });
+            numberInputs.forEach(input => { totalFields++; if (input.value) filledFields++; });
+            selects.forEach(select => { totalFields++; if (select.value && select.value !== '') filledFields++; });
+            checkboxes.forEach(checkbox => { totalFields++; if (checkbox.checked) filledFields++; });
+            radioGroups.forEach(group => { totalFields++; if (document.querySelector(`input[name="${group}"]:checked`)) filledFields++; });
+            
+            const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.innerHTML = percentage + '%';
+        }
+
+        function collectAllFormData() {
+            // ==================== IDENTITAS & ANGGOTA ====================
+            const identitas = {
+                kelas: document.getElementById('kelas')?.value || '',
+                nama: document.getElementById('nama')?.value || '',
+                kelompok: document.getElementById('kelompok')?.value || '',
+                tugas: document.getElementById('tugas')?.value || ''
+            };
+            
+            const anggota = {
+                anggota1: document.getElementById('anggota1')?.value || '',
+                anggota2: document.getElementById('anggota2')?.value || '',
+                anggota3: document.getElementById('anggota3')?.value || '',
+                anggota4: document.getElementById('anggota4')?.value || '',
+                anggota5: document.getElementById('anggota5')?.value || ''
+            };
+            
+            // ==================== LITERASI ====================
+            const literasi = {
+                makhluk_sosial: document.getElementById('literasi_makhluk_sosial')?.value || '',
+                interaksi1_bentuk: document.getElementById('interaksi1_bentuk')?.value || '',
+                interaksi1_contoh: document.getElementById('interaksi1_contoh')?.value || '',
+                interaksi2_bentuk: document.getElementById('interaksi2_bentuk')?.value || '',
+                interaksi2_contoh: document.getElementById('interaksi2_contoh')?.value || '',
+                interaksi3_bentuk: document.getElementById('interaksi3_bentuk')?.value || '',
+                interaksi3_contoh: document.getElementById('interaksi3_contoh')?.value || '',
+                sosialisasi: document.getElementById('sosialisasi_pengertian')?.value || '',
+                agen1: document.getElementById('agen1')?.value || '',
+                agen2: document.getElementById('agen2')?.value || '',
+                agen3: document.getElementById('agen3')?.value || '',
+                agen4: document.getElementById('agen4')?.value || '',
+                institusi1_nama: document.getElementById('institusi1_nama')?.value || '',
+                institusi1_peran: document.getElementById('institusi1_peran')?.value || '',
+                institusi2_nama: document.getElementById('institusi2_nama')?.value || '',
+                institusi2_peran: document.getElementById('institusi2_peran')?.value || '',
+                institusi3_nama: document.getElementById('institusi3_nama')?.value || '',
+                institusi3_peran: document.getElementById('institusi3_peran')?.value || ''
+            };
+            
+            // ==================== OBSERVASI AWAL ====================
+            const observasiAwal = {};
+            for (let i = 1; i <= 5; i++) {
+                observasiAwal[`obs${i}`] = {
+                    lokasi: document.getElementById(`obs${i}_lokasi`)?.value || '',
+                    bentuk: document.getElementById(`obs${i}_bentuk`)?.value || '',
+                    terlibat: document.getElementById(`obs${i}_terlibat`)?.value || '',
+                    terjadi: document.getElementById(`obs${i}_terjadi`)?.value || '',
+                    tujuan: document.getElementById(`obs${i}_tujuan`)?.value || ''
+                };
+            }
+            
+            // ==================== KLASIFIKASI ====================
+            const klasifikasi = {
+                kerjasama: { jml: document.getElementById('klas_kerjasama_jml')?.value || '', no: document.getElementById('klas_kerjasama_no')?.value || '' },
+                persaingan: { jml: document.getElementById('klas_persaingan_jml')?.value || '', no: document.getElementById('klas_persaingan_no')?.value || '' },
+                konflik: { jml: document.getElementById('klas_konflik_jml')?.value || '', no: document.getElementById('klas_konflik_no')?.value || '' },
+                akomodasi: { jml: document.getElementById('klas_akomodasi_jml')?.value || '', no: document.getElementById('klas_akomodasi_no')?.value || '' },
+                jualbeli: { jml: document.getElementById('klas_jualbeli_jml')?.value || '', no: document.getElementById('klas_jualbeli_no')?.value || '' },
+                diskusi: { jml: document.getElementById('klas_diskusi_jml')?.value || '', no: document.getElementById('klas_diskusi_no')?.value || '' },
+                lainnya: { nama: document.getElementById('klas_lainnya_nama')?.value || '', jml: document.getElementById('klas_lainnya_jml')?.value || '', no: document.getElementById('klas_lainnya_no')?.value || '' }
+            };
+            
+            // ==================== PILIHAN INTERAKSI ====================
+            const pilihanInteraksi = {
+                interaksi_pilihan: document.getElementById('interaksi_pilihan')?.value || '',
+                terlibat: document.getElementById('pilihan_terlibat')?.value || '',
+                latar: document.getElementById('pilihan_latar')?.value || '',
+                proses: document.getElementById('pilihan_proses')?.value || '',
+                tujuan: document.getElementById('pilihan_tujuan')?.value || '',
+                nilai: document.getElementById('pilihan_nilai')?.value || '',
+                aturan: document.getElementById('pilihan_aturan')?.value || '',
+                penjelasan: document.getElementById('penjelasan_ilmiah')?.value || ''
+            };
+            
+            // ==================== ISTILAH ====================
+            const istilah = {
+                interaksi_sosial: document.getElementById('istilah_interaksi_sosial')?.checked || false,
+                kerjasama: document.getElementById('istilah_kerjasama')?.checked || false,
+                persaingan: document.getElementById('istilah_persaingan')?.checked || false,
+                konflik: document.getElementById('istilah_konflik')?.checked || false,
+                akomodasi: document.getElementById('istilah_akomodasi')?.checked || false,
+                komunikasi: document.getElementById('istilah_komunikasi')?.checked || false,
+                peran_sosial: document.getElementById('istilah_peran_sosial')?.checked || false,
+                norma: document.getElementById('istilah_norma')?.checked || false,
+                status: document.getElementById('istilah_status')?.checked || false,
+                kelompok: document.getElementById('istilah_kelompok')?.checked || false,
+                lainnya: document.getElementById('istilah_lainnya')?.value || ''
+            };
+            
+            // ==================== OBSERVASI DETAIL ====================
+            const observasiDetail = {
+                lokasi: document.getElementById('observasi_lokasi')?.value || '',
+                mulai: document.getElementById('observasi_mulai')?.value || '',
+                selesai: document.getElementById('observasi_selesai')?.value || '',
+                catatan: document.getElementById('observasi_catatan')?.value || ''
+            };
+            
+            const waktuObservasi = {};
+            for (let menit of [0,5,10,15,20,25,30]) {
+                waktuObservasi[`waktu${menit}`] = {
+                    aktivitas: document.getElementById(`obsdet${menit}_aktivitas`)?.value || '',
+                    jumlah: document.getElementById(`obsdet${menit}_jumlah`)?.value || '',
+                    suasana: document.getElementById(`obsdet${menit}_suasana`)?.value || ''
+                };
+            }
+            
+            // ==================== POLA ====================
+            const pola = {
+                pola: document.getElementById('pola')?.value || '',
+                waktu_ramai: document.getElementById('waktu_ramai')?.value || '',
+                waktu_sepi: document.getElementById('waktu_sepi')?.value || '',
+                faktor: document.getElementById('faktor')?.value || ''
+            };
+            
+            // ==================== PREDIKSI ====================
+            const prediksi1 = {
+                skenario: document.querySelector('input[name="prediksi1_skenario"]:checked')?.value || '',
+                hasil: document.querySelector('input[name="prediksi1_hasil"]:checked')?.value || '',
+                berbeda_isi: document.getElementById('prediksi1_berbeda_isi')?.value || '',
+                alasan: document.getElementById('prediksi1_alasan')?.value || ''
+            };
+            
+            const prediksi2 = {
+                skenario: document.querySelector('input[name="prediksi2_skenario"]:checked')?.value || '',
+                lainnya: document.getElementById('prediksi2_lainnya')?.value || '',
+                hasil: document.getElementById('prediksi2_hasil')?.value || '',
+                alasan: document.getElementById('prediksi2_alasan')?.value || ''
+            };
+            
+            // ==================== FENOMENA ====================
+            const fenomena = {
+                tipe: document.querySelector('input[name="tipe_interaksi"]:checked')?.value || '',
+                lokasi: document.getElementById('fenomena_lokasi')?.value || '',
+                pelaku: document.getElementById('fenomena_pelaku')?.value || '',
+                aktivitas: document.getElementById('fenomena_aktivitas')?.value || '',
+                aturan: document.getElementById('fenomena_aturan')?.value || '',
+                unik: document.getElementById('fenomena_unik')?.value || ''
+            };
+            
+            // ==================== PILIHAN PREDIKSI ====================
+            const pilihanPrediksi = {
+                pilihan: document.querySelector('input[name="pilihan_prediksi"]:checked')?.value || '',
+                terpilih: document.getElementById('prediksi_terpilih')?.value || ''
+            };
+            
+            // ==================== CARA PEMBUKTIAN ====================
+            const caraPembuktian = {
+                cara1: document.getElementById('cara1')?.checked || false,
+                cara2: document.getElementById('cara2')?.checked || false,
+                cara3: document.getElementById('cara3')?.checked || false,
+                langkah1: document.getElementById('langkah1')?.value || '',
+                langkah2: document.getElementById('langkah2')?.value || ''
+            };
+            
+            // ==================== WAWANCARA ====================
+            const wawancara = {
+                pertanyaan1: document.getElementById('wawancara_pertanyaan1')?.value || '',
+                tujuan1: document.getElementById('wawancara_tujuan1')?.value || '',
+                pertanyaan2: document.getElementById('wawancara_pertanyaan2')?.value || '',
+                tujuan2: document.getElementById('wawancara_tujuan2')?.value || '',
+                pertanyaan3: document.getElementById('wawancara_pertanyaan3')?.value || '',
+                tujuan3: document.getElementById('wawancara_tujuan3')?.value || '',
+                pertanyaan4: document.getElementById('wawancara_pertanyaan4')?.value || '',
+                tujuan4: document.getElementById('wawancara_tujuan4')?.value || '',
+                pertanyaan5: document.getElementById('wawancara_pertanyaan5')?.value || '',
+                tujuan5: document.getElementById('wawancara_tujuan5')?.value || ''
+            };
+            
+            // ==================== ALAT ====================
+            const alat = {
+                tulis_ada: document.getElementById('alat_tulis_ada')?.checked || false,
+                tulis_siap: document.getElementById('alat_tulis_siap')?.checked || false,
+                hp_ada: document.getElementById('hp_ada')?.checked || false,
+                hp_siap: document.getElementById('hp_siap')?.checked || false,
+                lembar_siap: document.getElementById('lembar_siap')?.checked || false
+            };
+            
+            // ==================== ETIKA ====================
+            const etika = {
+                izin: document.getElementById('etik_izin')?.checked || false,
+                tujuan: document.getElementById('etik_tujuan')?.checked || false,
+                ganggu: document.getElementById('etik_ganggu')?.checked || false,
+                sopan: document.getElementById('etik_sopan')?.checked || false,
+                nama_sekolah: document.getElementById('etik_nama_sekolah')?.checked || false,
+                jujur: document.getElementById('etik_jujur')?.checked || false,
+                terimakasih: document.getElementById('etik_terimakasih')?.checked || false,
+                sampah: document.getElementById('etik_sampah')?.checked || false
+            };
+            
+            // ==================== HASIL PEMBUKTIAN ====================
+            const hasilPembuktian = {
+                bukti1: {
+                    waktu: document.getElementById('bukti1_waktu')?.value || '',
+                    hasil: document.getElementById('bukti1_hasil')?.value || '',
+                    jumlah: document.getElementById('bukti1_jumlah')?.value || '',
+                    suasana: document.getElementById('bukti1_suasana')?.value || '',
+                    banding: document.getElementById('bukti1_banding')?.value || ''
+                },
+                bukti2: {
+                    waktu: document.getElementById('bukti2_waktu')?.value || '',
+                    hasil: document.getElementById('bukti2_hasil')?.value || '',
+                    jumlah: document.getElementById('bukti2_jumlah')?.value || '',
+                    suasana: document.getElementById('bukti2_suasana')?.value || '',
+                    banding: document.getElementById('bukti2_banding')?.value || ''
+                },
+                wawancara1: {
+                    nama: document.getElementById('wawancara_nama1')?.value || '',
+                    pekerjaan: document.getElementById('wawancara_pekerjaan1')?.value || '',
+                    jawaban: document.getElementById('wawancara_jawaban1')?.value || ''
+                },
+                wawancara2: {
+                    nama: document.getElementById('wawancara_nama2')?.value || '',
+                    pekerjaan: document.getElementById('wawancara_pekerjaan2')?.value || '',
+                    jawaban: document.getElementById('wawancara_jawaban2')?.value || ''
+                },
+                dokumentasi: document.getElementById('dokumentasi')?.value || ''
+            };
+            
+            // ==================== ANALISIS ====================
+            const analisis = {
+                kesesuaian: document.querySelector('input[name="kesesuaian"]:checked')?.value || '',
+                data: document.getElementById('analisis_data')?.value || '',
+                penjelasan: document.getElementById('analisis_penjelasan')?.value || '',
+                faktor_waktu: document.getElementById('faktor_waktu')?.value || '',
+                faktor_aturan: document.getElementById('faktor_aturan')?.value || '',
+                faktor_ekonomi: document.getElementById('faktor_ekonomi')?.value || '',
+                faktor_acara: document.getElementById('faktor_acara')?.value || '',
+                faktor_fisik: document.getElementById('faktor_fisik')?.value || '',
+                nilai_sosial: document.getElementById('nilai_sosial')?.value || '',
+                kesimpulan: document.getElementById('kesimpulan')?.value || ''
+            };
+            
+            // ==================== JURUSAN ====================
+            const jurusan = {
+                pilihan: document.querySelector('input[name="jurusan"]:checked')?.value || '',
+                lainnya: document.getElementById('jurusan_lainnya')?.value || ''
+            };
+            
+            // ==================== ASPEK JURUSAN ====================
+            const aspekJurusan = {
+                pelanggan: document.getElementById('aspek_pelanggan')?.value || '',
+                pemasok: document.getElementById('aspek_pemasok')?.value || '',
+                rekan: document.getElementById('aspek_rekan')?.value || '',
+                masyarakat: document.getElementById('aspek_masyarakat')?.value || '',
+                institusi: document.getElementById('aspek_institusi')?.value || ''
+            };
+            
+            // ==================== SOLUSI ====================
+            const solusi = {
+                masalah: document.getElementById('solusi_masalah')?.value || '',
+                lokasi: document.getElementById('solusi_lokasi')?.value || '',
+                pihak: document.getElementById('solusi_pihak')?.value || '',
+                penyebab: document.getElementById('solusi_penyebab')?.value || '',
+                dampak: document.getElementById('solusi_dampak')?.value || '',
+                ide: document.getElementById('solusi_ide')?.value || '',
+                penerapan: document.getElementById('solusi_penerapan')?.value || '',
+                nilai: document.getElementById('solusi_nilai')?.value || ''
+            };
+            
+            // ==================== REFLEKSI ====================
+            const refleksi = {
+                q1: document.getElementById('refleksi1')?.value || '',
+                q2: document.getElementById('refleksi2')?.value || '',
+                q3: document.getElementById('refleksi3')?.value || '',
+                q4: document.getElementById('refleksi4')?.value || ''
+            };
+            
+            // ==================== PENILAIAN DIRI ====================
+            const penilaianDiri = {
+                nilai1: document.getElementById('nilai1')?.value || '3',
+                nilai2: document.getElementById('nilai2')?.value || '3',
+                nilai3: document.getElementById('nilai3')?.value || '3',
+                nilai4: document.getElementById('nilai4')?.value || '3',
+                nilai5: document.getElementById('nilai5')?.value || '3',
+                nilai6: document.getElementById('nilai6')?.value || '3'
+            };
+            
+            return {
+                identitas, anggota, literasi, observasiAwal, klasifikasi, pilihanInteraksi, istilah,
+                observasiDetail, waktuObservasi, pola, prediksi1, prediksi2, fenomena, pilihanPrediksi,
+                caraPembuktian, wawancara, alat, etika, hasilPembuktian, analisis, jurusan, aspekJurusan,
+                solusi, refleksi, penilaianDiri
+            };
+        }
+
+        function populateFormData(savedData) {
+            if (savedData.identitas) {
+                if (savedData.identitas.kelas) {
+                    document.getElementById('kelas').value = savedData.identitas.kelas;
+                    updateNamaDropdown();
+                }
+                setTimeout(() => {
+                    if (savedData.identitas.nama) document.getElementById('nama').value = savedData.identitas.nama;
+                }, 100);
+                document.getElementById('kelompok').value = savedData.identitas.kelompok || '';
+                document.getElementById('tugas').value = savedData.identitas.tugas || '';
+            }
+            
+            if (savedData.anggota) {
+                for (let i = 1; i <= 5; i++) {
+                    if (savedData.anggota[`anggota${i}`]) {
+                        document.getElementById(`anggota${i}`).value = savedData.anggota[`anggota${i}`];
+                    }
+                }
+            }
+            
+            if (savedData.literasi) {
+                const l = savedData.literasi;
+                document.getElementById('literasi_makhluk_sosial').value = l.makhluk_sosial || '';
+                document.getElementById('interaksi1_bentuk').value = l.interaksi1_bentuk || '';
+                document.getElementById('interaksi1_contoh').value = l.interaksi1_contoh || '';
+                document.getElementById('interaksi2_bentuk').value = l.interaksi2_bentuk || '';
+                document.getElementById('interaksi2_contoh').value = l.interaksi2_contoh || '';
+                document.getElementById('interaksi3_bentuk').value = l.interaksi3_bentuk || '';
+                document.getElementById('interaksi3_contoh').value = l.interaksi3_contoh || '';
+                document.getElementById('sosialisasi_pengertian').value = l.sosialisasi || '';
+                document.getElementById('agen1').value = l.agen1 || '';
+                document.getElementById('agen2').value = l.agen2 || '';
+                document.getElementById('agen3').value = l.agen3 || '';
+                document.getElementById('agen4').value = l.agen4 || '';
+                document.getElementById('institusi1_nama').value = l.institusi1_nama || '';
+                document.getElementById('institusi1_peran').value = l.institusi1_peran || '';
+                document.getElementById('institusi2_nama').value = l.institusi2_nama || '';
+                document.getElementById('institusi2_peran').value = l.institusi2_peran || '';
+                document.getElementById('institusi3_nama').value = l.institusi3_nama || '';
+                document.getElementById('institusi3_peran').value = l.institusi3_peran || '';
+            }
+            
+            // Populate observasi awal
+            if (savedData.observasiAwal) {
+                for (let i = 1; i <= 5; i++) {
+                    const obs = savedData.observasiAwal[`obs${i}`];
+                    if (obs) {
+                        document.getElementById(`obs${i}_lokasi`).value = obs.lokasi || '';
+                        document.getElementById(`obs${i}_bentuk`).value = obs.bentuk || '';
+                        document.getElementById(`obs${i}_terlibat`).value = obs.terlibat || '';
+                        document.getElementById(`obs${i}_terjadi`).value = obs.terjadi || '';
+                        document.getElementById(`obs${i}_tujuan`).value = obs.tujuan || '';
+                    }
+                }
+            }
+            
+            // Populate klasifikasi
+            if (savedData.klasifikasi) {
+                const k = savedData.klasifikasi;
+                document.getElementById('klas_kerjasama_jml').value = k.kerjasama?.jml || '';
+                document.getElementById('klas_kerjasama_no').value = k.kerjasama?.no || '';
+                document.getElementById('klas_persaingan_jml').value = k.persaingan?.jml || '';
+                document.getElementById('klas_persaingan_no').value = k.persaingan?.no || '';
+                document.getElementById('klas_konflik_jml').value = k.konflik?.jml || '';
+                document.getElementById('klas_konflik_no').value = k.konflik?.no || '';
+                document.getElementById('klas_akomodasi_jml').value = k.akomodasi?.jml || '';
+                document.getElementById('klas_akomodasi_no').value = k.akomodasi?.no || '';
+                document.getElementById('klas_jualbeli_jml').value = k.jualbeli?.jml || '';
+                document.getElementById('klas_jualbeli_no').value = k.jualbeli?.no || '';
+                document.getElementById('klas_diskusi_jml').value = k.diskusi?.jml || '';
+                document.getElementById('klas_diskusi_no').value = k.diskusi?.no || '';
+                document.getElementById('klas_lainnya_nama').value = k.lainnya?.nama || '';
+                document.getElementById('klas_lainnya_jml').value = k.lainnya?.jml || '';
+                document.getElementById('klas_lainnya_no').value = k.lainnya?.no || '';
+            }
+            
+            // Populate pilihan interaksi
+            if (savedData.pilihanInteraksi) {
+                const p = savedData.pilihanInteraksi;
+                document.getElementById('interaksi_pilihan').value = p.interaksi_pilihan || '';
+                document.getElementById('pilihan_terlibat').value = p.terlibat || '';
+                document.getElementById('pilihan_latar').value = p.latar || '';
+                document.getElementById('pilihan_proses').value = p.proses || '';
+                document.getElementById('pilihan_tujuan').value = p.tujuan || '';
+                document.getElementById('pilihan_nilai').value = p.nilai || '';
+                document.getElementById('pilihan_aturan').value = p.aturan || '';
+                document.getElementById('penjelasan_ilmiah').value = p.penjelasan || '';
+            }
+            
+            // Populate istilah
+            if (savedData.istilah) {
+                const i = savedData.istilah;
+                document.getElementById('istilah_interaksi_sosial').checked = i.interaksi_sosial || false;
+                document.getElementById('istilah_kerjasama').checked = i.kerjasama || false;
+                document.getElementById('istilah_persaingan').checked = i.persaingan || false;
+                document.getElementById('istilah_konflik').checked = i.konflik || false;
+                document.getElementById('istilah_akomodasi').checked = i.akomodasi || false;
+                document.getElementById('istilah_komunikasi').checked = i.komunikasi || false;
+                document.getElementById('istilah_peran_sosial').checked = i.peran_sosial || false;
+                document.getElementById('istilah_norma').checked = i.norma || false;
+                document.getElementById('istilah_status').checked = i.status || false;
+                document.getElementById('istilah_kelompok').checked = i.kelompok || false;
+                document.getElementById('istilah_lainnya').value = i.lainnya || '';
+            }
+            
+            // Populate observasi detail
+            if (savedData.observasiDetail) {
+                document.getElementById('observasi_lokasi').value = savedData.observasiDetail.lokasi || '';
+                document.getElementById('observasi_mulai').value = savedData.observasiDetail.mulai || '';
+                document.getElementById('observasi_selesai').value = savedData.observasiDetail.selesai || '';
+                document.getElementById('observasi_catatan').value = savedData.observasiDetail.catatan || '';
+            }
+            
+            if (savedData.waktuObservasi) {
+                for (let menit of [0,5,10,15,20,25,30]) {
+                    const w = savedData.waktuObservasi[`waktu${menit}`];
+                    if (w) {
+                        document.getElementById(`obsdet${menit}_aktivitas`).value = w.aktivitas || '';
+                        document.getElementById(`obsdet${menit}_jumlah`).value = w.jumlah || '';
+                        document.getElementById(`obsdet${menit}_suasana`).value = w.suasana || '';
+                    }
+                }
+            }
+            
+            // Populate pola
+            if (savedData.pola) {
+                document.getElementById('pola').value = savedData.pola.pola || '';
+                document.getElementById('waktu_ramai').value = savedData.pola.waktu_ramai || '';
+                document.getElementById('waktu_sepi').value = savedData.pola.waktu_sepi || '';
+                document.getElementById('faktor').value = savedData.pola.faktor || '';
+            }
+            
+            // Populate prediksi
+            if (savedData.prediksi1) {
+                const radiosSkenario = document.getElementsByName('prediksi1_skenario');
+                radiosSkenario.forEach(r => { if (r.value === savedData.prediksi1.skenario) r.checked = true; });
+                const radiosHasil = document.getElementsByName('prediksi1_hasil');
+                radiosHasil.forEach(r => { if (r.value === savedData.prediksi1.hasil) r.checked = true; });
+                document.getElementById('prediksi1_berbeda_isi').value = savedData.prediksi1.berbeda_isi || '';
+                document.getElementById('prediksi1_alasan').value = savedData.prediksi1.alasan || '';
+            }
+            
+            if (savedData.prediksi2) {
+                const radios = document.getElementsByName('prediksi2_skenario');
+                radios.forEach(r => { if (r.value === savedData.prediksi2.skenario) r.checked = true; });
+                document.getElementById('prediksi2_lainnya').value = savedData.prediksi2.lainnya || '';
+                document.getElementById('prediksi2_hasil').value = savedData.prediksi2.hasil || '';
+                document.getElementById('prediksi2_alasan').value = savedData.prediksi2.alasan || '';
+            }
+            
+            // Populate fenomena
+            if (savedData.fenomena) {
+                const radios = document.getElementsByName('tipe_interaksi');
+                radios.forEach(r => { if (r.value === savedData.fenomena.tipe) r.checked = true; });
+                document.getElementById('fenomena_lokasi').value = savedData.fenomena.lokasi || '';
+                document.getElementById('fenomena_pelaku').value = savedData.fenomena.pelaku || '';
+                document.getElementById('fenomena_aktivitas').value = savedData.fenomena.aktivitas || '';
+                document.getElementById('fenomena_aturan').value = savedData.fenomena.aturan || '';
+                document.getElementById('fenomena_unik').value = savedData.fenomena.unik || '';
+            }
+            
+            // Populate pilihan prediksi
+            if (savedData.pilihanPrediksi) {
+                const radios = document.getElementsByName('pilihan_prediksi');
+                radios.forEach(r => { if (r.value === savedData.pilihanPrediksi.pilihan) r.checked = true; });
+                document.getElementById('prediksi_terpilih').value = savedData.pilihanPrediksi.terpilih || '';
+            }
+            
+            // Populate cara pembuktian
+            if (savedData.caraPembuktian) {
+                document.getElementById('cara1').checked = savedData.caraPembuktian.cara1 || false;
+                document.getElementById('cara2').checked = savedData.caraPembuktian.cara2 || false;
+                document.getElementById('cara3').checked = savedData.caraPembuktian.cara3 || false;
+                document.getElementById('langkah1').value = savedData.caraPembuktian.langkah1 || '';
+                document.getElementById('langkah2').value = savedData.caraPembuktian.langkah2 || '';
+            }
+            
+            // Populate wawancara
+            if (savedData.wawancara) {
+                const w = savedData.wawancara;
+                document.getElementById('wawancara_pertanyaan1').value = w.pertanyaan1 || '';
+                document.getElementById('wawancara_tujuan1').value = w.tujuan1 || '';
+                document.getElementById('wawancara_pertanyaan2').value = w.pertanyaan2 || '';
+                document.getElementById('wawancara_tujuan2').value = w.tujuan2 || '';
+                document.getElementById('wawancara_pertanyaan3').value = w.pertanyaan3 || '';
+                document.getElementById('wawancara_tujuan3').value = w.tujuan3 || '';
+                document.getElementById('wawancara_pertanyaan4').value = w.pertanyaan4 || '';
+                document.getElementById('wawancara_tujuan4').value = w.tujuan4 || '';
+                document.getElementById('wawancara_pertanyaan5').value = w.pertanyaan5 || '';
+                document.getElementById('wawancara_tujuan5').value = w.tujuan5 || '';
+            }
+            
+            // Populate alat
+            if (savedData.alat) {
+                document.getElementById('alat_tulis_ada').checked = savedData.alat.tulis_ada || false;
+                document.getElementById('alat_tulis_siap').checked = savedData.alat.tulis_siap || false;
+                document.getElementById('hp_ada').checked = savedData.alat.hp_ada || false;
+                document.getElementById('hp_siap').checked = savedData.alat.hp_siap || false;
+                document.getElementById('lembar_siap').checked = savedData.alat.lembar_siap || false;
+            }
+            
+            // Populate etika
+            if (savedData.etika) {
+                const e = savedData.etika;
+                document.getElementById('etik_izin').checked = e.izin || false;
+                document.getElementById('etik_tujuan').checked = e.tujuan || false;
+                document.getElementById('etik_ganggu').checked = e.ganggu || false;
+                document.getElementById('etik_sopan').checked = e.sopan || false;
+                document.getElementById('etik_nama_sekolah').checked = e.nama_sekolah || false;
+                document.getElementById('etik_jujur').checked = e.jujur || false;
+                document.getElementById('etik_terimakasih').checked = e.terimakasih || false;
+                document.getElementById('etik_sampah').checked = e.sampah || false;
+            }
+            
+            // Populate hasil pembuktian
+            if (savedData.hasilPembuktian) {
+                const h = savedData.hasilPembuktian;
+                document.getElementById('bukti1_waktu').value = h.bukti1?.waktu || '';
+                document.getElementById('bukti1_hasil').value = h.bukti1?.hasil || '';
+                document.getElementById('bukti1_jumlah').value = h.bukti1?.jumlah || '';
+                document.getElementById('bukti1_suasana').value = h.bukti1?.suasana || '';
+                document.getElementById('bukti1_banding').value = h.bukti1?.banding || '';
+                document.getElementById('bukti2_waktu').value = h.bukti2?.waktu || '';
+                document.getElementById('bukti2_hasil').value = h.bukti2?.hasil || '';
+                document.getElementById('bukti2_jumlah').value = h.bukti2?.jumlah || '';
+                document.getElementById('bukti2_suasana').value = h.bukti2?.suasana || '';
+                document.getElementById('bukti2_banding').value = h.bukti2?.banding || '';
+                document.getElementById('wawancara_nama1').value = h.wawancara1?.nama || '';
+                document.getElementById('wawancara_pekerjaan1').value = h.wawancara1?.pekerjaan || '';
+                document.getElementById('wawancara_jawaban1').value = h.wawancara1?.jawaban || '';
+                document.getElementById('wawancara_nama2').value = h.wawancara2?.nama || '';
+                document.getElementById('wawancara_pekerjaan2').value = h.wawancara2?.pekerjaan || '';
+                document.getElementById('wawancara_jawaban2').value = h.wawancara2?.jawaban || '';
+                document.getElementById('dokumentasi').value = h.dokumentasi || '';
+            }
+            
+            // Populate analisis
+            if (savedData.analisis) {
+                const a = savedData.analisis;
+                const radios = document.getElementsByName('kesesuaian');
+                radios.forEach(r => { if (r.value === a.kesesuaian) r.checked = true; });
+                document.getElementById('analisis_data').value = a.data || '';
+                document.getElementById('analisis_penjelasan').value = a.penjelasan || '';
+                document.getElementById('faktor_waktu').value = a.faktor_waktu || '';
+                document.getElementById('faktor_aturan').value = a.faktor_aturan || '';
+                document.getElementById('faktor_ekonomi').value = a.faktor_ekonomi || '';
+                document.getElementById('faktor_acara').value = a.faktor_acara || '';
+                document.getElementById('faktor_fisik').value = a.faktor_fisik || '';
+                document.getElementById('nilai_sosial').value = a.nilai_sosial || '';
+                document.getElementById('kesimpulan').value = a.kesimpulan || '';
+            }
+            
+            // Populate jurusan
+            if (savedData.jurusan) {
+                const radios = document.getElementsByName('jurusan');
+                radios.forEach(r => { if (r.value === savedData.jurusan.pilihan) r.checked = true; });
+                document.getElementById('jurusan_lainnya').value = savedData.jurusan.lainnya || '';
+            }
+            
+            // Populate aspek jurusan
+            if (savedData.aspekJurusan) {
+                const aj = savedData.aspekJurusan;
+                document.getElementById('aspek_pelanggan').value = aj.pelanggan || '';
+                document.getElementById('aspek_pemasok').value = aj.pemasok || '';
+                document.getElementById('aspek_rekan').value = aj.rekan || '';
+                document.getElementById('aspek_masyarakat').value = aj.masyarakat || '';
+                document.getElementById('aspek_institusi').value = aj.institusi || '';
+            }
+            
+            // Populate solusi
+            if (savedData.solusi) {
+                const s = savedData.solusi;
+                document.getElementById('solusi_masalah').value = s.masalah || '';
+                document.getElementById('solusi_lokasi').value = s.lokasi || '';
+                document.getElementById('solusi_pihak').value = s.pihak || '';
+                document.getElementById('solusi_penyebab').value = s.penyebab || '';
+                document.getElementById('solusi_dampak').value = s.dampak || '';
+                document.getElementById('solusi_ide').value = s.ide || '';
+                document.getElementById('solusi_penerapan').value = s.penerapan || '';
+                document.getElementById('solusi_nilai').value = s.nilai || '';
+            }
+            
+            // Populate refleksi
+            if (savedData.refleksi) {
+                const r = savedData.refleksi;
+                document.getElementById('refleksi1').value = r.q1 || '';
+                document.getElementById('refleksi2').value = r.q2 || '';
+                document.getElementById('refleksi3').value = r.q3 || '';
+                document.getElementById('refleksi4').value = r.q4 || '';
+            }
+            
+            // Populate penilaian diri
+            if (savedData.penilaianDiri) {
+                const p = savedData.penilaianDiri;
+                document.getElementById('nilai1').value = p.nilai1 || '3';
+                document.getElementById('nilai2').value = p.nilai2 || '3';
+                document.getElementById('nilai3').value = p.nilai3 || '3';
+                document.getElementById('nilai4').value = p.nilai4 || '3';
+                document.getElementById('nilai5').value = p.nilai5 || '3';
+                document.getElementById('nilai6').value = p.nilai6 || '3';
+            }
+            
+            updateProgress();
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
-            if (hamburger) {
-                hamburger.addEventListener('click', function() {
-                    navMenu.classList.toggle('active');
-                });
-            }
-
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            checkConnection();
             loadDataFromGoogleSheets();
+            setInterval(checkConnection, 5000);
         });
 
         function updateNamaDropdown() {
             const kelas = document.getElementById('kelas').value;
             const namaSelect = document.getElementById('nama');
-            
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
                 return;
             }
-            
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            
-            const siswaList = dataSiswa[kelas] || [];
-            siswaList.sort().forEach(nama => {
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
                 if (nama && nama.trim() !== '') {
                     const option = document.createElement('option');
                     option.value = nama;
@@ -1143,13 +1599,15 @@
             });
         }
 
-        // ==================== FUNGSI SUBMIT DATA ====================
         async function submitData() {
+            if (!isOnline) {
+                alert('Tidak ada koneksi internet. Silakan periksa koneksi Anda dan refresh halaman.');
+                return;
+            }
             if (isLoading) {
                 alert('Data masih dimuat. Silakan tunggu beberapa saat.');
                 return;
             }
-            
             if (!document.getElementById('kelas').value) {
                 alert('Silakan isi kelas terlebih dahulu');
                 return;
@@ -1169,243 +1627,54 @@
 
             try {
                 const formData = new URLSearchParams();
+                const allData = collectAllFormData();
                 
-                // Kirim konfigurasi sheet
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                formData.append('Kelas', allData.identitas.kelas);
+                formData.append('Nama', allData.identitas.nama);
+                formData.append('Kelompok', allData.identitas.kelompok);
+                formData.append('Tugas_Peran', allData.identitas.tugas);
                 
-                // ==================== IDENTITAS ====================
-                formData.append('Kelas', document.getElementById('kelas').value || '');
-                formData.append('Nama', document.getElementById('nama').value || '');
-                formData.append('Kelompok', document.getElementById('kelompok').value || '');
-                formData.append('Tugas/Peran', document.getElementById('tugas').value || '');
+                formData.append('data_identitas', JSON.stringify(allData.identitas));
+                formData.append('data_anggota', JSON.stringify(allData.anggota));
+                formData.append('data_literasi', JSON.stringify(allData.literasi));
+                formData.append('data_observasi_awal', JSON.stringify(allData.observasiAwal));
+                formData.append('data_klasifikasi', JSON.stringify(allData.klasifikasi));
+                formData.append('data_pilihan_interaksi', JSON.stringify(allData.pilihanInteraksi));
+                formData.append('data_istilah', JSON.stringify(allData.istilah));
+                formData.append('data_observasi_detail', JSON.stringify({...allData.observasiDetail, ...allData.waktuObservasi}));
+                formData.append('data_pola', JSON.stringify(allData.pola));
+                formData.append('data_prediksi1', JSON.stringify(allData.prediksi1));
+                formData.append('data_prediksi2', JSON.stringify(allData.prediksi2));
+                formData.append('data_fenomena', JSON.stringify(allData.fenomena));
+                formData.append('data_pilihan_prediksi', JSON.stringify(allData.pilihanPrediksi));
+                formData.append('data_cara_pembuktian', JSON.stringify(allData.caraPembuktian));
+                formData.append('data_wawancara', JSON.stringify(allData.wawancara));
+                formData.append('data_alat', JSON.stringify(allData.alat));
+                formData.append('data_etika', JSON.stringify(allData.etika));
+                formData.append('data_hasil_pembuktian', JSON.stringify(allData.hasilPembuktian));
+                formData.append('data_analisis', JSON.stringify(allData.analisis));
+                formData.append('data_jurusan', JSON.stringify(allData.jurusan));
+                formData.append('data_aspek_jurusan', JSON.stringify(allData.aspekJurusan));
+                formData.append('data_solusi', JSON.stringify(allData.solusi));
+                formData.append('data_refleksi', JSON.stringify(allData.refleksi));
+                formData.append('data_penilaian_diri', JSON.stringify(allData.penilaianDiri));
                 
-                // ==================== ANGGOTA ====================
-                for (let i = 1; i <= 5; i++) {
-                    formData.append(`Anggota ${i}`, document.getElementById(`anggota${i}`)?.value || '');
-                }
-                
-                // ==================== LITERASI ====================
-                formData.append('Literasi Makhluk Sosial', document.getElementById('literasi_makhluk_sosial')?.value || '');
-                
-                for (let i = 1; i <= 3; i++) {
-                    formData.append(`Interaksi ${i} Bentuk`, document.getElementById(`interaksi${i}_bentuk`)?.value || '');
-                    formData.append(`Interaksi ${i} Contoh`, document.getElementById(`interaksi${i}_contoh`)?.value || '');
-                }
-                
-                formData.append('Sosialisasi Pengertian', document.getElementById('sosialisasi_pengertian')?.value || '');
-                
-                for (let i = 1; i <= 4; i++) {
-                    formData.append(`Agen ${i}`, document.getElementById(`agen${i}`)?.value || '');
-                }
-                
-                for (let i = 1; i <= 3; i++) {
-                    formData.append(`Institusi ${i} Nama`, document.getElementById(`institusi${i}_nama`)?.value || '');
-                    formData.append(`Institusi ${i} Peran`, document.getElementById(`institusi${i}_peran`)?.value || '');
-                }
-                
-                // ==================== OBSERVASI 1-5 ====================
-                for (let i = 1; i <= 5; i++) {
-                    formData.append(`Obs ${i} Lokasi`, document.getElementById(`obs${i}_lokasi`)?.value || '');
-                    formData.append(`Obs ${i} Bentuk`, document.getElementById(`obs${i}_bentuk`)?.value || '');
-                    formData.append(`Obs ${i} Terlibat`, document.getElementById(`obs${i}_terlibat`)?.value || '');
-                    formData.append(`Obs ${i} Terjadi`, document.getElementById(`obs${i}_terjadi`)?.value || '');
-                    formData.append(`Obs ${i} Tujuan`, document.getElementById(`obs${i}_tujuan`)?.value || '');
-                }
-                
-                // ==================== KLASIFIKASI ====================
-                const klasFields = ['kerjasama', 'persaingan', 'konflik', 'akomodasi', 'jualbeli', 'diskusi'];
-                klasFields.forEach(field => {
-                    formData.append(`Klas ${field.charAt(0).toUpperCase() + field.slice(1)} Jml`, document.getElementById(`klas_${field}_jml`)?.value || '');
-                    formData.append(`Klas ${field.charAt(0).toUpperCase() + field.slice(1)} No`, document.getElementById(`klas_${field}_no`)?.value || '');
-                });
-                
-                formData.append('Klas Lainnya Nama', document.getElementById('klas_lainnya_nama')?.value || '');
-                formData.append('Klas Lainnya Jml', document.getElementById('klas_lainnya_jml')?.value || '');
-                formData.append('Klas Lainnya No', document.getElementById('klas_lainnya_no')?.value || '');
-                
-                // ==================== PILIHAN ====================
-                formData.append('Interaksi Pilihan', document.getElementById('interaksi_pilihan')?.value || '');
-                formData.append('Pilihan Terlibat', document.getElementById('pilihan_terlibat')?.value || '');
-                formData.append('Pilihan Latar', document.getElementById('pilihan_latar')?.value || '');
-                formData.append('Pilihan Proses', document.getElementById('pilihan_proses')?.value || '');
-                formData.append('Pilihan Tujuan', document.getElementById('pilihan_tujuan')?.value || '');
-                formData.append('Pilihan Nilai', document.getElementById('pilihan_nilai')?.value || '');
-                formData.append('Pilihan Aturan', document.getElementById('pilihan_aturan')?.value || '');
-                formData.append('Penjelasan Ilmiah', document.getElementById('penjelasan_ilmiah')?.value || '');
-                
-                // ==================== ISTILAH ====================
-                const istilahFields = [
-                    'interaksi_sosial', 'kerjasama', 'persaingan', 'konflik', 'akomodasi',
-                    'komunikasi', 'peran_sosial', 'norma', 'status', 'kelompok'
-                ];
-                istilahFields.forEach(field => {
-                    formData.append(`Istilah ${field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}`, 
-                        document.getElementById(`istilah_${field}`)?.checked ? '✅' : '☐');
-                });
-                formData.append('Istilah Lainnya', document.getElementById('istilah_lainnya')?.value || '');
-                
-                // ==================== OBSERVASI DETAIL ====================
-                formData.append('Observasi Lokasi', document.getElementById('observasi_lokasi')?.value || '');
-                formData.append('Observasi Mulai', document.getElementById('observasi_mulai')?.value || '');
-                formData.append('Observasi Selesai', document.getElementById('observasi_selesai')?.value || '');
-                
-                for (let menit of [0,5,10,15,20,25,30]) {
-                    formData.append(`Obsdet${menit} Aktivitas`, document.getElementById(`obsdet${menit}_aktivitas`)?.value || '');
-                    formData.append(`Obsdet${menit} Jumlah`, document.getElementById(`obsdet${menit}_jumlah`)?.value || '');
-                    formData.append(`Obsdet${menit} Suasana`, document.getElementById(`obsdet${menit}_suasana`)?.value || '');
-                }
-                
-                formData.append('Observasi Catatan', document.getElementById('observasi_catatan')?.value || '');
-                
-                // ==================== POLA ====================
-                formData.append('Pola', document.getElementById('pola')?.value || '');
-                formData.append('Waktu Ramai', document.getElementById('waktu_ramai')?.value || '');
-                formData.append('Waktu Sepi', document.getElementById('waktu_sepi')?.value || '');
-                formData.append('Faktor', document.getElementById('faktor')?.value || '');
-                
-                // ==================== PREDIKSI 1 ====================
-                const prediksi1Skenario = document.querySelector('input[name="prediksi1_skenario"]:checked');
-                formData.append('Prediksi1 Skenario', prediksi1Skenario ? prediksi1Skenario.value : '');
-                
-                const prediksi1Hasil = document.querySelector('input[name="prediksi1_hasil"]:checked');
-                formData.append('Prediksi1 Hasil', prediksi1Hasil ? prediksi1Hasil.value : '');
-                
-                formData.append('Prediksi1 Berbeda Isi', document.getElementById('prediksi1_berbeda_isi')?.value || '');
-                formData.append('Prediksi1 Alasan', document.getElementById('prediksi1_alasan')?.value || '');
-                
-                // ==================== PREDIKSI 2 ====================
-                const prediksi2Skenario = document.querySelector('input[name="prediksi2_skenario"]:checked');
-                formData.append('Prediksi2 Skenario', prediksi2Skenario ? prediksi2Skenario.value : '');
-                formData.append('Prediksi2 Lainnya', document.getElementById('prediksi2_lainnya')?.value || '');
-                formData.append('Prediksi2 Hasil', document.getElementById('prediksi2_hasil')?.value || '');
-                formData.append('Prediksi2 Alasan', document.getElementById('prediksi2_alasan')?.value || '');
-                
-                // ==================== FENOMENA ====================
-                const tipeInteraksi = document.querySelector('input[name="tipe_interaksi"]:checked');
-                formData.append('Tipe Interaksi', tipeInteraksi ? tipeInteraksi.value : '');
-                formData.append('Fenomena Lokasi', document.getElementById('fenomena_lokasi')?.value || '');
-                formData.append('Fenomena Pelaku', document.getElementById('fenomena_pelaku')?.value || '');
-                formData.append('Fenomena Aktivitas', document.getElementById('fenomena_aktivitas')?.value || '');
-                formData.append('Fenomena Aturan', document.getElementById('fenomena_aturan')?.value || '');
-                formData.append('Fenomena Unik', document.getElementById('fenomena_unik')?.value || '');
-                
-                // ==================== PILIHAN PREDIKSI ====================
-                const pilihanPrediksi = document.querySelector('input[name="pilihan_prediksi"]:checked');
-                formData.append('Pilihan Prediksi', pilihanPrediksi ? pilihanPrediksi.value : '');
-                formData.append('Prediksi Terpilih', document.getElementById('prediksi_terpilih')?.value || '');
-                
-                // ==================== CARA PEMBUKTIAN ====================
-                formData.append('Cara 1', document.getElementById('cara1')?.checked ? '✅' : '☐');
-                formData.append('Cara 2', document.getElementById('cara2')?.checked ? '✅' : '☐');
-                formData.append('Cara 3', document.getElementById('cara3')?.checked ? '✅' : '☐');
-                formData.append('Langkah 1', document.getElementById('langkah1')?.value || '');
-                formData.append('Langkah 2', document.getElementById('langkah2')?.value || '');
-                
-                // ==================== WAWANCARA ====================
-                for (let i = 1; i <= 5; i++) {
-                    formData.append(`Wawancara Pertanyaan${i}`, document.getElementById(`wawancara_pertanyaan${i}`)?.value || '');
-                    formData.append(`Wawancara Tujuan${i}`, document.getElementById(`wawancara_tujuan${i}`)?.value || '');
-                }
-                
-                // ==================== ALAT ====================
-                formData.append('Alat Tulis Ada', document.getElementById('alat_tulis_ada')?.checked ? '✅' : '☐');
-                formData.append('Alat Tulis Siap', document.getElementById('alat_tulis_siap')?.checked ? '✅' : '☐');
-                formData.append('HP Ada', document.getElementById('hp_ada')?.checked ? '✅' : '☐');
-                formData.append('HP Siap', document.getElementById('hp_siap')?.checked ? '✅' : '☐');
-                formData.append('Lembar Siap', document.getElementById('lembar_siap')?.checked ? '✅' : '☐');
-                
-                // ==================== ETIKA ====================
-                const etikFields = ['izin', 'tujuan', 'ganggu', 'sopan', 'nama_sekolah', 'jujur', 'terimakasih', 'sampah'];
-                etikFields.forEach((field, index) => {
-                    formData.append(`Etik ${field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')}`, 
-                        document.getElementById(`etik_${field}`)?.checked ? '✅' : '☐');
-                });
-                
-                // ==================== HASIL PEMBUKTIAN ====================
-                for (let i = 1; i <= 2; i++) {
-                    formData.append(`Bukti ${i} Waktu`, document.getElementById(`bukti${i}_waktu`)?.value || '');
-                    formData.append(`Bukti ${i} Hasil`, document.getElementById(`bukti${i}_hasil`)?.value || '');
-                    formData.append(`Bukti ${i} Jumlah`, document.getElementById(`bukti${i}_jumlah`)?.value || '');
-                    formData.append(`Bukti ${i} Suasana`, document.getElementById(`bukti${i}_suasana`)?.value || '');
-                    formData.append(`Bukti ${i} Banding`, document.getElementById(`bukti${i}_banding`)?.value || '');
-                }
-                
-                // ==================== WAWANCARA HASIL ====================
-                for (let i = 1; i <= 2; i++) {
-                    formData.append(`Wawancara Nama${i}`, document.getElementById(`wawancara_nama${i}`)?.value || '');
-                    formData.append(`Wawancara Pekerjaan${i}`, document.getElementById(`wawancara_pekerjaan${i}`)?.value || '');
-                    formData.append(`Wawancara Jawaban${i}`, document.getElementById(`wawancara_jawaban${i}`)?.value || '');
-                }
-                
-                formData.append('Dokumentasi', document.getElementById('dokumentasi')?.value || '');
-                
-                // ==================== ANALISIS ====================
-                const kesesuaian = document.querySelector('input[name="kesesuaian"]:checked');
-                formData.append('Kesesuaian', kesesuaian ? kesesuaian.value : '');
-                formData.append('Analisis Data', document.getElementById('analisis_data')?.value || '');
-                formData.append('Analisis Penjelasan', document.getElementById('analisis_penjelasan')?.value || '');
-                formData.append('Faktor Waktu', document.getElementById('faktor_waktu')?.value || '');
-                formData.append('Faktor Aturan', document.getElementById('faktor_aturan')?.value || '');
-                formData.append('Faktor Ekonomi', document.getElementById('faktor_ekonomi')?.value || '');
-                formData.append('Faktor Acara', document.getElementById('faktor_acara')?.value || '');
-                formData.append('Faktor Fisik', document.getElementById('faktor_fisik')?.value || '');
-                formData.append('Nilai Sosial', document.getElementById('nilai_sosial')?.value || '');
-                formData.append('Kesimpulan', document.getElementById('kesimpulan')?.value || '');
-                
-                // ==================== JURUSAN ====================
-                const jurusan = document.querySelector('input[name="jurusan"]:checked');
-                formData.append('Jurusan', jurusan ? jurusan.value : '');
-                formData.append('Jurusan Lainnya', document.getElementById('jurusan_lainnya')?.value || '');
-                
-                // ==================== ASPEK JURUSAN ====================
-                formData.append('Aspek Pelanggan', document.getElementById('aspek_pelanggan')?.value || '');
-                formData.append('Aspek Pemasok', document.getElementById('aspek_pemasok')?.value || '');
-                formData.append('Aspek Rekan', document.getElementById('aspek_rekan')?.value || '');
-                formData.append('Aspek Masyarakat', document.getElementById('aspek_masyarakat')?.value || '');
-                formData.append('Aspek Institusi', document.getElementById('aspek_institusi')?.value || '');
-                
-                // ==================== SOLUSI ====================
-                formData.append('Solusi Masalah', document.getElementById('solusi_masalah')?.value || '');
-                formData.append('Solusi Lokasi', document.getElementById('solusi_lokasi')?.value || '');
-                formData.append('Solusi Pihak', document.getElementById('solusi_pihak')?.value || '');
-                formData.append('Solusi Penyebab', document.getElementById('solusi_penyebab')?.value || '');
-                formData.append('Solusi Dampak', document.getElementById('solusi_dampak')?.value || '');
-                formData.append('Solusi Ide', document.getElementById('solusi_ide')?.value || '');
-                formData.append('Solusi Penerapan', document.getElementById('solusi_penerapan')?.value || '');
-                formData.append('Solusi Nilai', document.getElementById('solusi_nilai')?.value || '');
-                
-                // ==================== REFLEKSI ====================
-                for (let i = 1; i <= 4; i++) {
-                    formData.append(`Refleksi ${i}`, document.getElementById(`refleksi${i}`)?.value || '');
-                }
-                
-                // ==================== NILAI ====================
-                for (let i = 1; i <= 6; i++) {
-                    formData.append(`Nilai ${i}`, document.getElementById(`nilai${i}`)?.value || '3');
-                }
+                formData.append('Timestamp', new Date().toISOString());
 
-                // Kirim ke perekap aktivitas
                 await fetch(URL_PEREKAP_AKTIVITAS, {
                     method: 'POST',
                     mode: 'no-cors',
                     redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData
                 });
 
+                clearLocalStorage();
                 document.getElementById('successMessage').style.display = 'block';
-                
-                setTimeout(() => {
-                    document.getElementById('successMessage').style.display = 'none';
-                }, 5000);
-
-                if (confirm('Data terkirim! Ingin mereset form?')) {
-                    location.reload();
-                }
-
+                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
+                if (confirm('Data terkirim! Ingin mereset form?')) location.reload();
             } catch (error) {
                 alert('Terjadi kesalahan: ' + error.message);
                 document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
