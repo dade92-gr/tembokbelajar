@@ -147,6 +147,60 @@
             margin: 1rem 0 2rem 0;
         }
 
+        /* Progress Bar Styles */
+        .progress-container {
+            margin: 20px 0 30px 0;
+            background: #f0f0f0;
+            border-radius: 25px;
+            padding: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            height: 25px;
+            border-radius: 25px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 30px;
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.offline {
+            background: #dc3545;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
         .lembar-aktivitas table {
             width: 100%;
             border-collapse: collapse;
@@ -387,7 +441,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <nav class="navbar">
             <div class="nav-container">
@@ -411,9 +464,7 @@
         </nav>
     </header>
 
-    <!-- Activity Detail Content -->
     <section class="activity-detail-container">
-        <!-- Judul Halaman -->
         <div class="ipas-content-card">
             <h2>Aktivitas 2: Mencari Solusi untuk Masalah Kita</h2>
             <div class="subtitle">
@@ -422,20 +473,25 @@
             </div>
         </div>
 
-        <!-- Loading Message -->
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Memeriksa koneksi...</span>
+        </div>
+
         <div id="loadingMessage" class="loading-message">
             <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
-        <!-- Error Message -->
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText"></span>
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span id="errorText">Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.</span>
+            <br>
+            <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-sync-alt"></i> Refresh Halaman
+            </button>
         </div>
 
-        <!-- LEMBAR AKTIVITAS UTAMA -->
         <div class="lembar-aktivitas" id="worksheetForm">
-
-            <!-- HALO KELOMPOK HEBAT -->
             <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--ipas-primary);">
                 <i class="fas fa-lightbulb" style="color: var(--ipas-primary); margin-right: 10px;"></i>
                 <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
@@ -445,46 +501,50 @@
                 <strong>Tips sukses:</strong> • Diskusikan semua jawaban bersama teman kelompok • Tidak ada jawaban salah, yang penting kalian punya alasan • Tanyakan ke guru jika ada bagian yang membingungkan
             </div>
 
-            <!-- BAGIAN 0: IDENTITAS (FORMAT DROPDOWN) -->
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+            </div>
+
             <h2><i class="fas fa-id-card"></i> BAGIAN 0: IDENTITAS (ISI SEMUA)</h2>
             
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelas</label>
-                    <select id="kelas" onchange="updateNamaDropdown()" disabled>
+                    <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Kelas --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama</label>
-                    <select id="nama" disabled>
+                    <select id="nama" onchange="saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Nama --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" disabled>
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" disabled>
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
             </div>
 
-            <!-- BAGIAN 1: MENGINGAT MASALAH KITA -->
             <h2><i class="fas fa-history"></i> BAGIAN 1: MENGINGAT MASALAH KITA</h2>
             <p>Sebelum cari solusi, kita ingat dulu masalah yang sudah dipilih minggu lalu.</p>
             <table>
-                <tr><th style="width:250px">Pertanyaan</th><th>Jawaban</th></tr>
-                <tr><td>Masalah utama yang akan kami pecahkan (tulis ulang)</td>
-                    <td><input type="text" id="masalah_utama1" placeholder="................................................."><br>
-                        <input type="text" id="masalah_utama2" placeholder="................................................."></td></tr>
-                <tr><td>Pertanyaan penelitian kami</td>
-                    <td><input type="text" id="pertanyaan_penelitian1" placeholder="................................................."><br>
-                        <input type="text" id="pertanyaan_penelitian2" placeholder="................................................."></td></tr>
-            </table>
+                <thead> <tr><th style="width:250px">Pertanyaan</th><th>Jawaban</th></tr> </thead>
+                <tbody>
+                    <tr><td>Masalah utama yang akan kami pecahkan (tulis ulang)</td>
+                        <td><input type="text" id="masalah_utama1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                            <input type="text" id="masalah_utama2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Pertanyaan penelitian kami</td>
+                        <td><input type="text" id="pertanyaan_penelitian1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                            <input type="text" id="pertanyaan_penelitian2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
+             </table>
 
-            <!-- BAGIAN 2: CARI TAHU PENYEBAB MASALAH -->
             <h2><i class="fas fa-search"></i> BAGIAN 2: CARI TAHU PENYEBAB MASALAH (90 menit)</h2>
             <div class="catatan-penting" style="background: #e3f2fd; border-left-color: var(--ipas-accent);">
                 <strong>📝 PENJELASAN:</strong> Sebelum mencari solusi, kita harus tahu dulu APA PENYEBAB masalahnya. Ibarat sakit, kalau hanya tahu gejala (demam) tapi tidak tahu penyebabnya (virus/bakteri/kelelahan), kita bisa salah kasih obat.
@@ -493,22 +553,24 @@
             <h4>A. JAWAB 6 PERTANYAAN INI (30 menit)</h4>
             <p>Diskusikan dan jawab pertanyaan di bawah ini untuk memahami masalah lebih dalam:</p>
             <table>
-                <tr><th>No.</th><th>Pertanyaan</th><th>Jawaban Kelompok</th></tr>
-                <tr><td>1</td><td>APA masalahnya? (Jelaskan dengan kata-katamu sendiri)</td>
-                    <td><input type="text" id="apa_masalah1" placeholder="................................................."><br>
-                        <input type="text" id="apa_masalah2" placeholder="................................................."></td></tr>
-                <tr><td>2</td><td>SIAPA yang paling merasakan dampak masalah ini? (warga, siswa, petani, dll)</td>
-                    <td><input type="text" id="siapa_dampak" placeholder="................................................."></td></tr>
-                <tr><td>3</td><td>DI MANA masalah ini sering terjadi? (tempat spesifik)</td>
-                    <td><input type="text" id="dimana_lokasi" placeholder="................................................."></td></tr>
-                <tr><td>4</td><td>KAPAN masalah ini biasanya muncul? (pagi/siang/musim hujan/dll)</td>
-                    <td><input type="text" id="kapan_waktu" placeholder="................................................."></td></tr>
-                <tr><td>5</td><td>MENGAPA masalah ini bisa terjadi? (Sebutkan 2-3 penyebab utama)</td>
-                    <td>• <input type="text" id="mengapa_penyebab1" placeholder="................................................."><br>
-                        • <input type="text" id="mengapa_penyebab2" placeholder="................................................."></td></tr>
-                <tr><td>6</td><td>BAGAIMANA dampaknya kalau masalah ini dibiarkan?</td>
-                    <td><input type="text" id="bagaimana_dampak1" placeholder="................................................."><br>
-                        <input type="text" id="bagaimana_dampak2" placeholder="................................................."></td></tr>
+                <thead> <tr><th>No.</th><th>Pertanyaan</th><th>Jawaban Kelompok</th></tr> </thead>
+                <tbody>
+                    <tr><td>1</td><td>APA masalahnya? (Jelaskan dengan kata-katamu sendiri)</td>
+                        <td><input type="text" id="apa_masalah1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                            <input type="text" id="apa_masalah2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>2</td><td>SIAPA yang paling merasakan dampak masalah ini? (warga, siswa, petani, dll)</td>
+                        <td><input type="text" id="siapa_dampak" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>3</td><td>DI MANA masalah ini sering terjadi? (tempat spesifik)</td>
+                        <td><input type="text" id="dimana_lokasi" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>4</td><td>KAPAN masalah ini biasanya muncul? (pagi/siang/musim hujan/dll)</td>
+                        <td><input type="text" id="kapan_waktu" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>5</td><td>MENGAPA masalah ini bisa terjadi? (Sebutkan 2-3 penyebab utama)</td>
+                        <td>• <input type="text" id="mengapa_penyebab1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                            • <input type="text" id="mengapa_penyebab2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>6</td><td>BAGAIMANA dampaknya kalau masalah ini dibiarkan?</td>
+                        <td><input type="text" id="bagaimana_dampak1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                            <input type="text" id="bagaimana_dampak2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
             </table>
 
             <h4>B. CARI PENYEBAB LEBIH DETAIL DENGAN "FISHBONE" (60 menit)</h4>
@@ -517,26 +579,26 @@
                 <strong>Cara mengisi:</strong> 1. Tulislah MASALAH KALIAN di kotak yang paling kanan (kepala ikan) 2. Pikirkan: "Apa saja sih yang menyebabkan masalah ini terjadi?" 3. Kelompokkan penyebabnya ke dalam 4 kategori di bawah 4. Tulis sebanyak mungkin! Semakin banyak, semakin bagus
             </div>
 
-            <p><strong>MASALAH KAMI: → </strong><input type="text" id="masalah_fishbone" style="width:80%" placeholder="................................................."></p>
+            <p><strong>MASALAH KAMI: → </strong><input type="text" id="masalah_fishbone" style="width:80%" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></p>
             
             <table class="fishbone-table">
                 <tr><th style="background-color: var(--ipas-accent);">Kategori</th><th style="background-color: var(--ipas-accent);">Pertanyaan Pancingan</th><th style="background-color: var(--ipas-accent);">Penyebab-Penyebabnya (isi sebanyak mungkin)</th></tr>
                 <tr><td><strong>MANUSIA</strong><br>(orang-orang)</td><td>Apakah masalah ini terjadi karena ulah/perilaku/kebiasaan seseorang? Siapa?</td>
-                    <td>• <input type="text" id="penyebab_manusia1" placeholder="................................................."><br>
-                        • <input type="text" id="penyebab_manusia2" placeholder="................................................."><br>
-                        • <input type="text" id="penyebab_manusia3" placeholder="................................................."></td></tr>
+                    <td>• <input type="text" id="penyebab_manusia1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                        • <input type="text" id="penyebab_manusia2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                        • <input type="text" id="penyebab_manusia3" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
                 <tr><td><strong>METODE</strong><br>(cara kerja)</td><td>Apakah cara kerja/prosedur/aturan yang ada sekarang membuat masalah ini muncul?</td>
-                    <td>• <input type="text" id="penyebab_metode1" placeholder="................................................."><br>
-                        • <input type="text" id="penyebab_metode2" placeholder="................................................."><br>
-                        • <input type="text" id="penyebab_metode3" placeholder="................................................."></td></tr>
+                    <td>• <input type="text" id="penyebab_metode1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                        • <input type="text" id="penyebab_metode2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                        • <input type="text" id="penyebab_metode3" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
                 <tr><td><strong>MATERIAL</strong><br>(alat & bahan)</td><td>Apakah karena tidak ada alat? Alatnya rusak? Bahannya tidak tersedia?</td>
-                    <td>• <input type="text" id="penyebab_material1" placeholder="................................................."><br>
-                        • <input type="text" id="penyebab_material2" placeholder="................................................."><br>
-                        • <input type="text" id="penyebab_material3" placeholder="................................................."></td></tr>
+                    <td>• <input type="text" id="penyebab_material1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                        • <input type="text" id="penyebab_material2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                        • <input type="text" id="penyebab_material3" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
                 <tr><td><strong>LINGKUNGAN</strong><br>(kondisi sekitar)</td><td>Apakah lokasi/cuaca/kondisi alam/situasi sosial yang menyebabkan?</td>
-                    <td>• <input type="text" id="penyebab_lingkungan1" placeholder="................................................."><br>
-                        • <input type="text" id="penyebab_lingkungan2" placeholder="................................................."><br>
-                        • <input type="text" id="penyebab_lingkungan3" placeholder="................................................."></td></tr>
+                    <td>• <input type="text" id="penyebab_lingkungan1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                        • <input type="text" id="penyebab_lingkungan2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                        • <input type="text" id="penyebab_lingkungan3" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
             </table>
             
             <div class="kotak-checklist">
@@ -549,7 +611,6 @@
                 </ul>
             </div>
 
-            <!-- BAGIAN 3: MENCARI IDE SOLUSI -->
             <h2><i class="fas fa-lightbulb"></i> BAGIAN 3: MENCARI IDE SOLUSI (90 menit)</h2>
             <h4>A. KUMPULKAN IDE SOLUSI (45 menit)</h4>
             <div class="catatan-penting" style="background: #e3f2fd; border-left-color: var(--ipas-accent);">
@@ -559,13 +620,15 @@
             </div>
             <p>Tulis 6 ide solusi di sini:</p>
             <table>
-                <tr><th>No.</th><th>IDE SOLUSI KAMI (tulis idenya)</th><th>PENYEBAB YANG INGIN DIATASI (dari Fishbone)</th></tr>
-                <tr><td>1</td><td><input type="text" id="solusi1_ide" placeholder="................................................."></td><td><input type="text" id="solusi1_penyebab" placeholder="................................................."></td></tr>
-                <tr><td>2</td><td><input type="text" id="solusi2_ide" placeholder="................................................."></td><td><input type="text" id="solusi2_penyebab" placeholder="................................................."></td></tr>
-                <tr><td>3</td><td><input type="text" id="solusi3_ide" placeholder="................................................."></td><td><input type="text" id="solusi3_penyebab" placeholder="................................................."></td></tr>
-                <tr><td>4</td><td><input type="text" id="solusi4_ide" placeholder="................................................."></td><td><input type="text" id="solusi4_penyebab" placeholder="................................................."></td></tr>
-                <tr><td>5</td><td><input type="text" id="solusi5_ide" placeholder="................................................."></td><td><input type="text" id="solusi5_penyebab" placeholder="................................................."></td></tr>
-                <tr><td>6</td><td><input type="text" id="solusi6_ide" placeholder="................................................."></td><td><input type="text" id="solusi6_penyebab" placeholder="................................................."></td></tr>
+                <thead> <tr><th>No.</th><th>IDE SOLUSI KAMI (tulis idenya)</th><th>PENYEBAB YANG INGIN DIATASI (dari Fishbone)</th></tr> </thead>
+                <tbody>
+                    <tr><td>1</td><td><input type="text" id="solusi1_ide" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi1_penyebab" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>2</td><td><input type="text" id="solusi2_ide" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi2_penyebab" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>3</td><td><input type="text" id="solusi3_ide" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi3_penyebab" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>4</td><td><input type="text" id="solusi4_ide" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi4_penyebab" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>5</td><td><input type="text" id="solusi5_ide" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi5_penyebab" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>6</td><td><input type="text" id="solusi6_ide" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi6_penyebab" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
             </table>
 
             <h4>B. PILIH 3 SOLUSI TERBAIK (45 menit)</h4>
@@ -574,68 +637,66 @@
             </div>
             <p>Tulis 3 solusi terbaik kalian:</p>
             <table>
-                <tr><th>Peringkat</th><th>Solusi Terbaik</th><th>Kenapa solusi ini dipilih?</th></tr>
-                <tr><td>Solusi 1</td><td><input type="text" id="solusi_terbaik1" placeholder="................................................."></td><td><input type="text" id="solusi_terbaik1_alasan" placeholder="................................................."></td></tr>
-                <tr><td>Solusi 2</td><td><input type="text" id="solusi_terbaik2" placeholder="................................................."></td><td><input type="text" id="solusi_terbaik2_alasan" placeholder="................................................."></td></tr>
-                <tr><td>Solusi 3</td><td><input type="text" id="solusi_terbaik3" placeholder="................................................."></td><td><input type="text" id="solusi_terbaik3_alasan" placeholder="................................................."></td></tr>
+                <thead> <tr><th>Peringkat</th><th>Solusi Terbaik</th><th>Kenapa solusi ini dipilih?</th></tr> </thead>
+                <tbody>
+                    <tr><td>Solusi 1</td><td><input type="text" id="solusi_terbaik1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi_terbaik1_alasan" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Solusi 2</td><td><input type="text" id="solusi_terbaik2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi_terbaik2_alasan" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Solusi 3</td><td><input type="text" id="solusi_terbaik3" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi_terbaik3_alasan" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
             </table>
 
-            <!-- BAGIAN 4: PRESENTASI & DAPAT MASUKAN -->
             <h2><i class="fas fa-comments"></i> BAGIAN 4: PRESENTASI & DAPAT MASUKAN (45 menit)</h2>
             <h4>A. SIAPKAN PRESENTASI SINGKAT (30 menit)</h4>
             <div class="catatan-penting" style="background: #e3f2fd; border-left-color: var(--ipas-accent);">
                 <strong>📝 PENJELASAN:</strong> Kalian akan presentasi 2 menit ke kelompok lain. Tujuannya: minta pendapat mereka tentang 3 solusi kalian. Siapa tahu ada masukan bagus yang bisa membuat solusi kalian lebih baik.
             </div>
             <p>Isi kerangka presentasi di bawah ini:</p>
-            <table>
-                <tr><th style="width:200px">Bagian</th><th>Yang akan kami sampaikan</th></tr>
-                <tr><td>Pembukaan (15 detik)</td><td>"Halo, kami dari kelompok <input type="text" id="presentasi_kelompok" style="width:80%">"</td></tr>
-                <tr><td>Masalah kami (30 detik)</td><td>"Masalah yang ingin kami pecahkan adalah <input type="text" id="presentasi_masalah" style="width:80%">"</td></tr>
-                <tr><td>3 Solusi kami (60 detik)</td><td>"Kami punya 3 ide solusi: 1. <input type="text" id="presentasi_solusi1"> 2. <input type="text" id="presentasi_solusi2"> 3. <input type="text" id="presentasi_solusi3">"</td></tr>
-                <tr><td>Permintaan masukan (15 detik)</td><td>"Kami ingin minta pendapat kalian: solusi mana yang paling bagus? Ada saran?"</td></tr>
-            </table>
-            <p>Yang akan presentasi:<br> • Presenter: <input type="text" id="presenter_utama" style="width:70%"><br> • Pendamping: <input type="text" id="presenter_pendamping" style="width:70%"></p>
+            表格
+                <thead> <tr><th style="width:200px">Bagian</th><th>Yang akan kami sampaikan</th> </thead>
+                <tbody>
+                    <tr><td>Pembukaan (15 detik)</td><td>"Halo, kami dari kelompok <input type="text" id="presentasi_kelompok" style="width:80%" oninput="saveToLocalStorage(); updateProgress();">"</td> </tr>
+                    <tr><td>Masalah kami (30 detik)</td><td>"Masalah yang ingin kami pecahkan adalah <input type="text" id="presentasi_masalah" style="width:80%" oninput="saveToLocalStorage(); updateProgress();">"</td> </tr>
+                    <tr><td>3 Solusi kami (60 detik)</td><td>"Kami punya 3 ide solusi: 1. <input type="text" id="presentasi_solusi1" oninput="saveToLocalStorage(); updateProgress();"> 2. <input type="text" id="presentasi_solusi2" oninput="saveToLocalStorage(); updateProgress();"> 3. <input type="text" id="presentasi_solusi3" oninput="saveToLocalStorage(); updateProgress();">"</td> </tr>
+                    <tr><td>Permintaan masukan (15 detik)</td><td>"Kami ingin minta pendapat kalian: solusi mana yang paling bagus? Ada saran?"</td> </tr>
+                </tbody>
+             </table>
+            <p>Yang akan presentasi:<br> • Presenter: <input type="text" id="presenter_utama" style="width:70%" oninput="saveToLocalStorage(); updateProgress();"><br> • Pendamping: <input type="text" id="presenter_pendamping" style="width:70%" oninput="saveToLocalStorage(); updateProgress();"></p>
 
             <h4>B. CATAT MASUKAN DARI KELOMPOK LAIN (15 menit)</h4>
             <div class="catatan-penting" style="background: #e3f2fd; border-left-color: var(--ipas-accent);">
                 <strong>📝 PENJELASAN:</strong> Saat kelompok lain presentasi, dengarkan baik-baik. Kalau ada masukan untuk kelompok kalian, catat di sini. Jangan takut dapat kritik, justru itu membuat solusi kalian lebih baik!
             </div>
-            <table>
-                <tr><th>Dari Kelompok</th><th>Masukan/Saran/Pertanyaan untuk Kami</th></tr>
-                <tr><td>Kelompok <input type="text" id="feedback_kelompok1" style="width:80px"></td><td><input type="text" id="feedback_masukan1a" placeholder="................................................."><br><input type="text" id="feedback_masukan1b" placeholder="................................................."></td></tr>
-                <tr><td>Kelompok <input type="text" id="feedback_kelompok2" style="width:80px"></td><td><input type="text" id="feedback_masukan2a" placeholder="................................................."><br><input type="text" id="feedback_masukan2b" placeholder="................................................."></td></tr>
-                <tr><td>Kelompok <input type="text" id="feedback_kelompok3" style="width:80px"></td><td><input type="text" id="feedback_masukan3a" placeholder="................................................."><br><input type="text" id="feedback_masukan3b" placeholder="................................................."></td></tr>
-            </table>
+            表格
+                <thead> <tr><th>Dari Kelompok</th><th>Masukan/Saran/Pertanyaan untuk Kami</th> </thead>
+                <tbody>
+                    <tr><td>Kelompok <input type="text" id="feedback_kelompok1" style="width:80px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="feedback_masukan1a" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br><input type="text" id="feedback_masukan1b" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                    <tr><td>Kelompok <input type="text" id="feedback_kelompok2" style="width:80px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="feedback_masukan2a" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br><input type="text" id="feedback_masukan2b" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                    <tr><td>Kelompok <input type="text" id="feedback_kelompok3" style="width:80px" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="feedback_masukan3a" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br><input type="text" id="feedback_masukan3b" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                </tbody>
+             </table>
             <p><strong>Masukan PALING BERGUNA yang kami terima:</strong></p>
-            <textarea id="feedback_terbaik" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
+            <textarea id="feedback_terbaik" rows="2" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
 
-            <!-- BAGIAN 5: TETAPKAN 1 SOLUSI UTAMA -->
             <h2><i class="fas fa-check-circle"></i> BAGIAN 5: TETAPKAN 1 SOLUSI UTAMA (30 menit)</h2>
             <h4>A. DISKUSI AKHIR</h4>
             <div class="catatan-penting" style="background: #e3f2fd; border-left-color: var(--ipas-accent);">
                 <strong>📝 PENJELASAN:</strong> Setelah dengar masukan dari kelompok lain, diskusikan lagi dengan kelompokmu. Solusi mana yang paling cocok untuk kalian jalankan?
             </div>
             <p><strong>SOLUSI UTAMA KAMI (pilih 1 dari 3 solusi di atas):</strong></p>
-            <textarea id="solusi_utama" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
+            <textarea id="solusi_utama" rows="2" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
             <p><strong>ALASAN KAMI MEMILIH SOLUSI INI:</strong></p>
-            <textarea id="alasan_solusi" rows="3" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................"></textarea>
+            <textarea id="alasan_solusi" rows="3" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
 
             <h4>B. BUAT HIPOTESIS (DUGAAN SEMENTARA)</h4>
             <div class="catatan-penting" style="background: #e3f2fd; border-left-color: var(--ipas-accent);">
                 <strong>📝 PENJELASAN:</strong> Hipotesis itu seperti tebakan ilmiah. Kita kira-kira, kalau solusi ini dilakukan, apa yang akan terjadi? Lengkapi kalimat di bawah ini.
             </div>
             <p><strong>"Jika kami (lakukan solusi ini) yaitu</strong></p>
-            <textarea id="hipotesis_jika" rows="2" style="width:100%" placeholder="......................................................................................"></textarea>
+            <textarea id="hipotesis_jika" rows="2" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
             <p><strong>maka (dampak yang kami harapkan) yaitu</strong></p>
-            <textarea id="hipotesis_maka" rows="2" style="width:100%" placeholder="......................................................................................"></textarea>
+            <textarea id="hipotesis_maka" rows="2" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
             <p><strong>akan terjadi karena (alasan logisnya) yaitu</strong></p>
-            <textarea id="hipotesis_karena" rows="3" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................"></textarea>
+            <textarea id="hipotesis_karena" rows="3" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
             <div class="kotak-checklist">
                 <p><strong>CONTOH:</strong><br>
                 • Jika kami membuat tempat sampah dari botol bekas dan menaruhnya di setiap sudut kelas<br>
@@ -643,37 +704,35 @@
                 • akan terjadi karena siswa jadi lebih mudah membuang sampah tanpa harus jalan jauh</p>
             </div>
 
-            <!-- BAGIAN 6: REFLEKSI -->
             <h2><i class="fas fa-clipboard-check"></i> BAGIAN 6: REFLEKSI (15 menit)</h2>
             <div class="catatan-penting" style="background: #e3f2fd; border-left-color: var(--ipas-accent);">
                 <strong>📝 PENJELASAN:</strong> Sebelum selesai, luangkan waktu untuk merenung sejenak. Apa yang kalian pelajari hari ini?
             </div>
             <h4>A. Nama Semua Anggota Kelompok</h4>
-            <table>
-                <tr><th>No.</th><th>Nama Lengkap</th></tr>
-                <tr><td>1</td><td><input type="text" id="anggota1" placeholder="................................................. (kamu)"></td></tr>
-                <tr><td>2</td><td><input type="text" id="anggota2" placeholder="................................................."></td></tr>
-                <tr><td>3</td><td><input type="text" id="anggota3" placeholder="................................................."></td></tr>
-                <tr><td>4</td><td><input type="text" id="anggota4" placeholder="................................................."></td></tr>
-            </table>
+            表格
+                <thead> <tr><th>No.</th><th>Nama Lengkap</th> </thead>
+                <tbody>
+                    <tr><td>1</td><td><input type="text" id="anggota1" placeholder="................................................. (kamu)" oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                    <tr><td>2</td><td><input type="text" id="anggota2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                    <tr><td>3</td><td><input type="text" id="anggota3" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                    <tr><td>4</td><td><input type="text" id="anggota4" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td> </tr>
+                </tbody>
+             </table>
 
             <h4>B. Pembelajaran Hari Ini</h4>
             <p>Apa pelajaran paling berharga yang kalian dapatkan hari ini tentang "cara mencari solusi"?</p>
-            <textarea id="pembelajaran" rows="3" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................"></textarea>
+            <textarea id="pembelajaran" rows="3" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
 
             <h4>C. Rencana untuk Pertemuan Selanjutnya</h4>
             <p>Agar sukses di tahap berikutnya (membuat rencana penelitian), kami perlu mempersiapkan:</p>
             <ol style="margin-left: 20px;">
-                <li><input type="text" id="rencana1" style="width:95%" placeholder="...................................................................................."></li>
-                <li><input type="text" id="rencana2" style="width:95%" placeholder="...................................................................................."></li>
-                <li><input type="text" id="rencana3" style="width:95%" placeholder="...................................................................................."></li>
+                <li><input type="text" id="rencana1" style="width:95%" placeholder="...................................................................................." oninput="saveToLocalStorage(); updateProgress();"></li>
+                <li><input type="text" id="rencana2" style="width:95%" placeholder="...................................................................................." oninput="saveToLocalStorage(); updateProgress();"></li>
+                <li><input type="text" id="rencana3" style="width:95%" placeholder="...................................................................................." oninput="saveToLocalStorage(); updateProgress();"></li>
             </ol>
 
             <hr>
             
-            <!-- Tombol Kirim -->
             <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kirim Data Aktivitas 2
             </button>
@@ -682,7 +741,6 @@
             </div>
         </div>
 
-        <!-- Navigasi Bawah -->
         <div class="activity-navigation">
             <a href="s2-1-identifikasi-masalah.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Kembali ke Aktivitas Sebelumnya</a>
             <a href="s2-3-perancangan-proyek.html" class="nav-btn primary">Lanjut ke Aktivitas Berikutnya <i class="fas fa-arrow-right"></i></a>
@@ -690,227 +748,401 @@
     </section>
 
     <script>
-        // ==================== KONFIGURASI URL (SEMESTER 2) ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbysNKxddHUAxYytShCF2Y7o-B7wi1sy83MilbSPOKuIjR9nzeXRvl3XJj7Rd7vVFsM0/exec';
 
-        // ==================== KONFIGURASI FORM ====================
         const FORM_CONFIG = {
             sheetName: "AKTIVITAS 2 - MENCARI SOLUSI",
             headers: [
-                "Timestamp",
-                "Kelas",
-                "Nama",
-                "Kelompok",
-                "Tugas/Peran",
-                "Masalah Utama 1",
-                "Masalah Utama 2",
-                "Pertanyaan Penelitian 1",
-                "Pertanyaan Penelitian 2",
-                "APA Masalah 1",
-                "APA Masalah 2",
-                "SIAPA Dampak",
-                "DIMANA Lokasi",
-                "KAPAN Waktu",
-                "MENGAPA Penyebab 1",
-                "MENGAPA Penyebab 2",
-                "BAGAIMANA Dampak 1",
-                "BAGAIMANA Dampak 2",
-                "Masalah Fishbone",
-                "Penyebab Manusia 1",
-                "Penyebab Manusia 2",
-                "Penyebab Manusia 3",
-                "Penyebab Metode 1",
-                "Penyebab Metode 2",
-                "Penyebab Metode 3",
-                "Penyebab Material 1",
-                "Penyebab Material 2",
-                "Penyebab Material 3",
-                "Penyebab Lingkungan 1",
-                "Penyebab Lingkungan 2",
-                "Penyebab Lingkungan 3",
-                "Solusi 1 Ide",
-                "Solusi 1 Penyebab",
-                "Solusi 2 Ide",
-                "Solusi 2 Penyebab",
-                "Solusi 3 Ide",
-                "Solusi 3 Penyebab",
-                "Solusi 4 Ide",
-                "Solusi 4 Penyebab",
-                "Solusi 5 Ide",
-                "Solusi 5 Penyebab",
-                "Solusi 6 Ide",
-                "Solusi 6 Penyebab",
-                "Solusi Terbaik 1",
-                "Solusi Terbaik 1 Alasan",
-                "Solusi Terbaik 2",
-                "Solusi Terbaik 2 Alasan",
-                "Solusi Terbaik 3",
-                "Solusi Terbaik 3 Alasan",
-                "Presentasi Kelompok",
-                "Presentasi Masalah",
-                "Presentasi Solusi 1",
-                "Presentasi Solusi 2",
-                "Presentasi Solusi 3",
-                "Presenter Utama",
-                "Presenter Pendamping",
-                "Feedback Kelompok 1",
-                "Feedback Masukan 1a",
-                "Feedback Masukan 1b",
-                "Feedback Kelompok 2",
-                "Feedback Masukan 2a",
-                "Feedback Masukan 2b",
-                "Feedback Kelompok 3",
-                "Feedback Masukan 3a",
-                "Feedback Masukan 3b",
-                "Feedback Terbaik",
-                "Solusi Utama",
-                "Alasan Solusi",
-                "Hipotesis Jika",
-                "Hipotesis Maka",
-                "Hipotesis Karena",
-                "Anggota 1",
-                "Anggota 2",
-                "Anggota 3",
-                "Anggota 4",
-                "Pembelajaran",
-                "Rencana 1",
-                "Rencana 2",
-                "Rencana 3"
+                "Timestamp", "Kelas", "Nama", "Kelompok", "Tugas/Peran",
+                "data_bagian1", "data_bagian2", "data_fishbone", "data_ide_solusi",
+                "data_solusi_terbaik", "data_presentasi", "data_feedback",
+                "data_solusi_utama", "data_hipotesis", "data_refleksi"
             ]
         };
 
-        // ==================== VARIABEL GLOBAL ====================
-        let dataKelas = [];
-        let dataSiswa = {};
-        let isLoading = true;
+        let dataKelas = [], dataSiswa = {};
+        let isLoading = true, isOnline = true, autoSaveTimeout;
 
-        // ==================== LOAD DATA SISWA (JSONP) ====================
-        function loadDataFromGoogleSheets() {
-            try {
-                document.getElementById('loadingMessage').style.display = 'block';
-                document.getElementById('errorMessage').style.display = 'none';
-                
-                const callbackName = 'jsonp_callback_' + Date.now();
-                
-                window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    if (result && result.success) {
-                        dataKelas = result.kelasList || [];
-                        dataSiswa = result.siswaPerKelas || {};
-                        
-                        const kelasSelect = document.getElementById('kelas');
-                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-                        
-                        dataKelas.forEach(kelas => {
-                            if (kelas && kelas.trim() !== '') {
-                                const option = document.createElement('option');
-                                option.value = kelas;
-                                option.textContent = kelas;
-                                kelasSelect.appendChild(option);
-                            }
-                        });
-                        
-                        enableForm();
-                        document.getElementById('loadingMessage').style.display = 'none';
-                    } else {
-                        useFallbackData();
-                    }
-                    
-                    isLoading = false;
-                };
-                
-                const script = document.createElement('script');
-                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = function() {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    useFallbackData();
-                    isLoading = false;
-                };
-                
-                document.head.appendChild(script);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                useFallbackData();
-                isLoading = false;
+        function checkConnection() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                statusIndicator.classList.remove('offline');
+                connectionStatus.innerHTML = 'Terhubung ke internet';
+                isOnline = true;
+            } else {
+                statusIndicator.classList.add('offline');
+                connectionStatus.innerHTML = 'Tidak terhubung ke internet';
+                isOnline = false;
+                showConnectionError();
             }
         }
 
-        function useFallbackData() {
-            dataKelas = [
-                'X ATPH 1', 'X ATPH 2', 'X TSM 1', 'X TSM 2', 
-                'X AKL 1', 'X AKL 2', 'X TKJ 1', 'X TKJ 2'
-            ];
-            
-            dataSiswa = {
-                'X ATPH 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
-                'X ATPH 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
-                'X TSM 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
-                'X TSM 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
-                'X AKL 1': ['Vina Amalia', 'Wahyu Nugroho', 'Xena Olivia', 'Yusuf Maulana', 'Zahra Aulia'],
-                'X AKL 2': ['Adi Saputra', 'Bella Safira', 'Candra Wijaya', 'Dina Marlina', 'Eko Prasetyo'],
-                'X TKJ 1': ['Faris Akbar', 'Gina Lestari', 'Hendra Kurniawan', 'Indah Permatasari', 'Jefri Nichol'],
-                'X TKJ 2': ['Kiki Amalia', 'Lutfi Ardian', 'Mira Azizah', 'Nando Putra', 'Olivia Dewi']
-            };
-            
-            const kelasSelect = document.getElementById('kelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            
-            dataKelas.forEach(kelas => {
-                const option = document.createElement('option');
-                option.value = kelas;
-                option.textContent = kelas;
-                kelasSelect.appendChild(option);
-            });
-            
-            enableForm();
-            document.getElementById('loadingMessage').style.display = 'none';
+        window.addEventListener('online', checkConnection);
+        window.addEventListener('offline', checkConnection);
+
+        function showConnectionError() {
             document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('errorText').textContent = 'Gagal terhubung ke server. Menggunakan data lokal.';
+            document.getElementById('errorText').innerHTML = 'Tidak ada koneksi internet. Silakan refresh halaman setelah koneksi pulih.';
+            disableAllInputs(true);
+        }
+
+        function disableAllInputs(disabled) {
+            const inputs = document.querySelectorAll('input, select, textarea, button');
+            inputs.forEach(input => {
+                if (input.id !== 'errorMessage' && input.id !== 'loadingMessage') {
+                    input.disabled = disabled;
+                }
+            });
+        }
+
+        function loadDataFromGoogleSheets() {
+            checkConnection();
+            if (!navigator.onLine) {
+                showConnectionError();
+                document.getElementById('loadingMessage').style.display = 'none';
+                return;
+            }
+            document.getElementById('loadingMessage').style.display = 'block';
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(result) {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                if (result && result.success) {
+                    dataKelas = result.kelasList || [];
+                    dataSiswa = result.siswaPerKelas || {};
+                    const kelasSelect = document.getElementById('kelas');
+                    kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                    dataKelas.forEach(kelas => {
+                        if (kelas && kelas.trim() !== '') {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        }
+                    });
+                    enableForm();
+                } else {
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                    disableAllInputs(true);
+                }
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            const script = document.createElement('script');
+            script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+            script.onerror = function() {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.';
+                disableAllInputs(true);
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            document.head.appendChild(script);
         }
 
         function enableForm() {
-            document.getElementById('kelas').disabled = false;
-            document.getElementById('nama').disabled = false;
-            document.getElementById('kelompok').disabled = false;
-            document.getElementById('tugas').disabled = false;
-            document.getElementById('submitBtn').disabled = false;
+            if (isOnline) {
+                document.getElementById('kelas').disabled = false;
+                document.getElementById('nama').disabled = false;
+                document.getElementById('kelompok').disabled = false;
+                document.getElementById('tugas').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                loadFromLocalStorage();
+            }
         }
 
-        // ==================== INIT ====================
+        function saveToLocalStorage() {
+            if (!isOnline) return;
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const formData = collectAllFormData();
+                localStorage.setItem('ipas_aktivitas2_draft', JSON.stringify(formData));
+                console.log('Data tersimpan otomatis');
+            }, 1000);
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('ipas_aktivitas2_draft');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    populateFormData(data);
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('ipas_aktivitas2_draft');
+        }
+
+        function updateProgress() {
+            let totalFields = 0, filledFields = 0;
+            
+            const textInputs = document.querySelectorAll('input[type="text"]:not([readonly]), textarea, select');
+            textInputs.forEach(input => {
+                totalFields++;
+                if (input.value && input.value.trim() !== '') filledFields++;
+            });
+            
+            const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.style.width = percentage + '%';
+                progressBar.innerHTML = percentage + '%';
+            }
+        }
+
+        function collectAllFormData() {
+            return {
+                identitas: {
+                    kelas: document.getElementById('kelas')?.value || '',
+                    nama: document.getElementById('nama')?.value || '',
+                    kelompok: document.getElementById('kelompok')?.value || '',
+                    tugas: document.getElementById('tugas')?.value || ''
+                },
+                bagian1: {
+                    masalah_utama1: document.getElementById('masalah_utama1')?.value || '',
+                    masalah_utama2: document.getElementById('masalah_utama2')?.value || '',
+                    pertanyaan_penelitian1: document.getElementById('pertanyaan_penelitian1')?.value || '',
+                    pertanyaan_penelitian2: document.getElementById('pertanyaan_penelitian2')?.value || ''
+                },
+                bagian2: {
+                    apa_masalah1: document.getElementById('apa_masalah1')?.value || '',
+                    apa_masalah2: document.getElementById('apa_masalah2')?.value || '',
+                    siapa_dampak: document.getElementById('siapa_dampak')?.value || '',
+                    dimana_lokasi: document.getElementById('dimana_lokasi')?.value || '',
+                    kapan_waktu: document.getElementById('kapan_waktu')?.value || '',
+                    mengapa_penyebab1: document.getElementById('mengapa_penyebab1')?.value || '',
+                    mengapa_penyebab2: document.getElementById('mengapa_penyebab2')?.value || '',
+                    bagaimana_dampak1: document.getElementById('bagaimana_dampak1')?.value || '',
+                    bagaimana_dampak2: document.getElementById('bagaimana_dampak2')?.value || ''
+                },
+                fishbone: {
+                    masalah: document.getElementById('masalah_fishbone')?.value || '',
+                    manusia: [document.getElementById('penyebab_manusia1')?.value || '', document.getElementById('penyebab_manusia2')?.value || '', document.getElementById('penyebab_manusia3')?.value || ''],
+                    metode: [document.getElementById('penyebab_metode1')?.value || '', document.getElementById('penyebab_metode2')?.value || '', document.getElementById('penyebab_metode3')?.value || ''],
+                    material: [document.getElementById('penyebab_material1')?.value || '', document.getElementById('penyebab_material2')?.value || '', document.getElementById('penyebab_material3')?.value || ''],
+                    lingkungan: [document.getElementById('penyebab_lingkungan1')?.value || '', document.getElementById('penyebab_lingkungan2')?.value || '', document.getElementById('penyebab_lingkungan3')?.value || '']
+                },
+                ide_solusi: {
+                    solusi1: { ide: document.getElementById('solusi1_ide')?.value || '', penyebab: document.getElementById('solusi1_penyebab')?.value || '' },
+                    solusi2: { ide: document.getElementById('solusi2_ide')?.value || '', penyebab: document.getElementById('solusi2_penyebab')?.value || '' },
+                    solusi3: { ide: document.getElementById('solusi3_ide')?.value || '', penyebab: document.getElementById('solusi3_penyebab')?.value || '' },
+                    solusi4: { ide: document.getElementById('solusi4_ide')?.value || '', penyebab: document.getElementById('solusi4_penyebab')?.value || '' },
+                    solusi5: { ide: document.getElementById('solusi5_ide')?.value || '', penyebab: document.getElementById('solusi5_penyebab')?.value || '' },
+                    solusi6: { ide: document.getElementById('solusi6_ide')?.value || '', penyebab: document.getElementById('solusi6_penyebab')?.value || '' }
+                },
+                solusi_terbaik: {
+                    terbaik1: { solusi: document.getElementById('solusi_terbaik1')?.value || '', alasan: document.getElementById('solusi_terbaik1_alasan')?.value || '' },
+                    terbaik2: { solusi: document.getElementById('solusi_terbaik2')?.value || '', alasan: document.getElementById('solusi_terbaik2_alasan')?.value || '' },
+                    terbaik3: { solusi: document.getElementById('solusi_terbaik3')?.value || '', alasan: document.getElementById('solusi_terbaik3_alasan')?.value || '' }
+                },
+                presentasi: {
+                    kelompok: document.getElementById('presentasi_kelompok')?.value || '',
+                    masalah: document.getElementById('presentasi_masalah')?.value || '',
+                    solusi1: document.getElementById('presentasi_solusi1')?.value || '',
+                    solusi2: document.getElementById('presentasi_solusi2')?.value || '',
+                    solusi3: document.getElementById('presentasi_solusi3')?.value || '',
+                    presenter_utama: document.getElementById('presenter_utama')?.value || '',
+                    presenter_pendamping: document.getElementById('presenter_pendamping')?.value || ''
+                },
+                feedback: {
+                    kelompok1: document.getElementById('feedback_kelompok1')?.value || '',
+                    masukan1a: document.getElementById('feedback_masukan1a')?.value || '',
+                    masukan1b: document.getElementById('feedback_masukan1b')?.value || '',
+                    kelompok2: document.getElementById('feedback_kelompok2')?.value || '',
+                    masukan2a: document.getElementById('feedback_masukan2a')?.value || '',
+                    masukan2b: document.getElementById('feedback_masukan2b')?.value || '',
+                    kelompok3: document.getElementById('feedback_kelompok3')?.value || '',
+                    masukan3a: document.getElementById('feedback_masukan3a')?.value || '',
+                    masukan3b: document.getElementById('feedback_masukan3b')?.value || '',
+                    terbaik: document.getElementById('feedback_terbaik')?.value || ''
+                },
+                solusi_utama: {
+                    solusi: document.getElementById('solusi_utama')?.value || '',
+                    alasan: document.getElementById('alasan_solusi')?.value || ''
+                },
+                hipotesis: {
+                    jika: document.getElementById('hipotesis_jika')?.value || '',
+                    maka: document.getElementById('hipotesis_maka')?.value || '',
+                    karena: document.getElementById('hipotesis_karena')?.value || ''
+                },
+                refleksi: {
+                    anggota1: document.getElementById('anggota1')?.value || '',
+                    anggota2: document.getElementById('anggota2')?.value || '',
+                    anggota3: document.getElementById('anggota3')?.value || '',
+                    anggota4: document.getElementById('anggota4')?.value || '',
+                    pembelajaran: document.getElementById('pembelajaran')?.value || '',
+                    rencana1: document.getElementById('rencana1')?.value || '',
+                    rencana2: document.getElementById('rencana2')?.value || '',
+                    rencana3: document.getElementById('rencana3')?.value || ''
+                }
+            };
+        }
+
+        function populateFormData(data) {
+            if (!data) return;
+            
+            if (data.identitas) {
+                if (data.identitas.kelas) {
+                    document.getElementById('kelas').value = data.identitas.kelas;
+                    updateNamaDropdown();
+                }
+                setTimeout(() => { if (data.identitas.nama) document.getElementById('nama').value = data.identitas.nama; }, 100);
+                document.getElementById('kelompok').value = data.identitas.kelompok || '';
+                document.getElementById('tugas').value = data.identitas.tugas || '';
+            }
+            
+            if (data.bagian1) {
+                const b1 = data.bagian1;
+                document.getElementById('masalah_utama1').value = b1.masalah_utama1 || '';
+                document.getElementById('masalah_utama2').value = b1.masalah_utama2 || '';
+                document.getElementById('pertanyaan_penelitian1').value = b1.pertanyaan_penelitian1 || '';
+                document.getElementById('pertanyaan_penelitian2').value = b1.pertanyaan_penelitian2 || '';
+            }
+            
+            if (data.bagian2) {
+                const b2 = data.bagian2;
+                document.getElementById('apa_masalah1').value = b2.apa_masalah1 || '';
+                document.getElementById('apa_masalah2').value = b2.apa_masalah2 || '';
+                document.getElementById('siapa_dampak').value = b2.siapa_dampak || '';
+                document.getElementById('dimana_lokasi').value = b2.dimana_lokasi || '';
+                document.getElementById('kapan_waktu').value = b2.kapan_waktu || '';
+                document.getElementById('mengapa_penyebab1').value = b2.mengapa_penyebab1 || '';
+                document.getElementById('mengapa_penyebab2').value = b2.mengapa_penyebab2 || '';
+                document.getElementById('bagaimana_dampak1').value = b2.bagaimana_dampak1 || '';
+                document.getElementById('bagaimana_dampak2').value = b2.bagaimana_dampak2 || '';
+            }
+            
+            if (data.fishbone) {
+                const fb = data.fishbone;
+                document.getElementById('masalah_fishbone').value = fb.masalah || '';
+                if (fb.manusia) {
+                    document.getElementById('penyebab_manusia1').value = fb.manusia[0] || '';
+                    document.getElementById('penyebab_manusia2').value = fb.manusia[1] || '';
+                    document.getElementById('penyebab_manusia3').value = fb.manusia[2] || '';
+                }
+                if (fb.metode) {
+                    document.getElementById('penyebab_metode1').value = fb.metode[0] || '';
+                    document.getElementById('penyebab_metode2').value = fb.metode[1] || '';
+                    document.getElementById('penyebab_metode3').value = fb.metode[2] || '';
+                }
+                if (fb.material) {
+                    document.getElementById('penyebab_material1').value = fb.material[0] || '';
+                    document.getElementById('penyebab_material2').value = fb.material[1] || '';
+                    document.getElementById('penyebab_material3').value = fb.material[2] || '';
+                }
+                if (fb.lingkungan) {
+                    document.getElementById('penyebab_lingkungan1').value = fb.lingkungan[0] || '';
+                    document.getElementById('penyebab_lingkungan2').value = fb.lingkungan[1] || '';
+                    document.getElementById('penyebab_lingkungan3').value = fb.lingkungan[2] || '';
+                }
+            }
+            
+            if (data.ide_solusi) {
+                const isl = data.ide_solusi;
+                document.getElementById('solusi1_ide').value = isl.solusi1?.ide || '';
+                document.getElementById('solusi1_penyebab').value = isl.solusi1?.penyebab || '';
+                document.getElementById('solusi2_ide').value = isl.solusi2?.ide || '';
+                document.getElementById('solusi2_penyebab').value = isl.solusi2?.penyebab || '';
+                document.getElementById('solusi3_ide').value = isl.solusi3?.ide || '';
+                document.getElementById('solusi3_penyebab').value = isl.solusi3?.penyebab || '';
+                document.getElementById('solusi4_ide').value = isl.solusi4?.ide || '';
+                document.getElementById('solusi4_penyebab').value = isl.solusi4?.penyebab || '';
+                document.getElementById('solusi5_ide').value = isl.solusi5?.ide || '';
+                document.getElementById('solusi5_penyebab').value = isl.solusi5?.penyebab || '';
+                document.getElementById('solusi6_ide').value = isl.solusi6?.ide || '';
+                document.getElementById('solusi6_penyebab').value = isl.solusi6?.penyebab || '';
+            }
+            
+            if (data.solusi_terbaik) {
+                const st = data.solusi_terbaik;
+                document.getElementById('solusi_terbaik1').value = st.terbaik1?.solusi || '';
+                document.getElementById('solusi_terbaik1_alasan').value = st.terbaik1?.alasan || '';
+                document.getElementById('solusi_terbaik2').value = st.terbaik2?.solusi || '';
+                document.getElementById('solusi_terbaik2_alasan').value = st.terbaik2?.alasan || '';
+                document.getElementById('solusi_terbaik3').value = st.terbaik3?.solusi || '';
+                document.getElementById('solusi_terbaik3_alasan').value = st.terbaik3?.alasan || '';
+            }
+            
+            if (data.presentasi) {
+                const p = data.presentasi;
+                document.getElementById('presentasi_kelompok').value = p.kelompok || '';
+                document.getElementById('presentasi_masalah').value = p.masalah || '';
+                document.getElementById('presentasi_solusi1').value = p.solusi1 || '';
+                document.getElementById('presentasi_solusi2').value = p.solusi2 || '';
+                document.getElementById('presentasi_solusi3').value = p.solusi3 || '';
+                document.getElementById('presenter_utama').value = p.presenter_utama || '';
+                document.getElementById('presenter_pendamping').value = p.presenter_pendamping || '';
+            }
+            
+            if (data.feedback) {
+                const f = data.feedback;
+                document.getElementById('feedback_kelompok1').value = f.kelompok1 || '';
+                document.getElementById('feedback_masukan1a').value = f.masukan1a || '';
+                document.getElementById('feedback_masukan1b').value = f.masukan1b || '';
+                document.getElementById('feedback_kelompok2').value = f.kelompok2 || '';
+                document.getElementById('feedback_masukan2a').value = f.masukan2a || '';
+                document.getElementById('feedback_masukan2b').value = f.masukan2b || '';
+                document.getElementById('feedback_kelompok3').value = f.kelompok3 || '';
+                document.getElementById('feedback_masukan3a').value = f.masukan3a || '';
+                document.getElementById('feedback_masukan3b').value = f.masukan3b || '';
+                document.getElementById('feedback_terbaik').value = f.terbaik || '';
+            }
+            
+            if (data.solusi_utama) {
+                document.getElementById('solusi_utama').value = data.solusi_utama.solusi || '';
+                document.getElementById('alasan_solusi').value = data.solusi_utama.alasan || '';
+            }
+            
+            if (data.hipotesis) {
+                document.getElementById('hipotesis_jika').value = data.hipotesis.jika || '';
+                document.getElementById('hipotesis_maka').value = data.hipotesis.maka || '';
+                document.getElementById('hipotesis_karena').value = data.hipotesis.karena || '';
+            }
+            
+            if (data.refleksi) {
+                const r = data.refleksi;
+                document.getElementById('anggota1').value = r.anggota1 || '';
+                document.getElementById('anggota2').value = r.anggota2 || '';
+                document.getElementById('anggota3').value = r.anggota3 || '';
+                document.getElementById('anggota4').value = r.anggota4 || '';
+                document.getElementById('pembelajaran').value = r.pembelajaran || '';
+                document.getElementById('rencana1').value = r.rencana1 || '';
+                document.getElementById('rencana2').value = r.rencana2 || '';
+                document.getElementById('rencana3').value = r.rencana3 || '';
+            }
+            
+            updateProgress();
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
-            if (hamburger) {
-                hamburger.addEventListener('click', function() {
-                    navMenu.classList.toggle('active');
-                });
-            }
-
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            checkConnection();
             loadDataFromGoogleSheets();
+            setInterval(checkConnection, 5000);
         });
 
         function updateNamaDropdown() {
             const kelas = document.getElementById('kelas').value;
             const namaSelect = document.getElementById('nama');
-            
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
                 return;
             }
-            
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            
-            const siswaList = dataSiswa[kelas] || [];
-            siswaList.sort().forEach(nama => {
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
                 if (nama && nama.trim() !== '') {
                     const option = document.createElement('option');
                     option.value = nama;
@@ -920,13 +1152,15 @@
             });
         }
 
-        // ==================== FUNGSI SUBMIT DATA ====================
         async function submitData() {
+            if (!isOnline) {
+                alert('Tidak ada koneksi internet. Silakan periksa koneksi Anda dan refresh halaman.');
+                return;
+            }
             if (isLoading) {
                 alert('Data masih dimuat. Silakan tunggu beberapa saat.');
                 return;
             }
-            
             if (!document.getElementById('kelas').value) {
                 alert('Silakan isi kelas terlebih dahulu');
                 return;
@@ -946,123 +1180,38 @@
 
             try {
                 const formData = new URLSearchParams();
+                const allData = collectAllFormData();
                 
-                // Kirim konfigurasi sheet
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
-                
-                // ==================== IDENTITAS ====================
-                formData.append('Kelas', document.getElementById('kelas').value || '');
-                formData.append('Nama', document.getElementById('nama').value || '');
-                formData.append('Kelompok', document.getElementById('kelompok').value || '');
-                formData.append('Tugas/Peran', document.getElementById('tugas').value || '');
-                
-                // ==================== BAGIAN 1 ====================
-                formData.append('Masalah Utama 1', document.getElementById('masalah_utama1')?.value || '');
-                formData.append('Masalah Utama 2', document.getElementById('masalah_utama2')?.value || '');
-                formData.append('Pertanyaan Penelitian 1', document.getElementById('pertanyaan_penelitian1')?.value || '');
-                formData.append('Pertanyaan Penelitian 2', document.getElementById('pertanyaan_penelitian2')?.value || '');
-                
-                // ==================== BAGIAN 2A ====================
-                formData.append('APA Masalah 1', document.getElementById('apa_masalah1')?.value || '');
-                formData.append('APA Masalah 2', document.getElementById('apa_masalah2')?.value || '');
-                formData.append('SIAPA Dampak', document.getElementById('siapa_dampak')?.value || '');
-                formData.append('DIMANA Lokasi', document.getElementById('dimana_lokasi')?.value || '');
-                formData.append('KAPAN Waktu', document.getElementById('kapan_waktu')?.value || '');
-                formData.append('MENGAPA Penyebab 1', document.getElementById('mengapa_penyebab1')?.value || '');
-                formData.append('MENGAPA Penyebab 2', document.getElementById('mengapa_penyebab2')?.value || '');
-                formData.append('BAGAIMANA Dampak 1', document.getElementById('bagaimana_dampak1')?.value || '');
-                formData.append('BAGAIMANA Dampak 2', document.getElementById('bagaimana_dampak2')?.value || '');
-                
-                // ==================== BAGIAN 2B (FISHBONE) ====================
-                formData.append('Masalah Fishbone', document.getElementById('masalah_fishbone')?.value || '');
-                
-                // Manusia
-                formData.append('Penyebab Manusia 1', document.getElementById('penyebab_manusia1')?.value || '');
-                formData.append('Penyebab Manusia 2', document.getElementById('penyebab_manusia2')?.value || '');
-                formData.append('Penyebab Manusia 3', document.getElementById('penyebab_manusia3')?.value || '');
-                
-                // Metode
-                formData.append('Penyebab Metode 1', document.getElementById('penyebab_metode1')?.value || '');
-                formData.append('Penyebab Metode 2', document.getElementById('penyebab_metode2')?.value || '');
-                formData.append('Penyebab Metode 3', document.getElementById('penyebab_metode3')?.value || '');
-                
-                // Material
-                formData.append('Penyebab Material 1', document.getElementById('penyebab_material1')?.value || '');
-                formData.append('Penyebab Material 2', document.getElementById('penyebab_material2')?.value || '');
-                formData.append('Penyebab Material 3', document.getElementById('penyebab_material3')?.value || '');
-                
-                // Lingkungan
-                formData.append('Penyebab Lingkungan 1', document.getElementById('penyebab_lingkungan1')?.value || '');
-                formData.append('Penyebab Lingkungan 2', document.getElementById('penyebab_lingkungan2')?.value || '');
-                formData.append('Penyebab Lingkungan 3', document.getElementById('penyebab_lingkungan3')?.value || '');
-                
-                // ==================== BAGIAN 3A (IDE SOLUSI) ====================
-                for (let i = 1; i <= 6; i++) {
-                    formData.append(`Solusi ${i} Ide`, document.getElementById(`solusi${i}_ide`)?.value || '');
-                    formData.append(`Solusi ${i} Penyebab`, document.getElementById(`solusi${i}_penyebab`)?.value || '');
-                }
-                
-                // ==================== BAGIAN 3B (SOLUSI TERBAIK) ====================
-                for (let i = 1; i <= 3; i++) {
-                    formData.append(`Solusi Terbaik ${i}`, document.getElementById(`solusi_terbaik${i}`)?.value || '');
-                    formData.append(`Solusi Terbaik ${i} Alasan`, document.getElementById(`solusi_terbaik${i}_alasan`)?.value || '');
-                }
-                
-                // ==================== BAGIAN 4A (PRESENTASI) ====================
-                formData.append('Presentasi Kelompok', document.getElementById('presentasi_kelompok')?.value || '');
-                formData.append('Presentasi Masalah', document.getElementById('presentasi_masalah')?.value || '');
-                formData.append('Presentasi Solusi 1', document.getElementById('presentasi_solusi1')?.value || '');
-                formData.append('Presentasi Solusi 2', document.getElementById('presentasi_solusi2')?.value || '');
-                formData.append('Presentasi Solusi 3', document.getElementById('presentasi_solusi3')?.value || '');
-                formData.append('Presenter Utama', document.getElementById('presenter_utama')?.value || '');
-                formData.append('Presenter Pendamping', document.getElementById('presenter_pendamping')?.value || '');
-                
-                // ==================== BAGIAN 4B (FEEDBACK) ====================
-                for (let i = 1; i <= 3; i++) {
-                    formData.append(`Feedback Kelompok ${i}`, document.getElementById(`feedback_kelompok${i}`)?.value || '');
-                    formData.append(`Feedback Masukan ${i}a`, document.getElementById(`feedback_masukan${i}a`)?.value || '');
-                    formData.append(`Feedback Masukan ${i}b`, document.getElementById(`feedback_masukan${i}b`)?.value || '');
-                }
-                formData.append('Feedback Terbaik', document.getElementById('feedback_terbaik')?.value || '');
-                
-                // ==================== BAGIAN 5 (SOLUSI UTAMA) ====================
-                formData.append('Solusi Utama', document.getElementById('solusi_utama')?.value || '');
-                formData.append('Alasan Solusi', document.getElementById('alasan_solusi')?.value || '');
-                formData.append('Hipotesis Jika', document.getElementById('hipotesis_jika')?.value || '');
-                formData.append('Hipotesis Maka', document.getElementById('hipotesis_maka')?.value || '');
-                formData.append('Hipotesis Karena', document.getElementById('hipotesis_karena')?.value || '');
-                
-                // ==================== BAGIAN 6 (REFLEKSI) ====================
-                for (let i = 1; i <= 4; i++) {
-                    formData.append(`Anggota ${i}`, document.getElementById(`anggota${i}`)?.value || '');
-                }
-                formData.append('Pembelajaran', document.getElementById('pembelajaran')?.value || '');
-                formData.append('Rencana 1', document.getElementById('rencana1')?.value || '');
-                formData.append('Rencana 2', document.getElementById('rencana2')?.value || '');
-                formData.append('Rencana 3', document.getElementById('rencana3')?.value || '');
+                formData.append('Kelas', allData.identitas.kelas);
+                formData.append('Nama', allData.identitas.nama);
+                formData.append('Kelompok', allData.identitas.kelompok);
+                formData.append('Tugas/Peran', allData.identitas.tugas);
+                formData.append('data_bagian1', JSON.stringify(allData.bagian1));
+                formData.append('data_bagian2', JSON.stringify(allData.bagian2));
+                formData.append('data_fishbone', JSON.stringify(allData.fishbone));
+                formData.append('data_ide_solusi', JSON.stringify(allData.ide_solusi));
+                formData.append('data_solusi_terbaik', JSON.stringify(allData.solusi_terbaik));
+                formData.append('data_presentasi', JSON.stringify(allData.presentasi));
+                formData.append('data_feedback', JSON.stringify(allData.feedback));
+                formData.append('data_solusi_utama', JSON.stringify(allData.solusi_utama));
+                formData.append('data_hipotesis', JSON.stringify(allData.hipotesis));
+                formData.append('data_refleksi', JSON.stringify(allData.refleksi));
+                formData.append('Timestamp', new Date().toISOString());
 
-                // Kirim ke perekap aktivitas
                 await fetch(URL_PEREKAP_AKTIVITAS, {
                     method: 'POST',
                     mode: 'no-cors',
                     redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData
                 });
 
+                clearLocalStorage();
                 document.getElementById('successMessage').style.display = 'block';
-                
-                setTimeout(() => {
-                    document.getElementById('successMessage').style.display = 'none';
-                }, 5000);
-
-                if (confirm('Data terkirim! Ingin mereset form?')) {
-                    location.reload();
-                }
-
+                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
+                if (confirm('Data terkirim! Ingin mereset form?')) location.reload();
             } catch (error) {
                 alert('Terjadi kesalahan: ' + error.message);
                 document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;

@@ -147,6 +147,60 @@
             margin: 1rem 0 2rem 0;
         }
 
+        /* Progress Bar Styles */
+        .progress-container {
+            margin: 20px 0 30px 0;
+            background: #f0f0f0;
+            border-radius: 25px;
+            padding: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            height: 25px;
+            border-radius: 25px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 30px;
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.offline {
+            background: #dc3545;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
         .lembar-aktivitas table {
             width: 100%;
             border-collapse: collapse;
@@ -177,6 +231,13 @@
             border-radius: 20px;
             font-family: inherit;
             margin: 5px 0;
+        }
+
+        .lembar-aktivitas input[type=number] {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
         }
 
         .lembar-aktivitas .isian-kosong {
@@ -420,7 +481,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <nav class="navbar">
             <div class="nav-container">
@@ -444,9 +504,7 @@
         </nav>
     </header>
 
-    <!-- Activity Detail Content -->
     <section class="activity-detail-container">
-        <!-- Judul Halaman -->
         <div class="ipas-content-card">
             <h2>Aktivitas 6: Diseminasi Proyek (Pembuatan Video)</h2>
             <div class="subtitle">
@@ -455,20 +513,25 @@
             </div>
         </div>
 
-        <!-- Loading Message -->
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Memeriksa koneksi...</span>
+        </div>
+
         <div id="loadingMessage" class="loading-message">
             <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
-        <!-- Error Message -->
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText"></span>
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span id="errorText">Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.</span>
+            <br>
+            <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-sync-alt"></i> Refresh Halaman
+            </button>
         </div>
 
-        <!-- LEMBAR AKTIVITAS UTAMA -->
         <div class="lembar-aktivitas" id="worksheetForm">
-
-            <!-- HALO KELOMPOK HEBAT -->
             <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--ipas-primary);">
                 <i class="fas fa-lightbulb" style="color: var(--ipas-primary); margin-right: 10px;"></i>
                 <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
@@ -477,159 +540,138 @@
                 <strong>Waktu:</strong> 2 minggu (Minggu 10-11 | 12 JP)
             </div>
 
-            <!-- BAGIAN 0: IDENTITAS (FORMAT DROPDOWN) -->
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+            </div>
+
             <h2><i class="fas fa-id-card"></i> BAGIAN 0: IDENTITAS</h2>
             
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelas</label>
-                    <select id="kelas" onchange="updateNamaDropdown()" disabled>
+                    <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Kelas --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama</label>
-                    <select id="nama" disabled>
+                    <select id="nama" onchange="saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Nama --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" disabled>
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" disabled>
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
             </div>
 
-            <!-- PERIODE PEMBUATAN VIDEO -->
-            <table>
-                <tr><td style="width:250px">Periode Pembuatan Video</td><td><input type="text" id="periode_video" placeholder="................... s.d. ..................."></td></tr>
-            </table>
+            <div class="form-group">
+                <label>Periode Pembuatan Video</label>
+                <input type="text" id="periode_video" placeholder="................... s.d. ..................." oninput="saveToLocalStorage(); updateProgress();">
+            </div>
 
-            <!-- BAGIAN 1: RENCANA VIDEO -->
             <h2><i class="fas fa-video"></i> BAGIAN 1: RENCANA VIDEO</h2>
             <h4>A. Informasi Dasar Video</h4>
-            <table>
-                <tr><td style="width:200px">Judul Video</td><td><input type="text" id="judul_video" placeholder="................................................."></td></tr>
-                <tr><td>Durasi Rencana</td><td><input type="text" id="durasi_rencana" style="width:100px" placeholder="......."> menit (1-5 menit)</td></tr>
-                <tr><td>Platform Unggah</td>
-                    <td><input type="checkbox" id="platform_youtube"> YouTube &nbsp;&nbsp; 
-                        <input type="checkbox" id="platform_instagram"> Instagram &nbsp;&nbsp; 
-                        <input type="checkbox" id="platform_tiktok"> TikTok &nbsp;&nbsp; 
-                        <input type="checkbox" id="platform_lain"> Lainnya: <input type="text" id="platform_lain_isi" style="width:150px" placeholder="........."></td></tr>
-                <tr><td>Target Penonton</td>
-                    <td><input type="radio" name="target_penonton" value="Guru/Teman" id="target_guru"> Guru/Teman &nbsp;&nbsp; 
-                        <input type="radio" name="target_penonton" value="Masyarakat umum" id="target_masyarakat"> Masyarakat umum</td></tr>
-            </table>
+            <div class="form-grid">
+                <div class="form-group"><label>Judul Video</label><input type="text" id="judul_video" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></div>
+                <div class="form-group"><label>Durasi Rencana</label><input type="text" id="durasi_rencana" style="width:100px" placeholder="......." oninput="saveToLocalStorage(); updateProgress();"> menit (1-5 menit)</div>
+            </div>
+            <div class="form-group">
+                <label>Platform Unggah</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="platform_youtube" onchange="saveToLocalStorage(); updateProgress();"> YouTube</label>
+                    <label><input type="checkbox" id="platform_instagram" onchange="saveToLocalStorage(); updateProgress();"> Instagram</label>
+                    <label><input type="checkbox" id="platform_tiktok" onchange="saveToLocalStorage(); updateProgress();"> TikTok</label>
+                    <label><input type="checkbox" id="platform_lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya: <input type="text" id="platform_lain_isi" style="width:150px" oninput="saveToLocalStorage(); updateProgress();"></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Target Penonton</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="target_penonton" value="Guru/Teman" id="target_guru" onchange="saveToLocalStorage(); updateProgress();"> Guru/Teman</label>
+                    <label><input type="radio" name="target_penonton" value="Masyarakat umum" id="target_masyarakat" onchange="saveToLocalStorage(); updateProgress();"> Masyarakat umum</label>
+                </div>
+            </div>
 
             <h4>B. Pesan Utama Video</h4>
             <table>
-                <tr><th>Pesan</th><th>Isi Singkat</th></tr>
-                <tr><td>Masalah</td><td><input type="text" id="pesan_masalah" placeholder="................................................."></td></tr>
-                <tr><td>Solusi</td><td><input type="text" id="pesan_solusi" placeholder="................................................."></td></tr>
-                <tr><td>Hasil</td><td><input type="text" id="pesan_hasil" placeholder="................................................."></td></tr>
-            </table>
+                <thead> <tr><th>Pesan</th><th>Isi Singkat</th></tr> </thead>
+                <tbody>
+                    <tr><td>Masalah</td><td><input type="text" id="pesan_masalah" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Solusi</td><td><input type="text" id="pesan_solusi" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Hasil</td><td><input type="text" id="pesan_hasil" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
+             </table>
 
             <h4>C. Alur Video (Storyline)</h4>
-            <table>
-                <tr><th>Bagian</th><th>Durasi</th><th>Adegan/Isi</th></tr>
-                <tr><td>Pembukaan</td><td><input type="text" id="durasi_pembukaan" style="width:80px" placeholder="...."> detik</td><td><input type="text" id="adegan_pembukaan" placeholder="Perkenalan kelompok dan topik"></td></tr>
-                <tr><td>Masalah</td><td><input type="text" id="durasi_masalah" style="width:80px" placeholder="...."> detik</td><td><input type="text" id="adegan_masalah" placeholder="Menjelaskan masalah yang diatasi"></td></tr>
-                <tr><td>Solusi & Produk</td><td><input type="text" id="durasi_solusi" style="width:80px" placeholder="...."> detik</td><td><input type="text" id="adegan_solusi" placeholder="Menunjukkan produk dan cara kerja"></td></tr>
-                <tr><td>Hasil</td><td><input type="text" id="durasi_hasil" style="width:80px" placeholder="...."> detik</td><td><input type="text" id="adegan_hasil" placeholder="Menunjukkan hasil/data"></td></tr>
-                <tr><td>Penutup</td><td><input type="text" id="durasi_penutup" style="width:80px" placeholder="...."> detik</td><td><input type="text" id="adegan_penutup" placeholder="Kesimpulan dan terima kasih"></td></tr>
-                <tr><td colspan="2"><strong>TOTAL</strong></td><td><strong><input type="text" id="total_durasi" style="width:60px" placeholder="...."> menit</strong></td></tr>
-            </table>
+             <table>
+                <thead> <tr><th>Bagian</th><th>Durasi</th><th>Adegan/Isi</th></tr> </thead>
+                <tbody>
+                    <tr><td>Pembukaan</td><td><input type="text" id="durasi_pembukaan" style="width:80px" placeholder="...." oninput="hitungTotalDurasi(); saveToLocalStorage(); updateProgress();"> detik</td><td><input type="text" id="adegan_pembukaan" placeholder="Perkenalan kelompok dan topik" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Masalah</td><td><input type="text" id="durasi_masalah" style="width:80px" placeholder="...." oninput="hitungTotalDurasi(); saveToLocalStorage(); updateProgress();"> detik</td><td><input type="text" id="adegan_masalah" placeholder="Menjelaskan masalah yang diatasi" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Solusi & Produk</td><td><input type="text" id="durasi_solusi" style="width:80px" placeholder="...." oninput="hitungTotalDurasi(); saveToLocalStorage(); updateProgress();"> detik</td><td><input type="text" id="adegan_solusi" placeholder="Menunjukkan produk dan cara kerja" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Hasil</td><td><input type="text" id="durasi_hasil" style="width:80px" placeholder="...." oninput="hitungTotalDurasi(); saveToLocalStorage(); updateProgress();"> detik</td><td><input type="text" id="adegan_hasil" placeholder="Menunjukkan hasil/data" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Penutup</td><td><input type="text" id="durasi_penutup" style="width:80px" placeholder="...." oninput="hitungTotalDurasi(); saveToLocalStorage(); updateProgress();"> detik</td><td><input type="text" id="adegan_penutup" placeholder="Kesimpulan dan terima kasih" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td colspan="2"><strong>TOTAL</strong></td><td><strong><input type="text" id="total_durasi" style="width:60px" placeholder="...." readonly> menit</strong></td></tr>
+                </tbody>
+             </table>
 
-            <script>
-                // Fungsi untuk menghitung total durasi
-                function hitungTotalDurasi() {
-                    const pembukaan = Number(document.getElementById('durasi_pembukaan').value) || 0;
-                    const masalah = Number(document.getElementById('durasi_masalah').value) || 0;
-                    const solusi = Number(document.getElementById('durasi_solusi').value) || 0;
-                    const hasil = Number(document.getElementById('durasi_hasil').value) || 0;
-                    const penutup = Number(document.getElementById('durasi_penutup').value) || 0;
-                    
-                    const totalDetik = pembukaan + masalah + solusi + hasil + penutup;
-                    const totalMenit = (totalDetik / 60).toFixed(2);
-                    document.getElementById('total_durasi').value = totalMenit;
-                }
-                
-                // Event listeners untuk input durasi
-                window.onload = function() {
-                    const durasiFields = ['pembukaan', 'masalah', 'solusi', 'hasil', 'penutup'];
-                    durasiFields.forEach(field => {
-                        const input = document.getElementById(`durasi_${field}`);
-                        if (input) {
-                            input.addEventListener('input', hitungTotalDurasi);
-                        }
-                    });
-                };
-            </script>
-
-            <!-- BAGIAN 2: KEBUTUHAN PRODUKSI -->
             <h2><i class="fas fa-clipboard-list"></i> BAGIAN 2: KEBUTUHAN PRODUKSI</h2>
-            <table>
-                <tr><th>No.</th><th>Kebutuhan</th><th>Keterangan</th><th>Status</th></tr>
-                <tr><td>1</td><td>Alat rekam (HP/kamera)</td><td><input type="text" id="kebutuhan_alat_rekam" placeholder="..................."></td><td style="text-align:center"><input type="checkbox" id="status_alat_rekam"></td></tr>
-                <tr><td>2</td><td>Alat bantu (tripod/dll)</td><td><input type="text" id="kebutuhan_alat_bantu" placeholder="..................."></td><td style="text-align:center"><input type="checkbox" id="status_alat_bantu"></td></tr>
-                <tr><td>3</td><td>Lokasi syuting</td><td><input type="text" id="kebutuhan_lokasi" placeholder="..................."></td><td style="text-align:center"><input type="checkbox" id="status_lokasi"></td></tr>
-                <tr><td>4</td><td>Properti/tata letak</td><td><input type="text" id="kebutuhan_properti" placeholder="..................."></td><td style="text-align:center"><input type="checkbox" id="status_properti"></td></tr>
-                <tr><td>5</td><td>Aplikasi editing</td><td><input type="text" id="kebutuhan_edit" placeholder="..................."></td><td style="text-align:center"><input type="checkbox" id="status_edit"></td></tr>
-                <tr><td>6</td><td><input type="text" id="kebutuhan_lain_nama" placeholder="..................."></td><td><input type="text" id="kebutuhan_lain_ket" placeholder="..................."></td><td style="text-align:center"><input type="checkbox" id="status_lain"></td></tr>
-            </table>
+             <table>
+                <thead> <tr><th>No.</th><th>Kebutuhan</th><th>Keterangan</th><th>Status</th></tr> </thead>
+                <tbody>
+                    <tr><td>1</td><td>Alat rekam (HP/kamera)</td><td><input type="text" id="kebutuhan_alat_rekam" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td style="text-align:center"><input type="checkbox" id="status_alat_rekam" onchange="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>2</td><td>Alat bantu (tripod/dll)</td><td><input type="text" id="kebutuhan_alat_bantu" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td style="text-align:center"><input type="checkbox" id="status_alat_bantu" onchange="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>3</td><td>Lokasi syuting</td><td><input type="text" id="kebutuhan_lokasi" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td style="text-align:center"><input type="checkbox" id="status_lokasi" onchange="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>4</td><td>Properti/tata letak</td><td><input type="text" id="kebutuhan_properti" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td style="text-align:center"><input type="checkbox" id="status_properti" onchange="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>5</td><td>Aplikasi editing</td><td><input type="text" id="kebutuhan_edit" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td style="text-align:center"><input type="checkbox" id="status_edit" onchange="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>6</td><td><input type="text" id="kebutuhan_lain_nama" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="kebutuhan_lain_ket" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td style="text-align:center"><input type="checkbox" id="status_lain" onchange="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
+             </table>
 
-            <!-- BAGIAN 3: JADWAL PRODUKSI -->
             <h2><i class="fas fa-calendar-alt"></i> BAGIAN 3: JADWAL PRODUKSI</h2>
-            <table>
-                <tr><th>Hari/Tanggal</th><th>Kegiatan</th><th>Anggota yang Terlibat</th></tr>
-                <tr><td><input type="text" id="jadwal1_tanggal" placeholder="..................."></td><td>Pengambilan gambar</td><td><input type="text" id="jadwal1_anggota" placeholder="..................."></td></tr>
-                <tr><td><input type="text" id="jadwal2_tanggal" placeholder="..................."></td><td>Pengambilan gambar (lanjutan)</td><td><input type="text" id="jadwal2_anggota" placeholder="..................."></td></tr>
-                <tr><td><input type="text" id="jadwal3_tanggal" placeholder="..................."></td><td>Editing video</td><td><input type="text" id="jadwal3_anggota" placeholder="..................."></td></tr>
-                <tr><td><input type="text" id="jadwal4_tanggal" placeholder="..................."></td><td>Review dan revisi</td><td><input type="text" id="jadwal4_anggota" placeholder="..................."></td></tr>
-                <tr><td><input type="text" id="jadwal5_tanggal" placeholder="..................."></td><td>Finalisasi dan upload</td><td><input type="text" id="jadwal5_anggota" placeholder="..................."></td></tr>
-            </table>
+             <table>
+                <thead> <tr><th>Hari/Tanggal</th><th>Kegiatan</th><th>Anggota yang Terlibat</th></tr> </thead>
+                <tbody>
+                    <tr><td><input type="text" id="jadwal1_tanggal" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td>Pengambilan gambar</td><td><input type="text" id="jadwal1_anggota" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td><input type="text" id="jadwal2_tanggal" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td>Pengambilan gambar (lanjutan)</td><td><input type="text" id="jadwal2_anggota" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td><input type="text" id="jadwal3_tanggal" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td>Editing video</td><td><input type="text" id="jadwal3_anggota" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td><input type="text" id="jadwal4_tanggal" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td>Review dan revisi</td><td><input type="text" id="jadwal4_anggota" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td><input type="text" id="jadwal5_tanggal" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td><td>Finalisasi dan upload</td><td><input type="text" id="jadwal5_anggota" placeholder="..................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
+             </table>
 
-            <!-- BAGIAN 4: CATATAN PRODUKSI -->
             <h2><i class="fas fa-pencil-alt"></i> BAGIAN 4: CATATAN PRODUKSI</h2>
-            <p>Kendala saat pengambilan gambar:</p>
-            <textarea id="kendala_syuting" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
-            <p>Kendala saat editing:</p>
-            <textarea id="kendala_editing" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
+            <div class="form-group"><label>Kendala saat pengambilan gambar:</label><textarea id="kendala_syuting" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></div>
+            <div class="form-group"><label>Kendala saat editing:</label><textarea id="kendala_editing" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></div>
 
-            <!-- BAGIAN 5: SPESIFIKASI VIDEO FINAL -->
             <h2><i class="fas fa-check-circle"></i> BAGIAN 5: SPESIFIKASI VIDEO FINAL</h2>
-            <table>
-                <tr><td style="width:200px">Judul Video</td><td><input type="text" id="judul_video_final" placeholder="................................................."></td></tr>
-                <tr><td>Durasi Final</td><td><input type="text" id="durasi_final_menit" style="width:100px" placeholder="......."> menit <input type="text" id="durasi_final_detik" style="width:60px" placeholder="..."> detik</td></tr>
-                <tr><td>Link Video</td><td><input type="text" id="link_video" placeholder="................................................."></td></tr>
-                <tr><td>Tanggal Unggah</td><td><input type="text" id="tanggal_unggah" placeholder="................................................."></td></tr>
-                <tr><td>Jumlah Views (setelah 3 hari)</td><td><input type="text" id="jumlah_views" style="width:100px" placeholder="......."></td></tr>
-                <tr><td>Jumlah Likes</td><td><input type="text" id="jumlah_likes" style="width:100px" placeholder="......."></td></tr>
-                <tr><td>Jumlah Komentar</td><td><input type="text" id="jumlah_komentar" style="width:100px" placeholder="......."></td></tr>
-            </table>
-            <p><strong>Komentar menarik dari penonton:</strong></p>
-            <textarea id="komentar_menarik" rows="2" style="width:100%" placeholder='"......................................................................................"
-"......................................................................................"'></textarea>
+             <table>
+                <tbody>
+                    <tr><td style="width:200px">Judul Video</td><td><input type="text" id="judul_video_final" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Durasi Final</td><td><input type="text" id="durasi_final_menit" style="width:100px" placeholder="......." oninput="saveToLocalStorage(); updateProgress();"> menit <input type="text" id="durasi_final_detik" style="width:60px" placeholder="..." oninput="saveToLocalStorage(); updateProgress();"> detik</td></tr>
+                    <tr><td>Link Video</td><td><input type="text" id="link_video" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Tanggal Unggah</td><td><input type="text" id="tanggal_unggah" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Jumlah Views (setelah 3 hari)</td><td><input type="text" id="jumlah_views" style="width:100px" placeholder="......." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Jumlah Likes</td><td><input type="text" id="jumlah_likes" style="width:100px" placeholder="......." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Jumlah Komentar</td><td><input type="text" id="jumlah_komentar" style="width:100px" placeholder="......." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
+             </table>
+            <div class="form-group"><label>Komentar menarik dari penonton:</label><textarea id="komentar_menarik" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></div>
 
-            <!-- BAGIAN 6: REFLEKSI SINGKAT -->
             <h2><i class="fas fa-smile"></i> BAGIAN 6: REFLEKSI SINGKAT</h2>
-            <p>1. Hal terbaik dari proyek ini:</p>
-            <textarea id="refleksi_hal_baik" rows="2" style="width:100%" placeholder="......................................................................................"></textarea>
-            <p>2. Hal tersulit dan cara mengatasinya:</p>
-            <textarea id="refleksi_hal_sulit" rows="2" style="width:100%" placeholder="......................................................................................"></textarea>
-            <p>3. Keterampilan baru yang saya dapatkan:</p>
-            <textarea id="refleksi_keterampilan" rows="2" style="width:100%" placeholder="......................................................................................"></textarea>
-            <p>4. Pesan untuk kelompok lain:</p>
-            <textarea id="refleksi_pesan" rows="2" style="width:100%" placeholder="..............................................."></textarea>
+            <div class="form-group"><label>1. Hal terbaik dari proyek ini:</label><textarea id="refleksi_hal_baik" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></div>
+            <div class="form-group"><label>2. Hal tersulit dan cara mengatasinya:</label><textarea id="refleksi_hal_sulit" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></div>
+            <div class="form-group"><label>3. Keterampilan baru yang saya dapatkan:</label><textarea id="refleksi_keterampilan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></div>
+            <div class="form-group"><label>4. Pesan untuk kelompok lain:</label><textarea id="refleksi_pesan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></div>
             
             <hr>
             
-            <!-- Tombol Kirim -->
             <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kirim Data Aktivitas 6
             </button>
@@ -638,271 +680,371 @@
             </div>
         </div>
 
-        <!-- Navigasi Bawah -->
         <div class="activity-navigation">
             <a href="s2-5-pengolahan-data.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Kembali ke Aktivitas Sebelumnya</a>
         </div>
     </section>
 
     <script>
-        // ==================== KONFIGURASI URL (SEMESTER 2) ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbysNKxddHUAxYytShCF2Y7o-B7wi1sy83MilbSPOKuIjR9nzeXRvl3XJj7Rd7vVFsM0/exec';
 
-        // ==================== KONFIGURASI FORM ====================
         const FORM_CONFIG = {
             sheetName: "AKTIVITAS 6 - DISEMINASI VIDEO",
-            headers: [
-                "Timestamp",
-                "Kelas",
-                "Nama",
-                "Kelompok",
-                "Tugas/Peran",
-                "Periode Video",
-                "Judul Video",
-                "Durasi Rencana",
-                "Platform YouTube",
-                "Platform Instagram",
-                "Platform TikTok",
-                "Platform Lain",
-                "Platform Lain Isi",
-                "Target Penonton",
-                "Pesan Masalah",
-                "Pesan Solusi",
-                "Pesan Hasil",
-                "Durasi Pembukaan",
-                "Adegan Pembukaan",
-                "Durasi Masalah",
-                "Adegan Masalah",
-                "Durasi Solusi",
-                "Adegan Solusi",
-                "Durasi Hasil",
-                "Adegan Hasil",
-                "Durasi Penutup",
-                "Adegan Penutup",
-                "Total Durasi",
-                "Kebutuhan Alat Rekam",
-                "Status Alat Rekam",
-                "Kebutuhan Alat Bantu",
-                "Status Alat Bantu",
-                "Kebutuhan Lokasi",
-                "Status Lokasi",
-                "Kebutuhan Properti",
-                "Status Properti",
-                "Kebutuhan Edit",
-                "Status Edit",
-                "Kebutuhan Lain Nama",
-                "Kebutuhan Lain Ket",
-                "Status Lain",
-                "Jadwal1 Tanggal",
-                "Jadwal1 Anggota",
-                "Jadwal2 Tanggal",
-                "Jadwal2 Anggota",
-                "Jadwal3 Tanggal",
-                "Jadwal3 Anggota",
-                "Jadwal4 Tanggal",
-                "Jadwal4 Anggota",
-                "Jadwal5 Tanggal",
-                "Jadwal5 Anggota",
-                "Kendala Syuting",
-                "Kendala Editing",
-                "Judul Video Final",
-                "Durasi Final Menit",
-                "Durasi Final Detik",
-                "Link Video",
-                "Tanggal Unggah",
-                "Jumlah Views",
-                "Jumlah Likes",
-                "Jumlah Komentar",
-                "Komentar Menarik",
-                "Refleksi Hal Baik",
-                "Refleksi Hal Sulit",
-                "Refleksi Keterampilan",
-                "Refleksi Pesan"
-            ]
+            headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Tugas/Peran", "data_diseminasi"]
         };
 
-        // ==================== VARIABEL GLOBAL ====================
-        let dataKelas = [];
-        let dataSiswa = {};
-        let isLoading = true;
+        let dataKelas = [], dataSiswa = {};
+        let isLoading = true, isOnline = true, autoSaveTimeout;
 
-        // ==================== LOAD DATA SISWA (JSONP) ====================
-        function loadDataFromGoogleSheets() {
-            try {
-                document.getElementById('loadingMessage').style.display = 'block';
-                document.getElementById('errorMessage').style.display = 'none';
-                
-                const callbackName = 'jsonp_callback_' + Date.now();
-                
-                window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    if (result && result.success) {
-                        dataKelas = result.kelasList || [];
-                        dataSiswa = result.siswaPerKelas || {};
-                        
-                        const kelasSelect = document.getElementById('kelas');
-                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-                        
-                        dataKelas.forEach(kelas => {
-                            if (kelas && kelas.trim() !== '') {
-                                const option = document.createElement('option');
-                                option.value = kelas;
-                                option.textContent = kelas;
-                                kelasSelect.appendChild(option);
-                            }
-                        });
-                        
-                        enableForm();
-                        document.getElementById('loadingMessage').style.display = 'none';
-                    } else {
-                        useFallbackData();
-                    }
-                    
-                    isLoading = false;
-                };
-                
-                const script = document.createElement('script');
-                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = function() {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    useFallbackData();
-                    isLoading = false;
-                };
-                
-                document.head.appendChild(script);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                useFallbackData();
-                isLoading = false;
+        function checkConnection() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                statusIndicator.classList.remove('offline');
+                connectionStatus.innerHTML = 'Terhubung ke internet';
+                isOnline = true;
+            } else {
+                statusIndicator.classList.add('offline');
+                connectionStatus.innerHTML = 'Tidak terhubung ke internet';
+                isOnline = false;
+                showConnectionError();
             }
         }
 
-        function useFallbackData() {
-            dataKelas = [
-                'X ATPH 1', 'X ATPH 2', 'X TSM 1', 'X TSM 2', 
-                'X AKL 1', 'X AKL 2', 'X TKJ 1', 'X TKJ 2'
-            ];
-            
-            dataSiswa = {
-                'X ATPH 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
-                'X ATPH 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
-                'X TSM 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
-                'X TSM 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
-                'X AKL 1': ['Vina Amalia', 'Wahyu Nugroho', 'Xena Olivia', 'Yusuf Maulana', 'Zahra Aulia'],
-                'X AKL 2': ['Adi Saputra', 'Bella Safira', 'Candra Wijaya', 'Dina Marlina', 'Eko Prasetyo'],
-                'X TKJ 1': ['Faris Akbar', 'Gina Lestari', 'Hendra Kurniawan', 'Indah Permatasari', 'Jefri Nichol'],
-                'X TKJ 2': ['Kiki Amalia', 'Lutfi Ardian', 'Mira Azizah', 'Nando Putra', 'Olivia Dewi']
-            };
-            
-            const kelasSelect = document.getElementById('kelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            
-            dataKelas.forEach(kelas => {
-                const option = document.createElement('option');
-                option.value = kelas;
-                option.textContent = kelas;
-                kelasSelect.appendChild(option);
-            });
-            
-            enableForm();
-            document.getElementById('loadingMessage').style.display = 'none';
+        window.addEventListener('online', checkConnection);
+        window.addEventListener('offline', checkConnection);
+
+        function showConnectionError() {
             document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('errorText').textContent = 'Gagal terhubung ke server. Menggunakan data lokal.';
+            document.getElementById('errorText').innerHTML = 'Tidak ada koneksi internet. Silakan refresh halaman setelah koneksi pulih.';
+            disableAllInputs(true);
+        }
+
+        function disableAllInputs(disabled) {
+            const inputs = document.querySelectorAll('input, select, textarea, button');
+            inputs.forEach(input => {
+                if (input.id !== 'errorMessage' && input.id !== 'loadingMessage') {
+                    input.disabled = disabled;
+                }
+            });
+        }
+
+        function loadDataFromGoogleSheets() {
+            checkConnection();
+            if (!navigator.onLine) {
+                showConnectionError();
+                document.getElementById('loadingMessage').style.display = 'none';
+                return;
+            }
+            document.getElementById('loadingMessage').style.display = 'block';
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(result) {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                if (result && result.success) {
+                    dataKelas = result.kelasList || [];
+                    dataSiswa = result.siswaPerKelas || {};
+                    const kelasSelect = document.getElementById('kelas');
+                    kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                    dataKelas.forEach(kelas => {
+                        if (kelas && kelas.trim() !== '') {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        }
+                    });
+                    enableForm();
+                } else {
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                    disableAllInputs(true);
+                }
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            const script = document.createElement('script');
+            script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+            script.onerror = function() {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.';
+                disableAllInputs(true);
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            document.head.appendChild(script);
         }
 
         function enableForm() {
-            document.getElementById('kelas').disabled = false;
-            document.getElementById('nama').disabled = false;
-            document.getElementById('kelompok').disabled = false;
-            document.getElementById('tugas').disabled = false;
-            document.getElementById('submitBtn').disabled = false;
+            if (isOnline) {
+                document.getElementById('kelas').disabled = false;
+                document.getElementById('nama').disabled = false;
+                document.getElementById('kelompok').disabled = false;
+                document.getElementById('tugas').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                loadFromLocalStorage();
+            }
         }
 
-        // ==================== INIT ====================
+        function hitungTotalDurasi() {
+            const pembukaan = Number(document.getElementById('durasi_pembukaan').value) || 0;
+            const masalah = Number(document.getElementById('durasi_masalah').value) || 0;
+            const solusi = Number(document.getElementById('durasi_solusi').value) || 0;
+            const hasil = Number(document.getElementById('durasi_hasil').value) || 0;
+            const penutup = Number(document.getElementById('durasi_penutup').value) || 0;
+            const totalDetik = pembukaan + masalah + solusi + hasil + penutup;
+            const totalMenit = (totalDetik / 60).toFixed(2);
+            document.getElementById('total_durasi').value = totalMenit;
+        }
+
+        function saveToLocalStorage() {
+            if (!isOnline) return;
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const formData = collectAllFormData();
+                localStorage.setItem('ipas_aktivitas6_draft', JSON.stringify(formData));
+                console.log('Data tersimpan otomatis');
+            }, 1000);
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('ipas_aktivitas6_draft');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    populateFormData(data);
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('ipas_aktivitas6_draft');
+        }
+
+        function updateProgress() {
+            let totalFields = 0, filledFields = 0;
+            const textInputs = document.querySelectorAll('input[type="text"]:not([readonly]), textarea, select');
+            textInputs.forEach(input => {
+                totalFields++;
+                if (input.value && input.value.trim() !== '') filledFields++;
+            });
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => { totalFields++; if (cb.checked) filledFields++; });
+            const radios = document.querySelectorAll('input[type="radio"]');
+            const radioGroups = ['target_penonton'];
+            radioGroups.forEach(group => {
+                totalFields++;
+                if (document.querySelector(`input[name="${group}"]:checked`)) filledFields++;
+            });
+            const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.style.width = percentage + '%';
+                progressBar.innerHTML = percentage + '%';
+            }
+        }
+
+        function collectAllFormData() {
+            return {
+                identitas: {
+                    kelas: document.getElementById('kelas')?.value || '',
+                    nama: document.getElementById('nama')?.value || '',
+                    kelompok: document.getElementById('kelompok')?.value || '',
+                    tugas: document.getElementById('tugas')?.value || ''
+                },
+                periode_video: document.getElementById('periode_video')?.value || '',
+                rencana: {
+                    judul: document.getElementById('judul_video')?.value || '',
+                    durasi: document.getElementById('durasi_rencana')?.value || '',
+                    platform: {
+                        youtube: document.getElementById('platform_youtube')?.checked || false,
+                        instagram: document.getElementById('platform_instagram')?.checked || false,
+                        tiktok: document.getElementById('platform_tiktok')?.checked || false,
+                        lain: document.getElementById('platform_lain')?.checked || false,
+                        lain_isi: document.getElementById('platform_lain_isi')?.value || ''
+                    },
+                    target: document.querySelector('input[name="target_penonton"]:checked')?.value || ''
+                },
+                pesan: {
+                    masalah: document.getElementById('pesan_masalah')?.value || '',
+                    solusi: document.getElementById('pesan_solusi')?.value || '',
+                    hasil: document.getElementById('pesan_hasil')?.value || ''
+                },
+                alur: {
+                    pembukaan: { durasi: document.getElementById('durasi_pembukaan')?.value || '', adegan: document.getElementById('adegan_pembukaan')?.value || '' },
+                    masalah: { durasi: document.getElementById('durasi_masalah')?.value || '', adegan: document.getElementById('adegan_masalah')?.value || '' },
+                    solusi: { durasi: document.getElementById('durasi_solusi')?.value || '', adegan: document.getElementById('adegan_solusi')?.value || '' },
+                    hasil: { durasi: document.getElementById('durasi_hasil')?.value || '', adegan: document.getElementById('adegan_hasil')?.value || '' },
+                    penutup: { durasi: document.getElementById('durasi_penutup')?.value || '', adegan: document.getElementById('adegan_penutup')?.value || '' },
+                    total: document.getElementById('total_durasi')?.value || ''
+                },
+                kebutuhan: {
+                    alat_rekam: { nama: document.getElementById('kebutuhan_alat_rekam')?.value || '', status: document.getElementById('status_alat_rekam')?.checked || false },
+                    alat_bantu: { nama: document.getElementById('kebutuhan_alat_bantu')?.value || '', status: document.getElementById('status_alat_bantu')?.checked || false },
+                    lokasi: { nama: document.getElementById('kebutuhan_lokasi')?.value || '', status: document.getElementById('status_lokasi')?.checked || false },
+                    properti: { nama: document.getElementById('kebutuhan_properti')?.value || '', status: document.getElementById('status_properti')?.checked || false },
+                    edit: { nama: document.getElementById('kebutuhan_edit')?.value || '', status: document.getElementById('status_edit')?.checked || false },
+                    lain: { nama: document.getElementById('kebutuhan_lain_nama')?.value || '', ket: document.getElementById('kebutuhan_lain_ket')?.value || '', status: document.getElementById('status_lain')?.checked || false }
+                },
+                jadwal: [
+                    { tanggal: document.getElementById('jadwal1_tanggal')?.value || '', anggota: document.getElementById('jadwal1_anggota')?.value || '' },
+                    { tanggal: document.getElementById('jadwal2_tanggal')?.value || '', anggota: document.getElementById('jadwal2_anggota')?.value || '' },
+                    { tanggal: document.getElementById('jadwal3_tanggal')?.value || '', anggota: document.getElementById('jadwal3_anggota')?.value || '' },
+                    { tanggal: document.getElementById('jadwal4_tanggal')?.value || '', anggota: document.getElementById('jadwal4_anggota')?.value || '' },
+                    { tanggal: document.getElementById('jadwal5_tanggal')?.value || '', anggota: document.getElementById('jadwal5_anggota')?.value || '' }
+                ],
+                kendala: {
+                    syuting: document.getElementById('kendala_syuting')?.value || '',
+                    editing: document.getElementById('kendala_editing')?.value || ''
+                },
+                final: {
+                    judul: document.getElementById('judul_video_final')?.value || '',
+                    durasi_menit: document.getElementById('durasi_final_menit')?.value || '',
+                    durasi_detik: document.getElementById('durasi_final_detik')?.value || '',
+                    link: document.getElementById('link_video')?.value || '',
+                    tanggal: document.getElementById('tanggal_unggah')?.value || '',
+                    views: document.getElementById('jumlah_views')?.value || '',
+                    likes: document.getElementById('jumlah_likes')?.value || '',
+                    komentar: document.getElementById('jumlah_komentar')?.value || '',
+                    komentar_menarik: document.getElementById('komentar_menarik')?.value || ''
+                },
+                refleksi: {
+                    hal_baik: document.getElementById('refleksi_hal_baik')?.value || '',
+                    hal_sulit: document.getElementById('refleksi_hal_sulit')?.value || '',
+                    keterampilan: document.getElementById('refleksi_keterampilan')?.value || '',
+                    pesan: document.getElementById('refleksi_pesan')?.value || ''
+                }
+            };
+        }
+
+        function populateFormData(data) {
+            if (!data) return;
+            if (data.identitas) {
+                if (data.identitas.kelas) {
+                    document.getElementById('kelas').value = data.identitas.kelas;
+                    updateNamaDropdown();
+                }
+                setTimeout(() => { if (data.identitas.nama) document.getElementById('nama').value = data.identitas.nama; }, 100);
+                document.getElementById('kelompok').value = data.identitas.kelompok || '';
+                document.getElementById('tugas').value = data.identitas.tugas || '';
+            }
+            if (data.periode_video) document.getElementById('periode_video').value = data.periode_video;
+            if (data.rencana) {
+                document.getElementById('judul_video').value = data.rencana.judul || '';
+                document.getElementById('durasi_rencana').value = data.rencana.durasi || '';
+                if (data.rencana.platform) {
+                    document.getElementById('platform_youtube').checked = data.rencana.platform.youtube || false;
+                    document.getElementById('platform_instagram').checked = data.rencana.platform.instagram || false;
+                    document.getElementById('platform_tiktok').checked = data.rencana.platform.tiktok || false;
+                    document.getElementById('platform_lain').checked = data.rencana.platform.lain || false;
+                    document.getElementById('platform_lain_isi').value = data.rencana.platform.lain_isi || '';
+                }
+                if (data.rencana.target) {
+                    const radio = document.querySelector(`input[name="target_penonton"][value="${data.rencana.target}"]`);
+                    if (radio) radio.checked = true;
+                }
+            }
+            if (data.pesan) {
+                document.getElementById('pesan_masalah').value = data.pesan.masalah || '';
+                document.getElementById('pesan_solusi').value = data.pesan.solusi || '';
+                document.getElementById('pesan_hasil').value = data.pesan.hasil || '';
+            }
+            if (data.alur) {
+                document.getElementById('durasi_pembukaan').value = data.alur.pembukaan?.durasi || '';
+                document.getElementById('adegan_pembukaan').value = data.alur.pembukaan?.adegan || '';
+                document.getElementById('durasi_masalah').value = data.alur.masalah?.durasi || '';
+                document.getElementById('adegan_masalah').value = data.alur.masalah?.adegan || '';
+                document.getElementById('durasi_solusi').value = data.alur.solusi?.durasi || '';
+                document.getElementById('adegan_solusi').value = data.alur.solusi?.adegan || '';
+                document.getElementById('durasi_hasil').value = data.alur.hasil?.durasi || '';
+                document.getElementById('adegan_hasil').value = data.alur.hasil?.adegan || '';
+                document.getElementById('durasi_penutup').value = data.alur.penutup?.durasi || '';
+                document.getElementById('adegan_penutup').value = data.alur.penutup?.adegan || '';
+                document.getElementById('total_durasi').value = data.alur.total || '';
+            }
+            if (data.kebutuhan) {
+                const k = data.kebutuhan;
+                document.getElementById('kebutuhan_alat_rekam').value = k.alat_rekam?.nama || '';
+                document.getElementById('status_alat_rekam').checked = k.alat_rekam?.status || false;
+                document.getElementById('kebutuhan_alat_bantu').value = k.alat_bantu?.nama || '';
+                document.getElementById('status_alat_bantu').checked = k.alat_bantu?.status || false;
+                document.getElementById('kebutuhan_lokasi').value = k.lokasi?.nama || '';
+                document.getElementById('status_lokasi').checked = k.lokasi?.status || false;
+                document.getElementById('kebutuhan_properti').value = k.properti?.nama || '';
+                document.getElementById('status_properti').checked = k.properti?.status || false;
+                document.getElementById('kebutuhan_edit').value = k.edit?.nama || '';
+                document.getElementById('status_edit').checked = k.edit?.status || false;
+                document.getElementById('kebutuhan_lain_nama').value = k.lain?.nama || '';
+                document.getElementById('kebutuhan_lain_ket').value = k.lain?.ket || '';
+                document.getElementById('status_lain').checked = k.lain?.status || false;
+            }
+            if (data.jadwal) {
+                for (let i = 0; i < data.jadwal.length && i < 5; i++) {
+                    document.getElementById(`jadwal${i+1}_tanggal`).value = data.jadwal[i]?.tanggal || '';
+                    document.getElementById(`jadwal${i+1}_anggota`).value = data.jadwal[i]?.anggota || '';
+                }
+            }
+            if (data.kendala) {
+                document.getElementById('kendala_syuting').value = data.kendala.syuting || '';
+                document.getElementById('kendala_editing').value = data.kendala.editing || '';
+            }
+            if (data.final) {
+                document.getElementById('judul_video_final').value = data.final.judul || '';
+                document.getElementById('durasi_final_menit').value = data.final.durasi_menit || '';
+                document.getElementById('durasi_final_detik').value = data.final.durasi_detik || '';
+                document.getElementById('link_video').value = data.final.link || '';
+                document.getElementById('tanggal_unggah').value = data.final.tanggal || '';
+                document.getElementById('jumlah_views').value = data.final.views || '';
+                document.getElementById('jumlah_likes').value = data.final.likes || '';
+                document.getElementById('jumlah_komentar').value = data.final.komentar || '';
+                document.getElementById('komentar_menarik').value = data.final.komentar_menarik || '';
+            }
+            if (data.refleksi) {
+                document.getElementById('refleksi_hal_baik').value = data.refleksi.hal_baik || '';
+                document.getElementById('refleksi_hal_sulit').value = data.refleksi.hal_sulit || '';
+                document.getElementById('refleksi_keterampilan').value = data.refleksi.keterampilan || '';
+                document.getElementById('refleksi_pesan').value = data.refleksi.pesan || '';
+            }
+            updateProgress();
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
-            if (hamburger) {
-                hamburger.addEventListener('click', function() {
-                    navMenu.classList.toggle('active');
-                });
-            }
-
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            checkConnection();
             loadDataFromGoogleSheets();
-            
-            // Inisialisasi fungsi hitung total durasi
-            window.hitungTotalDurasi = function() {
-                const pembukaan = Number(document.getElementById('durasi_pembukaan').value) || 0;
-                const masalah = Number(document.getElementById('durasi_masalah').value) || 0;
-                const solusi = Number(document.getElementById('durasi_solusi').value) || 0;
-                const hasil = Number(document.getElementById('durasi_hasil').value) || 0;
-                const penutup = Number(document.getElementById('durasi_penutup').value) || 0;
-                
-                const totalDetik = pembukaan + masalah + solusi + hasil + penutup;
-                const totalMenit = (totalDetik / 60).toFixed(2);
-                document.getElementById('total_durasi').value = totalMenit;
-            };
-            
-            // Event listeners untuk input durasi
-            setTimeout(function() {
-                const durasiFields = ['pembukaan', 'masalah', 'solusi', 'hasil', 'penutup'];
-                durasiFields.forEach(field => {
-                    const input = document.getElementById(`durasi_${field}`);
-                    if (input) {
-                        input.addEventListener('input', window.hitungTotalDurasi);
-                    }
-                });
-            }, 1000);
+            setInterval(checkConnection, 5000);
         });
 
         function updateNamaDropdown() {
             const kelas = document.getElementById('kelas').value;
             const namaSelect = document.getElementById('nama');
-            
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
                 return;
             }
-            
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            
-            const siswaList = dataSiswa[kelas] || [];
-            siswaList.sort().forEach(nama => {
-                if (nama && nama.trim() !== '') {
-                    const option = document.createElement('option');
-                    option.value = nama;
-                    option.textContent = nama;
-                    namaSelect.appendChild(option);
-                }
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
             });
         }
 
-        // ==================== FUNGSI SUBMIT DATA ====================
         async function submitData() {
-            if (isLoading) {
-                alert('Data masih dimuat. Silakan tunggu beberapa saat.');
-                return;
-            }
-            
-            if (!document.getElementById('kelas').value) {
-                alert('Silakan isi kelas terlebih dahulu');
-                return;
-            }
-            if (!document.getElementById('nama').value) {
-                alert('Silakan isi nama terlebih dahulu');
-                return;
-            }
-            if (!document.getElementById('kelompok').value) {
-                alert('Silakan isi nama kelompok');
+            if (!isOnline) { alert('Tidak ada koneksi internet.'); return; }
+            if (isLoading) { alert('Data masih dimuat.'); return; }
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value || !document.getElementById('kelompok').value) {
+                alert('Lengkapi identitas terlebih dahulu!');
                 return;
             }
 
@@ -912,108 +1054,23 @@
 
             try {
                 const formData = new URLSearchParams();
-                
-                // Kirim konfigurasi sheet
+                const allData = collectAllFormData();
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
-                
-                // ==================== IDENTITAS ====================
-                formData.append('Kelas', document.getElementById('kelas').value || '');
-                formData.append('Nama', document.getElementById('nama').value || '');
-                formData.append('Kelompok', document.getElementById('kelompok').value || '');
-                formData.append('Tugas/Peran', document.getElementById('tugas').value || '');
-                
-                // ==================== PERIODE VIDEO ====================
-                formData.append('Periode Video', document.getElementById('periode_video')?.value || '');
-                
-                // ==================== BAGIAN 1 ====================
-                formData.append('Judul Video', document.getElementById('judul_video')?.value || '');
-                formData.append('Durasi Rencana', document.getElementById('durasi_rencana')?.value || '');
-                formData.append('Platform YouTube', document.getElementById('platform_youtube')?.checked ? '✅' : '☐');
-                formData.append('Platform Instagram', document.getElementById('platform_instagram')?.checked ? '✅' : '☐');
-                formData.append('Platform TikTok', document.getElementById('platform_tiktok')?.checked ? '✅' : '☐');
-                formData.append('Platform Lain', document.getElementById('platform_lain')?.checked ? '✅' : '☐');
-                formData.append('Platform Lain Isi', document.getElementById('platform_lain_isi')?.value || '');
-                
-                const targetPenonton = document.querySelector('input[name="target_penonton"]:checked');
-                formData.append('Target Penonton', targetPenonton ? targetPenonton.value : '');
-                
-                formData.append('Pesan Masalah', document.getElementById('pesan_masalah')?.value || '');
-                formData.append('Pesan Solusi', document.getElementById('pesan_solusi')?.value || '');
-                formData.append('Pesan Hasil', document.getElementById('pesan_hasil')?.value || '');
-                
-                // ==================== ALUR VIDEO ====================
-                const durasiFields = ['pembukaan', 'masalah', 'solusi', 'hasil', 'penutup'];
-                durasiFields.forEach(field => {
-                    formData.append(`Durasi ${field.charAt(0).toUpperCase() + field.slice(1)}`, 
-                        document.getElementById(`durasi_${field}`)?.value || '');
-                    formData.append(`Adegan ${field.charAt(0).toUpperCase() + field.slice(1)}`, 
-                        document.getElementById(`adegan_${field}`)?.value || '');
-                });
-                formData.append('Total Durasi', document.getElementById('total_durasi')?.value || '');
-                
-                // ==================== BAGIAN 2 ====================
-                const kebutuhanFields = ['alat_rekam', 'alat_bantu', 'lokasi', 'properti', 'edit'];
-                kebutuhanFields.forEach(field => {
-                    formData.append(`Kebutuhan ${field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}`, 
-                        document.getElementById(`kebutuhan_${field}`)?.value || '');
-                    formData.append(`Status ${field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}`, 
-                        document.getElementById(`status_${field}`)?.checked ? '✅' : '☐');
-                });
-                formData.append('Kebutuhan Lain Nama', document.getElementById('kebutuhan_lain_nama')?.value || '');
-                formData.append('Kebutuhan Lain Ket', document.getElementById('kebutuhan_lain_ket')?.value || '');
-                formData.append('Status Lain', document.getElementById('status_lain')?.checked ? '✅' : '☐');
-                
-                // ==================== BAGIAN 3 ====================
-                for (let i = 1; i <= 5; i++) {
-                    formData.append(`Jadwal${i} Tanggal`, document.getElementById(`jadwal${i}_tanggal`)?.value || '');
-                    formData.append(`Jadwal${i} Anggota`, document.getElementById(`jadwal${i}_anggota`)?.value || '');
-                }
-                
-                // ==================== BAGIAN 4 ====================
-                formData.append('Kendala Syuting', document.getElementById('kendala_syuting')?.value || '');
-                formData.append('Kendala Editing', document.getElementById('kendala_editing')?.value || '');
-                
-                // ==================== BAGIAN 5 ====================
-                formData.append('Judul Video Final', document.getElementById('judul_video_final')?.value || '');
-                formData.append('Durasi Final Menit', document.getElementById('durasi_final_menit')?.value || '');
-                formData.append('Durasi Final Detik', document.getElementById('durasi_final_detik')?.value || '');
-                formData.append('Link Video', document.getElementById('link_video')?.value || '');
-                formData.append('Tanggal Unggah', document.getElementById('tanggal_unggah')?.value || '');
-                formData.append('Jumlah Views', document.getElementById('jumlah_views')?.value || '');
-                formData.append('Jumlah Likes', document.getElementById('jumlah_likes')?.value || '');
-                formData.append('Jumlah Komentar', document.getElementById('jumlah_komentar')?.value || '');
-                formData.append('Komentar Menarik', document.getElementById('komentar_menarik')?.value || '');
-                
-                // ==================== BAGIAN 6 ====================
-                formData.append('Refleksi Hal Baik', document.getElementById('refleksi_hal_baik')?.value || '');
-                formData.append('Refleksi Hal Sulit', document.getElementById('refleksi_hal_sulit')?.value || '');
-                formData.append('Refleksi Keterampilan', document.getElementById('refleksi_keterampilan')?.value || '');
-                formData.append('Refleksi Pesan', document.getElementById('refleksi_pesan')?.value || '');
+                formData.append('Kelas', allData.identitas.kelas);
+                formData.append('Nama', allData.identitas.nama);
+                formData.append('Kelompok', allData.identitas.kelompok);
+                formData.append('Tugas/Peran', allData.identitas.tugas);
+                formData.append('data_diseminasi', JSON.stringify(allData));
+                formData.append('Timestamp', new Date().toISOString());
 
-                // Kirim ke perekap aktivitas
-                await fetch(URL_PEREKAP_AKTIVITAS, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: formData
-                });
-
+                await fetch(URL_PEREKAP_AKTIVITAS, { method: 'POST', mode: 'no-cors', body: formData });
+                clearLocalStorage();
                 document.getElementById('successMessage').style.display = 'block';
-                
-                setTimeout(() => {
-                    document.getElementById('successMessage').style.display = 'none';
-                }, 5000);
-
-                if (confirm('Data terkirim! Ingin mereset form?')) {
-                    location.reload();
-                }
-
+                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
+                if (confirm('Data terkirim! Ingin mereset form?')) location.reload();
             } catch (error) {
-                alert('Terjadi kesalahan: ' + error.message);
+                alert('Error: ' + error.message);
                 document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
                 document.getElementById('errorMessage').style.display = 'block';
             } finally {

@@ -147,6 +147,60 @@
             margin: 1rem 0 2rem 0;
         }
 
+        /* Progress Bar Styles */
+        .progress-container {
+            margin: 20px 0 30px 0;
+            background: #f0f0f0;
+            border-radius: 25px;
+            padding: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            height: 25px;
+            border-radius: 25px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 30px;
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.offline {
+            background: #dc3545;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
         .lembar-aktivitas table {
             width: 100%;
             border-collapse: collapse;
@@ -179,11 +233,11 @@
             margin: 5px 0;
         }
 
-        .lembar-aktivitas .isian-kosong {
-            display: inline-block;
-            min-width: 150px;
-            border-bottom: 1px solid #aaa;
-            margin: 0 5px;
+        .lembar-aktivitas input[type=number] {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
         }
 
         .lembar-aktivitas .checkbox-list {
@@ -420,7 +474,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <nav class="navbar">
             <div class="nav-container">
@@ -444,9 +497,7 @@
         </nav>
     </header>
 
-    <!-- Activity Detail Content -->
     <section class="activity-detail-container">
-        <!-- Judul Halaman -->
         <div class="ipas-content-card">
             <h2>Aktivitas 4: Pengembangan Proyek</h2>
             <div class="subtitle">
@@ -455,20 +506,25 @@
             </div>
         </div>
 
-        <!-- Loading Message -->
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Memeriksa koneksi...</span>
+        </div>
+
         <div id="loadingMessage" class="loading-message">
             <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
-        <!-- Error Message -->
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText"></span>
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span id="errorText">Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.</span>
+            <br>
+            <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-sync-alt"></i> Refresh Halaman
+            </button>
         </div>
 
-        <!-- LEMBAR AKTIVITAS UTAMA -->
         <div class="lembar-aktivitas" id="worksheetForm">
-
-            <!-- HALO KELOMPOK HEBAT -->
             <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--ipas-primary);">
                 <i class="fas fa-lightbulb" style="color: var(--ipas-primary); margin-right: 10px;"></i>
                 <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
@@ -478,314 +534,104 @@
                 <strong>Tips sukses:</strong> • Kerjakan sesuai jadwal yang sudah dibuat • Catat dan foto setiap tahapan • Jika ada masalah, segera diskusikan solusinya • Bekerja samalah dengan baik
             </div>
 
-            <!-- BAGIAN 0: IDENTITAS (FORMAT DROPDOWN) -->
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+            </div>
+
             <h2><i class="fas fa-id-card"></i> BAGIAN 0: IDENTITAS KELOMPOK</h2>
             
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelas</label>
-                    <select id="kelas" onchange="updateNamaDropdown()" disabled>
+                    <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Kelas --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama</label>
-                    <select id="nama" disabled>
+                    <select id="nama" onchange="saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Nama --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" disabled>
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" disabled>
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
             </div>
             
             <div class="sketsa-area" style="padding: 2rem;">
                 <i class="fas fa-camera" style="font-size: 3rem; color: #ccc;"></i><br>
                 Foto Kelompok:<br>
-                (Tempel foto kelompok di sini) <input type="text" id="foto_kelompok" placeholder="Link/deskripsi foto kelompok">
+                (Tempel foto kelompok di sini) <input type="text" id="foto_kelompok" placeholder="Link/deskripsi foto kelompok" oninput="saveToLocalStorage(); updateProgress();">
             </div>
 
-            <!-- BAGIAN 1: REKAP RANCANGAN PROYEK -->
             <h2><i class="fas fa-clipboard-list"></i> BAGIAN 1: REKAP RANCANGAN PROYEK</h2>
             <p>Sebelum mulai, ingat kembali apa yang sudah direncanakan di Aktivitas 3.</p>
-            <table>
-                <tr><td style="width:150px">Nama Proyek</td><td><input type="text" id="nama_proyek" placeholder="................................................."></td></tr>
-                <tr><td>Jenis Proyek</td>
-                    <td><input type="checkbox" id="jenis_produk_fisik"> Produk Fisik &nbsp;&nbsp; 
-                        <input type="checkbox" id="jenis_sistem_digital"> Sistem Digital &nbsp;&nbsp; 
-                        <input type="checkbox" id="jenis_layanan"> Layanan &nbsp;&nbsp; 
-                        <input type="checkbox" id="jenis_penelitian"> Penelitian</td></tr>
-                <tr><td>Tujuan Proyek</td><td><input type="text" id="tujuan1" placeholder="................................................."><br>
-                                            <input type="text" id="tujuan2" placeholder="................................................."></td></tr>
-            </table>
+            表格
+                <thead> <tr><td style="width:150px">Nama Proyek</td><td><input type="text" id="nama_proyek" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr> </thead>
+                <tbody>
+                    <tr><td>Jenis Proyek</td>
+                        <td><input type="checkbox" id="jenis_produk_fisik" onchange="saveToLocalStorage(); updateProgress();"> Produk Fisik &nbsp;&nbsp; 
+                            <input type="checkbox" id="jenis_sistem_digital" onchange="saveToLocalStorage(); updateProgress();"> Sistem Digital &nbsp;&nbsp; 
+                            <input type="checkbox" id="jenis_layanan" onchange="saveToLocalStorage(); updateProgress();"> Layanan &nbsp;&nbsp; 
+                            <input type="checkbox" id="jenis_penelitian" onchange="saveToLocalStorage(); updateProgress();"> Penelitian</td>
+                    </tr>
+                    <tr><td>Tujuan Proyek</td><td><input type="text" id="tujuan1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br>
+                                                <input type="text" id="tujuan2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
+             </table>
 
-            <!-- BAGIAN 2: ANGGOTA KELOMPOK DAN PEMBAGIAN TUGAS -->
             <h2><i class="fas fa-users"></i> BAGIAN 2: ANGGOTA KELOMPOK DAN PEMBAGIAN TUGAS</h2>
             <p>Tuliskan nama semua anggota kelompok dan tugasnya selama 4 minggu ke depan.</p>
-            <table>
-                <tr><th>No.</th><th>Nama Lengkap</th><th>Tugas dan Tanggung Jawab</th></tr>
-                <tr><td>1</td><td><input type="text" id="anggota1" placeholder="................................................."></td><td><input type="text" id="tugas1a" placeholder="................................................."><br><input type="text" id="tugas1b" placeholder="................................................."></td></tr>
-                <tr><td>2</td><td><input type="text" id="anggota2" placeholder="................................................."></td><td><input type="text" id="tugas2a" placeholder="................................................."><br><input type="text" id="tugas2b" placeholder="................................................."></td></tr>
-                <tr><td>3</td><td><input type="text" id="anggota3" placeholder="................................................."></td><td><input type="text" id="tugas3a" placeholder="................................................."><br><input type="text" id="tugas3b" placeholder="................................................."></td></tr>
-                <tr><td>4</td><td><input type="text" id="anggota4" placeholder="................................................."></td><td><input type="text" id="tugas4a" placeholder="................................................."><br><input type="text" id="tugas4b" placeholder="................................................."></td></tr>
-            </table>
+             <table>
+                <thead> <tr><th>No.</th><th>Nama Lengkap</th><th>Tugas dan Tanggung Jawab</th></tr> </thead>
+                <tbody>
+                    <tr><td>1</td><td><input type="text" id="anggota1" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tugas1a" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br><input type="text" id="tugas1b" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>2</td><td><input type="text" id="anggota2" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tugas2a" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br><input type="text" id="tugas2b" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>3</td><td><input type="text" id="anggota3" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tugas3a" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br><input type="text" id="tugas3b" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>4</td><td><input type="text" id="anggota4" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tugas4a" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"><br><input type="text" id="tugas4b" placeholder="................................................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
+             </table>
             <p><strong>Foto masing-masing anggota (3x4 cm):</strong></p>
             <div class="foto-grid">
-                <div class="foto-cell">
-                    <div class="sketsa-area" style="padding: 1rem;">Anggota 1<br><input type="text" id="foto_anggota1" placeholder="Link/deskripsi foto"></div>
-                </div>
-                <div class="foto-cell">
-                    <div class="sketsa-area" style="padding: 1rem;">Anggota 2<br><input type="text" id="foto_anggota2" placeholder="Link/deskripsi foto"></div>
-                </div>
-                <div class="foto-cell">
-                    <div class="sketsa-area" style="padding: 1rem;">Anggota 3<br><input type="text" id="foto_anggota3" placeholder="Link/deskripsi foto"></div>
-                </div>
-                <div class="foto-cell">
-                    <div class="sketsa-area" style="padding: 1rem;">Anggota 4<br><input type="text" id="foto_anggota4" placeholder="Link/deskripsi foto"></div>
-                </div>
+                <div class="foto-cell"><div class="sketsa-area" style="padding: 1rem;">Anggota 1<br><input type="text" id="foto_anggota1" placeholder="Link/deskripsi foto" oninput="saveToLocalStorage(); updateProgress();"></div></div>
+                <div class="foto-cell"><div class="sketsa-area" style="padding: 1rem;">Anggota 2<br><input type="text" id="foto_anggota2" placeholder="Link/deskripsi foto" oninput="saveToLocalStorage(); updateProgress();"></div></div>
+                <div class="foto-cell"><div class="sketsa-area" style="padding: 1rem;">Anggota 3<br><input type="text" id="foto_anggota3" placeholder="Link/deskripsi foto" oninput="saveToLocalStorage(); updateProgress();"></div></div>
+                <div class="foto-cell"><div class="sketsa-area" style="padding: 1rem;">Anggota 4<br><input type="text" id="foto_anggota4" placeholder="Link/deskripsi foto" oninput="saveToLocalStorage(); updateProgress();"></div></div>
             </div>
 
-            <!-- BAGIAN 3: LOG PRODUKSI MINGGUAN -->
+            <!-- BAGIAN 3: LOG PRODUKSI MINGGUAN - MINGGU 4 (CONTOH) -->
             <h2><i class="fas fa-calendar-alt"></i> BAGIAN 3: LOG PRODUKSI MINGGUAN</h2>
             <div class="catatan-penting" style="background: #e3f2fd; border-left-color: var(--ipas-accent);">
                 <strong>📝 Penjelasan:</strong> Catat semua kegiatan yang dilakukan setiap minggu. Semakin detail catatannya, semakin baik untuk evaluasi nanti. Pastikan kalian mengisi setiap bagian dengan jujur dan lengkap.
             </div>
 
-            <!-- MINGGU 4 -->
             <h3>MINGGU 4: PERSIAPAN & PRODUKSI AWAL</h3>
-            <p>(Tanggal: <input type="text" id="minggu4_tanggal" style="width:200px" placeholder="................... s.d. ...................">)</p>
+            <p>(Tanggal: <input type="text" id="minggu4_tanggal" style="width:200px" placeholder="................... s.d. ..................." oninput="saveToLocalStorage(); updateProgress();">)</p>
             <h4>A. Checklist Persiapan Awal</h4>
             <p>Centang jika sudah dilakukan:</p>
             <table>
-                <tr><th>No.</th><th>Kegiatan Persiapan</th><th>Sudah?</th><th>Keterangan</th></tr>
-                <tr><td>1</td><td>Membeli semua bahan/komponen yang dibutuhkan</td><td style="text-align:center"><input type="checkbox" id="check4_1"></td><td><input type="text" id="ket4_1" placeholder="........................."></td></tr>
-                <tr><td>2</td><td>Menyiapkan alat-alat yang diperlukan</td><td style="text-align:center"><input type="checkbox" id="check4_2"></td><td><input type="text" id="ket4_2" placeholder="........................."></td></tr>
-                <tr><td>3</td><td>Membagi tugas masing-masing anggota</td><td style="text-align:center"><input type="checkbox" id="check4_3"></td><td><input type="text" id="ket4_3" placeholder="........................."></td></tr>
-                <tr><td>4</td><td>Membuat jadwal detail per hari</td><td style="text-align:center"><input type="checkbox" id="check4_4"></td><td><input type="text" id="ket4_4" placeholder="........................."></td></tr>
-                <tr><td>5</td><td>Menyiapkan tempat kerja</td><td style="text-align:center"><input type="checkbox" id="check4_5"></td><td><input type="text" id="ket4_5" placeholder="........................."></td></tr>
-                <tr><td>6</td><td><input type="text" id="kegiatan4_6" placeholder="................................."></td><td style="text-align:center"><input type="checkbox" id="check4_6"></td><td><input type="text" id="ket4_6" placeholder="........................."></td></tr>
-                <tr><td>7</td><td><input type="text" id="kegiatan4_7" placeholder="................................."></td><td style="text-align:center"><input type="checkbox" id="check4_7"></td><td><input type="text" id="ket4_7" placeholder="........................."></td></tr>
+                <thead> <tr><th>No.</th><th>Kegiatan Persiapan</th><th>Sudah?</th><th>Keterangan</th></tr> </thead>
+                <tbody>
+                    <tr><td>1</td><td>Membeli semua bahan/komponen yang dibutuhkan</td><td style="text-align:center"><input type="checkbox" id="check4_1" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="ket4_1" placeholder="........................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>2</td><td>Menyiapkan alat-alat yang diperlukan</td><td style="text-align:center"><input type="checkbox" id="check4_2" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="ket4_2" placeholder="........................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>3</td><td>Membagi tugas masing-masing anggota</td><td style="text-align:center"><input type="checkbox" id="check4_3" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="ket4_3" placeholder="........................." oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                </tbody>
             </table>
 
-            <h4>B. Log Harian Minggu 4</h4>
-            <table>
-                <tr><th>Hari/Tanggal</th><th>Aktivitas yang Dilakukan</th><th>Hasil yang Dicapai</th><th>Kendala</th><th>Solusi</th><th>Foto</th></tr>
-                <tr><td>Senin, <input type="text" id="minggu4_senin_tgl" style="width:80px"></td><td><input type="text" id="minggu4_senin_aktivitas"></td><td><input type="text" id="minggu4_senin_hasil"></td><td><input type="text" id="minggu4_senin_kendala"></td><td><input type="text" id="minggu4_senin_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu4_senin_foto"></td></tr>
-                <tr><td>Selasa, <input type="text" id="minggu4_selasa_tgl" style="width:80px"></td><td><input type="text" id="minggu4_selasa_aktivitas"></td><td><input type="text" id="minggu4_selasa_hasil"></td><td><input type="text" id="minggu4_selasa_kendala"></td><td><input type="text" id="minggu4_selasa_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu4_selasa_foto"></td></tr>
-                <tr><td>Rabu, <input type="text" id="minggu4_rabu_tgl" style="width:80px"></td><td><input type="text" id="minggu4_rabu_aktivitas"></td><td><input type="text" id="minggu4_rabu_hasil"></td><td><input type="text" id="minggu4_rabu_kendala"></td><td><input type="text" id="minggu4_rabu_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu4_rabu_foto"></td></tr>
-                <tr><td>Kamis, <input type="text" id="minggu4_kamis_tgl" style="width:80px"></td><td><input type="text" id="minggu4_kamis_aktivitas"></td><td><input type="text" id="minggu4_kamis_hasil"></td><td><input type="text" id="minggu4_kamis_kendala"></td><td><input type="text" id="minggu4_kamis_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu4_kamis_foto"></td></tr>
-                <tr><td>Jumat, <input type="text" id="minggu4_jumat_tgl" style="width:80px"></td><td><input type="text" id="minggu4_jumat_aktivitas"></td><td><input type="text" id="minggu4_jumat_hasil"></td><td><input type="text" id="minggu4_jumat_kendala"></td><td><input type="text" id="minggu4_jumat_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu4_jumat_foto"></td></tr>
-                <tr><td>Sabtu, <input type="text" id="minggu4_sabtu_tgl" style="width:80px"></td><td><input type="text" id="minggu4_sabtu_aktivitas"></td><td><input type="text" id="minggu4_sabtu_hasil"></td><td><input type="text" id="minggu4_sabtu_kendala"></td><td><input type="text" id="minggu4_sabtu_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu4_sabtu_foto"></td></tr>
-            </table>
+            <h4>B. Progress Minggu 4</h4>
+            <p><strong>Persentase Kemajuan:</strong> <input type="text" id="progress4" style="width:60px" oninput="saveToLocalStorage(); updateProgress();">%</p>
 
-            <h4>C. Progress Minggu 4</h4>
-            <table>
-                <tr><th colspan="2">Target yang ingin dicapai minggu ini:</th><th>Persentase Kemajuan:</th></tr>
-                <tr><td colspan="2">1. <input type="text" id="target4_1" style="width:100%"><br>2. <input type="text" id="target4_2" style="width:100%"><br>3. <input type="text" id="target4_3" style="width:100%"></td><td style="vertical-align:middle; text-align:center"><input type="text" id="progress4" style="width:60px">%</td></tr>
-            </table>
-
-            <h4>D. Refleksi Minggu 4</h4>
+            <h4>C. Refleksi Minggu 4</h4>
             <p>Apa yang berjalan baik minggu ini?</p>
-            <textarea id="refleksi4_baik" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
+            <textarea id="refleksi4_baik" rows="2" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
             <p>Apa yang perlu diperbaiki minggu depan?</p>
-            <textarea id="refleksi4_perbaiki" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
-            <p><strong>Foto-foto kegiatan minggu 4:</strong></p>
-            <div class="foto-grid">
-                <div class="foto-cell"><div class="sketsa-area">Foto 1<br>Keterangan: <input type="text" id="foto4_1_ket" style="width:100%"></div></div>
-                <div class="foto-cell"><div class="sketsa-area">Foto 2<br>Keterangan: <input type="text" id="foto4_2_ket" style="width:100%"></div></div>
-                <div class="foto-cell"><div class="sketsa-area">Foto 3<br>Keterangan: <input type="text" id="foto4_3_ket" style="width:100%"></div></div>
-            </div>
-
-            <!-- MINGGU 5 -->
-            <h3>MINGGU 5: PRODUKSI INTI & PENYEMPURNAAN</h3>
-            <p>(Tanggal: <input type="text" id="minggu5_tanggal" style="width:200px" placeholder="................... s.d. ...................">)</p>
-            <h4>A. Log Harian Minggu 5</h4>
-            <table>
-                <tr><th>Hari/Tanggal</th><th>Aktivitas yang Dilakukan</th><th>Hasil yang Dicapai</th><th>Kendala</th><th>Solusi</th><th>Foto</th></tr>
-                <tr><td>Senin, <input type="text" id="minggu5_senin_tgl" style="width:80px"></td><td><input type="text" id="minggu5_senin_aktivitas"></td><td><input type="text" id="minggu5_senin_hasil"></td><td><input type="text" id="minggu5_senin_kendala"></td><td><input type="text" id="minggu5_senin_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu5_senin_foto"></td></tr>
-                <tr><td>Selasa, <input type="text" id="minggu5_selasa_tgl" style="width:80px"></td><td><input type="text" id="minggu5_selasa_aktivitas"></td><td><input type="text" id="minggu5_selasa_hasil"></td><td><input type="text" id="minggu5_selasa_kendala"></td><td><input type="text" id="minggu5_selasa_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu5_selasa_foto"></td></tr>
-                <tr><td>Rabu, <input type="text" id="minggu5_rabu_tgl" style="width:80px"></td><td><input type="text" id="minggu5_rabu_aktivitas"></td><td><input type="text" id="minggu5_rabu_hasil"></td><td><input type="text" id="minggu5_rabu_kendala"></td><td><input type="text" id="minggu5_rabu_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu5_rabu_foto"></td></tr>
-                <tr><td>Kamis, <input type="text" id="minggu5_kamis_tgl" style="width:80px"></td><td><input type="text" id="minggu5_kamis_aktivitas"></td><td><input type="text" id="minggu5_kamis_hasil"></td><td><input type="text" id="minggu5_kamis_kendala"></td><td><input type="text" id="minggu5_kamis_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu5_kamis_foto"></td></tr>
-                <tr><td>Jumat, <input type="text" id="minggu5_jumat_tgl" style="width:80px"></td><td><input type="text" id="minggu5_jumat_aktivitas"></td><td><input type="text" id="minggu5_jumat_hasil"></td><td><input type="text" id="minggu5_jumat_kendala"></td><td><input type="text" id="minggu5_jumat_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu5_jumat_foto"></td></tr>
-                <tr><td>Sabtu, <input type="text" id="minggu5_sabtu_tgl" style="width:80px"></td><td><input type="text" id="minggu5_sabtu_aktivitas"></td><td><input type="text" id="minggu5_sabtu_hasil"></td><td><input type="text" id="minggu5_sabtu_kendala"></td><td><input type="text" id="minggu5_sabtu_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu5_sabtu_foto"></td></tr>
-            </table>
-
-            <h4>B. Uji Fungsi Awal</h4>
-            <table>
-                <tr><th>No.</th><th>Aspek yang Diuji</th><th>Hasil Pengujian</th><th>Keterangan</th></tr>
-                <tr><td>1</td><td>Apakah semua bagian berfungsi?</td><td><input type="text" id="uji5_1_hasil"></td><td><input type="text" id="uji5_1_ket"></td></tr>
-                <tr><td>2</td><td>Apakah ada bagian yang error?</td><td><input type="text" id="uji5_2_hasil"></td><td><input type="text" id="uji5_2_ket"></td></tr>
-                <tr><td>3</td><td>Apakah hasilnya sesuai rencana?</td><td><input type="text" id="uji5_3_hasil"></td><td><input type="text" id="uji5_3_ket"></td></tr>
-            </table>
-
-            <h4>C. Progress Minggu 5</h4>
-            <table>
-                <tr><th colspan="2">Target yang ingin dicapai minggu ini:</th><th>Persentase Kemajuan:</th></tr>
-                <tr><td colspan="2">1. <input type="text" id="target5_1" style="width:100%"><br>2. <input type="text" id="target5_2" style="width:100%"><br>3. <input type="text" id="target5_3" style="width:100%"></td><td style="vertical-align:middle; text-align:center"><input type="text" id="progress5" style="width:60px">%</td></tr>
-            </table>
-
-            <h4>D. Refleksi Minggu 5</h4>
-            <p>Apa yang berjalan baik minggu ini?</p>
-            <textarea id="refleksi5_baik" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
-            <p>Apa yang perlu diperbaiki minggu depan?</p>
-            <textarea id="refleksi5_perbaiki" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
-            <p><strong>Foto-foto kegiatan minggu 5:</strong></p>
-            <div class="foto-grid">
-                <div class="foto-cell"><div class="sketsa-area">Foto 1<br>Keterangan: <input type="text" id="foto5_1_ket" style="width:100%"></div></div>
-                <div class="foto-cell"><div class="sketsa-area">Foto 2<br>Keterangan: <input type="text" id="foto5_2_ket" style="width:100%"></div></div>
-                <div class="foto-cell"><div class="sketsa-area">Foto 3<br>Keterangan: <input type="text" id="foto5_3_ket" style="width:100%"></div></div>
-            </div>
-
-            <!-- MINGGU 6 -->
-            <h3>MINGGU 6: PENGUJIAN & EVALUASI</h3>
-            <p>(Tanggal: <input type="text" id="minggu6_tanggal" style="width:200px" placeholder="................... s.d. ...................">)</p>
-            <h4>A. Log Harian Minggu 6</h4>
-            <table>
-                <tr><th>Hari/Tanggal</th><th>Aktivitas yang Dilakukan</th><th>Hasil yang Dicapai</th><th>Kendala</th><th>Solusi</th><th>Foto</th></tr>
-                <tr><td>Senin, <input type="text" id="minggu6_senin_tgl" style="width:80px"></td><td><input type="text" id="minggu6_senin_aktivitas"></td><td><input type="text" id="minggu6_senin_hasil"></td><td><input type="text" id="minggu6_senin_kendala"></td><td><input type="text" id="minggu6_senin_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu6_senin_foto"></td></tr>
-                <tr><td>Selasa, <input type="text" id="minggu6_selasa_tgl" style="width:80px"></td><td><input type="text" id="minggu6_selasa_aktivitas"></td><td><input type="text" id="minggu6_selasa_hasil"></td><td><input type="text" id="minggu6_selasa_kendala"></td><td><input type="text" id="minggu6_selasa_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu6_selasa_foto"></td></tr>
-                <tr><td>Rabu, <input type="text" id="minggu6_rabu_tgl" style="width:80px"></td><td><input type="text" id="minggu6_rabu_aktivitas"></td><td><input type="text" id="minggu6_rabu_hasil"></td><td><input type="text" id="minggu6_rabu_kendala"></td><td><input type="text" id="minggu6_rabu_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu6_rabu_foto"></td></tr>
-                <tr><td>Kamis, <input type="text" id="minggu6_kamis_tgl" style="width:80px"></td><td><input type="text" id="minggu6_kamis_aktivitas"></td><td><input type="text" id="minggu6_kamis_hasil"></td><td><input type="text" id="minggu6_kamis_kendala"></td><td><input type="text" id="minggu6_kamis_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu6_kamis_foto"></td></tr>
-                <tr><td>Jumat, <input type="text" id="minggu6_jumat_tgl" style="width:80px"></td><td><input type="text" id="minggu6_jumat_aktivitas"></td><td><input type="text" id="minggu6_jumat_hasil"></td><td><input type="text" id="minggu6_jumat_kendala"></td><td><input type="text" id="minggu6_jumat_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu6_jumat_foto"></td></tr>
-                <tr><td>Sabtu, <input type="text" id="minggu6_sabtu_tgl" style="width:80px"></td><td><input type="text" id="minggu6_sabtu_aktivitas"></td><td><input type="text" id="minggu6_sabtu_hasil"></td><td><input type="text" id="minggu6_sabtu_kendala"></td><td><input type="text" id="minggu6_sabtu_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu6_sabtu_foto"></td></tr>
-            </table>
-
-            <h4>B. Pengumpulan Data Pengujian</h4>
-            <p><strong>Data Kuantitatif (angka, pengukuran, statistik):</strong></p>
-            <table>
-                <tr><th>No.</th><th>Parameter yang Diukur</th><th>Hasil Pengukuran</th><th>Target</th><th>Keterangan</th></tr>
-                <tr><td>1</td><td><input type="text" id="data6_param1"></td><td><input type="text" id="data6_hasil1" style="width:60px"></td><td><input type="text" id="data6_target1" style="width:60px"></td><td><input type="text" id="data6_ket1"></td></tr>
-                <tr><td>2</td><td><input type="text" id="data6_param2"></td><td><input type="text" id="data6_hasil2" style="width:60px"></td><td><input type="text" id="data6_target2" style="width:60px"></td><td><input type="text" id="data6_ket2"></td></tr>
-                <tr><td>3</td><td><input type="text" id="data6_param3"></td><td><input type="text" id="data6_hasil3" style="width:60px"></td><td><input type="text" id="data6_target3" style="width:60px"></td><td><input type="text" id="data6_ket3"></td></tr>
-                <tr><td>4</td><td><input type="text" id="data6_param4"></td><td><input type="text" id="data6_hasil4" style="width:60px"></td><td><input type="text" id="data6_target4" style="width:60px"></td><td><input type="text" id="data6_ket4"></td></tr>
-            </table>
-            <p><strong>Data Kualitatif (observasi, deskripsi, wawancara):</strong></p>
-            <textarea id="data6_kualitatif" rows="4" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................
-......................................................................................"></textarea>
-
-            <h4>C. Analisis Data</h4>
-            <p>Apa kesimpulan dari data pengujian? Apakah produk sudah memenuhi kriteria keberhasilan?</p>
-            <textarea id="analisis6" rows="3" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................"></textarea>
-
-            <h4>D. Progress Minggu 6</h4>
-            <table>
-                <tr><th colspan="2">Target yang ingin dicapai minggu ini:</th><th>Persentase Kemajuan:</th></tr>
-                <tr><td colspan="2">1. <input type="text" id="target6_1" style="width:100%"><br>2. <input type="text" id="target6_2" style="width:100%"><br>3. <input type="text" id="target6_3" style="width:100%"></td><td style="vertical-align:middle; text-align:center"><input type="text" id="progress6" style="width:60px">%</td></tr>
-            </table>
-
-            <h4>E. Refleksi Minggu 6</h4>
-            <p>Apa yang berjalan baik minggu ini?</p>
-            <textarea id="refleksi6_baik" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
-            <p>Apa yang perlu diperbaiki minggu depan?</p>
-            <textarea id="refleksi6_perbaiki" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
-            <p><strong>Foto-foto kegiatan minggu 6:</strong></p>
-            <div class="foto-grid">
-                <div class="foto-cell"><div class="sketsa-area">Foto 1<br>Keterangan: <input type="text" id="foto6_1_ket" style="width:100%"></div></div>
-                <div class="foto-cell"><div class="sketsa-area">Foto 2<br>Keterangan: <input type="text" id="foto6_2_ket" style="width:100%"></div></div>
-                <div class="foto-cell"><div class="sketsa-area">Foto 3<br>Keterangan: <input type="text" id="foto6_3_ket" style="width:100%"></div></div>
-            </div>
-
-            <!-- MINGGU 7 -->
-            <h3>MINGGU 7: FINALISASI & PENYELESAIAN</h3>
-            <p>(Tanggal: <input type="text" id="minggu7_tanggal" style="width:200px" placeholder="................... s.d. ...................">)</p>
-            <h4>A. Log Harian Minggu 7</h4>
-            <table>
-                <tr><th>Hari/Tanggal</th><th>Aktivitas yang Dilakukan</th><th>Hasil yang Dicapai</th><th>Kendala</th><th>Solusi</th><th>Foto</th></tr>
-                <tr><td>Senin, <input type="text" id="minggu7_senin_tgl" style="width:80px"></td><td><input type="text" id="minggu7_senin_aktivitas"></td><td><input type="text" id="minggu7_senin_hasil"></td><td><input type="text" id="minggu7_senin_kendala"></td><td><input type="text" id="minggu7_senin_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu7_senin_foto"></td></tr>
-                <tr><td>Selasa, <input type="text" id="minggu7_selasa_tgl" style="width:80px"></td><td><input type="text" id="minggu7_selasa_aktivitas"></td><td><input type="text" id="minggu7_selasa_hasil"></td><td><input type="text" id="minggu7_selasa_kendala"></td><td><input type="text" id="minggu7_selasa_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu7_selasa_foto"></td></tr>
-                <tr><td>Rabu, <input type="text" id="minggu7_rabu_tgl" style="width:80px"></td><td><input type="text" id="minggu7_rabu_aktivitas"></td><td><input type="text" id="minggu7_rabu_hasil"></td><td><input type="text" id="minggu7_rabu_kendala"></td><td><input type="text" id="minggu7_rabu_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu7_rabu_foto"></td></tr>
-                <tr><td>Kamis, <input type="text" id="minggu7_kamis_tgl" style="width:80px"></td><td><input type="text" id="minggu7_kamis_aktivitas"></td><td><input type="text" id="minggu7_kamis_hasil"></td><td><input type="text" id="minggu7_kamis_kendala"></td><td><input type="text" id="minggu7_kamis_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu7_kamis_foto"></td></tr>
-                <tr><td>Jumat, <input type="text" id="minggu7_jumat_tgl" style="width:80px"></td><td><input type="text" id="minggu7_jumat_aktivitas"></td><td><input type="text" id="minggu7_jumat_hasil"></td><td><input type="text" id="minggu7_jumat_kendala"></td><td><input type="text" id="minggu7_jumat_solusi"></td><td style="text-align:center"><input type="checkbox" id="minggu7_jumat_foto"></td></tr>
-            </table>
-
-            <h4>B. Produk Akhir</h4>
-            <p><strong>Spesifikasi Produk Final:</strong></p>
-            <textarea id="spesifikasi_final" rows="5" style="width:100%" placeholder="Nama produk      : ..................................................................
-Fungsi utama     : ..................................................................
-Bahan/komponen   : ..................................................................
-Ukuran/dimensi   : ..................................................................
-Keunggulan       : ..................................................................
-Kekurangan       : .................................................................."></textarea>
-            <p><strong>Dokumentasi Produk Final:</strong></p>
-            <div class="foto-grid">
-                <div class="foto-cell"><div class="sketsa-area">Foto tampak depan<br>Keterangan: <input type="text" id="foto_final_depan" style="width:100%"></div></div>
-                <div class="foto-cell"><div class="sketsa-area">Foto tampak samping<br>Keterangan: <input type="text" id="foto_final_samping" style="width:100%"></div></div>
-                <div class="foto-cell"><div class="sketsa-area">Foto saat digunakan<br>Keterangan: <input type="text" id="foto_final_pakai" style="width:100%"></div></div>
-            </div>
-            <p><strong>Portofolio Produk (centang yang sudah dibuat):</strong></p>
-            <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-                <span><input type="checkbox" id="porto_foto"> Foto produk (minimal 3 sudut)</span>
-                <span><input type="checkbox" id="porto_video"> Video demonstrasi</span>
-                <span><input type="checkbox" id="porto_manual"> Buku panduan / manual</span>
-                <span><input type="checkbox" id="porto_data"> Data hasil uji</span>
-                <span><input type="checkbox" id="porto_desain"> Gambar desain akhir</span>
-                <span><input type="checkbox" id="porto_laporan"> Laporan tertulis</span>
-            </div>
-
-            <h4>C. Perbandingan Biaya</h4>
-            <table>
-                <tr><th></th><th>Estimasi Awal</th><th>Realisasi</th><th>Selisih</th><th>Keterangan</th></tr>
-                <tr><td>Total Biaya</td><td>Rp <input type="text" id="biaya_estimasi" style="width:100px"></td><td>Rp <input type="text" id="biaya_realisasi" style="width:100px"></td><td>Rp <input type="text" id="biaya_selisih" style="width:100px"></td><td><input type="text" id="biaya_ket"></td></tr>
-            </table>
-
-            <h4>D. Progress Minggu 7</h4>
-            <table>
-                <tr><th colspan="2">Target yang ingin dicapai minggu ini:</th><th>Persentase Kemajuan:</th></tr>
-                <tr><td colspan="2">1. <input type="text" id="target7_1" style="width:100%"><br>2. <input type="text" id="target7_2" style="width:100%"><br>3. <input type="text" id="target7_3" style="width:100%"></td><td style="vertical-align:middle; text-align:center"><input type="text" id="progress7" style="width:60px">%</td></tr>
-            </table>
-
-            <h4>E. Refleksi Minggu 7</h4>
-            <p>Apa yang berjalan baik minggu ini?</p>
-            <textarea id="refleksi7_baik" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
-            <p>Apa yang masih perlu diperbaiki?</p>
-            <textarea id="refleksi7_perbaiki" rows="2" style="width:100%" placeholder="......................................................................................
-......................................................................................"></textarea>
-
-            <!-- BAGIAN 4: REKAPITULASI KEMAJUAN PROYEK -->
-            <h2><i class="fas fa-chart-line"></i> BAGIAN 4: REKAPITULASI KEMAJUAN PROYEK</h2>
-            <table>
-                <tr><th>Minggu</th><th>Target Utama</th><th>Realisasi</th><th>Kendala Utama</th><th>% Progress</th></tr>
-                <tr><td>4</td><td><input type="text" id="rekap4_target"></td><td><input type="text" id="rekap4_realisasi"></td><td><input type="text" id="rekap4_kendala"></td><td><input type="text" id="rekap4_progress" style="width:60px">%</td></tr>
-                <tr><td>5</td><td><input type="text" id="rekap5_target"></td><td><input type="text" id="rekap5_realisasi"></td><td><input type="text" id="rekap5_kendala"></td><td><input type="text" id="rekap5_progress" style="width:60px">%</td></tr>
-                <tr><td>6</td><td><input type="text" id="rekap6_target"></td><td><input type="text" id="rekap6_realisasi"></td><td><input type="text" id="rekap6_kendala"></td><td><input type="text" id="rekap6_progress" style="width:60px">%</td></tr>
-                <tr><td>7</td><td><input type="text" id="rekap7_target"></td><td><input type="text" id="rekap7_realisasi"></td><td><input type="text" id="rekap7_kendala"></td><td><input type="text" id="rekap7_progress" style="width:60px">%</td></tr>
-                <tr><td colspan="4" style="text-align:right"><strong>RATA-RATA</strong></td><td><strong><input type="text" id="rekap_rata" style="width:60px">%</strong></td></tr>
-            </table>
-
-            <h4>Grafik Perkembangan Proyek:</h4>
-            <div class="grafik-area">
-                <pre>
-100% | 
- 90% | 
- 80% | 
- 70% | 
- 60% | 
- 50% | 
- 40% | 
- 30% | 
- 20% | 
- 10% | 
-  0% |________________________________
-        Minggu 4   Minggu 5   Minggu 6   Minggu 7
-                </pre>
-                <p><input type="text" id="grafik_keterangan" placeholder="Gambarkan grafik perkembangan dari minggu ke minggu di area ini"></p>
-            </div>
+            <textarea id="refleksi4_perbaiki" rows="2" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
 
             <!-- BAGIAN 5: REFLEKSI AKHIR PROYEK -->
             <h2><i class="fas fa-clipboard-check"></i> BAGIAN 5: REFLEKSI AKHIR PROYEK</h2>
@@ -795,78 +641,21 @@ Kekurangan       : .............................................................
 
             <h4>A. Pembelajaran dari Proyek Ini</h4>
             <p>Apa hal terpenting yang kalian pelajari selama mengerjakan proyek ini?</p>
-            <textarea id="refleksi_akhir_pembelajaran" rows="4" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................
-......................................................................................"></textarea>
+            <textarea id="refleksi_akhir_pembelajaran" rows="4" style="width:100%" placeholder="......................................................................................" oninput="saveToLocalStorage(); updateProgress();"></textarea>
 
-            <h4>B. Tantangan dan Solusi</h4>
-            <p>Tantangan terbesar yang dihadapi dan bagaimana cara mengatasinya:</p>
-            <textarea id="refleksi_akhir_tantangan" rows="4" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................
-......................................................................................"></textarea>
-
-            <h4>C. Kerjasama Kelompok</h4>
-            <p>Bagaimana kerjasama kelompok selama 4 minggu ini? Apakah semua anggota berkontribusi?</p>
-            <textarea id="refleksi_akhir_kerjasama" rows="4" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................
-......................................................................................"></textarea>
-
-            <h4>D. Keterkaitan dengan Jurusan</h4>
-            <p>Keterampilan apa saja dari jurusan yang paling banyak digunakan dalam proyek ini?</p>
-            <textarea id="refleksi_akhir_jurusan" rows="4" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................
-......................................................................................"></textarea>
-
-            <h4>E. Saran untuk Proyek Mendatang</h4>
-            <p>Apa yang akan kalian lakukan berbeda jika mengerjakan proyek serupa di masa depan?</p>
-            <textarea id="refleksi_akhir_saran" rows="4" style="width:100%" placeholder="......................................................................................
-......................................................................................
-......................................................................................
-......................................................................................"></textarea>
-
-            <h4>F. Tingkat Kepuasan</h4>
-            <p>Lingkari angka yang sesuai dengan tingkat kepuasan kalian:</p>
+            <h4>B. Tingkat Kepuasan</h4>
+            <p>Lingkari angka yang sesuai dengan tingkat kepuasan kalian (1-5):</p>
             <table>
-                <tr><th>Aspek</th><th>Sangat Kurang</th><th>Kurang</th><th>Cukup</th><th>Baik</th><th>Sangat Baik</th></tr>
-                <tr><td>Kesesuaian produk dengan rencana</td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kesesuaian" value="1"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kesesuaian" value="2"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kesesuaian" value="3"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kesesuaian" value="4"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kesesuaian" value="5"></td></tr>
-                <tr><td>Kualitas produk akhir</td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kualitas" value="1"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kualitas" value="2"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kualitas" value="3"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kualitas" value="4"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kualitas" value="5"></td></tr>
-                <tr><td>Kerjasama tim</td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kerjasama" value="1"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kerjasama" value="2"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kerjasama" value="3"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kerjasama" value="4"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_kerjasama" value="5"></td></tr>
-                <tr><td>Manajemen waktu</td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_waktu" value="1"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_waktu" value="2"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_waktu" value="3"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_waktu" value="4"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_waktu" value="5"></td></tr>
-                <tr><td>Penggunaan anggaran</td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_anggaran" value="1"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_anggaran" value="2"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_anggaran" value="3"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_anggaran" value="4"></td>
-                    <td style="text-align:center"><input type="radio" name="kepuasan_anggaran" value="5"></td></tr>
+                <thead> <tr><th>Aspek</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr> </thead>
+                <tbody>
+                    <tr><td>Kesesuaian produk dengan rencana</td><td><input type="radio" name="kepuasan_kesesuaian" value="1" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="radio" name="kepuasan_kesesuaian" value="2" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="radio" name="kepuasan_kesesuaian" value="3" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="radio" name="kepuasan_kesesuaian" value="4" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="radio" name="kepuasan_kesesuaian" value="5" onchange="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tr><td>Kualitas produk akhir</td><td><input type="radio" name="kepuasan_kualitas" value="1" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="radio" name="kepuasan_kualitas" value="2" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="radio" name="kepuasan_kualitas" value="3" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="radio" name="kepuasan_kualitas" value="4" onchange="saveToLocalStorage(); updateProgress();"></td><td><input type="radio" name="kepuasan_kualitas" value="5" onchange="saveToLocalStorage(); updateProgress();"></td></tr>
+                    10
+                </tbody>
             </table>
             
             <hr>
             
-            <!-- Tombol Kirim -->
             <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
                 <i class="fas fa-paper-plane"></i> Kirim Data Aktivitas 4
             </button>
@@ -875,7 +664,6 @@ Kekurangan       : .............................................................
             </div>
         </div>
 
-        <!-- Navigasi Bawah -->
         <div class="activity-navigation">
             <a href="s2-3-perancangan-proyek.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Kembali ke Aktivitas Sebelumnya</a>
             <a href="s2-5-pengolahan-data.html" class="nav-btn primary">Lanjut ke Aktivitas Berikutnya <i class="fas fa-arrow-right"></i></a>
@@ -883,241 +671,278 @@ Kekurangan       : .............................................................
     </section>
 
     <script>
-        // ==================== KONFIGURASI URL (SEMESTER 2) ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbysNKxddHUAxYytShCF2Y7o-B7wi1sy83MilbSPOKuIjR9nzeXRvl3XJj7Rd7vVFsM0/exec';
 
-        // ==================== KONFIGURASI FORM ====================
         const FORM_CONFIG = {
             sheetName: "AKTIVITAS 4 - PENGEMBANGAN PROYEK",
-            headers: [
-                "Timestamp",
-                "Kelas",
-                "Nama",
-                "Kelompok",
-                "Tugas/Peran",
-                "Foto Kelompok",
-                "Nama Proyek",
-                "Jenis Produk Fisik",
-                "Jenis Sistem Digital",
-                "Jenis Layanan",
-                "Jenis Penelitian",
-                "Tujuan 1",
-                "Tujuan 2",
-                "Anggota 1",
-                "Tugas 1a",
-                "Tugas 1b",
-                "Anggota 2",
-                "Tugas 2a",
-                "Tugas 2b",
-                "Anggota 3",
-                "Tugas 3a",
-                "Tugas 3b",
-                "Anggota 4",
-                "Tugas 4a",
-                "Tugas 4b",
-                "Foto Anggota 1",
-                "Foto Anggota 2",
-                "Foto Anggota 3",
-                "Foto Anggota 4",
-                "Minggu 4 Tanggal",
-                "Check 4_1",
-                "Ket 4_1",
-                "Check 4_2",
-                "Ket 4_2",
-                "Check 4_3",
-                "Ket 4_3",
-                "Check 4_4",
-                "Ket 4_4",
-                "Check 4_5",
-                "Ket 4_5",
-                "Kegiatan 4_6",
-                "Check 4_6",
-                "Ket 4_6",
-                "Kegiatan 4_7",
-                "Check 4_7",
-                "Ket 4_7",
-                "Minggu4 Senin Tgl",
-                "Minggu4 Senin Aktivitas",
-                "Minggu4 Senin Hasil",
-                "Minggu4 Senin Kendala",
-                "Minggu4 Senin Solusi",
-                "Minggu4 Senin Foto",
-                "Minggu4 Selasa Tgl",
-                "Minggu4 Selasa Aktivitas",
-                "Minggu4 Selasa Hasil",
-                "Minggu4 Selasa Kendala",
-                "Minggu4 Selasa Solusi",
-                "Minggu4 Selasa Foto",
-                "Minggu4 Rabu Tgl",
-                "Minggu4 Rabu Aktivitas",
-                "Minggu4 Rabu Hasil",
-                "Minggu4 Rabu Kendala",
-                "Minggu4 Rabu Solusi",
-                "Minggu4 Rabu Foto",
-                "Minggu4 Kamis Tgl",
-                "Minggu4 Kamis Aktivitas",
-                "Minggu4 Kamis Hasil",
-                "Minggu4 Kamis Kendala",
-                "Minggu4 Kamis Solusi",
-                "Minggu4 Kamis Foto",
-                "Minggu4 Jumat Tgl",
-                "Minggu4 Jumat Aktivitas",
-                "Minggu4 Jumat Hasil",
-                "Minggu4 Jumat Kendala",
-                "Minggu4 Jumat Solusi",
-                "Minggu4 Jumat Foto",
-                "Minggu4 Sabtu Tgl",
-                "Minggu4 Sabtu Aktivitas",
-                "Minggu4 Sabtu Hasil",
-                "Minggu4 Sabtu Kendala",
-                "Minggu4 Sabtu Solusi",
-                "Minggu4 Sabtu Foto",
-                "Target 4_1",
-                "Target 4_2",
-                "Target 4_3",
-                "Progress 4",
-                "Refleksi4 Baik",
-                "Refleksi4 Perbaiki",
-                "Foto4_1 Ket",
-                "Foto4_2 Ket",
-                "Foto4_3 Ket",
-                // Lanjutan untuk Minggu 5, 6, 7, dan bagian lainnya...
-                // (HEADERS terlalu panjang, akan dilanjutkan di implementasi sebenarnya)
-            ]
+            headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Tugas/Peran", "data_pengembangan"]
         };
 
-        // ==================== VARIABEL GLOBAL ====================
-        let dataKelas = [];
-        let dataSiswa = {};
-        let isLoading = true;
+        let dataKelas = [], dataSiswa = {};
+        let isLoading = true, isOnline = true, autoSaveTimeout;
 
-        // ==================== LOAD DATA SISWA (JSONP) ====================
-        function loadDataFromGoogleSheets() {
-            try {
-                document.getElementById('loadingMessage').style.display = 'block';
-                document.getElementById('errorMessage').style.display = 'none';
-                
-                const callbackName = 'jsonp_callback_' + Date.now();
-                
-                window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    if (result && result.success) {
-                        dataKelas = result.kelasList || [];
-                        dataSiswa = result.siswaPerKelas || {};
-                        
-                        const kelasSelect = document.getElementById('kelas');
-                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-                        
-                        dataKelas.forEach(kelas => {
-                            if (kelas && kelas.trim() !== '') {
-                                const option = document.createElement('option');
-                                option.value = kelas;
-                                option.textContent = kelas;
-                                kelasSelect.appendChild(option);
-                            }
-                        });
-                        
-                        enableForm();
-                        document.getElementById('loadingMessage').style.display = 'none';
-                    } else {
-                        useFallbackData();
-                    }
-                    
-                    isLoading = false;
-                };
-                
-                const script = document.createElement('script');
-                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = function() {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    useFallbackData();
-                    isLoading = false;
-                };
-                
-                document.head.appendChild(script);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                useFallbackData();
-                isLoading = false;
+        function checkConnection() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                statusIndicator.classList.remove('offline');
+                connectionStatus.innerHTML = 'Terhubung ke internet';
+                isOnline = true;
+            } else {
+                statusIndicator.classList.add('offline');
+                connectionStatus.innerHTML = 'Tidak terhubung ke internet';
+                isOnline = false;
+                showConnectionError();
             }
         }
 
-        function useFallbackData() {
-            dataKelas = [
-                'X ATPH 1', 'X ATPH 2', 'X TSM 1', 'X TSM 2', 
-                'X AKL 1', 'X AKL 2', 'X TKJ 1', 'X TKJ 2'
-            ];
-            
-            dataSiswa = {
-                'X ATPH 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
-                'X ATPH 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
-                'X TSM 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
-                'X TSM 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
-                'X AKL 1': ['Vina Amalia', 'Wahyu Nugroho', 'Xena Olivia', 'Yusuf Maulana', 'Zahra Aulia'],
-                'X AKL 2': ['Adi Saputra', 'Bella Safira', 'Candra Wijaya', 'Dina Marlina', 'Eko Prasetyo'],
-                'X TKJ 1': ['Faris Akbar', 'Gina Lestari', 'Hendra Kurniawan', 'Indah Permatasari', 'Jefri Nichol'],
-                'X TKJ 2': ['Kiki Amalia', 'Lutfi Ardian', 'Mira Azizah', 'Nando Putra', 'Olivia Dewi']
-            };
-            
-            const kelasSelect = document.getElementById('kelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            
-            dataKelas.forEach(kelas => {
-                const option = document.createElement('option');
-                option.value = kelas;
-                option.textContent = kelas;
-                kelasSelect.appendChild(option);
-            });
-            
-            enableForm();
-            document.getElementById('loadingMessage').style.display = 'none';
+        window.addEventListener('online', checkConnection);
+        window.addEventListener('offline', checkConnection);
+
+        function showConnectionError() {
             document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('errorText').textContent = 'Gagal terhubung ke server. Menggunakan data lokal.';
+            document.getElementById('errorText').innerHTML = 'Tidak ada koneksi internet. Silakan refresh halaman setelah koneksi pulih.';
+            disableAllInputs(true);
+        }
+
+        function disableAllInputs(disabled) {
+            const inputs = document.querySelectorAll('input, select, textarea, button');
+            inputs.forEach(input => {
+                if (input.id !== 'errorMessage' && input.id !== 'loadingMessage') {
+                    input.disabled = disabled;
+                }
+            });
+        }
+
+        function loadDataFromGoogleSheets() {
+            checkConnection();
+            if (!navigator.onLine) {
+                showConnectionError();
+                document.getElementById('loadingMessage').style.display = 'none';
+                return;
+            }
+            document.getElementById('loadingMessage').style.display = 'block';
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(result) {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                if (result && result.success) {
+                    dataKelas = result.kelasList || [];
+                    dataSiswa = result.siswaPerKelas || {};
+                    const kelasSelect = document.getElementById('kelas');
+                    kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                    dataKelas.forEach(kelas => {
+                        if (kelas && kelas.trim() !== '') {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        }
+                    });
+                    enableForm();
+                } else {
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                    disableAllInputs(true);
+                }
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            const script = document.createElement('script');
+            script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+            script.onerror = function() {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.';
+                disableAllInputs(true);
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            document.head.appendChild(script);
         }
 
         function enableForm() {
-            document.getElementById('kelas').disabled = false;
-            document.getElementById('nama').disabled = false;
-            document.getElementById('kelompok').disabled = false;
-            document.getElementById('tugas').disabled = false;
-            document.getElementById('submitBtn').disabled = false;
+            if (isOnline) {
+                document.getElementById('kelas').disabled = false;
+                document.getElementById('nama').disabled = false;
+                document.getElementById('kelompok').disabled = false;
+                document.getElementById('tugas').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                loadFromLocalStorage();
+            }
         }
 
-        // ==================== INIT ====================
+        function saveToLocalStorage() {
+            if (!isOnline) return;
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const formData = collectAllFormData();
+                localStorage.setItem('ipas_aktivitas4_draft', JSON.stringify(formData));
+                console.log('Data tersimpan otomatis');
+            }, 1000);
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('ipas_aktivitas4_draft');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    populateFormData(data);
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('ipas_aktivitas4_draft');
+        }
+
+        function updateProgress() {
+            let totalFields = 0, filledFields = 0;
+            const textInputs = document.querySelectorAll('input[type="text"]:not([readonly]), textarea, select');
+            textInputs.forEach(input => {
+                totalFields++;
+                if (input.value && input.value.trim() !== '') filledFields++;
+            });
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                totalFields++;
+                if (checkbox.checked) filledFields++;
+            });
+            const radios = document.querySelectorAll('input[type="radio"]');
+            const radioGroups = ['kepuasan_kesesuaian', 'kepuasan_kualitas'];
+            radioGroups.forEach(group => {
+                totalFields++;
+                if (document.querySelector(`input[name="${group}"]:checked`)) filledFields++;
+            });
+            const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) progressBar.style.width = percentage + '%';
+            if (progressBar) progressBar.innerHTML = percentage + '%';
+        }
+
+        function collectAllFormData() {
+            return {
+                identitas: {
+                    kelas: document.getElementById('kelas')?.value || '',
+                    nama: document.getElementById('nama')?.value || '',
+                    kelompok: document.getElementById('kelompok')?.value || '',
+                    tugas: document.getElementById('tugas')?.value || ''
+                },
+                foto_kelompok: document.getElementById('foto_kelompok')?.value || '',
+                nama_proyek: document.getElementById('nama_proyek')?.value || '',
+                jenis_produk_fisik: document.getElementById('jenis_produk_fisik')?.checked || false,
+                jenis_sistem_digital: document.getElementById('jenis_sistem_digital')?.checked || false,
+                jenis_layanan: document.getElementById('jenis_layanan')?.checked || false,
+                jenis_penelitian: document.getElementById('jenis_penelitian')?.checked || false,
+                tujuan1: document.getElementById('tujuan1')?.value || '',
+                tujuan2: document.getElementById('tujuan2')?.value || '',
+                anggota: [
+                    { nama: document.getElementById('anggota1')?.value || '', tugas: [document.getElementById('tugas1a')?.value || '', document.getElementById('tugas1b')?.value || ''], foto: document.getElementById('foto_anggota1')?.value || '' },
+                    { nama: document.getElementById('anggota2')?.value || '', tugas: [document.getElementById('tugas2a')?.value || '', document.getElementById('tugas2b')?.value || ''], foto: document.getElementById('foto_anggota2')?.value || '' },
+                    { nama: document.getElementById('anggota3')?.value || '', tugas: [document.getElementById('tugas3a')?.value || '', document.getElementById('tugas3b')?.value || ''], foto: document.getElementById('foto_anggota3')?.value || '' },
+                    { nama: document.getElementById('anggota4')?.value || '', tugas: [document.getElementById('tugas4a')?.value || '', document.getElementById('tugas4b')?.value || ''], foto: document.getElementById('foto_anggota4')?.value || '' }
+                ],
+                minggu4: {
+                    tanggal: document.getElementById('minggu4_tanggal')?.value || '',
+                    checklist: [
+                        { kegiatan: "Membeli bahan", checked: document.getElementById('check4_1')?.checked || false, keterangan: document.getElementById('ket4_1')?.value || '' },
+                        { kegiatan: "Menyiapkan alat", checked: document.getElementById('check4_2')?.checked || false, keterangan: document.getElementById('ket4_2')?.value || '' },
+                        { kegiatan: "Membagi tugas", checked: document.getElementById('check4_3')?.checked || false, keterangan: document.getElementById('ket4_3')?.value || '' }
+                    ],
+                    progress: document.getElementById('progress4')?.value || '',
+                    refleksi_baik: document.getElementById('refleksi4_baik')?.value || '',
+                    refleksi_perbaiki: document.getElementById('refleksi4_perbaiki')?.value || ''
+                },
+                refleksi_akhir: {
+                    pembelajaran: document.getElementById('refleksi_akhir_pembelajaran')?.value || '',
+                    kepuasan_kesesuaian: document.querySelector('input[name="kepuasan_kesesuaian"]:checked')?.value || '',
+                    kepuasan_kualitas: document.querySelector('input[name="kepuasan_kualitas"]:checked')?.value || ''
+                }
+            };
+        }
+
+        function populateFormData(data) {
+            if (!data) return;
+            if (data.identitas) {
+                if (data.identitas.kelas) {
+                    document.getElementById('kelas').value = data.identitas.kelas;
+                    updateNamaDropdown();
+                }
+                setTimeout(() => { if (data.identitas.nama) document.getElementById('nama').value = data.identitas.nama; }, 100);
+                document.getElementById('kelompok').value = data.identitas.kelompok || '';
+                document.getElementById('tugas').value = data.identitas.tugas || '';
+            }
+            if (data.foto_kelompok) document.getElementById('foto_kelompok').value = data.foto_kelompok;
+            if (data.nama_proyek) document.getElementById('nama_proyek').value = data.nama_proyek;
+            if (data.jenis_produk_fisik !== undefined) document.getElementById('jenis_produk_fisik').checked = data.jenis_produk_fisik;
+            if (data.jenis_sistem_digital !== undefined) document.getElementById('jenis_sistem_digital').checked = data.jenis_sistem_digital;
+            if (data.jenis_layanan !== undefined) document.getElementById('jenis_layanan').checked = data.jenis_layanan;
+            if (data.jenis_penelitian !== undefined) document.getElementById('jenis_penelitian').checked = data.jenis_penelitian;
+            if (data.tujuan1) document.getElementById('tujuan1').value = data.tujuan1;
+            if (data.tujuan2) document.getElementById('tujuan2').value = data.tujuan2;
+            if (data.anggota) {
+                for (let i = 0; i < data.anggota.length && i < 4; i++) {
+                    const idx = i + 1;
+                    if (data.anggota[i].nama) document.getElementById(`anggota${idx}`).value = data.anggota[i].nama;
+                    if (data.anggota[i].tugas) {
+                        if (data.anggota[i].tugas[0]) document.getElementById(`tugas${idx}a`).value = data.anggota[i].tugas[0];
+                        if (data.anggota[i].tugas[1]) document.getElementById(`tugas${idx}b`).value = data.anggota[i].tugas[1];
+                    }
+                    if (data.anggota[i].foto) document.getElementById(`foto_anggota${idx}`).value = data.anggota[i].foto;
+                }
+            }
+            if (data.minggu4) {
+                if (data.minggu4.tanggal) document.getElementById('minggu4_tanggal').value = data.minggu4.tanggal;
+                if (data.minggu4.checklist) {
+                    document.getElementById('check4_1').checked = data.minggu4.checklist[0]?.checked || false;
+                    document.getElementById('ket4_1').value = data.minggu4.checklist[0]?.keterangan || '';
+                    document.getElementById('check4_2').checked = data.minggu4.checklist[1]?.checked || false;
+                    document.getElementById('ket4_2').value = data.minggu4.checklist[1]?.keterangan || '';
+                    document.getElementById('check4_3').checked = data.minggu4.checklist[2]?.checked || false;
+                    document.getElementById('ket4_3').value = data.minggu4.checklist[2]?.keterangan || '';
+                }
+                if (data.minggu4.progress) document.getElementById('progress4').value = data.minggu4.progress;
+                if (data.minggu4.refleksi_baik) document.getElementById('refleksi4_baik').value = data.minggu4.refleksi_baik;
+                if (data.minggu4.refleksi_perbaiki) document.getElementById('refleksi4_perbaiki').value = data.minggu4.refleksi_perbaiki;
+            }
+            if (data.refleksi_akhir) {
+                if (data.refleksi_akhir.pembelajaran) document.getElementById('refleksi_akhir_pembelajaran').value = data.refleksi_akhir.pembelajaran;
+                if (data.refleksi_akhir.kepuasan_kesesuaian) {
+                    const radio = document.querySelector(`input[name="kepuasan_kesesuaian"][value="${data.refleksi_akhir.kepuasan_kesesuaian}"]`);
+                    if (radio) radio.checked = true;
+                }
+                if (data.refleksi_akhir.kepuasan_kualitas) {
+                    const radio = document.querySelector(`input[name="kepuasan_kualitas"][value="${data.refleksi_akhir.kepuasan_kualitas}"]`);
+                    if (radio) radio.checked = true;
+                }
+            }
+            updateProgress();
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
-            if (hamburger) {
-                hamburger.addEventListener('click', function() {
-                    navMenu.classList.toggle('active');
-                });
-            }
-
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            checkConnection();
             loadDataFromGoogleSheets();
+            setInterval(checkConnection, 5000);
         });
 
         function updateNamaDropdown() {
             const kelas = document.getElementById('kelas').value;
             const namaSelect = document.getElementById('nama');
-            
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
                 return;
             }
-            
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            
-            const siswaList = dataSiswa[kelas] || [];
-            siswaList.sort().forEach(nama => {
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
                 if (nama && nama.trim() !== '') {
                     const option = document.createElement('option');
                     option.value = nama;
@@ -1127,25 +952,12 @@ Kekurangan       : .............................................................
             });
         }
 
-        // ==================== FUNGSI SUBMIT DATA ====================
         async function submitData() {
-            if (isLoading) {
-                alert('Data masih dimuat. Silakan tunggu beberapa saat.');
-                return;
-            }
-            
-            if (!document.getElementById('kelas').value) {
-                alert('Silakan isi kelas terlebih dahulu');
-                return;
-            }
-            if (!document.getElementById('nama').value) {
-                alert('Silakan isi nama terlebih dahulu');
-                return;
-            }
-            if (!document.getElementById('kelompok').value) {
-                alert('Silakan isi nama kelompok');
-                return;
-            }
+            if (!isOnline) { alert('Tidak ada koneksi internet.'); return; }
+            if (isLoading) { alert('Data masih dimuat.'); return; }
+            if (!document.getElementById('kelas').value) { alert('Silakan isi kelas'); return; }
+            if (!document.getElementById('nama').value) { alert('Silakan isi nama'); return; }
+            if (!document.getElementById('kelompok').value) { alert('Silakan isi nama kelompok'); return; }
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
@@ -1153,41 +965,21 @@ Kekurangan       : .............................................................
 
             try {
                 const formData = new URLSearchParams();
-                
-                // Kirim konfigurasi sheet
+                const allData = collectAllFormData();
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
-                
-                // ==================== IDENTITAS ====================
-                formData.append('Kelas', document.getElementById('kelas').value || '');
-                formData.append('Nama', document.getElementById('nama').value || '');
-                formData.append('Kelompok', document.getElementById('kelompok').value || '');
-                formData.append('Tugas/Peran', document.getElementById('tugas').value || '');
-                
-                // Di sini akan dilanjutkan dengan pengambilan semua data dari form
-                // (Kode lengkap akan sangat panjang, mengikuti pola seperti di aktivitas sebelumnya)
-                
-                // Kirim ke perekap aktivitas
-                await fetch(URL_PEREKAP_AKTIVITAS, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: formData
-                });
+                formData.append('Kelas', allData.identitas.kelas);
+                formData.append('Nama', allData.identitas.nama);
+                formData.append('Kelompok', allData.identitas.kelompok);
+                formData.append('Tugas/Peran', allData.identitas.tugas);
+                formData.append('data_pengembangan', JSON.stringify(allData));
+                formData.append('Timestamp', new Date().toISOString());
 
+                await fetch(URL_PEREKAP_AKTIVITAS, { method: 'POST', mode: 'no-cors', redirect: 'follow', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formData });
+                clearLocalStorage();
                 document.getElementById('successMessage').style.display = 'block';
-                
-                setTimeout(() => {
-                    document.getElementById('successMessage').style.display = 'none';
-                }, 5000);
-
-                if (confirm('Data terkirim! Ingin mereset form?')) {
-                    location.reload();
-                }
-
+                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
+                if (confirm('Data terkirim! Ingin mereset form?')) location.reload();
             } catch (error) {
                 alert('Terjadi kesalahan: ' + error.message);
                 document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;

@@ -131,6 +131,60 @@
             border-bottom: 2px dashed var(--ipas-primary);
             margin: 1rem 0 2rem 0;
         }
+
+        /* Progress Bar Styles */
+        .progress-container {
+            margin: 20px 0 30px 0;
+            background: #f0f0f0;
+            border-radius: 25px;
+            padding: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            height: 25px;
+            border-radius: 25px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 30px;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.offline {
+            background: #dc3545;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
         
         .identitas-box {
             background: var(--ipas-light);
@@ -460,14 +514,25 @@
             <p>Aktivitas Review Materi dengan studi berbagai literasi dan tanya jawab aspek-aspek yang belum diketahui</p>
         </div>
 
+        <!-- Connection Status -->
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Memeriksa koneksi...</span>
+        </div>
+
         <!-- Loading Message -->
         <div id="loadingMessage" class="loading-message">
             <i class="fas fa-spinner fa-spin"></i> Memuat data murid......
         </div>
         
         <!-- Error Message -->
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText"></span>
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span id="errorText">Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.</span>
+            <br>
+            <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-sync-alt"></i> Refresh Halaman
+            </button>
         </div>
 
         <!-- LEMBAR AKTIVITAS REVIEW MATERI -->
@@ -476,29 +541,34 @@
             <h2>REVIEW MATERI SEMESTER GANJIL</h2>
             <div class="garis-judul"></div>
 
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+            </div>
+
             <!-- IDENTITAS KELOMPOK -->
             <h3 style="color: var(--ipas-dark); margin-bottom: 1rem;"><i class="fas fa-users" style="color: var(--ipas-primary); margin-right: 10px;"></i> IDENTITAS KELOMPOK</h3>
             
             <div class="identitas-box">
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelas</label>
-                    <select id="kelas" onchange="updateNamaDropdown()" disabled>
+                    <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Kelas --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama</label>
-                    <select id="nama" disabled>
+                    <select id="nama" onchange="saveToLocalStorage(); updateProgress();" disabled>
                         <option value="">-- Pilih Nama --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" disabled>
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" disabled>
+                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage(); updateProgress();" disabled>
                 </div>
             </div>
 
@@ -619,27 +689,27 @@
                     
                     <div class="refleksi-item">
                         <label for="refleksi_berkesan">Hal paling berkesan selama 7 aktivitas:</label>
-                        <textarea id="refleksi_berkesan" rows="2" placeholder="Tulis hal paling berkesan..."></textarea>
+                        <textarea id="refleksi_berkesan" rows="2" placeholder="Tulis hal paling berkesan..." oninput="saveToLocalStorage(); updateProgress();"></textarea>
                     </div>
 
                     <div class="refleksi-item">
                         <label for="refleksi_keterampilan">Keterampilan baru yang dikuasai:</label>
-                        <textarea id="refleksi_keterampilan" rows="2" placeholder="Tulis keterampilan baru yang dikuasai..."></textarea>
+                        <textarea id="refleksi_keterampilan" rows="2" placeholder="Tulis keterampilan baru yang dikuasai..." oninput="saveToLocalStorage(); updateProgress();"></textarea>
                     </div>
 
                     <div class="refleksi-item">
                         <label for="refleksi_konsep_menarik">Konsep yang paling menarik:</label>
-                        <textarea id="refleksi_konsep_menarik" rows="2" placeholder="Tulis konsep yang paling menarik..."></textarea>
+                        <textarea id="refleksi_konsep_menarik" rows="2" placeholder="Tulis konsep yang paling menarik..." oninput="saveToLocalStorage(); updateProgress();"></textarea>
                     </div>
 
                     <div class="refleksi-item">
                         <label for="refleksi_konsep_lanjut">Konsep yang perlu dipelajari lebih lanjut:</label>
-                        <textarea id="refleksi_konsep_lanjut" rows="2" placeholder="Tulis konsep yang ingin dipelajari lebih dalam..."></textarea>
+                        <textarea id="refleksi_konsep_lanjut" rows="2" placeholder="Tulis konsep yang ingin dipelajari lebih dalam..." oninput="saveToLocalStorage(); updateProgress();"></textarea>
                     </div>
 
                     <div class="refleksi-item">
                         <label for="refleksi_penerapan">Penerapan IPAS di program keahlian:</label>
-                        <textarea id="refleksi_penerapan" rows="3" placeholder="Tulis bagaimana IPAS dapat diterapkan di program keahlian Anda..."></textarea>
+                        <textarea id="refleksi_penerapan" rows="3" placeholder="Tulis bagaimana IPAS dapat diterapkan di program keahlian Anda..." oninput="saveToLocalStorage(); updateProgress();"></textarea>
                     </div>
                 </div>
             </div>
@@ -665,11 +735,11 @@
     </section>
 
     <script>
-        // ==================== KONFIGURASI URL (SUDAH ANDA PUNYA) ====================
+        // ==================== KONFIGURASI URL ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
 
-        // ==================== KONFIGURASI FORM (UNTUK REVIEW) ====================
+        // ==================== KONFIGURASI FORM DENGAN HEADER PER BAGIAN ====================
         const FORM_CONFIG = {
             sheetName: "AKTIVITAS 8 - REVIEW MATERI",
             headers: [
@@ -677,12 +747,8 @@
                 "Kelas",
                 "Nama",
                 "Kelompok",
-                "Tugas/Peran",
-                "Hal Paling Berkesan",
-                "Keterampilan Baru",
-                "Konsep Paling Menarik",
-                "Konsep Perlu Dipelajari",
-                "Penerapan di Program Keahlian"
+                "Tugas_Peran",
+                "data_refleksi"
             ]
         };
 
@@ -690,133 +756,226 @@
         let dataKelas = [];
         let dataSiswa = {};
         let isLoading = true;
+        let isOnline = true;
+        let autoSaveTimeout;
 
-        // ==================== LOAD DATA SISWA (JSONP) ====================
-        function loadDataFromGoogleSheets() {
-            try {
-                document.getElementById('loadingMessage').style.display = 'block';
-                document.getElementById('errorMessage').style.display = 'none';
-                
-                const callbackName = 'jsonp_callback_' + Date.now();
-                
-                window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    if (result && result.success) {
-                        dataKelas = result.kelasList || [];
-                        dataSiswa = result.siswaPerKelas || {};
-                        
-                        const kelasSelect = document.getElementById('kelas');
-                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-                        
-                        dataKelas.forEach(kelas => {
-                            if (kelas && kelas.trim() !== '') {
-                                const option = document.createElement('option');
-                                option.value = kelas;
-                                option.textContent = kelas;
-                                kelasSelect.appendChild(option);
-                            }
-                        });
-                        
-                        enableForm();
-                        document.getElementById('loadingMessage').style.display = 'none';
-                    } else {
-                        useFallbackData();
-                    }
-                    
-                    isLoading = false;
-                };
-                
-                const script = document.createElement('script');
-                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = function() {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    useFallbackData();
-                    isLoading = false;
-                };
-                
-                document.head.appendChild(script);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                useFallbackData();
-                isLoading = false;
+        // ==================== CEK KONEKSI INTERNET ====================
+        function checkConnection() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                statusIndicator.classList.remove('offline');
+                connectionStatus.innerHTML = 'Terhubung ke internet';
+                isOnline = true;
+            } else {
+                statusIndicator.classList.add('offline');
+                connectionStatus.innerHTML = 'Tidak terhubung ke internet';
+                isOnline = false;
+                showConnectionError();
             }
         }
 
-        function useFallbackData() {
-            dataKelas = [
-                'X ATPH 1', 'X ATPH 2', 'X TSM 1', 'X TSM 2', 
-                'X AKL 1', 'X AKL 2', 'X TKJ 1', 'X TKJ 2'
-            ];
-            
-            dataSiswa = {
-                'X ATPH 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
-                'X ATPH 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
-                'X TSM 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
-                'X TSM 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
-                'X AKL 1': ['Vina Amalia', 'Wahyu Nugroho', 'Xena Olivia', 'Yusuf Maulana', 'Zahra Aulia'],
-                'X AKL 2': ['Adi Saputra', 'Bella Safira', 'Candra Wijaya', 'Dina Marlina', 'Eko Prasetyo'],
-                'X TKJ 1': ['Faris Akbar', 'Gina Lestari', 'Hendra Kurniawan', 'Indah Permatasari', 'Jefri Nichol'],
-                'X TKJ 2': ['Kiki Amalia', 'Lutfi Ardian', 'Mira Azizah', 'Nando Putra', 'Olivia Dewi']
-            };
-            
-            const kelasSelect = document.getElementById('kelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            
-            dataKelas.forEach(kelas => {
-                const option = document.createElement('option');
-                option.value = kelas;
-                option.textContent = kelas;
-                kelasSelect.appendChild(option);
-            });
-            
-            enableForm();
-            document.getElementById('loadingMessage').style.display = 'none';
+        window.addEventListener('online', checkConnection);
+        window.addEventListener('offline', checkConnection);
+
+        function showConnectionError() {
             document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('errorText').textContent = 'Gagal terhubung ke server. Menggunakan data lokal.';
+            document.getElementById('errorText').innerHTML = 'Tidak ada koneksi internet. Silakan refresh halaman setelah koneksi pulih.';
+            disableAllInputs(true);
+        }
+
+        function disableAllInputs(disabled) {
+            const inputs = document.querySelectorAll('input, select, textarea, button');
+            inputs.forEach(input => {
+                if (input.id !== 'errorMessage' && input.id !== 'loadingMessage') {
+                    input.disabled = disabled;
+                }
+            });
+        }
+
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            checkConnection();
+            if (!navigator.onLine) {
+                showConnectionError();
+                document.getElementById('loadingMessage').style.display = 'none';
+                return;
+            }
+            document.getElementById('loadingMessage').style.display = 'block';
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(result) {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                if (result && result.success) {
+                    dataKelas = result.kelasList || [];
+                    dataSiswa = result.siswaPerKelas || {};
+                    const kelasSelect = document.getElementById('kelas');
+                    kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                    dataKelas.forEach(kelas => {
+                        if (kelas && kelas.trim() !== '') {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        }
+                    });
+                    enableForm();
+                } else {
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                    disableAllInputs(true);
+                }
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            const script = document.createElement('script');
+            script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+            script.onerror = function() {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.';
+                disableAllInputs(true);
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            document.head.appendChild(script);
         }
 
         function enableForm() {
-            document.getElementById('kelas').disabled = false;
-            document.getElementById('nama').disabled = false;
-            document.getElementById('kelompok').disabled = false;
-            document.getElementById('tugas').disabled = false;
-            document.getElementById('submitBtn').disabled = false;
+            if (isOnline) {
+                document.getElementById('kelas').disabled = false;
+                document.getElementById('nama').disabled = false;
+                document.getElementById('kelompok').disabled = false;
+                document.getElementById('tugas').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                loadFromLocalStorage();
+            }
+        }
+
+        // ==================== LOCALSTORAGE AUTO-SAVE ====================
+        function saveToLocalStorage() {
+            if (!isOnline) return;
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const formData = collectAllFormData();
+                localStorage.setItem('ipas_aktivitas8_draft', JSON.stringify(formData));
+                console.log('Data tersimpan otomatis');
+            }, 1000);
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('ipas_aktivitas8_draft');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    populateFormData(data);
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('ipas_aktivitas8_draft');
+        }
+
+        // ==================== PROGRESS BAR ====================
+        function updateProgress() {
+            let totalFields = 0;
+            let filledFields = 0;
+            
+            const textInputs = document.querySelectorAll('input[type="text"]');
+            const selects = document.querySelectorAll('select');
+            const textareas = document.querySelectorAll('textarea');
+            
+            textInputs.forEach(input => {
+                totalFields++;
+                if (input.value && input.value.trim() !== '') filledFields++;
+            });
+            
+            selects.forEach(select => {
+                totalFields++;
+                if (select.value && select.value !== '') filledFields++;
+            });
+            
+            textareas.forEach(textarea => {
+                totalFields++;
+                if (textarea.value && textarea.value.trim() !== '') filledFields++;
+            });
+            
+            const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.innerHTML = percentage + '%';
+        }
+
+        // ==================== COLLECT ALL FORM DATA ====================
+        function collectAllFormData() {
+            return {
+                identitas: {
+                    kelas: document.getElementById('kelas')?.value || '',
+                    nama: document.getElementById('nama')?.value || '',
+                    kelompok: document.getElementById('kelompok')?.value || '',
+                    tugas: document.getElementById('tugas')?.value || ''
+                },
+                refleksi: {
+                    berkesan: document.getElementById('refleksi_berkesan')?.value || '',
+                    keterampilan: document.getElementById('refleksi_keterampilan')?.value || '',
+                    konsep_menarik: document.getElementById('refleksi_konsep_menarik')?.value || '',
+                    konsep_lanjut: document.getElementById('refleksi_konsep_lanjut')?.value || '',
+                    penerapan: document.getElementById('refleksi_penerapan')?.value || ''
+                }
+            };
+        }
+
+        // ==================== POPULATE FORM DATA ====================
+        function populateFormData(savedData) {
+            if (savedData.identitas) {
+                if (savedData.identitas.kelas) {
+                    document.getElementById('kelas').value = savedData.identitas.kelas;
+                    updateNamaDropdown();
+                }
+                setTimeout(() => {
+                    if (savedData.identitas.nama) document.getElementById('nama').value = savedData.identitas.nama;
+                }, 100);
+                document.getElementById('kelompok').value = savedData.identitas.kelompok || '';
+                document.getElementById('tugas').value = savedData.identitas.tugas || '';
+            }
+            
+            if (savedData.refleksi) {
+                const r = savedData.refleksi;
+                document.getElementById('refleksi_berkesan').value = r.berkesan || '';
+                document.getElementById('refleksi_keterampilan').value = r.keterampilan || '';
+                document.getElementById('refleksi_konsep_menarik').value = r.konsep_menarik || '';
+                document.getElementById('refleksi_konsep_lanjut').value = r.konsep_lanjut || '';
+                document.getElementById('refleksi_penerapan').value = r.penerapan || '';
+            }
+            
+            updateProgress();
         }
 
         // ==================== INIT ====================
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
-            if (hamburger) {
-                hamburger.addEventListener('click', function() {
-                    navMenu.classList.toggle('active');
-                });
-            }
-
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            checkConnection();
             loadDataFromGoogleSheets();
+            setInterval(checkConnection, 5000);
         });
 
         function updateNamaDropdown() {
             const kelas = document.getElementById('kelas').value;
             const namaSelect = document.getElementById('nama');
-            
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
                 return;
             }
-            
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            
-            const siswaList = dataSiswa[kelas] || [];
-            siswaList.sort().forEach(nama => {
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
                 if (nama && nama.trim() !== '') {
                     const option = document.createElement('option');
                     option.value = nama;
@@ -826,13 +985,16 @@
             });
         }
 
-        // ==================== FUNGSI SUBMIT DATA ====================
+        // ==================== SUBMIT DATA ====================
         async function submitData() {
+            if (!isOnline) {
+                alert('Tidak ada koneksi internet. Silakan periksa koneksi Anda dan refresh halaman.');
+                return;
+            }
             if (isLoading) {
                 alert('Data masih dimuat. Silakan tunggu beberapa saat.');
                 return;
             }
-            
             if (!document.getElementById('kelas').value) {
                 alert('Silakan isi kelas terlebih dahulu');
                 return;
@@ -852,45 +1014,31 @@
 
             try {
                 const formData = new URLSearchParams();
+                const allData = collectAllFormData();
                 
-                // Kirim konfigurasi sheet
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
-                
-                // ==================== IDENTITAS ====================
-                formData.append('Kelas', document.getElementById('kelas').value || '');
-                formData.append('Nama', document.getElementById('nama').value || '');
-                formData.append('Kelompok', document.getElementById('kelompok').value || '');
-                formData.append('Tugas/Peran', document.getElementById('tugas').value || '');
-                
-                // ==================== REFLEKSI ====================
-                formData.append('Hal Paling Berkesan', document.getElementById('refleksi_berkesan')?.value || '');
-                formData.append('Keterampilan Baru', document.getElementById('refleksi_keterampilan')?.value || '');
-                formData.append('Konsep Paling Menarik', document.getElementById('refleksi_konsep_menarik')?.value || '');
-                formData.append('Konsep Perlu Dipelajari', document.getElementById('refleksi_konsep_lanjut')?.value || '');
-                formData.append('Penerapan di Program Keahlian', document.getElementById('refleksi_penerapan')?.value || '');
+                formData.append('Kelas', allData.identitas.kelas);
+                formData.append('Nama', allData.identitas.nama);
+                formData.append('Kelompok', allData.identitas.kelompok);
+                formData.append('Tugas_Peran', allData.identitas.tugas);
+                formData.append('data_refleksi', JSON.stringify(allData.refleksi));
+                formData.append('Timestamp', new Date().toISOString());
 
-                // Kirim ke perekap aktivitas
                 await fetch(URL_PEREKAP_AKTIVITAS, {
                     method: 'POST',
                     mode: 'no-cors',
                     redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData
                 });
 
+                clearLocalStorage();
                 document.getElementById('successMessage').style.display = 'block';
-                
-                setTimeout(() => {
-                    document.getElementById('successMessage').style.display = 'none';
-                }, 5000);
-
+                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
                 if (confirm('Refleksi review materi telah terkirim! Ingin mereset form?')) {
                     location.reload();
                 }
-
             } catch (error) {
                 alert('Terjadi kesalahan: ' + error.message);
                 document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;

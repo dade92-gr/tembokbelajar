@@ -94,6 +94,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
         
         .informatika-content-card .subtitle i {
@@ -228,6 +229,12 @@
             resize: vertical;
         }
         
+        .answer-field:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
         .checkbox-group {
             display: flex;
             flex-wrap: wrap;
@@ -330,9 +337,14 @@
             box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
         }
         
-        .submit-button:hover {
+        .submit-button:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         
         .submit-button i {
@@ -371,6 +383,42 @@
             display: none;
             text-align: center;
             border-left: 5px solid #28a745;
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .connection-status.online {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .connection-status.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .refresh-btn {
+            background: var(--informatika-primary);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .refresh-btn:hover {
+            background: var(--informatika-secondary);
         }
         
         /* Navigation */
@@ -554,6 +602,12 @@
             border-radius: 12px;
             margin: 1.5rem 0;
         }
+        
+        /* Form disabled overlay */
+        .form-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -589,6 +643,7 @@
             <div class="subtitle">
                 <span><i class="fas fa-calendar"></i> Pertemuan 5 • Proyek 2: Pemrograman Dasar</span>
                 <span><i class="fas fa-clock"></i> 4 JP</span>
+                <span id="connectionStatus" class="connection-status online"><i class="fas fa-wifi"></i> Online</span>
             </div>
             <p><i class="fas fa-quote-left"></i> Menggunakan algoritma dan struktur data standar untuk menyelesaikan berbagai persoalan nyata dengan kondisi dan perulangan. <i class="fas fa-quote-right"></i></p>
         </div>
@@ -600,7 +655,8 @@
         
         <!-- Error Message -->
         <div id="errorMessage" class="error-message" style="display: none;">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan isi manual.</span>
+            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke server. Silakan cek koneksi internet Anda.</span>
+            <br><button class="refresh-btn" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Refresh Halaman</button>
         </div>
 
         <!-- Progress Bar -->
@@ -690,54 +746,16 @@
                 </div>
                 
                 <table class="lkpd-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Pertanyaan</th>
-                            <th>Jawaban</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Apa yang dimaksud dengan struktur kondisi (if-else) dalam pemrograman?</td>
-                            <td><textarea class="answer-field large" id="review1" placeholder="Tulis jawabanmu..."></textarea></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Sebutkan contoh kasus yang membutuhkan struktur kondisi!</td>
-                            <td><textarea class="answer-field large" id="review2" placeholder="Tulis jawabanmu..."></textarea></td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Tuliskan sintaks dasar if-else dalam JavaScript!</td>
-                            <td><textarea class="answer-field large" id="review3" placeholder="Tulis jawabanmu..."></textarea></td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Apa yang dimaksud dengan perulangan (looping)?</td>
-                            <td><textarea class="answer-field large" id="review4" placeholder="Tulis jawabanmu..."></textarea></td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Sebutkan 2 jenis perulangan yang umum digunakan!</td>
-                            <td><textarea class="answer-field large" id="review5" placeholder="1.&#10;2."></textarea></td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td>Tuliskan sintaks dasar perulangan for dalam JavaScript!</td>
-                            <td><textarea class="answer-field large" id="review6" placeholder="Tulis jawabanmu..."></textarea></td>
-                        </tr>
-                        <tr>
-                            <td>7</td>
-                            <td>Tuliskan sintaks dasar perulangan while dalam JavaScript!</td>
-                            <td><textarea class="answer-field large" id="review7" placeholder="Tulis jawabanmu..."></textarea></td>
-                        </tr>
-                        <tr>
-                            <td>8</td>
-                            <td>Apa perbedaan antara perulangan for dan while?</td>
-                            <td><textarea class="answer-field large" id="review8" placeholder="Tulis jawabanmu..."></textarea></td>
-                        </tr>
+                        <tr><td>1</td><td>Apa yang dimaksud dengan struktur kondisi (if-else) dalam pemrograman?</td><td><textarea class="answer-field large" id="review1" placeholder="Tulis jawabanmu..."></textarea></td></tr>
+                        <tr><td>2</td><td>Sebutkan contoh kasus yang membutuhkan struktur kondisi!</td><td><textarea class="answer-field large" id="review2" placeholder="Tulis jawabanmu..."></textarea></td></tr>
+                        <tr><td>3</td><td>Tuliskan sintaks dasar if-else dalam JavaScript!</td><td><textarea class="answer-field large" id="review3" placeholder="Tulis jawabanmu..."></textarea></td></tr>
+                        <tr><td>4</td><td>Apa yang dimaksud dengan perulangan (looping)?</td><td><textarea class="answer-field large" id="review4" placeholder="Tulis jawabanmu..."></textarea></td></tr>
+                        <tr><td>5</td><td>Sebutkan 2 jenis perulangan yang umum digunakan!</td><td><textarea class="answer-field large" id="review5" placeholder="1.&#10;2."></textarea></td></tr>
+                        <tr><td>6</td><td>Tuliskan sintaks dasar perulangan for dalam JavaScript!</td><td><textarea class="answer-field large" id="review6" placeholder="Tulis jawabanmu..."></textarea></td></tr>
+                        <tr><td>7</td><td>Tuliskan sintaks dasar perulangan while dalam JavaScript!</td><td><textarea class="answer-field large" id="review7" placeholder="Tulis jawabanmu..."></textarea></td></tr>
+                        <tr><td>8</td><td>Apa perbedaan antara perulangan for dan while?</td><td><textarea class="answer-field large" id="review8" placeholder="Tulis jawabanmu..."></textarea></td></tr>
                     </tbody>
                 </table>
                 
@@ -761,42 +779,8 @@
                 </div>
                 
                 <h4 class="section-subtitle">Kegiatan 1: Memahami If-Else</h4>
-                <p>Instruksi: Perhatikan contoh program berikut dan jawab pertanyaannya!</p>
-                
-                <div class="code-box">
-                    &lt;!DOCTYPE html&gt;<br>
-                    &lt;html&gt;<br>
-                    &lt;head&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Contoh If-Else&lt;/title&gt;<br>
-                    &lt;/head&gt;<br>
-                    &lt;body&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;Program Cek Kelulusan&lt;/h1&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;label&gt;Masukkan nilai:&lt;/label&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="number" id="nilai"&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;button onclick="cekLulus()"&gt;Cek&lt;/button&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;p id="hasil"&gt;&lt;/p&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;script&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function cekLulus() {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var n = document.getElementById('nilai').value;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (n >= 75) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasil').innerHTML = "Selamat! Anda LULUS";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasil').innerHTML = "Maaf, Anda TIDAK LULUS";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;/script&gt;<br>
-                    &lt;/body&gt;<br>
-                    &lt;/html&gt;
-                </div>
-                
                 <table class="lkpd-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Pertanyaan</th>
-                            <th>Jawaban</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr></thead>
                     <tbody>
                         <tr><td>1</td><td>Jika input nilai = 80, apa outputnya?</td><td><input type="text" class="answer-field" id="if1"></td></tr>
                         <tr><td>2</td><td>Jika input nilai = 70, apa outputnya?</td><td><input type="text" class="answer-field" id="if2"></td></tr>
@@ -807,86 +791,9 @@
                 </table>
                 
                 <h4 class="section-subtitle">Kegiatan 2: If-Else dengan Banyak Kondisi</h4>
-                <p>Instruksi: Buat program yang dapat mengkonversi nilai angka menjadi nilai huruf dengan ketentuan:</p>
-                <ul style="margin-left: 20px; margin-bottom: 15px;">
-                    <li>A = 86 - 100</li>
-                    <li>B = 71 - 85</li>
-                    <li>C = 56 - 70</li>
-                    <li>D = 41 - 55</li>
-                    <li>E = 0 - 40</li>
-                </ul>
-                
-                <p><strong>Pseudocode:</strong></p>
-                <div class="code-box">
-                    PROGRAM KonversiNilai<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Deklarasi variabel<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;nilai : integer<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Input<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;INPUT nilai<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Proses dan Output<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;IF nilai >= 86 AND nilai <= 100 THEN<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Nilai A (Sangat Baik)"<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ELSE IF nilai >= 71 AND nilai <= 85 THEN<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Nilai B (Baik)"<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ELSE IF nilai >= 56 AND nilai <= 70 THEN<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Nilai C (Cukup)"<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ELSE IF nilai >= 41 AND nilai <= 55 THEN<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Nilai D (Kurang)"<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ELSE IF nilai >= 0 AND nilai <= 40 THEN<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Nilai E (Sangat Kurang)"<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ELSE<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Nilai tidak valid"<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ENDIF<br>
-                    END
-                </div>
-                
-                <p><strong>Tugas: Lengkapi kode HTML berikut!</strong></p>
-                <div class="code-box">
-                    &lt;!DOCTYPE html&gt;<br>
-                    &lt;html&gt;<br>
-                    &lt;head&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Konversi Nilai&lt;/title&gt;<br>
-                    &lt;/head&gt;<br>
-                    &lt;body&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;Program Konversi Nilai Angka ke Huruf&lt;/h1&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;label&gt;Masukkan nilai (0-100):&lt;/label&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="number" id="nilai" min="0" max="100"&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;button onclick="konversiNilai()"&gt;Konversi&lt;/button&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;p id="hasil"&gt;&lt;/p&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;script&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function konversiNilai() {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var n = parseInt(document.getElementById('nilai').value);<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var hasil = "";<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (n >= 86 && n <= 100) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hasil = "Nilai A (Sangat Baik)";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else if (_________________________) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hasil = "Nilai B (Baik)";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else if (_________________________) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hasil = "Nilai C (Cukup)";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else if (_________________________) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hasil = "Nilai D (Kurang)";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else if (_________________________) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hasil = "Nilai E (Sangat Kurang)";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hasil = "Nilai tidak valid";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasil').innerHTML = hasil;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;/script&gt;<br>
-                    &lt;/body&gt;<br>
-                    &lt;/html&gt;
-                </div>
-                
                 <p><strong>Uji Coba:</strong></p>
                 <table class="test-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Input</th>
-                            <th>Output yang Diharapkan</th>
-                            <th>Output Program</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>No</th><th>Input</th><th>Output yang Diharapkan</th><th>Output Program</th></tr></thead>
                     <tbody>
                         <tr><td>1</td><td>90</td><td>Nilai A (Sangat Baik)</td><td><input type="text" class="answer-field" id="uji1"></td></tr>
                         <tr><td>2</td><td>75</td><td>Nilai B (Baik)</td><td><input type="text" class="answer-field" id="uji2"></td></tr>
@@ -906,39 +813,8 @@
                 </div>
                 
                 <h4 class="section-subtitle">Kegiatan 3: Perulangan For</h4>
-                <p>Instruksi: Perhatikan contoh program berikut dan jawab pertanyaannya!</p>
-                
-                <div class="code-box">
-                    &lt;!DOCTYPE html&gt;<br>
-                    &lt;html&gt;<br>
-                    &lt;head&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Contoh Perulangan For&lt;/title&gt;<br>
-                    &lt;/head&gt;<br>
-                    &lt;body&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;Program Menampilkan Angka 1-10&lt;/h1&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;button onclick="tampilkanAngka()"&gt;Tampilkan Angka&lt;/button&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;p id="hasil"&gt;&lt;/p&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;script&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function tampilkanAngka() {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var teks = "";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (var i = 1; i <= 10; i++) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teks = teks + i + " ";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasil').innerHTML = teks;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;/script&gt;<br>
-                    &lt;/body&gt;<br>
-                    &lt;/html&gt;
-                </div>
-                
                 <table class="lkpd-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Pertanyaan</th>
-                            <th>Jawaban</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr></thead>
                     <tbody>
                         <tr><td>1</td><td>Apa output dari program di atas?</td><td><input type="text" class="answer-field" id="for1"></td></tr>
                         <tr><td>2</td><td>Jika i <= 10 diubah menjadi i <= 5, apa outputnya?</td><td><input type="text" class="answer-field" id="for2"></td></tr>
@@ -949,48 +825,15 @@
                 </table>
                 
                 <h4 class="section-subtitle">Kegiatan 4: Perulangan While</h4>
-                <p>Instruksi: Perhatikan contoh program berikut dan jawab pertanyaannya!</p>
-                
-                <div class="code-box">
-                    &lt;!DOCTYPE html&gt;<br>
-                    &lt;html&gt;<br>
-                    &lt;head&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Contoh Perulangan While&lt;/title&gt;<br>
-                    &lt;/head&gt;<br>
-                    &lt;body&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;Program Menampilkan Angka Genap 2-20&lt;/h1&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;button onclick="tampilkanGenap()"&gt;Tampilkan Genap&lt;/button&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;p id="hasil"&gt;&lt;/p&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;script&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function tampilkanGenap() {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var teks = "";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var i = 2;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (i <= 20) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teks = teks + i + " ";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i = i + 2;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasil').innerHTML = teks;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;/script&gt;<br>
-                    &lt;/body&gt;<br>
-                    &lt;/html&gt;
-                </div>
-                
                 <table class="lkpd-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Pertanyaan</th>
-                            <th>Jawaban</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th> </thead>
                     <tbody>
-                        <tr><td>1</td><td>Apa output dari program di atas?</td><td><input type="text" class="answer-field" id="while1"></td></tr>
-                        <tr><td>2</td><td>Jika i = i + 2 diubah menjadi i = i + 3, apa outputnya?</td><td><input type="text" class="answer-field" id="while2"></td></tr>
-                        <tr><td>3</td><td>Jelaskan perbedaan perulangan for dan while!</td><td><textarea class="answer-field" id="while3"></textarea></td></tr>
-                        <tr><td>4</td><td>Buat program untuk menampilkan angka ganjil 1-19 menggunakan while!</td><td><textarea class="answer-field" id="while4"></textarea></td></tr>
+                        <tr><td>1</td><td>Apa output dari program di atas?</td><td><input type="text" class="answer-field" id="while1"></td> </tr>
+                         <tr><td>2</td><td>Jika i = i + 2 diubah menjadi i = i + 3, apa outputnya?</td><td><input type="text" class="answer-field" id="while2"></td> </tr>
+                         <tr><td>3</td><td>Jelaskan perbedaan perulangan for dan while!</td><td><textarea class="answer-field" id="while3"></textarea></td> </tr>
+                         <tr><td>4</td><td>Buat program untuk menampilkan angka ganjil 1-19 menggunakan while!</td><td><textarea class="answer-field" id="while4"></textarea></td> </tr>
                     </tbody>
-                </table>
+                 </table>
             </div>
 
             <!-- BAGIAN D: STUDI KASUS -->
@@ -1001,92 +844,9 @@
                 </div>
                 
                 <h4 class="section-subtitle">Kegiatan 5: Program Kasir dengan Diskon</h4>
-                <p><strong>Kasus:</strong> Sebuah toko memberikan diskon berdasarkan total belanja:</p>
-                <ul style="margin-left: 20px; margin-bottom: 15px;">
-                    <li>Total < Rp 50.000: Tidak dapat diskon</li>
-                    <li>Total Rp 50.000 - Rp 100.000: Diskon 5%</li>
-                    <li>Total Rp 100.000 - Rp 200.000: Diskon 10%</li>
-                    <li>Total > Rp 200.000: Diskon 15%</li>
-                </ul>
-                
-                <p><strong>Pseudocode:</strong></p>
-                <div class="code-box">
-                    PROGRAM KasirDiskon<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Deklarasi variabel<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;totalBelanja, diskon, totalBayar : integer<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Input<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;INPUT totalBelanja<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Proses menentukan diskon<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;IF totalBelanja < 50000 THEN<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diskon = 0<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ELSE IF totalBelanja <= 100000 THEN<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diskon = totalBelanja × 5/100<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ELSE IF totalBelanja <= 200000 THEN<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diskon = totalBelanja × 10/100<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ELSE<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diskon = totalBelanja × 15/100<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ENDIF<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Hitung total bayar<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;totalBayar = totalBelanja - diskon<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Output<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Total Belanja: Rp " + totalBelanja<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Diskon: Rp " + diskon<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Total Bayar: Rp " + totalBayar<br>
-                    END
-                </div>
-                
-                <p><strong>Tugas: Buat program HTML berdasarkan pseudocode di atas!</strong></p>
-                <div class="code-box">
-                    &lt;!DOCTYPE html&gt;<br>
-                    &lt;html&gt;<br>
-                    &lt;head&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Kasir dengan Diskon&lt;/title&gt;<br>
-                    &lt;/head&gt;<br>
-                    &lt;body&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;Program Kasir dengan Diskon&lt;/h1&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;label&gt;Masukkan total belanja: Rp&lt;/label&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="number" id="totalBelanja"&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;button onclick="hitungDiskon()"&gt;Hitung&lt;/button&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;p id="hasilTotal"&gt;Total Belanja: Rp &lt;/p&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;p id="hasilDiskon"&gt;Diskon: Rp &lt;/p&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;p id="hasilBayar"&gt;Total Bayar: Rp &lt;/p&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;script&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function hitungDiskon() {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var total = parseInt(document.getElementById('totalBelanja').value);<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var diskon = 0;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var bayar = 0;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Tentukan diskon berdasarkan total belanja<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (total < 50000) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diskon = 0;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else if (_________________________) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diskon = total * 5 / 100;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else if (_________________________) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diskon = total * 10 / 100;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diskon = total * 15 / 100;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Hitung total bayar<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bayar = total - diskon;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Tampilkan hasil<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasilTotal').innerHTML = "Total Belanja: Rp " + total;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasilDiskon').innerHTML = "Diskon: Rp " + diskon;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasilBayar').innerHTML = "Total Bayar: Rp " + bayar;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;/script&gt;<br>
-                    &lt;/body&gt;<br>
-                    &lt;/html&gt;
-                </div>
-                
                 <p><strong>Uji Coba:</strong></p>
                 <table class="test-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Total Belanja</th>
-                            <th>Diskon</th>
-                            <th>Total Bayar</th>
-                        </tr>
-                    </thead>
+                    <thead> <tr><th>No</th><th>Total Belanja</th><th>Diskon</th><th>Total Bayar</th></tr> </thead>
                     <tbody>
                         <tr><td>1</td><td>Rp 45.000</td><td><input type="text" class="answer-field" id="kasir1"></td><td><input type="text" class="answer-field" id="kasir2"></td></tr>
                         <tr><td>2</td><td>Rp 75.000</td><td><input type="text" class="answer-field" id="kasir3"></td><td><input type="text" class="answer-field" id="kasir4"></td></tr>
@@ -1096,127 +856,9 @@
                 </table>
                 
                 <h4 class="section-subtitle">Kegiatan 6: Program Tabel Perkalian</h4>
-                <p><strong>Kasus:</strong> Buat program yang dapat menampilkan tabel perkalian dari angka yang dimasukkan user.</p>
-                <p>Contoh: Jika user memasukkan angka 5, maka tampilkan:</p>
-                <div class="code-box">
-                    1 × 5 = 5<br>
-                    2 × 5 = 10<br>
-                    3 × 5 = 15<br>
-                    ...<br>
-                    10 × 5 = 50
-                </div>
-                
-                <p><strong>Pseudocode:</strong></p>
-                <div class="code-box">
-                    PROGRAM TabelPerkalian<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Deklarasi variabel<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;angka, i : integer<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Input<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;INPUT angka<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Proses dan Output<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;FOR i = 1 TO 10<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT i + " × " + angka + " = " + (i × angka)<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ENDFOR<br>
-                    END
-                </div>
-                
-                <p><strong>Tugas: Buat program HTML berdasarkan pseudocode di atas!</strong></p>
-                <div class="code-box">
-                    &lt;!DOCTYPE html&gt;<br>
-                    &lt;html&gt;<br>
-                    &lt;head&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Tabel Perkalian&lt;/title&gt;<br>
-                    &lt;/head&gt;<br>
-                    &lt;body&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;Program Tabel Perkalian&lt;/h1&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;label&gt;Masukkan angka:&lt;/label&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="number" id="angka"&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;button onclick="tampilkanPerkalian()"&gt;Tampilkan&lt;/button&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;p id="hasil"&gt;&lt;/p&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;script&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function tampilkanPerkalian() {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var a = parseInt(document.getElementById('angka').value);<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var teks = "";<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Gunakan perulangan for untuk menampilkan 1 sampai 10<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (var i = 1; i <= 10; i++) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teks = teks + i + " × " + a + " = " + (i * a) + "&lt;br&gt;";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasil').innerHTML = teks;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;/script&gt;<br>
-                    &lt;/body&gt;<br>
-                    &lt;/html&gt;
-                </div>
-                
                 <p><strong>Pengembangan:</strong></p>
-                <ol style="margin-left: 20px;">
-                    <li>Ubah program agar user bisa menentukan batas perkalian (misal sampai 20)! <textarea class="answer-field" id="tabel1"></textarea></li>
-                    <li>Tambahkan input untuk batas bawah dan batas atas! <textarea class="answer-field" id="tabel2"></textarea></li>
-                </ol>
-                
-                <h4 class="section-subtitle">Kegiatan 7: Program Simulasi Antrean Kantin</h4>
-                <p><strong>Kasus:</strong> Sebuah kantin memiliki aturan:</p>
-                <ul style="margin-left: 20px; margin-bottom: 15px;">
-                    <li>Setiap siswa dapat membeli maksimal 3 item</li>
-                    <li>Harga item: Rp 5.000 per item</li>
-                    <li>Jika siswa membeli lebih dari 3 item, tampilkan pesan "Maksimal 3 item per siswa"</li>
-                </ul>
-                
-                <p><strong>Pseudocode:</strong></p>
-                <div class="code-box">
-                    PROGRAM AntreanKantin<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Deklarasi variabel<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;jumlahItem, totalHarga : integer<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ulang : char = 'y'<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;// Proses dengan perulangan<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;WHILE ulang == 'y' OR ulang == 'Y'<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INPUT jumlahItem<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF jumlahItem <= 3 THEN<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;totalHarga = jumlahItem × 5000<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Total harga: Rp " + totalHarga<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Maksimal 3 item per siswa"<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Ada siswa lagi? (y/n): "<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INPUT ulang<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ENDWHILE<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Terima kasih"<br>
-                    END
-                </div>
-                
-                <p><strong>Tugas: Buat program HTML berdasarkan pseudocode di atas! (Gunakan prompt untuk input berulang)</strong></p>
-                <div class="code-box">
-                    &lt;!DOCTYPE html&gt;<br>
-                    &lt;html&gt;<br>
-                    &lt;head&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Simulasi Antrean Kantin&lt;/title&gt;<br>
-                    &lt;/head&gt;<br>
-                    &lt;body&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;Simulasi Antrean Kantin&lt;/h1&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;button onclick="mulaiAntrean()"&gt;Mulai Antrean&lt;/button&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;p id="hasil"&gt;&lt;/p&gt;<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;script&gt;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function mulaiAntrean() {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var teks = "";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var ulang = "y";<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (ulang == "y" || ulang == "Y") {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var jumlah = prompt("Masukkan jumlah item yang dibeli:");<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jumlah = parseInt(jumlah);<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (jumlah <= 3) {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var total = jumlah * 5000;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teks = teks + "Siswa membeli " + jumlah + " item, total Rp " + total + "&lt;br&gt;";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teks = teks + "Siswa mencoba membeli " + jumlah + " item (TIDAK BOLEH - maksimal 3)&lt;br&gt;";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ulang = prompt("Ada siswa lagi? (y/n):");<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teks = teks + "&lt;br&gt;&lt;strong&gt;Antrean selesai. Terima kasih!&lt;/strong&gt;";<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('hasil').innerHTML = teks;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;/script&gt;<br>
-                    &lt;/body&gt;<br>
-                    &lt;/html&gt;
-                </div>
+                <ol><li>Ubah program agar user bisa menentukan batas perkalian (misal sampai 20)! <textarea class="answer-field" id="tabel1"></textarea></li>
+                <li>Tambahkan input untuk batas bawah dan batas atas! <textarea class="answer-field" id="tabel2"></textarea></li></ol>
             </div>
 
             <!-- BAGIAN E: PERSIAPAN PRESENTASI -->
@@ -1226,22 +868,11 @@
                     <i class="fas fa-microphone"></i> "Siapkan program terbaik untuk dipresentasikan!"
                 </div>
                 
-                <h4 class="section-subtitle">Kegiatan 8: Memilih Program untuk Presentasi</h4>
-                <p>Instruksi: Pilih SATU program terbaik yang telah dibuat kelompok untuk dipresentasikan pada pertemuan berikutnya (Aktivitas 6)!</p>
-                
                 <div class="condition-box">
                     <h4 style="color: var(--informatika-dark); margin-bottom: 20px;">FORMULIR PERSIAPAN PRESENTASI</h4>
-                    
                     <p><strong>Kelompok :</strong> <input type="text" class="answer-field" id="presentasi_kelompok" style="width:300px"></p>
-                    
                     <table class="lkpd-table">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Bagian</th>
-                                <th>Jawaban Kelompok</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>No</th><th>Bagian</th><th>Jawaban Kelompok</th></tr></thead>
                         <tbody>
                             <tr><td>1</td><td>Program yang dipilih:</td><td><input type="text" class="answer-field" id="presentasi_program"></td></tr>
                             <tr><td>2</td><td>Alasan memilih program ini:</td><td><textarea class="answer-field" id="presentasi_alasan"></textarea></td></tr>
@@ -1271,13 +902,7 @@
                 </div>
                 
                 <table class="lkpd-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Pertanyaan</th>
-                            <th>Jawabanku</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawabanku</th></tr></thead>
                     <tbody>
                         <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang kondisi (if-else) hari ini?</td><td><textarea class="answer-field large" id="ref1"></textarea></td></tr>
                         <tr><td>2</td><td>Hal baru apa yang aku pelajari tentang perulangan (looping) hari ini?</td><td><textarea class="answer-field large" id="ref2"></textarea></td></tr>
@@ -1310,12 +935,8 @@
 
         <!-- Navigasi -->
         <div class="activity-navigation">
-            <a href="s1p2a4.html" class="nav-btn">
-                <i class="fas fa-arrow-left"></i> Kembali ke Aktivitas 4
-            </a>
-            <a href="s1p2a6.html" class="nav-btn primary">
-                Lanjut ke Aktivitas 6 <i class="fas fa-arrow-right"></i>
-            </a>
+            <a href="s1p2a4.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Kembali ke Aktivitas 4</a>
+            <a href="s1p2a6.html" class="nav-btn primary">Lanjut ke Aktivitas 6 <i class="fas fa-arrow-right"></i></a>
         </div>
     </section>
 
@@ -1328,157 +949,158 @@
         // ==================== KONFIGURASI FORM ====================
         const FORM_CONFIG = {
             sheetName: "AKTIVITAS 5 - KONDISI & PERULANGAN",
-            headers: [
-                "Timestamp",
-                "Kelas",
-                "Nama",
-                "Kelompok",
-                "Tugas/Peran",
-                "Data Review Materi",
-                "Data Kegiatan 1-2 (If-Else)",
-                "Data Kegiatan 3-4 (Perulangan)",
-                "Data Studi Kasus",
-                "Data Persiapan Presentasi",
-                "Data Refleksi"
-            ]
+            headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Tugas/Peran", "Data Review Materi", "Data If-Else", "Data Perulangan", "Data Studi Kasus", "Data Persiapan Presentasi", "Data Refleksi"]
         };
 
         // ==================== VARIABEL GLOBAL ====================
         let dataKelas = [];
         let dataSiswa = {};
         let isLoading = true;
+        let isOnline = true;
+        let saveTimeout = null;
+        const STORAGE_KEY = 'proyek2_aktivitas5';
 
-        // ==================== INISIALISASI ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load data siswa
-            loadDataFromGoogleSheets();
-            
-            // Hamburger menu
-            const hamburger = document.getElementById('hamburger');
-            const navMenu = document.getElementById('nav-menu');
-            if (hamburger) {
-                hamburger.addEventListener('click', function() {
-                    navMenu.classList.toggle('active');
+        // ==================== LOCALSTORAGE AUTO-SAVE ====================
+        function saveToLocalStorage() {
+            const formData = {};
+            document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').forEach(el => {
+                if (el.id) formData[el.id] = el.value;
+            });
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                if (el.id) formData[el.id] = el.checked;
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (!savedData) return;
+            try {
+                const formData = JSON.parse(savedData);
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') element.checked = formData[key];
+                        else element.value = formData[key];
+                    }
                 });
-            }
-            
-            // Enable all form inputs
-            const inputs = document.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                input.disabled = false;
-            });
-            
-            // Update progress bar
-            updateProgressBar();
-            
-            // Tambahkan event listener ke semua input untuk update progress
-            document.querySelectorAll('input, select, textarea').forEach(el => {
-                el.addEventListener('input', updateProgressBar);
-                el.addEventListener('change', updateProgressBar);
-            });
-        });
+                updateProgressBar();
+            } catch (e) { console.error(e); }
+        }
 
-        // ==================== FUNGSI PROGRESS BAR ====================
+        function clearLocalStorage() { localStorage.removeItem(STORAGE_KEY); }
+        function debounceSave() { if (saveTimeout) clearTimeout(saveTimeout); saveTimeout = setTimeout(saveToLocalStorage, 1000); }
+
+        // ==================== PROGRESS BAR ====================
         function updateProgressBar() {
-            const totalFields = document.querySelectorAll('input:not([type=checkbox]), select, textarea').length;
-            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]), select, textarea'))
+            const totalFields = document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').length;
+            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea'))
                 .filter(el => el.value && el.value.trim() !== '').length;
-            
             const progress = Math.round((filledFields / totalFields) * 100) || 0;
-            document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressText').textContent = progress + '% selesai';
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            if (progressBar) progressBar.style.width = progress + '%';
+            if (progressText) progressText.textContent = progress + '% selesai';
+        }
+
+        // ==================== KONEKSI ====================
+        function updateConnectionStatus() {
+            const statusEl = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                isOnline = true;
+                statusEl.className = 'connection-status online';
+                statusEl.innerHTML = '<i class="fas fa-wifi"></i> Online';
+                document.getElementById('errorMessage').style.display = 'none';
+            } else {
+                isOnline = false;
+                statusEl.className = 'connection-status offline';
+                statusEl.innerHTML = '<i class="fas fa-plug"></i> Offline';
+                showError('Koneksi internet terputus. Form dinonaktifkan. Silakan sambungkan kembali dan refresh halaman.');
+                disableForm();
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            document.getElementById('errorText').innerHTML = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function disableForm() {
+            document.querySelectorAll('input, select, textarea, button').forEach(el => el.disabled = true);
+            document.getElementById('worksheetForm').classList.add('form-disabled');
+        }
+
+        function enableForm() {
+            if (!isOnline) return;
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.id !== 'kelas' && el.id !== 'nama' && el.id !== 'kelompok' && el.id !== 'tugas') {
+                    el.disabled = false;
+                }
+            });
+            document.getElementById('kelas').disabled = false;
+            document.getElementById('nama').disabled = false;
+            document.getElementById('kelompok').disabled = false;
+            document.getElementById('tugas').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('worksheetForm').classList.remove('form-disabled');
         }
 
         // ==================== LOAD DATA SISWA ====================
         function loadDataFromGoogleSheets() {
+            if (!navigator.onLine) { updateConnectionStatus(); return; }
             try {
                 document.getElementById('loadingMessage').style.display = 'block';
-                
                 const callbackName = 'jsonp_callback_' + Date.now();
-                
                 window[callbackName] = function(result) {
                     const script = document.querySelector(`script[src*="${callbackName}"]`);
                     if (script) script.remove();
                     delete window[callbackName];
-                    
                     if (result && result.success) {
                         dataKelas = result.kelasList || [];
                         dataSiswa = result.siswaPerKelas || {};
-                        
                         const kelasSelect = document.getElementById('kelas');
                         kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-                        
                         dataKelas.forEach(kelas => {
                             const option = document.createElement('option');
                             option.value = kelas;
                             option.textContent = kelas;
                             kelasSelect.appendChild(option);
                         });
-                        
                         enableForm();
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        document.getElementById('errorMessage').style.display = 'none';
                     } else {
-                        useFallbackData();
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        showError('Gagal memuat data siswa. Silakan cek koneksi internet Anda dan refresh halaman.');
+                        disableForm();
                     }
-                    
-                    document.getElementById('loadingMessage').style.display = 'none';
                     isLoading = false;
                 };
-                
                 const script = document.createElement('script');
                 script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = useFallbackData;
+                script.onerror = function() {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    showError('Gagal terhubung ke server. Silakan cek koneksi internet Anda dan refresh halaman.');
+                    disableForm();
+                    isLoading = false;
+                };
                 document.head.appendChild(script);
-                
             } catch (error) {
-                useFallbackData();
+                document.getElementById('loadingMessage').style.display = 'none';
+                showError('Terjadi kesalahan. Silakan cek koneksi internet Anda dan refresh halaman.');
+                disableForm();
+                isLoading = false;
             }
-        }
-
-        function useFallbackData() {
-            dataKelas = ['X IPA 1', 'X IPA 2', 'X IPS 1', 'X IPS 2', 'X TKJ 1', 'X TKJ 2'];
-            
-            dataSiswa = {
-                'X IPA 1': ['Ahmad Fauzi', 'Budi Santoso', 'Citra Dewi', 'Dian Pratama', 'Eka Putri'],
-                'X IPA 2': ['Fajar Hidayat', 'Gita Permata', 'Hadi Wijaya', 'Intan Sari', 'Joko Susilo'],
-                'X IPS 1': ['Karina Ayu', 'Lukman Hakim', 'Maya Sari', 'Nanda Putra', 'Oscar Rizky'],
-                'X IPS 2': ['Putri Amanda', 'Rian Aditya', 'Siti Aisyah', 'Teguh Prasetyo', 'Umar Bakri'],
-                'X TKJ 1': ['Vina Aulia', 'Wahyu Hidayat', 'Xavier Putra', 'Yuni Safitri', 'Zainal Abidin'],
-                'X TKJ 2': ['Aulia Rahman', 'Bagas Pratama', 'Cantika Dewi', 'Doni Saputra', 'Eka Sari']
-            };
-            
-            const kelasSelect = document.getElementById('kelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            dataKelas.forEach(kelas => {
-                const option = document.createElement('option');
-                option.value = kelas;
-                option.textContent = kelas;
-                kelasSelect.appendChild(option);
-            });
-            
-            enableForm();
-            document.getElementById('loadingMessage').style.display = 'none';
-            document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('errorText').textContent = 'Menggunakan data lokal.';
-            isLoading = false;
-        }
-
-        function enableForm() {
-            document.getElementById('kelas').disabled = false;
-            document.getElementById('nama').disabled = false;
-            document.getElementById('kelompok').disabled = false;
-            document.getElementById('tugas').disabled = false;
-            document.getElementById('submitBtn').disabled = false;
         }
 
         function updateNamaDropdown() {
             const kelas = document.getElementById('kelas').value;
             const namaSelect = document.getElementById('nama');
-            
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
                 return;
             }
-            
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
             (dataSiswa[kelas] || []).sort().forEach(nama => {
                 const option = document.createElement('option');
@@ -1488,152 +1110,74 @@
             });
         }
 
-        // ==================== FUNGSI SUBMIT DATA ====================
+        // ==================== SUBMIT DATA ====================
         async function submitData() {
-            if (isLoading) {
-                alert('Data masih dimuat. Silakan tunggu.');
-                return;
-            }
-            
+            if (isLoading) { alert('Data masih dimuat. Silakan tunggu.'); return; }
+            if (!navigator.onLine) { alert('Tidak ada koneksi internet. Silakan sambungkan ke internet dan refresh halaman.'); return; }
             if (!document.getElementById('kelas').value || !document.getElementById('nama').value || !document.getElementById('kelompok').value) {
                 alert('Lengkapi identitas terlebih dahulu!');
                 return;
             }
-
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
-
             try {
                 const formData = new URLSearchParams();
-                
-                // Kirim konfigurasi sheet
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
-                
-                // ==================== KUMPULKAN DATA ====================
-                // Data Identitas Dasar
                 formData.append('Kelas', document.getElementById('kelas').value);
                 formData.append('Nama', document.getElementById('nama').value);
                 formData.append('Kelompok', document.getElementById('kelompok').value);
                 formData.append('Tugas/Peran', document.getElementById('tugas').value);
                 
-                // Data Review Materi (Bagian A)
-                const dataReview = {
-                    q1: document.getElementById('review1')?.value || '',
-                    q2: document.getElementById('review2')?.value || '',
-                    q3: document.getElementById('review3')?.value || '',
-                    q4: document.getElementById('review4')?.value || '',
-                    q5: document.getElementById('review5')?.value || '',
-                    q6: document.getElementById('review6')?.value || '',
-                    q7: document.getElementById('review7')?.value || '',
-                    q8: document.getElementById('review8')?.value || ''
-                };
+                const dataReview = { q1: document.getElementById('review1')?.value || '', q2: document.getElementById('review2')?.value || '', q3: document.getElementById('review3')?.value || '', q4: document.getElementById('review4')?.value || '', q5: document.getElementById('review5')?.value || '', q6: document.getElementById('review6')?.value || '', q7: document.getElementById('review7')?.value || '', q8: document.getElementById('review8')?.value || '', bacaMateri: document.getElementById('bacaMateri')?.checked || false, tanggalBaca: document.getElementById('tanggalBaca')?.value || '' };
                 formData.append('Data Review Materi', JSON.stringify(dataReview));
                 
-                // Data Kegiatan 1-2 (If-Else)
-                const dataIfElse = {
-                    q1: document.getElementById('if1')?.value || '',
-                    q2: document.getElementById('if2')?.value || '',
-                    q3: document.getElementById('if3')?.value || '',
-                    q4: document.getElementById('if4')?.value || '',
-                    q5: document.getElementById('if5')?.value || '',
-                    uji1: document.getElementById('uji1')?.value || '',
-                    uji2: document.getElementById('uji2')?.value || '',
-                    uji3: document.getElementById('uji3')?.value || '',
-                    uji4: document.getElementById('uji4')?.value || '',
-                    uji5: document.getElementById('uji5')?.value || '',
-                    uji6: document.getElementById('uji6')?.value || ''
-                };
+                const dataIfElse = { if1: document.getElementById('if1')?.value || '', if2: document.getElementById('if2')?.value || '', if3: document.getElementById('if3')?.value || '', if4: document.getElementById('if4')?.value || '', if5: document.getElementById('if5')?.value || '', uji1: document.getElementById('uji1')?.value || '', uji2: document.getElementById('uji2')?.value || '', uji3: document.getElementById('uji3')?.value || '', uji4: document.getElementById('uji4')?.value || '', uji5: document.getElementById('uji5')?.value || '', uji6: document.getElementById('uji6')?.value || '' };
                 formData.append('Data If-Else', JSON.stringify(dataIfElse));
                 
-                // Data Kegiatan 3-4 (Perulangan)
-                const dataPerulangan = {
-                    for1: document.getElementById('for1')?.value || '',
-                    for2: document.getElementById('for2')?.value || '',
-                    for3: document.getElementById('for3')?.value || '',
-                    for4: document.getElementById('for4')?.value || '',
-                    for5: document.getElementById('for5')?.value || '',
-                    while1: document.getElementById('while1')?.value || '',
-                    while2: document.getElementById('while2')?.value || '',
-                    while3: document.getElementById('while3')?.value || '',
-                    while4: document.getElementById('while4')?.value || ''
-                };
+                const dataPerulangan = { for1: document.getElementById('for1')?.value || '', for2: document.getElementById('for2')?.value || '', for3: document.getElementById('for3')?.value || '', for4: document.getElementById('for4')?.value || '', for5: document.getElementById('for5')?.value || '', while1: document.getElementById('while1')?.value || '', while2: document.getElementById('while2')?.value || '', while3: document.getElementById('while3')?.value || '', while4: document.getElementById('while4')?.value || '' };
                 formData.append('Data Perulangan', JSON.stringify(dataPerulangan));
                 
-                // Data Studi Kasus
-                const dataStudiKasus = {
-                    kasir1: document.getElementById('kasir1')?.value || '',
-                    kasir2: document.getElementById('kasir2')?.value || '',
-                    kasir3: document.getElementById('kasir3')?.value || '',
-                    kasir4: document.getElementById('kasir4')?.value || '',
-                    kasir5: document.getElementById('kasir5')?.value || '',
-                    kasir6: document.getElementById('kasir6')?.value || '',
-                    kasir7: document.getElementById('kasir7')?.value || '',
-                    kasir8: document.getElementById('kasir8')?.value || '',
-                    tabel1: document.getElementById('tabel1')?.value || '',
-                    tabel2: document.getElementById('tabel2')?.value || ''
-                };
+                const dataStudiKasus = { kasir1: document.getElementById('kasir1')?.value || '', kasir2: document.getElementById('kasir2')?.value || '', kasir3: document.getElementById('kasir3')?.value || '', kasir4: document.getElementById('kasir4')?.value || '', kasir5: document.getElementById('kasir5')?.value || '', kasir6: document.getElementById('kasir6')?.value || '', kasir7: document.getElementById('kasir7')?.value || '', kasir8: document.getElementById('kasir8')?.value || '', tabel1: document.getElementById('tabel1')?.value || '', tabel2: document.getElementById('tabel2')?.value || '' };
                 formData.append('Data Studi Kasus', JSON.stringify(dataStudiKasus));
                 
-                // Data Persiapan Presentasi
-                const dataPersiapan = {
-                    kelompok: document.getElementById('presentasi_kelompok')?.value || '',
-                    program: document.getElementById('presentasi_program')?.value || '',
-                    alasan: document.getElementById('presentasi_alasan')?.value || '',
-                    pseudocode: document.getElementById('presentasi_pseudocode')?.value || '',
-                    fitur: document.getElementById('presentasi_fitur')?.value || '',
-                    anggota: document.getElementById('presentasi_anggota')?.value || '',
-                    persiapan: document.getElementById('presentasi_persiapan')?.value || ''
-                };
+                const dataPersiapan = { kelompok: document.getElementById('presentasi_kelompok')?.value || '', program: document.getElementById('presentasi_program')?.value || '', alasan: document.getElementById('presentasi_alasan')?.value || '', pseudocode: document.getElementById('presentasi_pseudocode')?.value || '', fitur: document.getElementById('presentasi_fitur')?.value || '', anggota: document.getElementById('presentasi_anggota')?.value || '', persiapan: document.getElementById('presentasi_persiapan')?.value || '' };
                 formData.append('Data Persiapan Presentasi', JSON.stringify(dataPersiapan));
                 
-                // Data Refleksi
-                const dataRefleksi = {
-                    nama: document.getElementById('ref_nama')?.value || '',
-                    kelas: document.getElementById('ref_kelas')?.value || '',
-                    kelompok: document.getElementById('ref_kelompok')?.value || '',
-                    peran: document.getElementById('ref_peran')?.value || '',
-                    q1: document.getElementById('ref1')?.value || '',
-                    q2: document.getElementById('ref2')?.value || '',
-                    q3: document.getElementById('ref3')?.value || '',
-                    q4: document.getElementById('ref4')?.value || '',
-                    q5: document.getElementById('ref5')?.value || '',
-                    q6: document.getElementById('ref6')?.value || '',
-                    q7: document.getElementById('ref7')?.value || '',
-                    check1: document.getElementById('check1')?.checked || false,
-                    check2: document.getElementById('check2')?.checked || false,
-                    check3: document.getElementById('check3')?.checked || false,
-                    check4: document.getElementById('check4')?.checked || false,
-                    check5: document.getElementById('check5')?.checked || false
-                };
+                const dataRefleksi = { nama: document.getElementById('ref_nama')?.value || '', kelas: document.getElementById('ref_kelas')?.value || '', kelompok: document.getElementById('ref_kelompok')?.value || '', peran: document.getElementById('ref_peran')?.value || '', q1: document.getElementById('ref1')?.value || '', q2: document.getElementById('ref2')?.value || '', q3: document.getElementById('ref3')?.value || '', q4: document.getElementById('ref4')?.value || '', q5: document.getElementById('ref5')?.value || '', q6: document.getElementById('ref6')?.value || '', q7: document.getElementById('ref7')?.value || '', check1: document.getElementById('check1')?.checked || false, check2: document.getElementById('check2')?.checked || false, check3: document.getElementById('check3')?.checked || false, check4: document.getElementById('check4')?.checked || false, check5: document.getElementById('check5')?.checked || false };
                 formData.append('Data Refleksi', JSON.stringify(dataRefleksi));
                 
-                // ==================== KIRIM ====================
-                await fetch(URL_PEREKAP_AKTIVITAS, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: formData
-                });
-
+                await fetch(URL_PEREKAP_AKTIVITAS, { method: 'POST', mode: 'no-cors', body: formData });
                 document.getElementById('successMessage').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('successMessage').style.display = 'none';
-                }, 5000);
-
-                if (confirm('Data terkirim! Ingin mereset form?')) {
-                    location.reload();
-                }
-
+                clearLocalStorage();
+                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
+                if (confirm('Data terkirim! Ingin mereset form?')) location.reload();
             } catch (error) {
                 alert('Error: ' + error.message);
-                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
-                document.getElementById('errorMessage').style.display = 'block';
+                showError('Gagal mengirim: ' + error.message);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan LKPD';
             }
         }
+
+        // ==================== INISIALISASI ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('online', function() { isOnline = true; updateConnectionStatus(); loadDataFromGoogleSheets(); });
+            window.addEventListener('offline', function() { isOnline = false; updateConnectionStatus(); });
+            loadDataFromGoogleSheets();
+            loadFromLocalStorage();
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) hamburger.addEventListener('click', function() { navMenu.classList.toggle('active'); });
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', function() { updateProgressBar(); debounceSave(); });
+                el.addEventListener('change', function() { updateProgressBar(); debounceSave(); });
+            });
+            updateProgressBar();
+            updateConnectionStatus();
+        });
     </script>
 </body>
 </html>
