@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktivitas 1 - Berpikir Komputasional | KKA Kelas X</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* KKA THEME COLORS */
+        :root {
+            --kka-primary: #3498db;
+            --kka-secondary: #2980b9;
+            --kka-light: #ebf5fb;
+            --kka-dark: #21618c;
+            --kka-accent: #9b59b6;
+            --kka-success: #27ae60;
+            --kka-warning: #f39c12;
+            --kka-danger: #e74c3c;
+            --kka-gray: #f5f7fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        /* MAIN CONTENT */
+        .activity-detail-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* CARD STYLE */
+        .kka-content-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.1);
+            border-left: 5px solid var(--kka-primary);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .kka-content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .kka-content-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .kka-content-card h2 {
+            color: var(--kka-dark);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .kka-content-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--kka-primary), var(--kka-secondary));
+            border-radius: 2px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .subtitle i {
+            color: var(--kka-primary);
+        }
+        
+        .kka-content-card > p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--kka-light);
+            border-radius: 10px;
+            border-left: 4px solid var(--kka-primary);
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 8px 15px;
+            border-radius: 30px;
+            background: #f8f9fa;
+            width: fit-content;
+            margin-left: auto;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.offline {
+            background: #dc3545;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+        
+        .refresh-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            color: var(--kka-primary);
+        }
+        
+        .refresh-btn:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        
+        /* Messages */
+        .loading-message, .error-message, .success-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .loading-message {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid var(--kka-warning);
+            display: none;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid var(--kka-danger);
+            display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid var(--kka-success);
+            display: none;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin: 1.5rem 0;
+            background: var(--kka-gray);
+            border-radius: 30px;
+            padding: 0.8rem;
+            position: sticky;
+            top: 10px;
+            z-index: 99;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--kka-primary), var(--kka-secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        
+        /* Worksheet Container */
+        .worksheet-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid var(--kka-light);
+        }
+        
+        .worksheet-title {
+            color: var(--kka-dark);
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            border-bottom: 3px solid var(--kka-light);
+            padding-bottom: 1rem;
+        }
+        
+        /* Sections */
+        .kka-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e0e7ff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            color: var(--kka-dark);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--kka-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--kka-primary);
+            font-size: 1.3rem;
+        }
+        
+        .section-subtitle {
+            color: var(--kka-secondary);
+            font-size: 1.1rem;
+            margin: 1rem 0 0.8rem 0;
+            font-weight: 600;
+        }
+        
+        .instruction-box {
+            background: var(--kka-light);
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--kka-primary);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+        
+        /* Tables */
+        .kka-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .kka-table th {
+            background: var(--kka-primary);
+            color: white;
+            font-weight: 600;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        
+        .kka-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e7ff;
+            vertical-align: top;
+        }
+        
+        .kka-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .kka-table tr:hover {
+            background: var(--kka-light);
+        }
+        
+        /* Form Elements */
+        .answer-field {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #e0e7ff;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .answer-field:focus {
+            outline: none;
+            border-color: var(--kka-primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .answer-field.large {
+            min-height: 70px;
+            resize: vertical;
+        }
+        
+        /* Identitas Box */
+        .identitas-box {
+            background: var(--kka-light);
+            border-radius: 15px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .identitas-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .identitas-item label {
+            font-weight: 600;
+            color: var(--kka-dark);
+            font-size: 0.85rem;
+        }
+        
+        .identitas-item input, .identitas-item select {
+            padding: 8px 12px;
+            border: 2px solid white;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .identitas-item input:focus, .identitas-item select:focus {
+            outline: none;
+            border-color: var(--kka-primary);
+        }
+        
+        /* Flowchart Area */
+        .flowchart-area {
+            background: #f8f9fa;
+            border: 2px dashed var(--kka-primary);
+            border-radius: 12px;
+            padding: 1rem;
+            min-height: 150px;
+            font-family: monospace;
+        }
+        
+        /* Checklist */
+        .checklist-container {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px dashed var(--kka-primary);
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+        }
+        
+        /* Submit Button */
+        .submit-button {
+            background: linear-gradient(135deg, var(--kka-primary), var(--kka-secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            width: fit-content;
+            margin: 1.5rem auto;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .submit-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Navigation */
+        .activity-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--kka-dark);
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid var(--kka-light);
+        }
+        
+        .nav-btn:hover {
+            background: var(--kka-primary);
+            color: white;
+        }
+        
+        .nav-btn.primary {
+            background: var(--kka-primary);
+            color: white;
+            border: none;
+        }
+        
+        .nav-btn.primary:hover {
+            background: var(--kka-secondary);
+            transform: translateY(-2px);
+        }
+        
+        /* Disabled Form */
+        .form-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .activity-detail-container {
+                padding: 1rem;
+            }
+            .worksheet-container {
+                padding: 1rem;
+            }
+            .kka-table {
+                font-size: 0.8rem;
+                display: block;
+                overflow-x: auto;
+            }
+            .identitas-box {
+                grid-template-columns: 1fr;
+            }
+            .connection-status {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+            .activity-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header - SAMA PERSIS DENGAN FILE DAFTAR AKTIVITAS -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>KKA - KODING & KECERDASAN ARTIFISIAL</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index-kka.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda KKA</a></li>
+                    <li><a href="index-aktivitas-kka.html" class="nav-link active"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-kka.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="../penilaian/index-penilaian-kka.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Activity Detail Content -->
+    <section class="activity-detail-container">
+        <!-- Connection Status -->
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Online</span>
+            <button class="refresh-btn" onclick="refreshPage()"><i class="fas fa-sync-alt"></i></button>
+        </div>
+
+        <!-- Judul Halaman -->
+        <div class="kka-content-card">
+            <h2>Aktivitas 1: Berpikir Komputasional</h2>
+            <div class="subtitle">
+                <span><i class="fas fa-calendar"></i> Semester Ganjil • Aktivitas Eksplorasi</span>
+                <span><i class="fas fa-clock"></i> 4 JP (2 × 45 menit)</span>
+                <span><i class="fas fa-tag"></i> TP.1.1</span>
+            </div>
+            <p><i class="fas fa-quote-left"></i> Menerapkan konsep berpikir komputasional (dekomposisi, pengenalan pola, abstraksi, dan algoritma) untuk memecahkan permasalahan yang relevan dengan bidang keahlian. <i class="fas fa-quote-right"></i></p>
+        </div>
+
+        <!-- Loading Message -->
+        <div id="loadingMessage" class="loading-message">
+            <i class="fas fa-spinner fa-spin"></i> Memuat data murid...
+        </div>
+        
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span id="errorText">Gagal terhubung ke server. Silakan cek koneksi internet Anda dan refresh halaman.</span>
+            <br>
+            <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-sync-alt"></i> Refresh Halaman
+            </button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
+        </div>
+
+        <!-- Worksheet Container -->
+        <div class="worksheet-container" id="worksheetForm">
+            <div class="instruction-box" style="background: #e8f5e9; border-left-color: var(--kka-success); margin-bottom: 1.5rem;">
+                <i class="fas fa-lightbulb" style="color: var(--kka-primary); margin-right: 10px;"></i>
+                <strong>HALO, PROBLEM SOLVER HEBAT! 👋</strong><br>
+                Selamat datang di aktivitas pertama semester ganjil. Mari belajar berpikir komputasional!
+            </div>
+
+            <h1 class="worksheet-title">LEMBAR AKTIVITAS 1 – BERPIKIR KOMPUTASIONAL</h1>
+            <p style="text-align: center; margin-bottom: 1rem; font-size: 0.9rem; color: var(--kka-accent);">
+                <strong>MENGURAI MASALAH DI BIDANG KEAHLIAN</strong>
+            </p>
+
+            <!-- Identitas -->
+            <h3 style="margin: 1rem 0 0.5rem 0; color: var(--kka-dark); font-size: 1.1rem;">
+                <i class="fas fa-users"></i> Identitas
+            </h3>
+            <div class="identitas-box">
+                <div class="identitas-item">
+                    <label><i class="fas fa-building"></i> Kelas</label>
+                    <select id="kelas" class="answer-field">
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
+                </div>
+                <div class="identitas-item">
+                    <label><i class="fas fa-user"></i> Nama Lengkap</label>
+                    <select id="nama" class="answer-field">
+                        <option value="">-- Pilih Nama --</option>
+                    </select>
+                </div>
+                <div class="identitas-item">
+                    <label><i class="fas fa-users"></i> Nama Kelompok</label>
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1 - Problem Solver" class="answer-field">
+                </div>
+                <div class="identitas-item">
+                    <label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label>
+                    <input type="text" id="peran" placeholder="Contoh: Ketua / Analis / Programmer" class="answer-field">
+                </div>
+            </div>
+
+            <!-- Petunjuk -->
+            <div class="instruction-box">
+                <i class="fas fa-info-circle" style="margin-right: 10px;"></i>
+                <strong>📚 PETUNJUK PENGGUNAAN LEMBAR AKTIVITAS</strong><br><br>
+                Sebelum mengerjakan, pastikan kamu telah:
+                <ol style="margin-top: 8px; margin-left: 20px;">
+                    <li>Membaca materi <strong>"Berpikir Komputasional"</strong> di menu Daftar Materi.</li>
+                    <li>Memahami keempat pilar: Dekomposisi, Pengenalan Pola, Abstraksi, dan Algoritma.</li>
+                    <li>Menyiapkan alat tulis dan berdiskusi dengan kelompok.</li>
+                    <li>Mengamati permasalahan di lingkungan sekitar atau bidang keahlian.</li>
+                </ol>
+            </div>
+
+            <!-- BAGIAN A: PEMAHAMAN MATERI -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-book-reader"></i> 📖 BAGIAN A: PEMAHAMAN MATERI (INDIVIDU) – 15 menit</h3>
+                <div class="instruction-box">
+                    <i class="fas fa-exclamation-triangle"></i> "Pastikan kamu sudah membaca materi sebelum mengerjakan!"
+                </div>
+                
+                <table class="kka-table">
+                    <thead><tr><th style="width: 5%">No</th><th style="width: 45%">Pertanyaan</th><th style="width: 50%">Jawaban</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Apa yang dimaksud dengan berpikir komputasional?</td><td><textarea class="answer-field large" id="a1" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>2</td><td>Sebutkan 4 pilar utama berpikir komputasional!</td><td><textarea class="answer-field large" id="a2" placeholder="1.&#10;2.&#10;3.&#10;4."></textarea></td></tr>
+                        <tr><td>3</td><td>Jelaskan apa yang dimaksud dengan dekomposisi beserta contohnya!</td><td><textarea class="answer-field large" id="a3" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>4</td><td>Jelaskan apa yang dimaksud dengan pengenalan pola beserta contohnya!</td><td><textarea class="answer-field large" id="a4" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>5</td><td>Jelaskan apa yang dimaksud dengan abstraksi beserta contohnya!</td><td><textarea class="answer-field large" id="a5" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>6</td><td>Jelaskan apa yang dimaksud dengan algoritma beserta contohnya!</td><td><textarea class="answer-field large" id="a6" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>7</td><td>Mengapa berpikir komputasional penting untuk diterapkan dalam menyelesaikan masalah di bidang keahlianmu?</td><td><textarea class="answer-field large" id="a7" placeholder="Tulis jawaban..."></textarea></td></tr>
+                    </tbody>
+                </table>
+                
+                <div class="checklist-container">
+                    <div class="checklist-item"><input type="checkbox" id="bacaMateri"> <label><strong>☐ Ya, saya sudah membaca materi "Berpikir Komputasional"</strong></label></div>
+                    <div class="checklist-item"><label>Saya membaca materi pada tanggal: </label><input type="date" id="tanggalBaca" class="answer-field" style="width: auto;"></div>
+                </div>
+            </div>
+
+            <!-- BAGIAN B: REFLEKSI DIRI -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-brain"></i> 🧠 BAGIAN B: REFLEKSI DIRI (INDIVIDU) – 10 menit</h3>
+                <div class="instruction-box">"Kenali dirimu sebelum menjadi problem solver!"</div>
+                
+                <table class="kka-table">
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Apa bidang keahlianmu? (misal: TKJ, RPL, Multimedia, dll)</td><td><input type="text" class="answer-field" id="b1"></td></tr>
+                        <tr><td>2</td><td>Pernahkah kamu menghadapi masalah kompleks di bidang keahlianmu? Ceritakan secara singkat!</td><td><textarea class="answer-field large" id="b2" placeholder="Tulis cerita..."></textarea></td></tr>
+                        <tr><td>3</td><td>Bagaimana biasanya kamu menyelesaikan masalah tersebut?</td><td><textarea class="answer-field large" id="b3" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>4</td><td>Menurutmu, apakah cara yang kamu gunakan sudah sistematis? Mengapa?</td><td><textarea class="answer-field large" id="b4" placeholder="Tulis jawaban..."></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN C: DISKUSI KELOMPOK -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-users"></i> 🔍 BAGIAN C: DISKUSI KELOMPOK – 20 menit</h3>
+                <div class="instruction-box">"Diskusikan dengan kelompokmu!"</div>
+                
+                <h4 class="section-subtitle">Aktivitas 1: Mengidentifikasi Masalah di Bidang Keahlian</h4>
+                <table class="kka-table">
+                    <thead><tr><th>Aspek</th><th>Jawaban Kelompok</th></tr></thead>
+                    <tbody>
+                        <tr><td>Bidang Keahlian</td><td><input type="text" class="answer-field" id="c1"></td></tr>
+                        <tr><td>Permasalahan yang Dipilih</td><td><textarea class="answer-field large" id="c2" placeholder="Deskripsikan permasalahan..."></textarea></td></tr>
+                        <tr><td>Mengapa masalah ini penting untuk diselesaikan?</td><td><textarea class="answer-field large" id="c3" placeholder="Alasan..."></textarea></td></tr>
+                        <tr><td>Siapa yang terdampak oleh masalah ini?</td><td><textarea class="answer-field large" id="c4" placeholder="Jelaskan..."></textarea></td></tr>
+                    </tbody>
+                </table>
+                
+                <h4 class="section-subtitle">Aktivitas 2: Menerapkan Dekomposisi</h4>
+                <table class="kka-table">
+                    <thead><tr><th>No</th><th>Sub-Masalah</th><th>Penjelasan Singkat</th></tr></thead>
+                    <tbody id="dekomposisiBody">
+                        <tr><td>1</td><td><input type="text" class="answer-field" id="dekom1"></td><td><input type="text" class="answer-field" id="dekom_desc1"></td></tr>
+                        <tr><td>2</td><td><input type="text" class="answer-field" id="dekom2"></td><td><input type="text" class="answer-field" id="dekom_desc2"></td></tr>
+                        <tr><td>3</td><td><input type="text" class="answer-field" id="dekom3"></td><td><input type="text" class="answer-field" id="dekom_desc3"></td></tr>
+                        <tr><td>4</td><td><input type="text" class="answer-field" id="dekom4"></td><td><input type="text" class="answer-field" id="dekom_desc4"></td></tr>
+                        <tr><td>5</td><td><input type="text" class="answer-field" id="dekom5"></td><td><input type="text" class="answer-field" id="dekom_desc5"></td></tr>
+                    </tbody>
+                </table>
+                
+                <h4 class="section-subtitle">Aktivitas 3: Mengenali Pola</h4>
+                <table class="kka-table">
+                    <thead><tr><th>No</th><th>Pola yang Ditemukan</th><th>Contoh dalam Sub-Masalah</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td><input type="text" class="answer-field" id="pola1"></td><td><input type="text" class="answer-field" id="pola_ex1"></td></tr>
+                        <tr><td>2</td><td><input type="text" class="answer-field" id="pola2"></td><td><input type="text" class="answer-field" id="pola_ex2"></td></tr>
+                        <tr><td>3</td><td><input type="text" class="answer-field" id="pola3"></td><td><input type="text" class="answer-field" id="pola_ex3"></td></tr>
+                    </tbody>
+                </table>
+                
+                <h4 class="section-subtitle">Aktivitas 4: Melakukan Abstraksi</h4>
+                <table class="kka-table">
+                    <thead><tr><th>Detail Penting (Wajib Diperhatikan)</th><th>Detail Tidak Penting (Bisa Diabaikan)</th></tr></thead>
+                    <tbody>
+                        <tr><td><input type="text" class="answer-field" id="penting1"></td><td><input type="text" class="answer-field" id="tidak1"></td></tr>
+                        <tr><td><input type="text" class="answer-field" id="penting2"></td><td><input type="text" class="answer-field" id="tidak2"></td></tr>
+                        <tr><td><input type="text" class="answer-field" id="penting3"></td><td><input type="text" class="answer-field" id="tidak3"></td></tr>
+                        <tr><td><input type="text" class="answer-field" id="penting4"></td><td><input type="text" class="answer-field" id="tidak4"></td></tr>
+                        <tr><td><input type="text" class="answer-field" id="penting5"></td><td><input type="text" class="answer-field" id="tidak5"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN D: MENYUSUN ALGORITMA -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-code-branch"></i> 💻 BAGIAN D: MENYUSUN ALGORITMA (KELOMPOK) – 20 menit</h3>
+                
+                <h4 class="section-subtitle">Aktivitas 5: Merancang Algoritma</h4>
+                <table class="kka-table">
+                    <thead><tr><th>No</th><th>Langkah</th><th>Keterangan</th></tr></thead>
+                    <tbody id="algoritmaBody">
+                        <tr><td>1</td><td><input type="text" class="answer-field" id="alg_langkah1"></td><td><input type="text" class="answer-field" id="alg_ket1"></td></tr>
+                        <tr><td>2</td><td><input type="text" class="answer-field" id="alg_langkah2"></td><td><input type="text" class="answer-field" id="alg_ket2"></td></tr>
+                        <tr><td>3</td><td><input type="text" class="answer-field" id="alg_langkah3"></td><td><input type="text" class="answer-field" id="alg_ket3"></td></tr>
+                        <tr><td>4</td><td><input type="text" class="answer-field" id="alg_langkah4"></td><td><input type="text" class="answer-field" id="alg_ket4"></td></tr>
+                        <tr><td>5</td><td><input type="text" class="answer-field" id="alg_langkah5"></td><td><input type="text" class="answer-field" id="alg_ket5"></td></tr>
+                        <tr><td>6</td><td><input type="text" class="answer-field" id="alg_langkah6"></td><td><input type="text" class="answer-field" id="alg_ket6"></td></tr>
+                        <tr><td>7</td><td><input type="text" class="answer-field" id="alg_langkah7"></td><td><input type="text" class="answer-field" id="alg_ket7"></td></tr>
+                        <tr><td>8</td><td><input type="text" class="answer-field" id="alg_langkah8"></td><td><input type="text" class="answer-field" id="alg_ket8"></td></tr>
+                        <tr><td>9</td><td><input type="text" class="answer-field" id="alg_langkah9"></td><td><input type="text" class="answer-field" id="alg_ket9"></td></tr>
+                        <tr><td>10</td><td><input type="text" class="answer-field" id="alg_langkah10"></td><td><input type="text" class="answer-field" id="alg_ket10"></td></tr>
+                    </tbody>
+                </table>
+                
+                <h4 class="section-subtitle">Aktivitas 6: Visualisasi Algoritma (Flowchart)</h4>
+                <textarea class="answer-field large" id="flowchart" placeholder="Gambarkan flowchart atau diagram alur di sini..." rows="6"></textarea>
+            </div>
+
+            <!-- BAGIAN E: KONEKSI DENGAN ELEMEN LAIN -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-link"></i> 🎯 BAGIAN E: KONEKSI DENGAN ELEMEN LAIN – 10 menit</h3>
+                
+                <h4 class="section-subtitle">Aktivitas 7: Menghubungkan dengan Pemrograman</h4>
+                <table class="kka-table">
+                    <thead><tr><th>Pertanyaan</th><th>Jawaban Kelompok</th></tr></thead>
+                    <tbody>
+                        <tr><td>Apakah algoritma ini dapat dijalankan oleh komputer?</td><td><input type="text" class="answer-field" id="e1"></td></tr>
+                        <tr><td>Bahasa pemrograman apa yang mungkin digunakan?</td><td><input type="text" class="answer-field" id="e2"></td></tr>
+                        <tr><td>Apa input yang dibutuhkan?</td><td><input type="text" class="answer-field" id="e3"></td></tr>
+                        <tr><td>Apa output yang dihasilkan?</td><td><input type="text" class="answer-field" id="e4"></td></tr>
+                        <tr><td>Apa tantangan dalam mengimplementasikannya?</td><td><textarea class="answer-field" id="e5" placeholder="Tulis jawaban..."></textarea></td></tr>
+                    </tbody>
+                </table>
+                
+                <h4 class="section-subtitle">Aktivitas 8: Koneksi dengan Bidang Keahlian</h4>
+                <table class="kka-table">
+                    <thead><tr><th>Pilar Berpikir Komputasional</th><th>Contoh Penerapan di Bidang Keahlian</th></tr></thead>
+                    <tbody>
+                        <tr><td>Dekomposisi</td><td><textarea class="answer-field" id="f1" placeholder="Tulis contoh..."></textarea></td></tr>
+                        <tr><td>Pengenalan Pola</td><td><textarea class="answer-field" id="f2" placeholder="Tulis contoh..."></textarea></td></tr>
+                        <tr><td>Abstraksi</td><td><textarea class="answer-field" id="f3" placeholder="Tulis contoh..."></textarea></td></tr>
+                        <tr><td>Algoritma</td><td><textarea class="answer-field" id="f4" placeholder="Tulis contoh..."></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN F: REFLEKSI AKHIR -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-pen-fancy"></i> 📝 BAGIAN F: REFLEKSI AKHIR (INDIVIDU) – 5 menit</h3>
+                
+                <div class="checklist-container" style="margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                        <div><strong>Nama:</strong> <input type="text" class="answer-field" id="ref_nama" style="width: 100%;"></div>
+                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="ref_kelas" style="width: 100%;"></div>
+                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="ref_kelompok" style="width: 100%;"></div>
+                        <div><strong>Peran:</strong> <input type="text" class="answer-field" id="ref_peran" style="width: 100%;"></div>
+                    </div>
+                </div>
+                
+                <table class="kka-table">
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawabanku</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Hal baru apa yang aku pelajari dari materi tentang berpikir komputasional?</td><td><textarea class="answer-field large" id="g1" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>2</td><td>Pilar mana yang paling mudah dipahami? Mengapa?</td><td><textarea class="answer-field large" id="g2" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>3</td><td>Pilar mana yang paling sulit diterapkan? Mengapa?</td><td><textarea class="answer-field large" id="g3" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>4</td><td>Bagaimana perasaanku saat berdiskusi dengan kelompok?</td><td><textarea class="answer-field large" id="g4" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>5</td><td>Apakah algoritma yang kelompokku buat sudah logis dan sistematis?</td><td><textarea class="answer-field large" id="g5" placeholder="Tulis jawaban..."></textarea></td></tr>
+                        <tr><td>6</td><td>Apa komitmenku untuk menerapkan berpikir komputasional dalam kehidupan sehari-hari?</td><td><textarea class="answer-field large" id="g6" placeholder="Tulis jawaban..."></textarea></td></tr>
+                    </tbody>
+                </table>
+                
+                <div class="checklist-container">
+                    <div class="checklist-item"><input type="checkbox" id="final_check1"> Saya sudah membaca materi "Berpikir Komputasional"</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check2"> Saya sudah berdiskusi dengan kelompok</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check3"> Saya sudah menerapkan 4 pilar berpikir komputasional</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check4"> Saya sudah menyusun algoritma untuk menyelesaikan masalah</div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
+                <i class="fas fa-paper-plane"></i> Kumpulkan Lembar Aktivitas
+            </button>
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i> Lembar aktivitas berhasil dikumpulkan!
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="activity-navigation">
+            <a href="index-aktivitas-kka.html" class="nav-btn">
+                <i class="fas fa-arrow-left"></i> Kembali ke Daftar Aktivitas
+            </a>
+            <a href="s1-1-analisis-data.html" class="nav-btn primary">
+                Lanjut ke Aktivitas 2 <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <script>
+        // ==================== KONFIGURASI ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAPAN = 'https://script.google.com/macros/s/AKfycbzYIVPu-d_uJAYQ6vvFll38AXt5pKCyl3ckg2OhULVQxjBSsEI-Ww1X0J8CZEYl-By4hA/exec';
+        const STORAGE_KEY = 'kka_aktivitas1';
+        
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 1 - BERPIKIR KOMPUTASIONAL",
+            headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Peran", "Data Bagian A", "Data Bagian B", "Data Bagian C", "Data Bagian D", "Data Bagian E", "Data Bagian F"]
+        };
+        
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+        let autoSaveTimeout = null;
+        let isOnline = navigator.onLine;
+        
+        // ==================== KONEKSI STATUS ====================
+        function updateConnectionStatus() {
+            isOnline = navigator.onLine;
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            if (isOnline) {
+                statusIndicator.classList.remove('offline');
+                connectionStatus.textContent = 'Online';
+                if (!isLoading && dataKelas.length === 0) {
+                    loadDataFromGoogleSheets();
+                }
+                disableForm(false);
+                document.getElementById('errorMessage').style.display = 'none';
+            } else {
+                statusIndicator.classList.add('offline');
+                connectionStatus.textContent = 'Offline - Form Dinonaktifkan';
+                disableForm(true);
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Anda sedang offline. Silakan cek koneksi internet dan refresh halaman.';
+            }
+        }
+        
+        function refreshPage() {
+            window.location.reload();
+        }
+        
+        function disableForm(disabled) {
+            const container = document.getElementById('worksheetForm');
+            if (disabled) {
+                container.classList.add('form-disabled');
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('kelas').disabled = true;
+                document.getElementById('nama').disabled = true;
+                document.getElementById('kelompok').disabled = true;
+                document.getElementById('peran').disabled = true;
+            } else {
+                container.classList.remove('form-disabled');
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('kelas').disabled = false;
+                document.getElementById('nama').disabled = false;
+                document.getElementById('kelompok').disabled = false;
+                document.getElementById('peran').disabled = false;
+            }
+        }
+        
+        // ==================== LOCALSTORAGE AUTO-SAVE ====================
+        function saveToLocalStorage() {
+            if (!isOnline) return;
+            
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const formData = {};
+                document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').forEach(el => {
+                    if (el.id) formData[el.id] = el.value;
+                });
+                document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                    if (el.id) formData[el.id] = el.checked;
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+                console.log('Auto-save tersimpan');
+            }, 1000);
+        }
+        
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (!savedData) return;
+            try {
+                const formData = JSON.parse(savedData);
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') element.checked = formData[key];
+                        else element.value = formData[key];
+                    }
+                });
+                updateProgressBar();
+            } catch(e) { console.error('Gagal load localStorage', e); }
+        }
+        
+        function clearLocalStorage() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+        
+        function triggerAutoSave() {
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                saveToLocalStorage();
+                updateProgressBar();
+            }, 1000);
+        }
+        
+        // ==================== PROGRESS BAR ====================
+        function updateProgressBar() {
+            const allFields = document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea');
+            let filled = 0;
+            allFields.forEach(field => {
+                if (field.value && field.value.trim() !== '') filled++;
+            });
+            const total = allFields.length;
+            const progress = total > 0 ? Math.round((filled / total) * 100) : 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+        }
+        
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            if (!isOnline) return;
+            
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
+                const callbackName = 'jsonp_callback_' + Date.now();
+                
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        dataKelas.forEach(kelas => {
+                            const option = document.createElement('option');
+                            option.value = kelas;
+                            option.textContent = kelas;
+                            kelasSelect.appendChild(option);
+                        });
+                        
+                        disableForm(false);
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        loadFromLocalStorage();
+                    } else {
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        document.getElementById('errorMessage').style.display = 'block';
+                        document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                        disableForm(true);
+                    }
+                    isLoading = false;
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = function() {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman.';
+                    disableForm(true);
+                    isLoading = false;
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                disableForm(true);
+                isLoading = false;
+            }
+        }
+        
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
+            });
+        }
+        
+        // ==================== SUBMIT DATA ====================
+        async function submitData() {
+            if (!isOnline) {
+                alert('Anda sedang offline. Silakan cek koneksi internet.');
+                return;
+            }
+            if (isLoading) { alert('Data masih dimuat.'); return; }
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value) {
+                alert('Lengkapi identitas terlebih dahulu!');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            
+            try {
+                const formData = new URLSearchParams();
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                
+                // Identitas (kolom terpisah)
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value || '');
+                formData.append('Peran', document.getElementById('peran').value || '');
+                
+                // Bagian A: Pemahaman Materi
+                const bagianA = {
+                    a1: document.getElementById('a1')?.value || '',
+                    a2: document.getElementById('a2')?.value || '',
+                    a3: document.getElementById('a3')?.value || '',
+                    a4: document.getElementById('a4')?.value || '',
+                    a5: document.getElementById('a5')?.value || '',
+                    a6: document.getElementById('a6')?.value || '',
+                    a7: document.getElementById('a7')?.value || '',
+                    bacaMateri: document.getElementById('bacaMateri')?.checked || false,
+                    tanggalBaca: document.getElementById('tanggalBaca')?.value || ''
+                };
+                formData.append('Data Bagian A', JSON.stringify(bagianA));
+                
+                // Bagian B: Refleksi Diri
+                const bagianB = {
+                    b1: document.getElementById('b1')?.value || '',
+                    b2: document.getElementById('b2')?.value || '',
+                    b3: document.getElementById('b3')?.value || '',
+                    b4: document.getElementById('b4')?.value || ''
+                };
+                formData.append('Data Bagian B', JSON.stringify(bagianB));
+                
+                // Bagian C: Diskusi Kelompok
+                const bagianC = {
+                    c1: document.getElementById('c1')?.value || '',
+                    c2: document.getElementById('c2')?.value || '',
+                    c3: document.getElementById('c3')?.value || '',
+                    c4: document.getElementById('c4')?.value || '',
+                    dekomposisi: [
+                        {sub: document.getElementById('dekom1')?.value, desc: document.getElementById('dekom_desc1')?.value},
+                        {sub: document.getElementById('dekom2')?.value, desc: document.getElementById('dekom_desc2')?.value},
+                        {sub: document.getElementById('dekom3')?.value, desc: document.getElementById('dekom_desc3')?.value},
+                        {sub: document.getElementById('dekom4')?.value, desc: document.getElementById('dekom_desc4')?.value},
+                        {sub: document.getElementById('dekom5')?.value, desc: document.getElementById('dekom_desc5')?.value}
+                    ],
+                    pola: [
+                        {pola: document.getElementById('pola1')?.value, contoh: document.getElementById('pola_ex1')?.value},
+                        {pola: document.getElementById('pola2')?.value, contoh: document.getElementById('pola_ex2')?.value},
+                        {pola: document.getElementById('pola3')?.value, contoh: document.getElementById('pola_ex3')?.value}
+                    ],
+                    abstraksi: {
+                        penting: [document.getElementById('penting1')?.value, document.getElementById('penting2')?.value, document.getElementById('penting3')?.value, document.getElementById('penting4')?.value, document.getElementById('penting5')?.value],
+                        tidak: [document.getElementById('tidak1')?.value, document.getElementById('tidak2')?.value, document.getElementById('tidak3')?.value, document.getElementById('tidak4')?.value, document.getElementById('tidak5')?.value]
+                    }
+                };
+                formData.append('Data Bagian C', JSON.stringify(bagianC));
+                
+                // Bagian D: Algoritma
+                const bagianD = {
+                    algoritma: [
+                        {langkah: document.getElementById('alg_langkah1')?.value, ket: document.getElementById('alg_ket1')?.value},
+                        {langkah: document.getElementById('alg_langkah2')?.value, ket: document.getElementById('alg_ket2')?.value},
+                        {langkah: document.getElementById('alg_langkah3')?.value, ket: document.getElementById('alg_ket3')?.value},
+                        {langkah: document.getElementById('alg_langkah4')?.value, ket: document.getElementById('alg_ket4')?.value},
+                        {langkah: document.getElementById('alg_langkah5')?.value, ket: document.getElementById('alg_ket5')?.value},
+                        {langkah: document.getElementById('alg_langkah6')?.value, ket: document.getElementById('alg_ket6')?.value},
+                        {langkah: document.getElementById('alg_langkah7')?.value, ket: document.getElementById('alg_ket7')?.value},
+                        {langkah: document.getElementById('alg_langkah8')?.value, ket: document.getElementById('alg_ket8')?.value},
+                        {langkah: document.getElementById('alg_langkah9')?.value, ket: document.getElementById('alg_ket9')?.value},
+                        {langkah: document.getElementById('alg_langkah10')?.value, ket: document.getElementById('alg_ket10')?.value}
+                    ],
+                    flowchart: document.getElementById('flowchart')?.value || ''
+                };
+                formData.append('Data Bagian D', JSON.stringify(bagianD));
+                
+                // Bagian E: Koneksi
+                const bagianE = {
+                    e1: document.getElementById('e1')?.value || '',
+                    e2: document.getElementById('e2')?.value || '',
+                    e3: document.getElementById('e3')?.value || '',
+                    e4: document.getElementById('e4')?.value || '',
+                    e5: document.getElementById('e5')?.value || '',
+                    f1: document.getElementById('f1')?.value || '',
+                    f2: document.getElementById('f2')?.value || '',
+                    f3: document.getElementById('f3')?.value || '',
+                    f4: document.getElementById('f4')?.value || ''
+                };
+                formData.append('Data Bagian E', JSON.stringify(bagianE));
+                
+                // Bagian F: Refleksi Akhir
+                const bagianF = {
+                    nama: document.getElementById('ref_nama')?.value || '',
+                    kelas: document.getElementById('ref_kelas')?.value || '',
+                    kelompok: document.getElementById('ref_kelompok')?.value || '',
+                    peran: document.getElementById('ref_peran')?.value || '',
+                    g1: document.getElementById('g1')?.value || '',
+                    g2: document.getElementById('g2')?.value || '',
+                    g3: document.getElementById('g3')?.value || '',
+                    g4: document.getElementById('g4')?.value || '',
+                    g5: document.getElementById('g5')?.value || '',
+                    g6: document.getElementById('g6')?.value || '',
+                    final_check1: document.getElementById('final_check1')?.checked || false,
+                    final_check2: document.getElementById('final_check2')?.checked || false,
+                    final_check3: document.getElementById('final_check3')?.checked || false,
+                    final_check4: document.getElementById('final_check4')?.checked || false
+                };
+                formData.append('Data Bagian F', JSON.stringify(bagianF));
+                
+                // Timestamp
+                formData.append('Timestamp', new Date().toISOString());
+                
+                await fetch(URL_PEREKAPAN, { method: 'POST', mode: 'no-cors', body: formData });
+                
+                document.getElementById('successMessage').style.display = 'block';
+                clearLocalStorage();
+                setTimeout(() => { document.getElementById('successMessage').style.display = 'none'; }, 5000);
+                
+                if (confirm('Data terkirim! Ingin mereset form?')) location.reload();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan Lembar Aktivitas';
+            }
+        }
+        
+        // ==================== EVENT LISTENERS ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('online', () => { updateConnectionStatus(); });
+            window.addEventListener('offline', () => { updateConnectionStatus(); });
+            updateConnectionStatus();
+            loadDataFromGoogleSheets();
+            
+            document.getElementById('kelas').addEventListener('change', updateNamaDropdown);
+            
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', triggerAutoSave);
+                el.addEventListener('change', triggerAutoSave);
+            });
+            
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+        });
+    </script>
+</body>
+</html>

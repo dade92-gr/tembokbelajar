@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktivitas 7 - Review Materi Semester Ganjil | KKA Kelas X</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --kka-primary: #3498db;
+            --kka-secondary: #2980b9;
+            --kka-light: #ebf5fb;
+            --kka-dark: #21618c;
+            --kka-accent: #9b59b6;
+            --kka-success: #27ae60;
+            --kka-warning: #f39c12;
+            --kka-danger: #e74c3c;
+            --kka-gray: #f5f7fa;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .activity-detail-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        
+        .kka-content-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.1);
+            border-left: 5px solid var(--kka-primary);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .kka-content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .kka-content-card > * { position: relative; z-index: 1; }
+        
+        .kka-content-card h2 {
+            color: var(--kka-dark);
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+            display: inline-block;
+            padding-bottom: 8px;
+            border-bottom: 3px solid var(--kka-primary);
+        }
+        
+        .subtitle { color: #666; font-size: 0.85rem; margin: 0.5rem 0 1rem; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .subtitle i { color: var(--kka-primary); }
+        .kka-content-card > p { font-size: 0.95rem; line-height: 1.5; color: #555; padding: 0.8rem 1.2rem; background: var(--kka-light); border-radius: 10px; border-left: 4px solid var(--kka-primary); }
+        
+        .connection-status { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 15px; padding: 6px 12px; border-radius: 30px; background: #f8f9fa; width: fit-content; margin-left: auto; font-size: 0.8rem; }
+        .status-indicator { width: 10px; height: 10px; border-radius: 50%; background: #28a745; animation: pulse 2s infinite; }
+        .status-indicator.offline { background: #dc3545; animation: none; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(40, 167, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
+        .refresh-btn { background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 4px 8px; border-radius: 20px; color: var(--kka-primary); }
+        .refresh-btn:hover { background: rgba(0,0,0,0.05); }
+        
+        .loading-message, .error-message, .success-message { padding: 0.8rem; border-radius: 10px; margin: 1rem 0; text-align: center; font-size: 0.9rem; }
+        .loading-message { background: #fff3cd; color: #856404; border-left: 5px solid var(--kka-warning); display: none; }
+        .error-message { background: #f8d7da; color: #721c24; border-left: 5px solid var(--kka-danger); display: none; }
+        .success-message { background: #d4edda; color: #155724; border-left: 5px solid var(--kka-success); display: none; }
+        
+        .progress-container { margin: 1rem 0; background: var(--kka-gray); border-radius: 30px; padding: 0.6rem; position: sticky; top: 10px; z-index: 99; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .progress-bar { height: 8px; background: linear-gradient(90deg, var(--kka-primary), var(--kka-secondary)); border-radius: 4px; width: 0%; transition: width 0.3s ease; }
+        .progress-text { text-align: right; font-size: 0.75rem; color: #666; margin-top: 5px; }
+        
+        .worksheet-container { background: white; border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--kka-light); }
+        .worksheet-title { color: var(--kka-dark); font-size: 1.4rem; text-align: center; border-bottom: 2px solid var(--kka-light); padding-bottom: 0.8rem; margin-bottom: 1rem; }
+        
+        .kka-section { background: white; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; border: 1px solid #e0e7ff; }
+        .section-title { color: var(--kka-dark); font-size: 1.2rem; margin-bottom: 0.8rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--kka-light); display: flex; align-items: center; gap: 8px; }
+        .section-title i { color: var(--kka-primary); font-size: 1.2rem; }
+        .section-subtitle { color: var(--kka-secondary); font-size: 1rem; margin: 1rem 0 0.6rem; font-weight: 600; }
+        .instruction-box { background: var(--kka-light); padding: 0.6rem 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--kka-primary); font-style: italic; font-size: 0.85rem; }
+        
+        .kka-table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.8rem; }
+        .kka-table th { background: var(--kka-primary); color: white; padding: 8px 10px; text-align: left; }
+        .kka-table td { padding: 8px 10px; border-bottom: 1px solid #e0e7ff; vertical-align: top; }
+        .kka-table tr:hover { background: var(--kka-light); }
+        
+        .answer-field { width: 100%; padding: 6px 10px; border: 2px solid #e0e7ff; border-radius: 6px; font-family: inherit; font-size: 0.8rem; transition: all 0.3s ease; }
+        .answer-field:focus { outline: none; border-color: var(--kka-primary); box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1); }
+        .answer-field.large { min-height: 60px; resize: vertical; }
+        
+        .identitas-box { background: var(--kka-light); border-radius: 12px; padding: 1rem; margin: 1rem 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; }
+        .identitas-item { display: flex; flex-direction: column; gap: 0.4rem; }
+        .identitas-item label { font-weight: 600; color: var(--kka-dark); font-size: 0.8rem; }
+        .identitas-item input, .identitas-item select { padding: 6px 10px; border: 2px solid white; border-radius: 6px; font-size: 0.8rem; background: white; }
+        
+        .checklist-container { background: #f8fafc; border-radius: 8px; padding: 0.8rem; margin: 0.8rem 0; border: 1px dashed var(--kka-primary); }
+        .checklist-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 0.8rem; }
+        
+        .radio-group { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+        .radio-item { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; }
+        
+        .submit-button { background: linear-gradient(135deg, var(--kka-primary), var(--kka-secondary)); color: white; border: none; padding: 0.7rem 1.8rem; border-radius: 40px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: block; width: fit-content; margin: 1rem auto; box-shadow: 0 2px 10px rgba(52, 152, 219, 0.3); }
+        .submit-button:hover:not(:disabled) { transform: translateY(-2px); }
+        .submit-button:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .activity-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--kka-dark); padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid var(--kka-light); }
+        .nav-btn:hover { background: var(--kka-primary); color: white; }
+        .nav-btn.primary { background: var(--kka-primary); color: white; border: none; }
+        
+        .form-disabled { opacity: 0.6; pointer-events: none; }
+        
+        .achievement-badge { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; padding: 8px 15px; border-radius: 30px; font-weight: bold; text-align: center; display: inline-block; margin: 5px; }
+        
+        @media (max-width: 768px) {
+            .activity-detail-container { padding: 1rem; }
+            .worksheet-container { padding: 1rem; }
+            .kka-table { display: block; overflow-x: auto; }
+            .identitas-box { grid-template-columns: 1fr; }
+            .activity-navigation { flex-direction: column; gap: 0.8rem; }
+            .nav-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>KKA - KODING & KECERDASAN ARTIFISIAL</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index-kka.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda KKA</a></li>
+                    <li><a href="index-aktivitas-kka.html" class="nav-link active"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-kka.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="../penilaian/index-penilaian-kka.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="activity-detail-container">
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Online</span>
+            <button class="refresh-btn" onclick="refreshPage()"><i class="fas fa-sync-alt"></i></button>
+        </div>
+
+        <div class="kka-content-card">
+            <h2>Aktivitas 7: Review Materi Semester Ganjil</h2>
+            <div class="subtitle">
+                <span><i class="fas fa-calendar"></i> Semester Ganjil • Review Akhir</span>
+                <span><i class="fas fa-clock"></i> 6 JP (3 pertemuan)</span>
+                <span><i class="fas fa-tag"></i> Evaluasi Pemahaman</span>
+            </div>
+            <p><i class="fas fa-quote-left"></i> Pengulangan dan penguatan materi semester ganjil untuk mempersiapkan evaluasi akhir semester. <i class="fas fa-quote-right"></i></p>
+        </div>
+
+        <div id="loadingMessage" class="loading-message"><i class="fas fa-spinner fa-spin"></i> Memuat data murid...</div>
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke server. Silakan cek koneksi internet dan refresh halaman.</span>
+            <br><button onclick="location.reload()" style="margin-top:8px; padding:6px 15px; background:#dc3545; color:white; border:none; border-radius:5px;"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
+        </div>
+
+        <div class="worksheet-container" id="worksheetForm">
+            <div class="instruction-box" style="background:#e8f5e9; border-left-color:var(--kka-success);">
+                <i class="fas fa-star-of-life"></i> <strong>SELAMAT! KAMU TELAH MENYELESAIKAN 6 AKTIVITAS! 🎉</strong><br>
+                Saatnya mereview semua materi yang telah dipelajari selama semester ganjil. Mari kita evaluasi pemahaman dan persiapan menuju evaluasi akhir!
+            </div>
+            <h1 class="worksheet-title">LEMBAR AKTIVITAS 7 – REVIEW MATERI SEMESTER GANJIL</h1>
+            <p style="text-align:center; font-size:0.85rem; margin-bottom:1rem;">PENGULANGAN & PENGUATAN MATERI</p>
+
+            <!-- Identitas -->
+            <div class="identitas-box">
+                <div class="identitas-item"><label><i class="fas fa-building"></i> Kelas</label><select id="kelas"><option value="">-- Pilih Kelas --</option></select></div>
+                <div class="identitas-item"><label><i class="fas fa-user"></i> Nama Lengkap</label><select id="nama"><option value="">-- Pilih Nama --</option></select></div>
+                <div class="identitas-item"><label><i class="fas fa-users"></i> Nama Kelompok</label><input type="text" id="kelompok" placeholder="Contoh: Kelompok Review"></div>
+                <div class="identitas-item"><label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label><input type="text" id="peran" placeholder="Contoh: Koordinator Review"></div>
+            </div>
+
+            <!-- BAGIAN A: PETA MATERI SEMESTER GANJIL -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-map"></i> 🗺️ BAGIAN A: PETA MATERI SEMESTER GANJIL (KELOMPOK) – 20 menit</h3>
+                <div class="instruction-box">Aktivitas 1: Memetakan 6 Aktivitas yang Telah Dipelajari</div>
+                <table class="kka-table">
+                    <thead> 的人<th>No</th><th>Aktivitas</th><th>TP</th><th>Materi Pokok</th><th>Tingkat Pemahaman (1-5)</th> </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Berpikir Komputasional</td><td>TP.1.1</td><td><input type="text" class="answer-field" id="map1_materi"></td><td><select id="map1_paham"><option value="">Pilih</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3">3 - Sedang</option><option value="4">4 - Baik</option><option value="5">5 - Sangat Baik</option></select></td> </tr>
+                        <tr><td>2</td><td>Analisis Data</td><td>TP.4.1</td><td><input type="text" class="answer-field" id="map2_materi"></td><td><select id="map2_paham"><option value="">Pilih</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3">3 - Sedang</option><option value="4">4 - Baik</option><option value="5">5 - Sangat Baik</option></select></td> </tr>
+                        <tr><td>3</td><td>Algoritma Pemrograman</td><td>TP.3.1</td><td><input type="text" class="answer-field" id="map3_materi"></td><td><select id="map3_paham"><option value="">Pilih</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3">3 - Sedang</option><option value="4">4 - Baik</option><option value="5">5 - Sangat Baik</option></select></td> </tr>
+                        <tr><td>4</td><td>Literasi & Etika AI</td><td>TP.5.1</td><td><input type="text" class="answer-field" id="map4_materi"></td><td><select id="map4_paham"><option value="">Pilih</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3">3 - Sedang</option><option value="4">4 - Baik</option><option value="5">5 - Sangat Baik</option></select></td> </tr>
+                        <tr><td>5</td><td>Prompt Engineering & KA Generatif</td><td>TP.6.1</td><td><input type="text" class="answer-field" id="map5_materi"></td><td><select id="map5_paham"><option value="">Pilih</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3">3 - Sedang</option><option value="4">4 - Baik</option><option value="5">5 - Sangat Baik</option></select></td> </tr>
+                        <tr><td>6</td><td>Literasi Digital</td><td>TP.2.1</td><td><input type="text" class="answer-field" id="map6_materi"></td><td><select id="map6_paham"><option value="">Pilih</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3">3 - Sedang</option><option value="4">4 - Baik</option><option value="5">5 - Sangat Baik</option></select></td> </tr>
+                    </tbody>
+                </table>
+                <div class="instruction-box">Rata-rata Tingkat Pemahaman: <input type="text" id="rata_paham" style="width:60px;" readonly> / 5</div>
+            </div>
+
+            <!-- BAGIAN B: REVIEW MATERI INTI -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-brain"></i> 🧠 BAGIAN B: REVIEW MATERI INTI (INDIVIDU) – 30 menit</h3>
+                <div class="instruction-box">Aktivitas 2: Menguji Pemahaman Konsep</div>
+                
+                <h4 class="section-subtitle">1. Berpikir Komputasional (TP.1.1)</h4>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr> </thead>
+                    <tbody>
+                        <tr><td>a</td><td>Sebutkan 4 pilar berpikir komputasional!</td><td><textarea class="answer-field" id="review_bk1"></textarea></td></tr>
+                        <tr><td>b</td><td>Jelaskan apa yang dimaksud dengan dekomposisi!</td><td><textarea class="answer-field" id="review_bk2"></textarea></td></tr>
+                        <tr><td>c</td><td>Berikan contoh penerapan algoritma dalam kehidupan sehari-hari!</td><td><textarea class="answer-field" id="review_bk3"></textarea></td></tr>
+                    </tbody>
+                </table>
+
+                <h4 class="section-subtitle">2. Analisis Data (TP.4.1)</h4>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr> </thead>
+                    <tbody>
+                        <tr><td>a</td><td>Apa yang dimaksud dengan basis data?</td><td><textarea class="answer-field" id="review_ad1"></textarea></td></tr>
+                        <tr><td>b</td><td>Sebutkan 3 komponen utama dalam basis data!</td><td><textarea class="answer-field" id="review_ad2"></textarea></td></tr>
+                        <tr><td>c</td><td>Apa fungsi primary key dalam sebuah tabel?</td><td><textarea class="answer-field" id="review_ad3"></textarea></td></tr>
+                    </tbody>
+                </table>
+
+                <h4 class="section-subtitle">3. Algoritma Pemrograman (TP.3.1)</h4>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr> </thead>
+                    <tbody>
+                        <tr><td>a</td><td>Apa perbedaan antara pseudocode dan flowchart?</td><td><textarea class="answer-field" id="review_algo1"></textarea></td></tr>
+                        <tr><td>b</td><td>Sebutkan 3 struktur data dasar!</td><td><textarea class="answer-field" id="review_algo2"></textarea></td></tr>
+                        <tr><td>c</td><td>Apa yang dimaksud dengan kompleksitas algoritma?</td><td><textarea class="answer-field" id="review_algo3"></textarea></td></tr>
+                    </tbody>
+                </table>
+
+                <h4 class="section-subtitle">4. Literasi & Etika Kecerdasan Artifisial (TP.5.1)</h4>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr> </thead>
+                    <tbody>
+                        <tr><td>a</td><td>Apa perbedaan antara Narrow AI dan General AI?</td><td><textarea class="answer-field" id="review_ai1"></textarea></td></tr>
+                        <tr><td>b</td><td>Sebutkan 3 isu etika dalam pemanfaatan AI!</td><td><textarea class="answer-field" id="review_ai2"></textarea></td></tr>
+                        <tr><td>c</td><td>Mengapa keamanan data penting dalam pengembangan AI?</td><td><textarea class="answer-field" id="review_ai3"></textarea></td></tr>
+                    </tbody>
+                </table>
+
+                <h4 class="section-subtitle">5. Prompt Engineering & KA Generatif (TP.6.1)</h4>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr> </thead>
+                    <tbody>
+                        <tr><td>a</td><td>Apa yang dimaksud dengan prompt engineering?</td><td><textarea class="answer-field" id="review_pe1"></textarea></td></tr>
+                        <tr><td>b</td><td>Sebutkan 3 elemen penting dalam menyusun prompt yang baik!</td><td><textarea class="answer-field" id="review_pe2"></textarea></td></tr>
+                        <tr><td>c</td><td>Apa perbedaan prompt sederhana dan prompt terstruktur?</td><td><textarea class="answer-field" id="review_pe3"></textarea></td></tr>
+                    </tbody>
+                </table>
+
+                <h4 class="section-subtitle">6. Literasi Digital (TP.2.1)</h4>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr> </thead>
+                    <tbody>
+                        <tr><td>a</td><td>Sebutkan 4 pilar utama literasi digital menurut Kominfo!</td><td><textarea class="answer-field" id="review_ld1"></textarea></td></tr>
+                        <tr><td>b</td><td>Apa yang dimaksud dengan etika digital?</td><td><textarea class="answer-field" id="review_ld2"></textarea></td></tr>
+                        <tr><td>c</td><td>Sebutkan 3 cara melindungi data pribadi di internet!</td><td><textarea class="answer-field" id="review_ld3"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN C: PROYEK AKHIR SEMESTER -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-project-diagram"></i> 📁 BAGIAN C: PROYEK AKHIR SEMESTER (KELOMPOK) – 25 menit</h3>
+                <div class="instruction-box">Aktivitas 3: Menyusun Portofolio Proyek</div>
+                <table class="kka-table">
+                    <tr><td style="width:35%">Nama Proyek yang Dikembangkan</td><td><input type="text" class="answer-field" id="proyek_nama"></td></tr>
+                    <tr><td>Jenis Produk</td><td><div class="radio-group"><label class="radio-item"><input type="radio" name="jenis_produk" id="produk_barang" value="Barang Fisik"> Barang Fisik</label><label class="radio-item"><input type="radio" name="jenis_produk" id="produk_jasa" value="Jasa Layanan"> Jasa Layanan</label><label class="radio-item"><input type="radio" name="jenis_produk" id="produk_digital" value="Produk Digital"> Produk Digital</label></div></td></tr>
+                    <tr><td>Deskripsi Produk</td><td><textarea class="answer-field large" id="proyek_deskripsi"></textarea></td></tr>
+                    <tr><td>Keterkaitan dengan Bidang Keahlian</td><td><textarea class="answer-field large" id="proyek_bidang"></textarea></td></tr>
+                    <tr><td>Konten Digital yang Diproduksi</td><td><textarea class="answer-field large" id="proyek_konten"></textarea></td></tr>
+                    <tr><td>Link/Tautan Konten</td><td><input type="text" class="answer-field" id="proyek_link"></td></tr>
+                    <tr><td>Hasil yang Dicapai</td><td><textarea class="answer-field large" id="proyek_hasil"></textarea></td></tr>
+                    <tr><td>Kendala yang Dihadapi</td><td><textarea class="answer-field large" id="proyek_kendala"></textarea></td></tr>
+                    <tr><td>Solusi yang Diterapkan</td><td><textarea class="answer-field large" id="proyek_solusi"></textarea></td></tr>
+                </table>
+
+                <div class="instruction-box">Aktivitas 4: Evaluasi Diri Proyek</div>
+                <table class="kka-table">
+                    <thead> <tr><th>Aspek</th><th>Penilaian (1-4)</th><th>Catatan</th></tr> </thead>
+                    <tbody>
+                        <tr><td>Kreativitas Ide</td><td><select id="eval_kreativitas"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td><td><input type="text" class="answer-field" id="eval_kreativitas_catatan"></td></tr>
+                        <tr><td>Penerapan Konsep</td><td><select id="eval_konsep"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td><td><input type="text" class="answer-field" id="eval_konsep_catatan"></td></tr>
+                        <tr><td>Kualitas Konten</td><td><select id="eval_kualitas"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td><td><input type="text" class="answer-field" id="eval_kualitas_catatan"></td></tr>
+                        <tr><td>Kerja Sama Tim</td><td><select id="eval_kerjasama"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td><td><input type="text" class="answer-field" id="eval_kerjasama_catatan"></td></tr>
+                        <tr><td>Etika & Tanggung Jawab</td><td><select id="eval_etika"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td><td><input type="text" class="answer-field" id="eval_etika_catatan"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN D: PERSIAPAN EVALUASI AKHIR -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-pencil-alt"></i> ✍️ BAGIAN D: PERSIAPAN EVALUASI AKHIR (INDIVIDU) – 15 menit</h3>
+                <div class="instruction-box">Aktivitas 5: Identifikasi Materi yang Perlu Dipelajari Ulang</div>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Materi</th><th>Tingkat Kesiapan (1-5)</th><th>Rencana Belajar Ulang</th></tr> </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Berpikir Komputasional</td><td><select id="siap1"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td><td><input type="text" class="answer-field" id="rencana1"></td></tr>
+                        <tr><td>2</td><td>Analisis Data & Basis Data</td><td><select id="siap2"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+                                                <select id="siap2"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+                        <td><input type="text" class="answer-field" id="rencana2"> </tr>
+                        <tr><td>3</td><td>Algoritma Pemrograman</td>
+                        <td><select id="siap3"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td>
+                        <td><input type="text" class="answer-field" id="rencana3"></td></tr>
+                        <tr><td>4</td><td>Literasi & Etika Kecerdasan Artifisial</td>
+                        <td><select id="siap4"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td>
+                        <td><input type="text" class="answer-field" id="rencana4"></td></tr>
+                        <tr><td>5</td><td>Prompt Engineering & KA Generatif</td>
+                        <td><select id="siap5"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td>
+                        <td><input type="text" class="answer-field" id="rencana5"></td></tr>
+                        <tr><td>6</td><td>Literasi Digital</td>
+                        <td><select id="siap6"><option value="">Pilih</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td>
+                        <td><input type="text" class="answer-field" id="rencana6"></td></tr>
+                    </tbody>
+                </table>
+
+                <div class="instruction-box">Aktivitas 6: Target Nilai dan Strategi Belajar</div>
+                <table class="kka-table">
+                    <tr><td style="width:35%">Target Nilai Akhir Semester</td>
+                    <td><select id="target_nilai"><option value="">Pilih</option><option value="90-100">90-100 (A)</option><option value="80-89">80-89 (B)</option><option value="70-79">70-79 (C)</option><option value="<70"><70 (Perlu Bimbingan)</option></select></td></tr>
+                    <tr><td>Strategi Belajar yang Akan Diterapkan</td>
+                    <td><textarea class="answer-field large" id="strategi_belajar" rows="3" placeholder="Contoh: Membaca ulang materi, latihan soal, diskusi kelompok, membuat rangkuman, dll..."></textarea></td></tr>
+                    <tr><td>Waktu Belajar Tambahan (per minggu)</td>
+                    <td><input type="text" class="answer-field" id="waktu_belajar" placeholder="Contoh: 4 jam/minggu"></td></tr>
+                </table>
+            </div>
+
+            <!-- BAGIAN E: REFLEKSI PERJALANAN BELAJAR -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-chart-line"></i> 📈 BAGIAN E: REFLEKSI PERJALANAN BELAJAR (INDIVIDU) – 15 menit</h3>
+                <div class="instruction-box">Aktivitas 7: Merenungkan Perjalanan Belajar Selama Semester Ganjil</div>
+                <table class="kka-table">
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawabanku</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Aktivitas mana yang paling kamu sukai? Mengapa?</td>
+                        <td><textarea class="answer-field large" id="ref1"></textarea></td></tr>
+                        <tr><td>2</td><td>Aktivitas mana yang paling menantang? Mengapa?</td>
+                        <td><textarea class="answer-field large" id="ref2"></textarea></td></tr>
+                        <tr><td>3</td><td>Keterampilan baru apa yang kamu dapatkan selama semester ini?</td>
+                        <td><textarea class="answer-field large" id="ref3"></textarea></td></tr>
+                        <tr><td>4</td><td>Apa kontribusi terbaikmu dalam kerja kelompok?</td>
+                        <td><textarea class="answer-field large" id="ref4"></textarea></td></tr>
+                        <tr><td>5</td><td>Bagaimana perasaanmu melihat produk yang telah dikembangkan?</td>
+                        <td><textarea class="answer-field large" id="ref5"></textarea></td></tr>
+                        <tr><td>6</td><td>Apa yang akan kamu lakukan berbeda di semester genap?</td>
+                        <td><textarea class="answer-field large" id="ref6"></textarea></td></tr>
+                        <tr><td>7</td><td>Pesan untuk dirimu sendiri di semester depan</td>
+                        <td><textarea class="answer-field large" id="ref7"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN F: PRESTASI DAN PENCAPAIAN -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-trophy"></i> 🏆 BAGIAN F: PRESTASI DAN PENCAPAIAN (KELOMPOK) – 10 menit</h3>
+                <div class="instruction-box">Aktivitas 8: Merayakan Pencapaian!</div>
+                
+                <div style="text-align: center; margin: 1rem 0;">
+                    <div class="achievement-badge"><i class="fas fa-check-circle"></i> Berpikir Komputasional</div>
+                    <div class="achievement-badge"><i class="fas fa-database"></i> Analisis Data</div>
+                    <div class="achievement-badge"><i class="fas fa-code"></i> Algoritma Pemrograman</div>
+                    <div class="achievement-badge"><i class="fas fa-robot"></i> Literasi AI</div>
+                    <div class="achievement-badge"><i class="fas fa-magic"></i> Prompt Engineering</div>
+                    <div class="achievement-badge"><i class="fas fa-video"></i> Literasi Digital</div>
+                </div>
+
+                <table class="kka-table">
+                    <tr><td style="width:40%">Pencapaian Terbesar Kelompok</td>
+                    <td><textarea class="answer-field large" id="prestasi_terbesar"></textarea></td></tr>
+                    <tr><td>Inovasi yang Dihasilkan</td>
+                    <td><textarea class="answer-field large" id="prestasi_inovasi"></textarea></td></tr>
+                    <tr><td>Konten Digital yang Paling Dibanggakan</td>
+                    <td><input type="text" class="answer-field" id="prestasi_konten"></td></tr>
+                    <tr><td>Apresiasi untuk Anggota Kelompok</td>
+                    <td><textarea class="answer-field large" id="prestasi_apresiasi" placeholder="Tulis apresiasi untuk setiap anggota kelompok..."></textarea></td></tr>
+                </table>
+            </div>
+
+            <!-- BAGIAN G: RENCANA SEMESTER GENAP -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-rocket"></i> 🚀 BAGIAN G: RENCANA SEMESTER GENAP (KELOMPOK) – 10 menit</h3>
+                <div class="instruction-box">Aktivitas 9: Menyusun Target dan Harapan</div>
+                <table class="kka-table">
+                    <tr><td style="width:40%">Target Pengembangan Produk di Semester Genap</td>
+                    <td><textarea class="answer-field large" id="target_produk"></textarea></td></tr>
+                    <tr><td>Keterampilan yang Ingin Ditingkatkan</td>
+                    <td><textarea class="answer-field large" id="target_skill"></textarea></td></tr>
+                    <tr><td>Proyek Impian yang Ingin Dikerjakan</td>
+                    <td><textarea class="answer-field large" id="target_proyek"></textarea></td></tr>
+                    <tr><td>Harapan untuk Pembelajaran Semester Genap</td>
+                    <td><textarea class="answer-field large" id="target_harapan"></textarea></td></tr>
+                </table>
+            </div>
+
+            <!-- BAGIAN H: REFLEKSI AKHIR SEMESTER -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-heart"></i> 💖 BAGIAN H: REFLEKSI AKHIR SEMESTER (INDIVIDU) – 10 menit</h3>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin-bottom:1rem;">
+                    <div><strong>Nama:</strong> <input type="text" id="ref_nama" class="answer-field"></div>
+                    <div><strong>Kelas:</strong> <input type="text" id="ref_kelas" class="answer-field"></div>
+                    <div><strong>Kelompok:</strong> <input type="text" id="ref_kelompok" class="answer-field"></div>
+                    <div><strong>Peran:</strong> <input type="text" id="ref_peran" class="answer-field"></div>
+                </div>
+                <table class="kka-table">
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawabanku</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Apakah kamu merasa sudah memahami semua materi semester ganjil?</td>
+                        <td><select id="akhir_paham"><option value="">Pilih</option><option value="Sangat Paham">Sangat Paham</option><option value="Cukup Paham">Cukup Paham</option><option value="Perlu Belajar Lagi">Perlu Belajar Lagi</option></select></td></tr>
+                        <tr><td>2</td><td>Apa yang paling berkesan selama pembelajaran semester ganjil?</td>
+                        <td><textarea class="answer-field large" id="akhir_berkesan"></textarea></td></tr>
+                        <tr><td>3</td><td>Siapa yang paling banyak membantumu dalam belajar?</td>
+                        <td><input type="text" class="answer-field" id="akhir_pembantu"></td></tr>
+                        <tr><td>4</td><td>Pesan untuk guru KKA</td>
+                        <td><textarea class="answer-field large" id="akhir_pesan_guru"></textarea></td></tr>
+                        <tr><td>5</td><td>Komitmen untuk semester genap</td>
+                        <td><textarea class="answer-field large" id="akhir_komitmen"></textarea></td></tr>
+                    </tbody>
+                </table>
+                <div class="checklist-container">
+                    <div class="checklist-item"><input type="checkbox" id="final_check1"> Saya telah mengikuti semua 6 aktivitas dengan baik</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check2"> Saya telah menyelesaikan seluruh lembar aktivitas</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check3"> Saya telah memproduksi konten digital</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check4"> Saya siap menghadapi evaluasi akhir semester</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check5"> Saya siap melanjutkan ke semester genap</div>
+                </div>
+                <div class="instruction-box" style="background: #fff9e0; text-align: center; margin-top: 1rem;">
+                    <i class="fas fa-star" style="color: #f39c12;"></i>
+                    <strong>SELAMAT! KAMU TELAH MENYELESAIKAN SELURUH AKTIVITAS SEMESTER GANJIL! 🎉</strong>
+                    <i class="fas fa-star" style="color: #f39c12;"></i><br>
+                    Terima kasih atas kerja keras dan semangat belajarmu. Tetap semangat di semester genap!
+                </div>
+            </div>
+
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled><i class="fas fa-paper-plane"></i> Kumpulkan Lembar Review Materi</button>
+            <div id="successMessage" class="success-message"><i class="fas fa-check-circle"></i> Lembar review materi berhasil dikumpulkan! Selamat menyelesaikan semester ganjil! 🎉</div>
+        </div>
+
+        <div class="activity-navigation">
+            <a href="s1-5-literasi-digital.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Kembali ke Aktivitas 6</a>
+            <a href="s1-7-evaluasi-akhir.html" class="nav-btn primary">Lanjut ke Evaluasi Akhir <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <script>
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAPAN = 'https://script.google.com/macros/s/AKfycbzYIVPu-d_uJAYQ6vvFll38AXt5pKCyl3ckg2OhULVQxjBSsEI-Ww1X0J8CZEYl-By4hA/exec';
+        const STORAGE_KEY = 'kka_aktivitas7_review';
+
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 7 - REVIEW MATERI SEMESTER GANJIL",
+            headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Peran", "Data Bagian A", "Data Bagian B", "Data Bagian C", "Data Bagian D", "Data Bagian E", "Data Bagian F", "Data Bagian G", "Data Bagian H"]
+        };
+
+        let dataKelas = [], dataSiswa = {}, isLoading = true, autoSaveTimeout = null, isOnline = navigator.onLine;
+
+        function updateConnectionStatus() {
+            isOnline = navigator.onLine;
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            if (isOnline) {
+                statusIndicator.classList.remove('offline');
+                connectionStatus.textContent = 'Online';
+                if (!isLoading && dataKelas.length === 0) loadDataFromGoogleSheets();
+                disableForm(false);
+                document.getElementById('errorMessage').style.display = 'none';
+            } else {
+                statusIndicator.classList.add('offline');
+                connectionStatus.textContent = 'Offline - Form Dinonaktifkan';
+                disableForm(true);
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Anda sedang offline. Silakan cek koneksi internet dan refresh halaman.';
+            }
+        }
+
+        function refreshPage() { location.reload(); }
+
+        function disableForm(disabled) {
+            const container = document.getElementById('worksheetForm');
+            if (disabled) {
+                container.classList.add('form-disabled');
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('kelas').disabled = true;
+                document.getElementById('nama').disabled = true;
+                document.getElementById('kelompok').disabled = true;
+                document.getElementById('peran').disabled = true;
+            } else {
+                container.classList.remove('form-disabled');
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('kelas').disabled = false;
+                document.getElementById('nama').disabled = false;
+                document.getElementById('kelompok').disabled = false;
+                document.getElementById('peran').disabled = false;
+            }
+        }
+
+        function saveToLocalStorage() {
+            if (!isOnline) return;
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const formData = {};
+                document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').forEach(el => { if (el.id) formData[el.id] = el.value; });
+                document.querySelectorAll('input[type="checkbox"]').forEach(el => { if (el.id) formData[el.id] = el.checked; });
+                document.querySelectorAll('input[type="radio"]').forEach(el => { if (el.checked && el.name) formData[`radio_${el.name}`] = el.value; });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+            }, 1000);
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (!savedData) return;
+            try {
+                const formData = JSON.parse(savedData);
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') element.checked = formData[key];
+                        else if (element.type === 'radio') {}
+                        else element.value = formData[key];
+                    }
+                    if (key.startsWith('radio_')) {
+                        const radioName = key.replace('radio_', '');
+                        const radioToCheck = document.querySelector(`input[name="${radioName}"][value="${formData[key]}"]`);
+                        if (radioToCheck) radioToCheck.checked = true;
+                    }
+                });
+                updateProgressBar();
+            } catch(e) { console.error('Gagal load localStorage', e); }
+        }
+
+        function clearLocalStorage() { localStorage.removeItem(STORAGE_KEY); }
+
+        function triggerAutoSave() {
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => { saveToLocalStorage(); updateProgressBar(); }, 1000);
+        }
+
+        function updateProgressBar() {
+            const allFields = document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea');
+            let filled = 0;
+            allFields.forEach(field => { if (field.value && field.value.trim() !== '') filled++; });
+            const total = allFields.length;
+            const progress = total > 0 ? Math.round((filled / total) * 100) : 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+            
+            // Hitung rata-rata pemahaman
+            let totalPaham = 0;
+            let countPaham = 0;
+            for(let i=1; i<=6; i++) {
+                const val = document.getElementById(`map${i}_paham`)?.value;
+                if(val && val !== '') {
+                    totalPaham += parseInt(val);
+                    countPaham++;
+                }
+            }
+            if(countPaham > 0) {
+                const rata = (totalPaham / countPaham).toFixed(1);
+                document.getElementById('rata_paham').value = rata;
+            }
+        }
+
+        function loadDataFromGoogleSheets() {
+            if (!isOnline) return;
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
+                const callbackName = 'jsonp_callback_' + Date.now();
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        dataKelas.forEach(kelas => { const opt = document.createElement('option'); opt.value = kelas; opt.textContent = kelas; kelasSelect.appendChild(opt); });
+                        disableForm(false);
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        loadFromLocalStorage();
+                    } else {
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        document.getElementById('errorMessage').style.display = 'block';
+                        document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                        disableForm(true);
+                    }
+                    isLoading = false;
+                };
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = function() {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman.';
+                    disableForm(true);
+                    isLoading = false;
+                };
+                document.head.appendChild(script);
+            } catch(error) {
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                disableForm(true);
+                isLoading = false;
+            }
+        }
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            if (!kelas || !dataSiswa[kelas]) { namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>'; return; }
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => { const opt = document.createElement('option'); opt.value = nama; opt.textContent = nama; namaSelect.appendChild(opt); });
+        }
+
+        async function submitData() {
+            if (!isOnline) { alert('Anda sedang offline. Silakan cek koneksi internet.'); return; }
+            if (isLoading) { alert('Data masih dimuat.'); return; }
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value) { alert('Lengkapi identitas terlebih dahulu!'); return; }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                const formData = new URLSearchParams();
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value || '');
+                formData.append('Peran', document.getElementById('peran').value || '');
+
+                // Kumpulkan data per bagian
+                const bagianA = {
+                    materi: [
+                        {aktivitas:1, materi:document.getElementById('map1_materi')?.value, paham:document.getElementById('map1_paham')?.value},
+                        {aktivitas:2, materi:document.getElementById('map2_materi')?.value, paham:document.getElementById('map2_paham')?.value},
+                        {aktivitas:3, materi:document.getElementById('map3_materi')?.value, paham:document.getElementById('map3_paham')?.value},
+                        {aktivitas:4, materi:document.getElementById('map4_materi')?.value, paham:document.getElementById('map4_paham')?.value},
+                        {aktivitas:5, materi:document.getElementById('map5_materi')?.value, paham:document.getElementById('map5_paham')?.value},
+                        {aktivitas:6, materi:document.getElementById('map6_materi')?.value, paham:document.getElementById('map6_paham')?.value}
+                    ],
+                    rata_paham: document.getElementById('rata_paham')?.value
+                };
+                formData.append('Data Bagian A', JSON.stringify(bagianA));
+
+                const bagianB = {
+                    bk: {a:document.getElementById('review_bk1')?.value, b:document.getElementById('review_bk2')?.value, c:document.getElementById('review_bk3')?.value},
+                    ad: {a:document.getElementById('review_ad1')?.value, b:document.getElementById('review_ad2')?.value, c:document.getElementById('review_ad3')?.value},
+                    algo: {a:document.getElementById('review_algo1')?.value, b:document.getElementById('review_algo2')?.value, c:document.getElementById('review_algo3')?.value},
+                    ai: {a:document.getElementById('review_ai1')?.value, b:document.getElementById('review_ai2')?.value, c:document.getElementById('review_ai3')?.value},
+                    pe: {a:document.getElementById('review_pe1')?.value, b:document.getElementById('review_pe2')?.value, c:document.getElementById('review_pe3')?.value},
+                    ld: {a:document.getElementById('review_ld1')?.value, b:document.getElementById('review_ld2')?.value, c:document.getElementById('review_ld3')?.value}
+                };
+                formData.append('Data Bagian B', JSON.stringify(bagianB));
+
+                let jenisProduk = ''; if (document.getElementById('produk_barang')?.checked) jenisProduk = 'Barang Fisik'; else if (document.getElementById('produk_jasa')?.checked) jenisProduk = 'Jasa Layanan'; else if (document.getElementById('produk_digital')?.checked) jenisProduk = 'Produk Digital';
+                const bagianC = {
+                    proyek: {
+                        nama: document.getElementById('proyek_nama')?.value,
+                        jenis: jenisProduk,
+                        deskripsi: document.getElementById('proyek_deskripsi')?.value,
+                        bidang: document.getElementById('proyek_bidang')?.value,
+                        konten: document.getElementById('proyek_konten')?.value,
+                        link: document.getElementById('proyek_link')?.value,
+                        hasil: document.getElementById('proyek_hasil')?.value,
+                        kendala: document.getElementById('proyek_kendala')?.value,
+                        solusi: document.getElementById('proyek_solusi')?.value
+                    },
+                    evaluasi: {
+                        kreativitas: document.getElementById('eval_kreativitas')?.value,
+                        konsep: document.getElementById('eval_konsep')?.value,
+                        kualitas: document.getElementById('eval_kualitas')?.value,
+                        kerjasama: document.getElementById('eval_kerjasama')?.value,
+                        etika: document.getElementById('eval_etika')?.value
+                    }
+                };
+                formData.append('Data Bagian C', JSON.stringify(bagianC));
+
+                const bagianD = {
+                    kesiapan: [
+                        {materi:1, siap:document.getElementById('siap1')?.value, rencana:document.getElementById('rencana1')?.value},
+                        {materi:2, siap:document.getElementById('siap2')?.value, rencana:document.getElementById('rencana2')?.value},
+                        {materi:3, siap:document.getElementById('siap3')?.value, rencana:document.getElementById('rencana3')?.value},
+                        {materi:4, siap:document.getElementById('siap4')?.value, rencana:document.getElementById('rencana4')?.value},
+                        {materi:5, siap:document.getElementById('siap5')?.value, rencana:document.getElementById('rencana5')?.value},
+                        {materi:6, siap:document.getElementById('siap6')?.value, rencana:document.getElementById('rencana6')?.value}
+                    ],
+                    target_nilai: document.getElementById('target_nilai')?.value,
+                    strategi_belajar: document.getElementById('strategi_belajar')?.value,
+                    waktu_belajar: document.getElementById('waktu_belajar')?.value
+                };
+                formData.append('Data Bagian D', JSON.stringify(bagianD));
+
+                const bagianE = {
+                    ref1: document.getElementById('ref1')?.value,
+                    ref2: document.getElementById('ref2')?.value,
+                    ref3: document.getElementById('ref3')?.value,
+                    ref4: document.getElementById('ref4')?.value,
+                    ref5: document.getElementById('ref5')?.value,
+                    ref6: document.getElementById('ref6')?.value,
+                    ref7: document.getElementById('ref7')?.value
+                };
+                formData.append('Data Bagian E', JSON.stringify(bagianE));
+
+                const bagianF = {
+                    prestasi_terbesar: document.getElementById('prestasi_terbesar')?.value,
+                    prestasi_inovasi: document.getElementById('prestasi_inovasi')?.value,
+                    prestasi_konten: document.getElementById('prestasi_konten')?.value,
+                    prestasi_apresiasi: document.getElementById('prestasi_apresiasi')?.value
+                };
+                formData.append('Data Bagian F', JSON.stringify(bagianF));
+
+                const bagianG = {
+                    target_produk: document.getElementById('target_produk')?.value,
+                    target_skill: document.getElementById('target_skill')?.value,
+                    target_proyek: document.getElementById('target_proyek')?.value,
+                    target_harapan: document.getElementById('target_harapan')?.value
+                };
+                formData.append('Data Bagian G', JSON.stringify(bagianG));
+
+                const bagianH = {
+                    nama: document.getElementById('ref_nama')?.value,
+                    kelas: document.getElementById('ref_kelas')?.value,
+                    kelompok: document.getElementById('ref_kelompok')?.value,
+                    peran: document.getElementById('ref_peran')?.value,
+                    akhir_paham: document.getElementById('akhir_paham')?.value,
+                    akhir_berkesan: document.getElementById('akhir_berkesan')?.value,
+                    akhir_pembantu: document.getElementById('akhir_pembantu')?.value,
+                    akhir_pesan_guru: document.getElementById('akhir_pesan_guru')?.value,
+                    akhir_komitmen: document.getElementById('akhir_komitmen')?.value,
+                    final_check1: document.getElementById('final_check1')?.checked,
+                    final_check2: document.getElementById('final_check2')?.checked,
+                    final_check3: document.getElementById('final_check3')?.checked,
+                    final_check4: document.getElementById('final_check4')?.checked,
+                    final_check5: document.getElementById('final_check5')?.checked
+                };
+                formData.append('Data Bagian H', JSON.stringify(bagianH));
+
+                formData.append('Timestamp', new Date().toISOString());
+
+                await fetch(URL_PEREKAPAN, { method: 'POST', mode: 'no-cors', body: formData });
+                document.getElementById('successMessage').style.display = 'block';
+                clearLocalStorage();
+                setTimeout(() => { document.getElementById('successMessage').style.display = 'none'; }, 5000);
+                if (confirm('Data terkirim! Ingin mereset form?')) location.reload();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan Lembar Review Materi';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('online', updateConnectionStatus);
+            window.addEventListener('offline', updateConnectionStatus);
+            updateConnectionStatus();
+            loadDataFromGoogleSheets();
+            document.getElementById('kelas').addEventListener('change', updateNamaDropdown);
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', triggerAutoSave);
+                el.addEventListener('change', triggerAutoSave);
+            });
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+        });
+    </script>
+</body>
+</html>

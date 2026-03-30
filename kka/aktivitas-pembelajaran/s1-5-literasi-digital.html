@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktivitas 6 - Literasi Digital | KKA Kelas X</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --kka-primary: #3498db;
+            --kka-secondary: #2980b9;
+            --kka-light: #ebf5fb;
+            --kka-dark: #21618c;
+            --kka-accent: #9b59b6;
+            --kka-success: #27ae60;
+            --kka-warning: #f39c12;
+            --kka-danger: #e74c3c;
+            --kka-gray: #f5f7fa;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .activity-detail-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        
+        .kka-content-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.1);
+            border-left: 5px solid var(--kka-primary);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .kka-content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .kka-content-card > * { position: relative; z-index: 1; }
+        
+        .kka-content-card h2 {
+            color: var(--kka-dark);
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+            display: inline-block;
+            padding-bottom: 8px;
+            border-bottom: 3px solid var(--kka-primary);
+        }
+        
+        .subtitle { color: #666; font-size: 0.85rem; margin: 0.5rem 0 1rem; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .subtitle i { color: var(--kka-primary); }
+        .kka-content-card > p { font-size: 0.95rem; line-height: 1.5; color: #555; padding: 0.8rem 1.2rem; background: var(--kka-light); border-radius: 10px; border-left: 4px solid var(--kka-primary); }
+        
+        .connection-status { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 15px; padding: 6px 12px; border-radius: 30px; background: #f8f9fa; width: fit-content; margin-left: auto; font-size: 0.8rem; }
+        .status-indicator { width: 10px; height: 10px; border-radius: 50%; background: #28a745; animation: pulse 2s infinite; }
+        .status-indicator.offline { background: #dc3545; animation: none; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(40, 167, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
+        .refresh-btn { background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 4px 8px; border-radius: 20px; color: var(--kka-primary); }
+        .refresh-btn:hover { background: rgba(0,0,0,0.05); }
+        
+        .loading-message, .error-message, .success-message { padding: 0.8rem; border-radius: 10px; margin: 1rem 0; text-align: center; font-size: 0.9rem; }
+        .loading-message { background: #fff3cd; color: #856404; border-left: 5px solid var(--kka-warning); display: none; }
+        .error-message { background: #f8d7da; color: #721c24; border-left: 5px solid var(--kka-danger); display: none; }
+        .success-message { background: #d4edda; color: #155724; border-left: 5px solid var(--kka-success); display: none; }
+        
+        .progress-container { margin: 1rem 0; background: var(--kka-gray); border-radius: 30px; padding: 0.6rem; position: sticky; top: 10px; z-index: 99; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .progress-bar { height: 8px; background: linear-gradient(90deg, var(--kka-primary), var(--kka-secondary)); border-radius: 4px; width: 0%; transition: width 0.3s ease; }
+        .progress-text { text-align: right; font-size: 0.75rem; color: #666; margin-top: 5px; }
+        
+        .worksheet-container { background: white; border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--kka-light); }
+        .worksheet-title { color: var(--kka-dark); font-size: 1.4rem; text-align: center; border-bottom: 2px solid var(--kka-light); padding-bottom: 0.8rem; margin-bottom: 1rem; }
+        
+        .kka-section { background: white; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; border: 1px solid #e0e7ff; }
+        .section-title { color: var(--kka-dark); font-size: 1.2rem; margin-bottom: 0.8rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--kka-light); display: flex; align-items: center; gap: 8px; }
+        .section-title i { color: var(--kka-primary); font-size: 1.2rem; }
+        .section-subtitle { color: var(--kka-secondary); font-size: 1rem; margin: 1rem 0 0.6rem; font-weight: 600; }
+        .instruction-box { background: var(--kka-light); padding: 0.6rem 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--kka-primary); font-style: italic; font-size: 0.85rem; }
+        
+        .kka-table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.8rem; }
+        .kka-table th { background: var(--kka-primary); color: white; padding: 8px 10px; text-align: left; }
+        .kka-table td { padding: 8px 10px; border-bottom: 1px solid #e0e7ff; vertical-align: top; }
+        .kka-table tr:hover { background: var(--kka-light); }
+        
+        .answer-field { width: 100%; padding: 6px 10px; border: 2px solid #e0e7ff; border-radius: 6px; font-family: inherit; font-size: 0.8rem; transition: all 0.3s ease; }
+        .answer-field:focus { outline: none; border-color: var(--kka-primary); box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1); }
+        .answer-field.large { min-height: 60px; resize: vertical; }
+        
+        .identitas-box { background: var(--kka-light); border-radius: 12px; padding: 1rem; margin: 1rem 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; }
+        .identitas-item { display: flex; flex-direction: column; gap: 0.4rem; }
+        .identitas-item label { font-weight: 600; color: var(--kka-dark); font-size: 0.8rem; }
+        .identitas-item input, .identitas-item select { padding: 6px 10px; border: 2px solid white; border-radius: 6px; font-size: 0.8rem; background: white; }
+        
+        .checklist-container { background: #f8fafc; border-radius: 8px; padding: 0.8rem; margin: 0.8rem 0; border: 1px dashed var(--kka-primary); }
+        .checklist-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 0.8rem; }
+        
+        .radio-group { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+        .radio-item { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; }
+        
+        .submit-button { background: linear-gradient(135deg, var(--kka-primary), var(--kka-secondary)); color: white; border: none; padding: 0.7rem 1.8rem; border-radius: 40px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: block; width: fit-content; margin: 1rem auto; box-shadow: 0 2px 10px rgba(52, 152, 219, 0.3); }
+        .submit-button:hover:not(:disabled) { transform: translateY(-2px); }
+        .submit-button:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .activity-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--kka-dark); padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid var(--kka-light); }
+        .nav-btn:hover { background: var(--kka-primary); color: white; }
+        .nav-btn.primary { background: var(--kka-primary); color: white; border: none; }
+        
+        .form-disabled { opacity: 0.6; pointer-events: none; }
+        
+        .storyboard-box, .final-content-box { background: #f8f9fa; border: 2px dashed var(--kka-primary); border-radius: 12px; padding: 1rem; min-height: 150px; margin: 0.8rem 0; }
+        
+        @media (max-width: 768px) {
+            .activity-detail-container { padding: 1rem; }
+            .worksheet-container { padding: 1rem; }
+            .kka-table { display: block; overflow-x: auto; }
+            .identitas-box { grid-template-columns: 1fr; }
+            .activity-navigation { flex-direction: column; gap: 0.8rem; }
+            .nav-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>KKA - KODING & KECERDASAN ARTIFISIAL</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index-kka.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda KKA</a></li>
+                    <li><a href="index-aktiVitas-kka.html" class="nav-link active"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-kka.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="../penilaian/index-penilaian-kka.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="activity-detail-container">
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Online</span>
+            <button class="refresh-btn" onclick="refreshPage()"><i class="fas fa-sync-alt"></i></button>
+        </div>
+
+        <div class="kka-content-card">
+            <h2>Aktivitas 6: Literasi Digital</h2>
+            <div class="subtitle">
+                <span><i class="fas fa-calendar"></i> Semester Ganjil • Aktivitas Eksplorasi</span>
+                <span><i class="fas fa-clock"></i> 8 JP (4 pertemuan)</span>
+                <span><i class="fas fa-tag"></i> TP.2.1</span>
+            </div>
+            <p><i class="fas fa-quote-left"></i> Memproduksi dan menyebarkan konten digital dalam bentuk multimedia secara kreatif, etis, aman, dan bertanggung jawab sesuai dengan bidang keahlian. <i class="fas fa-quote-right"></i></p>
+        </div>
+
+        <div id="loadingMessage" class="loading-message"><i class="fas fa-spinner fa-spin"></i> Memuat data murid...</div>
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke server. Silakan cek koneksi internet dan refresh halaman.</span>
+            <br><button onclick="location.reload()" style="margin-top:8px; padding:6px 15px; background:#dc3545; color:white; border:none; border-radius:5px;"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% selesai</div>
+        </div>
+
+        <div class="worksheet-container" id="worksheetForm">
+            <div class="instruction-box" style="background:#e8f5e9; border-left-color:var(--kka-success);">
+                <i class="fas fa-video"></i> <strong>HALO, KREATOR DIGITAL HEBAT! 👋</strong><br>
+                Selamat datang di aktivitas literasi digital. Mari belajar memproduksi dan menyebarkan konten digital secara kreatif, etis, dan bertanggung jawab!
+            </div>
+            <h1 class="worksheet-title">LEMBAR AKTIVITAS 6 – LITERASI DIGITAL</h1>
+            <p style="text-align:center; font-size:0.85rem; margin-bottom:1rem;">MEMPRODUKSI & MENYEBARKAN KONTEN DIGITAL</p>
+
+            <!-- Identitas -->
+            <div class="identitas-box">
+                <div class="identitas-item"><label><i class="fas fa-building"></i> Kelas</label><select id="kelas"><option value="">-- Pilih Kelas --</option></select></div>
+                <div class="identitas-item"><label><i class="fas fa-user"></i> Nama Lengkap</label><select id="nama"><option value="">-- Pilih Nama --</option></select></div>
+                <div class="identitas-item"><label><i class="fas fa-users"></i> Nama Kelompok</label><input type="text" id="kelompok" placeholder="Contoh: Kelompok Digital Creators"></div>
+                <div class="identitas-item"><label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label><input type="text" id="peran" placeholder="Contoh: Content Creator"></div>
+            </div>
+
+            <div class="instruction-box"><i class="fas fa-info-circle"></i> <strong>PETUNJUK PENGGUNAAN</strong><br>Sebelum mengerjakan, pastikan membaca materi "Literasi Digital" di Daftar Materi.</div>
+
+            <!-- BAGIAN A: PEMAHAMAN MATERI -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-book-reader"></i> 📖 BAGIAN A: PEMAHAMAN MATERI (INDIVIDU) – 15 menit</h3>
+                <table class="kka-table">
+                    <thead> 响<th>No</th><th>Pertanyaan</th><th>Jawaban</th> </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Apa yang dimaksud dengan literasi digital?</td><td><textarea class="answer-field large" id="a1"></textarea></td> '</tr>
+                        <tr><td>2</td><td>Sebutkan 4 pilar utama literasi digital menurut Kementerian Kominfo!</td><td><textarea class="answer-field large" id="a2"></textarea></td></tr>
+                        <tr><td>3</td><td>Apa yang dimaksud dengan etika digital? Sebutkan 3 contoh pelanggaran etika digital!</td><td><textarea class="answer-field large" id="a3"></textarea></td></tr>
+                        <tr><td>4</td><td>Apa yang dimaksud dengan keamanan digital? Sebutkan 3 cara melindungi data pribadi!</td><td><textarea class="answer-field large" id="a4"></textarea></td></tr>
+                        <tr><td>5</td><td>Apa yang dimaksud dengan budaya digital? Mengapa penting dalam bermedia digital?</td><td><textarea class="answer-field large" id="a5"></textarea></td></tr>
+                        <tr><td>6</td><td>Sebutkan 3 jenis konten digital beserta contoh platform yang biasa digunakan!</td><td><textarea class="answer-field large" id="a6"></textarea></td></tr>
+                        <tr><td>7</td><td>Mengapa penting untuk memproduksi konten digital secara kreatif, etis, dan bertanggung jawab?</td><td><textarea class="answer-field large" id="a7"></textarea></td></tr>
+                    </tbody>
+                </table>
+                <div class="checklist-container">
+                    <div class="checklist-item"><input type="checkbox" id="bacaMateri"> <label><strong>Ya, saya sudah membaca materi "Literasi Digital"</strong></label></div>
+                    <div class="checklist-item"><label>Tanggal baca: </label><input type="date" id="tanggalBaca" style="width:auto;"></div>
+                </div>
+            </div>
+
+            <!-- BAGIAN B: REFLEKSI DIRI -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-brain"></i> 🔍 BAGIAN B: REFLEKSI DIRI (INDIVIDU) – 10 menit</h3>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr> </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Berapa jam rata-rata kamu menghabiskan waktu di internet setiap hari?</td><td><input type="text" class="answer-field" id="b1"></td></tr>
+                        <tr><td>2</td><td>Platform media sosial apa yang paling sering kamu gunakan?</td><td><input type="text" class="answer-field" id="b2"></td></tr>
+                        <tr><td>3</td><td>Apakah kamu pernah membuat dan membagikan konten digital sendiri?</td><td><select id="b3"><option value="">Pilih</option><option value="Ya, sering">Ya, sering</option><option value="Ya, pernah">Ya, pernah</option><option value="Belum pernah">Belum pernah</option></select></td></tr>
+                        <tr><td>4</td><td>Pernahkah kamu mengalami atau menyaksikan perundungan digital (cyberbullying)?</td><td><select id="b4"><option value="">Pilih</option><option value="Ya">Ya</option><option value="Tidak">Tidak</option></select></td></tr>
+                        <tr><td>5</td><td>Apakah kamu selalu mengecek kebenaran informasi sebelum membagikannya?</td><td><select id="b5"><option value="">Pilih</option><option value="Selalu">Selalu</option><option value="Kadang">Kadang</option><option value="Tidak pernah">Tidak pernah</option></select></td></tr>
+                        <tr><td>6</td><td>Menurutmu, apa yang perlu ditingkatkan dari dirimu terkait literasi digital?</td><td><textarea class="answer-field large" id="b6"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN C: DISKUSI KELOMPOK -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-users"></i> 🧠 BAGIAN C: DISKUSI KELOMPOK – LITERASI DIGITAL – 25 menit</h3>
+                <div class="instruction-box">Aktivitas 1: Mengidentifikasi Perilaku Digital</div>
+                <table class="kka-table">
+                    <thead> <tr><th>Aspek Perilaku Digital</th><th>Perilaku yang Baik (Etis)</th><th>Perilaku yang Buruk (Tidak Etis)</th></tr> </thead>
+                    <tbody>
+                        <tr><td>Berkomunikasi</td><td><textarea class="answer-field" id="c1_baik"></textarea></td><td><textarea class="answer-field" id="c1_buruk"></textarea></td></tr>
+                        <tr><td>Berbagi Informasi</td><td><textarea class="answer-field" id="c2_baik"></textarea></td><td><textarea class="answer-field" id="c2_buruk"></textarea></td></tr>
+                        <tr><td>Mengomentari Konten</td><td><textarea class="answer-field" id="c3_baik"></textarea></td><td><textarea class="answer-field" id="c3_buruk"></textarea></td></tr>
+                        <tr><td>Mengunggah Konten</td><td><textarea class="answer-field" id="c4_baik"></textarea></td><td><textarea class="answer-field" id="c4_buruk"></textarea></td></tr>
+                    </tbody>
+                </table>
+
+                <div class="instruction-box">Aktivitas 3: Keamanan Digital</div>
+                <table class="kka-table">
+                    <thead> <tr><th>Praktik Keamanan Digital</th><th>Status</th><th>Rencana Perbaikan</th></tr> </thead>
+                    <tbody>
+                        <tr><td>Menggunakan password yang kuat dan berbeda untuk setiap akun</td><td><select id="keamanan1"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Belum">Belum</option></select></td><td><input type="text" class="answer-field" id="keamanan1_rencana"></td></tr>
+                        <tr><td>Mengaktifkan verifikasi dua langkah (2FA)</td><td><select id="keamanan2"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Belum">Belum</option></select></td><td><input type="text" class="answer-field" id="keamanan2_rencana"></td></tr>
+                        <tr><td>Tidak membagikan informasi pribadi sembarangan</td><td><select id="keamanan3"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Belum">Belum</option></select></td><td><input type="text" class="answer-field" id="keamanan3_rencana"></td></tr>
+                        <tr><td>Memeriksa tautan sebelum mengklik (phishing)</td><td><select id="keamanan4"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Belum">Belum</option></select></td><td><input type="text" class="answer-field" id="keamanan4_rencana"></td></tr>
+                        <tr><td>Menggunakan koneksi internet yang aman</td><td><select id="keamanan5"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Belum">Belum</option></select></td><td><input type="text" class="answer-field" id="keamanan5_rencana"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN D: REFLEKSI PERTEMUAN 1 -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-pen"></i> 📝 BAGIAN D: REFLEKSI PERTEMUAN 1 (INDIVIDU) – 10 menit</h3>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Pertanyaan</th><th>Jawabanku</th></tr> </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang literasi digital?</td><td><textarea class="answer-field large" id="d1"></textarea></td></tr>
+                        <tr><td>2</td><td>Praktik digital apa yang selama ini aku lakukan dan ternyata kurang etis?</td><td><textarea class="answer-field large" id="d2"></textarea></td></tr>
+                        <tr><td>3</td><td>Apa komitmenku untuk menjadi warga digital yang lebih baik?</td><td><textarea class="answer-field large" id="d3"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN E: PERENCANAAN KONTEN -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-lightbulb"></i> 🎯 BAGIAN E: PERENCANAAN & PERANCANGAN KONTEN DIGITAL (KELOMPOK) – 20 menit</h3>
+                <table class="kka-table">
+                    <tr><td style="width:35%">Tema Konten</td><td><input type="text" class="answer-field" id="e_tema"></td></tr>
+                    <tr><td>Tujuan Konten</td><td><div class="radio-group"><label class="radio-item"><input type="radio" name="tujuan" id="tujuan_edukasi" value="Edukasi"> Edukasi</label><label class="radio-item"><input type="radio" name="tujuan" id="tujuan_promosi" value="Promosi"> Promosi</label><label class="radio-item"><input type="radio" name="tujuan" id="tujuan_informasi" value="Informasi"> Informasi</label><label class="radio-item"><input type="radio" name="tujuan" id="tujuan_hiburan" value="Hiburan"> Hiburan</label><label class="radio-item"><input type="radio" name="tujuan" id="tujuan_inspirasi" value="Inspirasi"> Inspirasi</label></div></td></tr>
+                    <tr><td>Target Audiens</td><td><input type="text" class="answer-field" id="e_target"></td></tr>
+                    <tr><td>Jenis Konten</td><td><div class="radio-group"><label class="radio-item"><input type="radio" name="jenis_konten" id="jenis_poster" value="Poster/Gambar"> Poster/Gambar</label><label class="radio-item"><input type="radio" name="jenis_konten" id="jenis_video" value="Video"> Video</label><label class="radio-item"><input type="radio" name="jenis_konten" id="jenis_infografis" value="Infografis"> Infografis</label><label class="radio-item"><input type="radio" name="jenis_konten" id="jenis_artikel" value="Artikel/Blog"> Artikel/Blog</label></div></td></tr>
+                    <tr><td>Platform Penyebaran</td><td><div class="radio-group"><label class="radio-item"><input type="radio" name="platform" id="platform_ig" value="Instagram"> Instagram</label><label class="radio-item"><input type="radio" name="platform" id="platform_tiktok" value="TikTok"> TikTok</label><label class="radio-item"><input type="radio" name="platform" id="platform_yt" value="YouTube"> YouTube</label><label class="radio-item"><input type="radio" name="platform" id="platform_fb" value="Facebook"> Facebook</label></div></td></tr>
+                    <tr><td>Produk yang Dipromosikan (dari Aktivitas 5)</td><td><input type="text" class="answer-field" id="e_produk"></td></tr>
+                    <tr><td>Judul/Nama Konten</td><td><input type="text" class="answer-field" id="e_judul"></td></tr>
+                    <tr><td>Tagline</td><td><input type="text" class="answer-field" id="e_tagline"></td></tr>
+                    <tr><td>Pesan Utama</td><td><textarea class="answer-field" id="e_pesan"></textarea></td></tr>
+                    <tr><td>Gaya/Tone</td><td><div class="radio-group"><label class="radio-item"><input type="radio" name="gaya" id="gaya_formal" value="Formal"> Formal</label><label class="radio-item"><input type="radio" name="gaya" id="gaya_santai" value="Santai"> Santai</label><label class="radio-item"><input type="radio" name="gaya" id="gaya_humor" value="Humor"> Humor</label><label class="radio-item"><input type="radio" name="gaya" id="gaya_inspiratif" value="Inspiratif"> Inspiratif</label></div></td></tr>
+                </table>
+
+                <div class="instruction-box">Storyboard/Rancangan Konten</div>
+                <textarea class="answer-field large" id="storyboard" rows="8" placeholder="Gambarkan rancangan konten di sini..."></textarea>
+
+                <div class="instruction-box">Sumber Daya dan Alat</div>
+                <table class="kka-table">
+                    <thead> <tr><th>Sumber Daya/Alat</th><th>Ketersediaan</th><th>Keterangan</th></tr> </thead>
+                    <tbody>
+                        <tr><td>Aplikasi/Tools</td><td><select id="sumber1"><option value="">Pilih</option><option value="Ada">Ada</option><option value="Perlu disiapkan">Perlu disiapkan</option></select></td><td><input type="text" class="answer-field" id="sumber1_ket"></td></tr>
+                        <tr><td>Perangkat (HP/Kamera)</td><td><select id="sumber2"><option value="">Pilih</option><option value="Ada">Ada</option><option value="Perlu disiapkan">Perlu disiapkan</option></select></td><td><input type="text" class="answer-field" id="sumber2_ket"></td></tr>
+                        <tr><td>Gambar/Ilustrasi</td><td><select id="sumber3"><option value="">Pilih</option><option value="Ada">Ada</option><option value="Perlu dibuat">Perlu dibuat</option></select></td><td><input type="text" class="answer-field" id="sumber3_ket"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN F: PRODUKSI KONTEN -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-video"></i> 🎬 BAGIAN F: PRODUKSI KONTEN (KELOMPOK) – 35 menit</h3>
+                <div class="instruction-box">Catatan Proses Produksi</div>
+                <textarea class="answer-field large" id="proses_produksi" rows="6" placeholder="Catat tahapan produksi konten..."></textarea>
+
+                <div class="instruction-box">Finalisasi Konten</div>
+                <table class="kka-table">
+                    <thead> <tr><th>Aspek Finalisasi</th><th>Status</th><th>Catatan Perbaikan</th></tr> </thead>
+                    <tbody>
+                        <tr><td>Kesesuaian dengan konsep</td><td><select id="final1"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Perlu perbaikan">Perlu perbaikan</option></select></td><td><input type="text" class="answer-field" id="final1_catatan"></td> </tr>
+                         <tr><td>Kualitas visual/audio</td><td><select id="final2"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Perlu perbaikan">Perlu perbaikan</option></select></td><td><input type="text" class="answer-field" id="final2_catatan"></td> </tr>
+                         <tr><td>Kejelasan pesan</td><td><select id="final3"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Perlu perbaikan">Perlu perbaikan</option></select></td><td><input type="text" class="answer-field" id="final3_catatan"></td> </tr>
+                         <tr><td>Etika konten</td><td><select id="final4"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Perlu perbaikan">Perlu perbaikan</option></select></td><td><input type="text" class="answer-field" id="final4_catatan"></td> </tr>
+                    </tbody>
+                 </table>
+
+                <div class="instruction-box">HASIL AKHIR KONTEN DIGITAL</div>
+                <textarea class="answer-field large" id="hasil_konten" rows="6" placeholder="Tempelkan link atau deskripsi hasil konten di sini..."></textarea>
+                <table class="kka-table">
+                     <tr><td style="width:30%">Judul Konten</td><td><input type="text" class="answer-field" id="hasil_judul"></td> </tr>
+                     <tr><td>Jenis Konten</td><td><input type="text" class="answer-field" id="hasil_jenis"></td> </tr>
+                     <tr><td>Durasi (jika video)</td><td><input type="text" class="answer-field" id="hasil_durasi"></td> </tr>
+                     <tr><td>Tools yang Digunakan</td><td><input type="text" class="answer-field" id="hasil_tools"></td> </tr>
+                     <tr><td>Link/Tautan</td><td><input type="text" class="answer-field" id="hasil_link"></td> </tr>
+                </table>
+            </div>
+
+            <!-- BAGIAN G: REFLEKSI PERTEMUAN 3 -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-pen"></i> 📝 BAGIAN G: REFLEKSI PERTEMUAN 3 (INDIVIDU) – 5 menit</h3>
+                <table class="kka-table">
+                    <thead> 响<th>No</th><th>Pertanyaan</th><th>Jawabanku</th> </thead>
+                    <tbody>
+                         <tr><td>1</td><td>Apakah konten yang dihasilkan sesuai dengan rancangan awal?</td><td><textarea class="answer-field large" id="g1"></textarea></td> </tr>
+                         <tr><td>2</td><td>Kesulitan apa yang dihadapi saat produksi konten?</td><td><textarea class="answer-field large" id="g2"></textarea></td> </tr>
+                         <tr><td>3</td><td>Apa yang paling membanggakan dari konten kelompokku?</td><td><textarea class="answer-field large" id="g3"></textarea></td> </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN H: DISEMINASI KONTEN -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-share-alt"></i> 📤 BAGIAN H: DISEMINASI KONTEN DIGITAL (KELOMPOK) – 20 menit</h3>
+                <table class="kka-table">
+                     <tr><td style="width:35%">Platform Penyebaran</td><td><input type="text" class="answer-field" id="h_platform"></td> </tr>
+                     <tr><td>Waktu Unggah</td><td><input type="text" class="answer-field" id="h_waktu"></td> </tr>
+                     <tr><td>Caption/Deskripsi</td><td><textarea class="answer-field" id="h_caption"></textarea></td> </tr>
+                     <tr><td>Hashtag yang Digunakan</td><td><input type="text" class="answer-field" id="h_hashtag"></td> </tr>
+                     <tr><td>Link Konten</td><td><input type="text" class="answer-field" id="h_link"></td> </tr>
+                </table>
+                <div class="instruction-box">Strategi Promosi Konten</div>
+                <table class="kka-table">
+                    <thead> <tr><th>Strategi</th><th>Rencana Pelaksanaan</th><th>Status</th> </tr></thead>
+                    <tbody>
+                         <tr><td>Bagikan ke grup/komunitas</td><td><input type="text" class="answer-field" id="strategi1_rencana"></td><td><select id="strategi1_status"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Belum">Belum</option></select></td> </tr>
+                         <tr><td>Kolaborasi dengan akun lain</td><td><input type="text" class="answer-field" id="strategi2_rencana"></td><td><select id="strategi2_status"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Belum">Belum</option></select></td> </tr>
+                         <tr><td>Unggah pada waktu terbaik</td><td><input type="text" class="answer-field" id="strategi3_rencana"></td><td><select id="strategi3_status"><option value="">Pilih</option><option value="Sudah">Sudah</option><option value="Belum">Belum</option></select></td> </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN I: EVALUASI KONTEN -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-chart-line"></i> 📊 BAGIAN I: EVALUASI KONTEN (KELOMPOK) – 15 menit</h3>
+                <table class="kka-table">
+                    <thead> <tr><th>Metrik</th><th>Jumlah</th><th>Interpretasi</th> </tr></thead>
+                    <tbody>
+                         <tr><td>Jumlah Tayangan (Views)</td><td><input type="text" class="answer-field" id="metric_views"></td><td><input type="text" class="answer-field" id="metric_views_int"></td> </tr>
+                         <tr><td>Jumlah Suka (Likes)</td><td><input type="text" class="answer-field" id="metric_likes"></td><td><input type="text" class="answer-field" id="metric_likes_int"></td> </tr>
+                         <tr><td>Jumlah Komentar</td><td><input type="text" class="answer-field" id="metric_comments"></td><td><input type="text" class="answer-field" id="metric_comments_int"></td> </tr>
+                         <tr><td>Jumlah Bagikan (Shares)</td><td><input type="text" class="answer-field" id="metric_shares"></td><td><input type="text" class="answer-field" id="metric_shares_int"></td> </tr>
+                    </tbody>
+                </table>
+
+                <div class="instruction-box">Analisis Respons Audiens</div>
+                <table class="kka-table">
+                     <tr><td style="width:35%">Respons Positif</td><td><textarea class="answer-field" id="respon_positif"></textarea></td> </tr>
+                     <tr><td>Respons Negatif</td><td><textarea class="answer-field" id="respon_negatif"></textarea></td> </tr>
+                     <tr><td>Pertanyaan dari Audiens</td><td><textarea class="answer-field" id="respon_pertanyaan"></textarea></td> </tr>
+                     <tr><td>Saran dari Audiens</td><td><textarea class="answer-field" id="respon_saran"></textarea></td> </tr>
+                </table>
+
+                <div class="instruction-box">Evaluasi Etika dan Keamanan</div>
+                <table class="kka-table">
+                    <thead> <tr><th>Pertanyaan Evaluasi</th><th>Jawaban</th><th>Catatan</th> </tr></thead>
+                    <tbody>
+                         <tr><td>Apakah konten tidak mengandung ujaran kebencian/SARA?</td><td><select id="etika1"><option value="">Pilih</option><option value="Ya">Ya</option><option value="Tidak">Tidak</option></select></td><td><input type="text" class="answer-field" id="etika1_catatan"></td> </tr>
+                         <tr><td>Apakah konten tidak melanggar hak cipta?</td><td><select id="etika2"><option value="">Pilih</option><option value="Ya">Ya</option><option value="Tidak">Tidak</option></select></td><td><input type="text" class="answer-field" id="etika2_catatan"></td> </tr>
+                         <tr><td>Apakah konten tidak mengandung informasi palsu?</td><td><select id="etika3"><option value="">Pilih</option><option value="Ya">Ya</option><option value="Tidak">Tidak</option></select></td><td><input type="text" class="answer-field" id="etika3_catatan"></td> </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BAGIAN J: REFLEKSI AKHIR -->
+            <div class="kka-section">
+                <h3 class="section-title"><i class="fas fa-pen-fancy"></i> 📝 BAGIAN J: REFLEKSI AKHIR PROYEK (INDIVIDU) – 15 menit</h3>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin-bottom:1rem;">
+                    <div><strong>Nama:</strong> <input type="text" id="ref_nama" class="answer-field"></div>
+                    <div><strong>Kelas:</strong> <input type="text" id="ref_kelas" class="answer-field"></div>
+                    <div><strong>Kelompok:</strong> <input type="text" id="ref_kelompok" class="answer-field"></div>
+                    <div><strong>Peran:</strong> <input type="text" id="ref_peran" class="answer-field"></div>
+                </div>
+                <table class="kka-table">
+                    <thead> <tr><th>No</th><th>Pertanyaan</th><th>Jawabanku</th> </tr></thead>
+                    <tbody>
+                         <tr><td>1</td><td>Hal baru apa yang aku pelajari tentang produksi konten digital?</td><td><textarea class="answer-field large" id="j1"></textarea></td> </tr>
+                         <tr><td>2</td><td>Apakah aku sudah mampu memproduksi konten digital secara kreatif?</td><td><textarea class="answer-field large" id="j2"></textarea></td> </tr>
+                         <tr><td>3</td><td>Apakah aku sudah menyebarkan konten secara etis dan bertanggung jawab?</td><td><textarea class="answer-field large" id="j3"></textarea></td> </tr>
+                         <tr><td>4</td><td>Apa tantangan terbesar dalam memproduksi konten digital?</td><td><textarea class="answer-field large" id="j4"></textarea></td> </tr>
+                         <tr><td>5</td><td>Bagaimana perasaanku melihat konten yang aku buat dilihat banyak orang?</td><td><textarea class="answer-field large" id="j5"></textarea></td> </tr>
+                         <tr><td>6</td><td>Apa komitmenku sebagai kreator konten yang bertanggung jawab?</td><td><textarea class="answer-field large" id="j6"></textarea></td> </tr>
+                    </tbody>
+                </table>
+                <div class="checklist-container">
+                    <div class="checklist-item"><input type="checkbox" id="final_check1"> Saya sudah membaca materi "Literasi Digital"</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check2"> Saya sudah memahami etika, keamanan, dan budaya digital</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check3"> Saya sudah merencanakan konten digital</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check4"> Saya sudah memproduksi konten digital</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check5"> Saya sudah menyebarkan konten digital</div>
+                    <div class="checklist-item"><input type="checkbox" id="final_check6"> Saya sudah mengevaluasi konten yang disebarkan</div>
+                </div>
+            </div>
+
+            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled><i class="fas fa-paper-plane"></i> Kumpulkan Lembar Aktivitas</button>
+            <div id="successMessage" class="success-message"><i class="fas fa-check-circle"></i> Lembar aktivitas berhasil dikumpulkan!</div>
+        </div>
+
+        <div class="activity-navigation">
+            <a href="s1-4-ai-generatif.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Kembali ke Aktivitas 5</a>
+            <a href="s1-6-review-materi.html" class="nav-btn primary">Lanjut ke Aktivitas 7 <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <script>
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_PEREKAPAN = 'https://script.google.com/macros/s/AKfycbzYIVPu-d_uJAYQ6vvFll38AXt5pKCyl3ckg2OhULVQxjBSsEI-Ww1X0J8CZEYl-By4hA/exec';
+        const STORAGE_KEY = 'kka_aktivitas6';
+        
+        const FORM_CONFIG = {
+            sheetName: "AKTIVITAS 6 - LITERASI DIGITAL",
+            headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Peran", "Data Bagian A", "Data Bagian B", "Data Bagian C", "Data Bagian D", "Data Bagian E", "Data Bagian F", "Data Bagian G", "Data Bagian H", "Data Bagian I", "Data Bagian J"]
+        };
+        
+        let dataKelas = [], dataSiswa = {}, isLoading = true, autoSaveTimeout = null, isOnline = navigator.onLine;
+        
+        function updateConnectionStatus() {
+            isOnline = navigator.onLine;
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            if (isOnline) {
+                statusIndicator.classList.remove('offline');
+                connectionStatus.textContent = 'Online';
+                if (!isLoading && dataKelas.length === 0) loadDataFromGoogleSheets();
+                disableForm(false);
+                document.getElementById('errorMessage').style.display = 'none';
+            } else {
+                statusIndicator.classList.add('offline');
+                connectionStatus.textContent = 'Offline - Form Dinonaktifkan';
+                disableForm(true);
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Anda sedang offline. Silakan cek koneksi internet dan refresh halaman.';
+            }
+        }
+        
+        function refreshPage() { location.reload(); }
+        
+        function disableForm(disabled) {
+            const container = document.getElementById('worksheetForm');
+            if (disabled) {
+                container.classList.add('form-disabled');
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('kelas').disabled = true;
+                document.getElementById('nama').disabled = true;
+                document.getElementById('kelompok').disabled = true;
+                document.getElementById('peran').disabled = true;
+            } else {
+                container.classList.remove('form-disabled');
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('kelas').disabled = false;
+                document.getElementById('nama').disabled = false;
+                document.getElementById('kelompok').disabled = false;
+                document.getElementById('peran').disabled = false;
+            }
+        }
+        
+        function saveToLocalStorage() {
+            if (!isOnline) return;
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const formData = {};
+                document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').forEach(el => { if (el.id) formData[el.id] = el.value; });
+                document.querySelectorAll('input[type="checkbox"]').forEach(el => { if (el.id) formData[el.id] = el.checked; });
+                document.querySelectorAll('input[type="radio"]').forEach(el => { if (el.checked && el.name) formData[`radio_${el.name}`] = el.value; });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+            }, 1000);
+        }
+        
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (!savedData) return;
+            try {
+                const formData = JSON.parse(savedData);
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') element.checked = formData[key];
+                        else if (element.type === 'radio') {}
+                        else element.value = formData[key];
+                    }
+                    if (key.startsWith('radio_')) {
+                        const radioName = key.replace('radio_', '');
+                        const radioToCheck = document.querySelector(`input[name="${radioName}"][value="${formData[key]}"]`);
+                        if (radioToCheck) radioToCheck.checked = true;
+                    }
+                });
+                updateProgressBar();
+            } catch(e) { console.error('Gagal load localStorage', e); }
+        }
+        
+        function clearLocalStorage() { localStorage.removeItem(STORAGE_KEY); }
+        
+        function triggerAutoSave() {
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => { saveToLocalStorage(); updateProgressBar(); }, 1000);
+        }
+        
+        function updateProgressBar() {
+            const allFields = document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea');
+            let filled = 0;
+            allFields.forEach(field => { if (field.value && field.value.trim() !== '') filled++; });
+            const total = allFields.length;
+            const progress = total > 0 ? Math.round((filled / total) * 100) : 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '% selesai';
+        }
+        
+        function loadDataFromGoogleSheets() {
+            if (!isOnline) return;
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
+                const callbackName = 'jsonp_callback_' + Date.now();
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        const kelasSelect = document.getElementById('kelas');
+                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                        dataKelas.forEach(kelas => { const opt = document.createElement('option'); opt.value = kelas; opt.textContent = kelas; kelasSelect.appendChild(opt); });
+                        disableForm(false);
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        loadFromLocalStorage();
+                    } else {
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        document.getElementById('errorMessage').style.display = 'block';
+                        document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                        disableForm(true);
+                    }
+                    isLoading = false;
+                };
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = function() {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman.';
+                    disableForm(true);
+                    isLoading = false;
+                };
+                document.head.appendChild(script);
+            } catch(error) {
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                disableForm(true);
+                isLoading = false;
+            }
+        }
+        
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            if (!kelas || !dataSiswa[kelas]) { namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>'; return; }
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => { const opt = document.createElement('option'); opt.value = nama; opt.textContent = nama; namaSelect.appendChild(opt); });
+        }
+        
+        async function submitData() {
+            if (!isOnline) { alert('Anda sedang offline. Silakan cek koneksi internet.'); return; }
+            if (isLoading) { alert('Data masih dimuat.'); return; }
+            if (!document.getElementById('kelas').value || !document.getElementById('nama').value) { alert('Lengkapi identitas terlebih dahulu!'); return; }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            
+            try {
+                const formData = new URLSearchParams();
+                formData.append('sheetName', FORM_CONFIG.sheetName);
+                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
+                formData.append('Kelas', document.getElementById('kelas').value);
+                formData.append('Nama', document.getElementById('nama').value);
+                formData.append('Kelompok', document.getElementById('kelompok').value || '');
+                formData.append('Peran', document.getElementById('peran').value || '');
+                
+                // Kumpulkan data per bagian (ringkas karena panjang)
+                const bagianA = { a1:document.getElementById('a1')?.value, a2:document.getElementById('a2')?.value, a3:document.getElementById('a3')?.value, a4:document.getElementById('a4')?.value, a5:document.getElementById('a5')?.value, a6:document.getElementById('a6')?.value, a7:document.getElementById('a7')?.value, bacaMateri:document.getElementById('bacaMateri')?.checked, tanggalBaca:document.getElementById('tanggalBaca')?.value };
+                formData.append('Data Bagian A', JSON.stringify(bagianA));
+                
+                const bagianB = { b1:document.getElementById('b1')?.value, b2:document.getElementById('b2')?.value, b3:document.getElementById('b3')?.value, b4:document.getElementById('b4')?.value, b5:document.getElementById('b5')?.value, b6:document.getElementById('b6')?.value };
+                formData.append('Data Bagian B', JSON.stringify(bagianB));
+                
+                const bagianC = { perilaku:[{aspek:'Berkomunikasi',baik:document.getElementById('c1_baik')?.value,buruk:document.getElementById('c1_buruk')?.value},{aspek:'Berbagi Informasi',baik:document.getElementById('c2_baik')?.value,buruk:document.getElementById('c2_buruk')?.value},{aspek:'Mengomentari',baik:document.getElementById('c3_baik')?.value,buruk:document.getElementById('c3_buruk')?.value},{aspek:'Mengunggah',baik:document.getElementById('c4_baik')?.value,buruk:document.getElementById('c4_buruk')?.value}], keamanan:[{praktik:'Password',status:document.getElementById('keamanan1')?.value,rencana:document.getElementById('keamanan1_rencana')?.value},{praktik:'2FA',status:document.getElementById('keamanan2')?.value,rencana:document.getElementById('keamanan2_rencana')?.value},{praktik:'Privasi',status:document.getElementById('keamanan3')?.value,rencana:document.getElementById('keamanan3_rencana')?.value},{praktik:'Phishing',status:document.getElementById('keamanan4')?.value,rencana:document.getElementById('keamanan4_rencana')?.value},{praktik:'Koneksi Aman',status:document.getElementById('keamanan5')?.value,rencana:document.getElementById('keamanan5_rencana')?.value}] };
+                formData.append('Data Bagian C', JSON.stringify(bagianC));
+                
+                const bagianD = { d1:document.getElementById('d1')?.value, d2:document.getElementById('d2')?.value, d3:document.getElementById('d3')?.value };
+                formData.append('Data Bagian D', JSON.stringify(bagianD));
+                
+                let tujuan = ''; if (document.getElementById('tujuan_edukasi')?.checked) tujuan = 'Edukasi'; else if (document.getElementById('tujuan_promosi')?.checked) tujuan = 'Promosi'; else if (document.getElementById('tujuan_informasi')?.checked) tujuan = 'Informasi'; else if (document.getElementById('tujuan_hiburan')?.checked) tujuan = 'Hiburan'; else if (document.getElementById('tujuan_inspirasi')?.checked) tujuan = 'Inspirasi';
+                let jenisKonten = ''; if (document.getElementById('jenis_poster')?.checked) jenisKonten = 'Poster/Gambar'; else if (document.getElementById('jenis_video')?.checked) jenisKonten = 'Video'; else if (document.getElementById('jenis_infografis')?.checked) jenisKonten = 'Infografis'; else if (document.getElementById('jenis_artikel')?.checked) jenisKonten = 'Artikel/Blog';
+                let platform = ''; if (document.getElementById('platform_ig')?.checked) platform = 'Instagram'; else if (document.getElementById('platform_tiktok')?.checked) platform = 'TikTok'; else if (document.getElementById('platform_yt')?.checked) platform = 'YouTube'; else if (document.getElementById('platform_fb')?.checked) platform = 'Facebook';
+                let gaya = ''; if (document.getElementById('gaya_formal')?.checked) gaya = 'Formal'; else if (document.getElementById('gaya_santai')?.checked) gaya = 'Santai'; else if (document.getElementById('gaya_humor')?.checked) gaya = 'Humor'; else if (document.getElementById('gaya_inspiratif')?.checked) gaya = 'Inspiratif';
+                const bagianE = { perencanaan:{tema:document.getElementById('e_tema')?.value,tujuan:tujuan,target:document.getElementById('e_target')?.value,jenis_konten:jenisKonten,platform:platform,produk:document.getElementById('e_produk')?.value,judul:document.getElementById('e_judul')?.value,tagline:document.getElementById('e_tagline')?.value,pesan:document.getElementById('e_pesan')?.value,gaya:gaya}, storyboard:document.getElementById('storyboard')?.value, sumber_daya:[{alat:'Aplikasi',ketersediaan:document.getElementById('sumber1')?.value,ket:document.getElementById('sumber1_ket')?.value},{alat:'Perangkat',ketersediaan:document.getElementById('sumber2')?.value,ket:document.getElementById('sumber2_ket')?.value},{alat:'Gambar',ketersediaan:document.getElementById('sumber3')?.value,ket:document.getElementById('sumber3_ket')?.value}] };
+                formData.append('Data Bagian E', JSON.stringify(bagianE));
+                
+                const bagianF = { proses_produksi:document.getElementById('proses_produksi')?.value, finalisasi:[{aspek:'Kesesuaian',status:document.getElementById('final1')?.value,catatan:document.getElementById('final1_catatan')?.value},{aspek:'Kualitas',status:document.getElementById('final2')?.value,catatan:document.getElementById('final2_catatan')?.value},{aspek:'Kejelasan',status:document.getElementById('final3')?.value,catatan:document.getElementById('final3_catatan')?.value},{aspek:'Etika',status:document.getElementById('final4')?.value,catatan:document.getElementById('final4_catatan')?.value}], hasil:{konten:document.getElementById('hasil_konten')?.value,judul:document.getElementById('hasil_judul')?.value,jenis:document.getElementById('hasil_jenis')?.value,durasi:document.getElementById('hasil_durasi')?.value,tools:document.getElementById('hasil_tools')?.value,link:document.getElementById('hasil_link')?.value} };
+                formData.append('Data Bagian F', JSON.stringify(bagianF));
+                
+                const bagianG = { g1:document.getElementById('g1')?.value, g2:document.getElementById('g2')?.value, g3:document.getElementById('g3')?.value };
+                formData.append('Data Bagian G', JSON.stringify(bagianG));
+                
+                const bagianH = { diseminasi:{platform:document.getElementById('h_platform')?.value,waktu:document.getElementById('h_waktu')?.value,caption:document.getElementById('h_caption')?.value,hashtag:document.getElementById('h_hashtag')?.value,link:document.getElementById('h_link')?.value}, strategi:[{nama:'Bagikan ke grup',rencana:document.getElementById('strategi1_rencana')?.value,status:document.getElementById('strategi1_status')?.value},{nama:'Kolaborasi',rencana:document.getElementById('strategi2_rencana')?.value,status:document.getElementById('strategi2_status')?.value},{nama:'Waktu terbaik',rencana:document.getElementById('strategi3_rencana')?.value,status:document.getElementById('strategi3_status')?.value}] };
+                formData.append('Data Bagian H', JSON.stringify(bagianH));
+                
+                const bagianI = { metrik:{views:document.getElementById('metric_views')?.value,views_int:document.getElementById('metric_views_int')?.value,likes:document.getElementById('metric_likes')?.value,likes_int:document.getElementById('metric_likes_int')?.value,comments:document.getElementById('metric_comments')?.value,comments_int:document.getElementById('metric_comments_int')?.value,shares:document.getElementById('metric_shares')?.value,shares_int:document.getElementById('metric_shares_int')?.value}, respon:{positif:document.getElementById('respon_positif')?.value,negatif:document.getElementById('respon_negatif')?.value,pertanyaan:document.getElementById('respon_pertanyaan')?.value,saran:document.getElementById('respon_saran')?.value}, etika:[{pertanyaan:'Ujaran kebencian',jawaban:document.getElementById('etika1')?.value,catatan:document.getElementById('etika1_catatan')?.value},{pertanyaan:'Hak cipta',jawaban:document.getElementById('etika2')?.value,catatan:document.getElementById('etika2_catatan')?.value},{pertanyaan:'Informasi palsu',jawaban:document.getElementById('etika3')?.value,catatan:document.getElementById('etika3_catatan')?.value}] };
+                formData.append('Data Bagian I', JSON.stringify(bagianI));
+                
+                const bagianJ = { nama:document.getElementById('ref_nama')?.value, kelas:document.getElementById('ref_kelas')?.value, kelompok:document.getElementById('ref_kelompok')?.value, peran:document.getElementById('ref_peran')?.value, j1:document.getElementById('j1')?.value, j2:document.getElementById('j2')?.value, j3:document.getElementById('j3')?.value, j4:document.getElementById('j4')?.value, j5:document.getElementById('j5')?.value, j6:document.getElementById('j6')?.value, final_check1:document.getElementById('final_check1')?.checked, final_check2:document.getElementById('final_check2')?.checked, final_check3:document.getElementById('final_check3')?.checked, final_check4:document.getElementById('final_check4')?.checked, final_check5:document.getElementById('final_check5')?.checked, final_check6:document.getElementById('final_check6')?.checked };
+                formData.append('Data Bagian J', JSON.stringify(bagianJ));
+                
+                formData.append('Timestamp', new Date().toISOString());
+                
+                await fetch(URL_PEREKAPAN, { method: 'POST', mode: 'no-cors', body: formData });
+                document.getElementById('successMessage').style.display = 'block';
+                clearLocalStorage();
+                setTimeout(() => { document.getElementById('successMessage').style.display = 'none'; }, 5000);
+                if (confirm('Data terkirim! Ingin mereset form?')) location.reload();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan Lembar Aktivitas';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('online', updateConnectionStatus);
+            window.addEventListener('offline', updateConnectionStatus);
+            updateConnectionStatus();
+            loadDataFromGoogleSheets();
+            document.getElementById('kelas').addEventListener('change', updateNamaDropdown);
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', triggerAutoSave);
+                el.addEventListener('change', triggerAutoSave);
+            });
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+        });
+    </script>
+</body>
+</html>
