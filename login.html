@@ -151,8 +151,10 @@
     </div>
 
     <script>
-        // 🔴 GANTI URL INI dengan Web App URL dari Google Apps Script Anda!
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkl83HoT--CnS-EptEsrfqgxPEO8SiOj-34_RM9ZlkyV1m1HH_ifBF47rOKPaAI33x/exec';
+        // ========== GANTI URL INI ==========
+        // Masukkan URL Web App dari Google Apps Script Anda
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwasPkwfFyJkcM9PJXzG_X2hHcygASiUk4rHCavNuT1MOrOGcgDaukqXIfiAjygYWFx/exec';
+        // ===================================
         
         const loginForm = document.getElementById('loginForm');
         const usernameInput = document.getElementById('username');
@@ -160,7 +162,7 @@
         const loginBtn = document.getElementById('loginBtn');
         const messageDiv = document.getElementById('message');
         
-        loginForm.addEventListener('submit', async (e) => {
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
             const username = usernameInput.value.trim();
@@ -176,106 +178,57 @@
             loginBtn.textContent = 'Memproses...';
             showMessage('Sedang memeriksa data...', 'loading');
             
-            try {
-                // Kirim data ke Google Apps Script menggunakan fetch dengan mode cors
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'cors',  // Ubah dari 'no-cors' ke 'cors'
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username, password })
-                });
+            // ========== MENGGUNAKAN JSONP (SAMA SEPERTI KODE SUKSES ANDA) ==========
+            const callbackName = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+            const script = document.createElement('script');
+            
+            // Buat URL dengan parameter (method GET, sama seperti contoh sukses Anda)
+            const url = APPS_SCRIPT_URL + '?callback=' + callbackName + 
+                       '&username=' + encodeURIComponent(username) + 
+                       '&password=' + encodeURIComponent(password);
+            
+            // Definisikan fungsi callback (sama persis seperti kode sukses Anda)
+            window[callbackName] = function(response) {
+                // Hapus callback dan script setelah selesai
+                delete window[callbackName];
+                document.body.removeChild(script);
                 
-                // Baca response dari server
-                const data = await response.json();
-                
-                if (data.success) {
+                if (response.success) {
                     // Simpan data user ke localStorage
                     localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('username', data.user.username);
-                    localStorage.setItem('status', data.user.status);
-                    localStorage.setItem('nama', data.user.nama);
+                    localStorage.setItem('username', response.user.username);
+                    localStorage.setItem('status', response.user.status);
+                    localStorage.setItem('nama', response.user.nama);
                     
                     showMessage('Login berhasil! Mengalihkan...', 'success');
                     
                     // Redirect sesuai status
                     setTimeout(() => {
-                        if (data.user.status === 'guru') {
+                        if (response.user.status === 'guru') {
                             window.location.href = '/dashboard-guru.html';
                         } else {
                             window.location.href = '/dashboard-murid.html';
                         }
                     }, 1000);
                 } else {
-                    showMessage(data.message || 'Login gagal. Periksa username dan password.', 'error');
-                    loginBtn.disabled = false;
-                    loginBtn.textContent = 'Login';
-                }
-                
-            } catch (error) {
-                console.error('Error detail:', error);
-                
-                // Jika fetch gagal karena CORS, coba pakai teknik JSONP
-                if (error.message.includes('fetch')) {
-                    showMessage('Mencoba metode alternatif...', 'loading');
-                    tryLoginWithJsonp(username, password);
-                } else {
-                    showMessage('Terjadi kesalahan: ' + error.message, 'error');
-                    loginBtn.disabled = false;
-                    loginBtn.textContent = 'Login';
-                }
-            }
-        });
-        
-        // Metode alternatif menggunakan JSONP (callback)
-        function tryLoginWithJsonp(username, password) {
-            // Buat script tag untuk JSONP
-            const callbackName = 'callback_' + Date.now();
-            const script = document.createElement('script');
-            
-            // URL dengan parameter callback
-            const url = APPS_SCRIPT_URL + '?callback=' + callbackName + 
-                       '&username=' + encodeURIComponent(username) + 
-                       '&password=' + encodeURIComponent(password);
-            
-            // Definisikan fungsi callback global
-            window[callbackName] = function(data) {
-                delete window[callbackName];
-                document.body.removeChild(script);
-                
-                if (data.success) {
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('username', data.user.username);
-                    localStorage.setItem('status', data.user.status);
-                    localStorage.setItem('nama', data.user.nama);
-                    
-                    showMessage('Login berhasil! Mengalihkan...', 'success');
-                    
-                    setTimeout(() => {
-                        if (data.user.status === 'guru') {
-                            window.location.href = '/dashboard-guru.html';
-                        } else {
-                            window.location.href = '/dashboard-murid.html';
-                        }
-                    }, 1000);
-                } else {
-                    showMessage(data.message || 'Login gagal', 'error');
+                    showMessage(response.message || 'Login gagal', 'error');
                     loginBtn.disabled = false;
                     loginBtn.textContent = 'Login';
                 }
             };
             
-            script.src = url;
+            // Handle error jika script gagal dimuat
             script.onerror = function() {
-                showMessage('Gagal terhubung ke server. Coba lagi nanti.', 'error');
+                showMessage('Gagal terhubung ke server. Periksa URL Apps Script.', 'error');
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Login';
                 delete window[callbackName];
             };
             
+            // Tambahkan script ke halaman (ini yang akan memanggil Apps Script)
+            script.src = url;
             document.body.appendChild(script);
-        }
+        });
         
         function showMessage(msg, type) {
             messageDiv.textContent = msg;
