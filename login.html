@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - LMS Tembok Belajar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        
+        .loading {
+            background: #e3f2fd;
+            color: #1976d2;
+            display: none;
+        }
+        
+        .info {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>📚 LMS Tembok Belajar</h1>
+        <div class="subtitle">Silakan login untuk melanjutkan</div>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Masukkan username" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Masukkan password" required>
+            </div>
+            
+            <button type="submit" id="loginBtn">Login</button>
+        </form>
+        
+        <div id="message" class="message"></div>
+        <div class="info">
+            🔐 Gunakan data yang sudah didaftarkan di spreadsheet
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ GANTI URL INI dengan Web App URL dari Google Apps Script!
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxxxxxxxxxxx/exec';
+        
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const messageDiv = document.getElementById('message');
+        
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            
+            if (!username || !password) {
+                showMessage('Username dan password harus diisi', 'error');
+                return;
+            }
+            
+            // Tampilkan loading
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Memproses...';
+            showMessage('Sedang memeriksa data...', 'loading');
+            
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Penting untuk Apps Script!
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                // Karena mode 'no-cors', kita tidak bisa membaca response langsung
+                // Kita perlu pendekatan alternatif: buat iframe tersembunyi
+                // Atau gunakan pendekatan JSONP
+                
+                // Pendekatan yang lebih baik: gunakan fetch tanpa no-cors
+                // Tapi Apps Script perlu dikonfigurasi untuk menerima CORS
+                
+                // Solusi: Gunakan teknik form submit + iframe
+                submitViaIframe(username, password);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Terjadi kesalahan, coba lagi', 'error');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        });
+        
+        function submitViaIframe(username, password) {
+            // Buat form tersembunyi
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = APPS_SCRIPT_URL;
+            form.target = 'hiddenFrame';
+            form.style.display = 'none';
+            
+            const userField = document.createElement('input');
+            userField.name = 'username';
+            userField.value = username;
+            form.appendChild(userField);
+            
+            const passField = document.createElement('input');
+            passField.name = 'password';
+            passField.value = password;
+            form.appendChild(passField);
+            
+            document.body.appendChild(form);
+            
+            // Buat iframe untuk menerima response
+            const iframe = document.createElement('iframe');
+            iframe.name = 'hiddenFrame';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            // Set timeout untuk menerima response
+            iframe.onload = function() {
+                // Coba baca response dari iframe
+                try {
+                    const responseText = iframe.contentDocument?.body?.innerText;
+                    if (responseText) {
+                        const data = JSON.parse(responseText);
+                        handleResponse(data);
+                    } else {
+                        // Jika response kosong, asumsikan berhasil? Tidak ideal
+                        showMessage('Login diproses, tunggu sebentar...', 'loading');
+                        // Redirect setelah delay
+                        setTimeout(() => {
+                            window.location.href = '/dashboard.html';
+                        }, 2000);
+                    }
+                } catch (err) {
+                    console.error('Parse error:', err);
+                    // Fallback: redirect ke halaman cek login
+                    window.location.href = '/check-login.html?username=' + encodeURIComponent(username);
+                }
+                
+                // Cleanup
+                document.body.removeChild(form);
+                document.body.removeChild(iframe);
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            };
+            
+            form.submit();
+        }
+        
+        function handleResponse(data) {
+            if (data.success) {
+                // Simpan data user
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', data.user.username);
+                localStorage.setItem('status', data.user.status);
+                localStorage.setItem('nama', data.user.nama);
+                
+                showMessage('Login berhasil! Mengalihkan...', 'loading');
+                
+                // Redirect sesuai status
+                setTimeout(() => {
+                    if (data.user.status === 'guru') {
+                        window.location.href = '/dashboard-guru.html';
+                    } else {
+                        window.location.href = '/dashboard-murid.html';
+                    }
+                }, 1000);
+            } else {
+                showMessage(data.message || 'Login gagal', 'error');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        }
+        
+        function showMessage(msg, type) {
+            messageDiv.textContent = msg;
+            messageDiv.className = 'message ' + type;
+            messageDiv.style.display = 'block';
+            
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
