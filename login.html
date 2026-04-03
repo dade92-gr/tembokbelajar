@@ -106,10 +106,15 @@
             border: 1px solid #fcc;
         }
         
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
         .loading {
             background: #e3f2fd;
             color: #1976d2;
-            display: none;
         }
         
         .info {
@@ -146,8 +151,8 @@
     </div>
 
     <script>
-        // ⚠️ GANTI URL INI dengan Web App URL dari Google Apps Script!
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxxxxxxxxxxx/exec';
+        // 🔴 GANTI URL INI dengan Web App URL dari Google Apps Script Anda!
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkl83HoT--CnS-EptEsrfqgxPEO8SiOj-34_RM9ZlkyV1m1HH_ifBF47rOKPaAI33x/exec';
         
         const loginForm = document.getElementById('loginForm');
         const usernameInput = document.getElementById('username');
@@ -172,114 +177,104 @@
             showMessage('Sedang memeriksa data...', 'loading');
             
             try {
+                // Kirim data ke Google Apps Script menggunakan fetch dengan mode cors
                 const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Penting untuk Apps Script!
+                    mode: 'cors',  // Ubah dari 'no-cors' ke 'cors'
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ username, password })
                 });
                 
-                // Karena mode 'no-cors', kita tidak bisa membaca response langsung
-                // Kita perlu pendekatan alternatif: buat iframe tersembunyi
-                // Atau gunakan pendekatan JSONP
+                // Baca response dari server
+                const data = await response.json();
                 
-                // Pendekatan yang lebih baik: gunakan fetch tanpa no-cors
-                // Tapi Apps Script perlu dikonfigurasi untuk menerima CORS
-                
-                // Solusi: Gunakan teknik form submit + iframe
-                submitViaIframe(username, password);
+                if (data.success) {
+                    // Simpan data user ke localStorage
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('username', data.user.username);
+                    localStorage.setItem('status', data.user.status);
+                    localStorage.setItem('nama', data.user.nama);
+                    
+                    showMessage('Login berhasil! Mengalihkan...', 'success');
+                    
+                    // Redirect sesuai status
+                    setTimeout(() => {
+                        if (data.user.status === 'guru') {
+                            window.location.href = '/dashboard-guru.html';
+                        } else {
+                            window.location.href = '/dashboard-murid.html';
+                        }
+                    }, 1000);
+                } else {
+                    showMessage(data.message || 'Login gagal. Periksa username dan password.', 'error');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login';
+                }
                 
             } catch (error) {
-                console.error('Error:', error);
-                showMessage('Terjadi kesalahan, coba lagi', 'error');
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'Login';
+                console.error('Error detail:', error);
+                
+                // Jika fetch gagal karena CORS, coba pakai teknik JSONP
+                if (error.message.includes('fetch')) {
+                    showMessage('Mencoba metode alternatif...', 'loading');
+                    tryLoginWithJsonp(username, password);
+                } else {
+                    showMessage('Terjadi kesalahan: ' + error.message, 'error');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login';
+                }
             }
         });
         
-        function submitViaIframe(username, password) {
-            // Buat form tersembunyi
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = APPS_SCRIPT_URL;
-            form.target = 'hiddenFrame';
-            form.style.display = 'none';
+        // Metode alternatif menggunakan JSONP (callback)
+        function tryLoginWithJsonp(username, password) {
+            // Buat script tag untuk JSONP
+            const callbackName = 'callback_' + Date.now();
+            const script = document.createElement('script');
             
-            const userField = document.createElement('input');
-            userField.name = 'username';
-            userField.value = username;
-            form.appendChild(userField);
+            // URL dengan parameter callback
+            const url = APPS_SCRIPT_URL + '?callback=' + callbackName + 
+                       '&username=' + encodeURIComponent(username) + 
+                       '&password=' + encodeURIComponent(password);
             
-            const passField = document.createElement('input');
-            passField.name = 'password';
-            passField.value = password;
-            form.appendChild(passField);
-            
-            document.body.appendChild(form);
-            
-            // Buat iframe untuk menerima response
-            const iframe = document.createElement('iframe');
-            iframe.name = 'hiddenFrame';
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            
-            // Set timeout untuk menerima response
-            iframe.onload = function() {
-                // Coba baca response dari iframe
-                try {
-                    const responseText = iframe.contentDocument?.body?.innerText;
-                    if (responseText) {
-                        const data = JSON.parse(responseText);
-                        handleResponse(data);
-                    } else {
-                        // Jika response kosong, asumsikan berhasil? Tidak ideal
-                        showMessage('Login diproses, tunggu sebentar...', 'loading');
-                        // Redirect setelah delay
-                        setTimeout(() => {
-                            window.location.href = '/dashboard.html';
-                        }, 2000);
-                    }
-                } catch (err) {
-                    console.error('Parse error:', err);
-                    // Fallback: redirect ke halaman cek login
-                    window.location.href = '/check-login.html?username=' + encodeURIComponent(username);
-                }
+            // Definisikan fungsi callback global
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
                 
-                // Cleanup
-                document.body.removeChild(form);
-                document.body.removeChild(iframe);
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'Login';
+                if (data.success) {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('username', data.user.username);
+                    localStorage.setItem('status', data.user.status);
+                    localStorage.setItem('nama', data.user.nama);
+                    
+                    showMessage('Login berhasil! Mengalihkan...', 'success');
+                    
+                    setTimeout(() => {
+                        if (data.user.status === 'guru') {
+                            window.location.href = '/dashboard-guru.html';
+                        } else {
+                            window.location.href = '/dashboard-murid.html';
+                        }
+                    }, 1000);
+                } else {
+                    showMessage(data.message || 'Login gagal', 'error');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login';
+                }
             };
             
-            form.submit();
-        }
-        
-        function handleResponse(data) {
-            if (data.success) {
-                // Simpan data user
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('username', data.user.username);
-                localStorage.setItem('status', data.user.status);
-                localStorage.setItem('nama', data.user.nama);
-                
-                showMessage('Login berhasil! Mengalihkan...', 'loading');
-                
-                // Redirect sesuai status
-                setTimeout(() => {
-                    if (data.user.status === 'guru') {
-                        window.location.href = '/dashboard-guru.html';
-                    } else {
-                        window.location.href = '/dashboard-murid.html';
-                    }
-                }, 1000);
-            } else {
-                showMessage(data.message || 'Login gagal', 'error');
+            script.src = url;
+            script.onerror = function() {
+                showMessage('Gagal terhubung ke server. Coba lagi nanti.', 'error');
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Login';
-            }
+                delete window[callbackName];
+            };
+            
+            document.body.appendChild(script);
         }
         
         function showMessage(msg, type) {
