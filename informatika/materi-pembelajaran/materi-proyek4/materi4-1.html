@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi 4.1: Model Input-Process-Output (IPO) - Informatika Kelas X</title>
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --informatika-primary: #3498db;
+            --informatika-secondary: #2980b9;
+            --informatika-light: #ebf5fb;
+            --informatika-dark: #21618c;
+            --informatika-semester1: #3498db;
+            --success: #27ae60;
+            --warning: #e74c3c;
+            --info: #f39c12;
+            --purple: #9b59b6;
+            --ipo-input: #3498db;
+            --ipo-process: #f39c12;
+            --ipo-output: #27ae60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .materi-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        
+        .materi-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(52, 152, 219, 0.15);
+            border-left: 8px solid var(--informatika-semester1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .materi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .materi-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .materi-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid var(--informatika-light);
+            flex-wrap: wrap;
+        }
+        
+        .materi-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--ipo-input), var(--ipo-output));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .materi-title-wrapper {
+            flex: 1;
+        }
+        
+        .materi-title-wrapper h1 {
+            color: var(--informatika-dark);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .materi-subtitle {
+            color: var(--informatika-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .materi-badge {
+            background: var(--informatika-light);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: var(--informatika-dark);
+        }
+        
+        .tujuan-card {
+            background: linear-gradient(135deg, var(--informatika-light), white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+        
+        .tujuan-card h3 {
+            color: var(--informatika-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tujuan-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.8rem;
+        }
+        
+        .tujuan-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 0.8rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .tujuan-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .tujuan-item i {
+            color: var(--success);
+        }
+        
+        .materi-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(52, 152, 219, 0.1);
+        }
+        
+        .materi-content h2 {
+            color: var(--informatika-dark);
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem 0;
+            border-bottom: 2px solid var(--informatika-light);
+            padding-bottom: 0.5rem;
+        }
+        
+        .materi-content h2:first-of-type {
+            margin-top: 0;
+        }
+        
+        .materi-content h3 {
+            color: var(--informatika-dark);
+            font-size: 1.3rem;
+            margin: 1.2rem 0 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .materi-content h3 i {
+            color: var(--informatika-primary);
+        }
+        
+        .materi-content p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        .materi-content ul, .materi-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .materi-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote-box {
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            background: var(--informatika-light);
+            border-left: 4px solid var(--informatika-primary);
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .note-box {
+            background: #fff3e0;
+            border-left: 4px solid var(--info);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--informatika-primary);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .warning-box {
+            background: #fee2e2;
+            border-left: 4px solid var(--warning);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        /* IPO Flowchart */
+        .ipo-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 20px;
+        }
+        
+        .ipo-box {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 16px;
+            min-width: 180px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .ipo-box.input {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .ipo-box.process {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+        
+        .ipo-box.output {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+        
+        .ipo-box.active {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .ipo-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .ipo-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        .ipo-arrow {
+            font-size: 2rem;
+            color: var(--informatika-primary);
+        }
+        
+        /* Komponen Grid */
+        .komponen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .komponen-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .komponen-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .komponen-card.active {
+            border: 2px solid;
+        }
+        
+        .komponen-card.input.active { border-color: var(--ipo-input); background: #ebf5fb; }
+        .komponen-card.process.active { border-color: var(--ipo-process); background: #fff3e0; }
+        .komponen-card.output.active { border-color: var(--ipo-output); background: #d4edda; }
+        
+        .komponen-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .komponen-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .komponen-desc {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* Contoh IPO Grid */
+        .contoh-ipo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .contoh-ipo-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .contoh-ipo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .contoh-ipo-card.active {
+            border: 2px solid var(--purple);
+            background: #f3e5f5;
+        }
+        
+        .contoh-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--informatika-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .contoh-detail {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .contoh-detail strong {
+            color: var(--informatika-primary);
+        }
+        
+        /* Tabel */
+        .ipo-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        .ipo-table th {
+            background: var(--informatika-primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .ipo-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .ipo-table tr:hover {
+            background: var(--informatika-light);
+        }
+        
+        /* Diagram IPO */
+        .diagram-ipo {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+            font-size: 0.8rem;
+        }
+        
+        .refleksi-card {
+            background: linear-gradient(135deg, var(--purple), #8e44ad);
+            color: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .refleksi-card h3 {
+            color: white;
+        }
+        
+        .refleksi-card ul {
+            margin-left: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .refleksi-card li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .soal-section {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .soal-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .soal-item p {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        
+        .option:hover {
+            background: var(--informatika-light);
+        }
+        
+        .jawaban-feedback {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .jawaban-feedback.benar {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .jawaban-feedback.salah {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .btn-check {
+            background: var(--informatika-primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        .btn-check:hover {
+            background: var(--informatika-secondary);
+        }
+        
+        .materi-navigation {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--informatika-primary), var(--informatika-secondary));
+            color: white;
+        }
+        
+        .nav-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-btn.secondary {
+            background: white;
+            color: var(--informatika-dark);
+            border: 2px solid var(--informatika-light);
+        }
+        
+        .nav-btn.secondary:hover {
+            background: var(--informatika-light);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .materi-container { padding: 1rem; }
+            .materi-card { padding: 1.5rem; }
+            .materi-header { flex-direction: column; text-align: center; }
+            .ipo-flow { flex-direction: column; }
+            .ipo-arrow { transform: rotate(90deg); }
+            .diagram-ipo { font-size: 0.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>INFORMATIKA - MATERI PEMBELAJARAN</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../../index-informatika.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda Informatika</a></li>
+                    <li><a href="../../aktivitas-pembelajaran/index-aktivitas-informatika.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../index-materi-informatika.html" class="nav-link active"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="../../penilaian/index-penilaian-inform.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="materi-container">
+        <div class="materi-card">
+            <!-- Header -->
+            <div class="materi-header">
+                <div class="materi-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="materi-title-wrapper">
+                    <h1>Model Input-Process-Output (IPO)</h1>
+                    <div class="materi-subtitle">
+                        <i class="fas fa-circle"></i>
+                        <span>Proyek 4: Rancang Mesin Pintar Mini - Pertemuan 1</span>
+                        <span class="materi-badge"><i class="fas fa-clock"></i> 4 JP</span>
+                        <span class="materi-badge"><i class="fas fa-tag"></i> TP 1.6</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tujuan Pembelajaran -->
+            <div class="tujuan-card">
+                <h3><i class="fas fa-bullseye"></i> 🎯 Tujuan Pembelajaran</h3>
+                <div class="tujuan-list">
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Memahami konsep dasar model Input-Process-Output (IPO)</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Mengidentifikasi komponen input, proses, dan output dalam berbagai sistem</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Menjelaskan bagaimana data mengalir dalam sistem komputer</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Memberikan contoh penerapan model IPO dalam kehidupan sehari-hari</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Membuat diagram IPO sederhana untuk berbagai kasus</div>
+                </div>
+            </div>
+
+            <!-- Konten Materi -->
+            <div class="materi-content">
+                <h2>A. Apa Itu Model IPO?</h2>
+                <p><strong>Model Input-Process-Output (IPO)</strong> adalah kerangka kerja konseptual yang menggambarkan bagaimana suatu sistem memproses data atau masukan untuk menghasilkan keluaran. Model ini merupakan fondasi dasar dari hampir semua sistem komputasi.</p>
+                
+                <div class="quote-box">
+                    <i class="fas fa-quote-left"></i> <strong>Donald Knuth:</strong> "Model IPO adalah representasi sederhana dari cara kerja sistem komputer yang menerima masukan, memprosesnya, dan menghasilkan keluaran."
+                </div>
+                
+                <!-- IPO Flowchart Interaktif -->
+                <div class="ipo-flow" id="ipoFlow">
+                    <div class="ipo-box input" data-ipo="input">
+                        <div class="ipo-icon"><i class="fas fa-keyboard"></i></div>
+                        <div class="ipo-title">INPUT</div>
+                        <div class="ipo-desc" style="font-size: 0.8rem; margin-top: 0.5rem;">Data mentah masuk ke sistem</div>
+                    </div>
+                    <div class="ipo-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="ipo-box process" data-ipo="process">
+                        <div class="ipo-icon"><i class="fas fa-microchip"></i></div>
+                        <div class="ipo-title">PROCESS</div>
+                        <div class="ipo-desc" style="font-size: 0.8rem; margin-top: 0.5rem;">Pengolahan data</div>
+                    </div>
+                    <div class="ipo-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="ipo-box output" data-ipo="output">
+                        <div class="ipo-icon"><i class="fas fa-desktop"></i></div>
+                        <div class="ipo-title">OUTPUT</div>
+                        <div class="ipo-desc" style="font-size: 0.8rem; margin-top: 0.5rem;">Hasil olahan keluar sistem</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <i class="fas fa-lightbulb"></i> <strong>Ilustrasi Sederhana:</strong><br>
+                    🍳 Memasak Mie Instan:<br>
+                    • <strong>INPUT:</strong> Mie instan, air, kompor, bumbu<br>
+                    • <strong>PROCESS:</strong> Rebus air, masukkan mie, masak 3 menit, campur bumbu<br>
+                    • <strong>OUTPUT:</strong> Mie instan matang siap santap
+                </div>
+
+                <h2>B. Tiga Komponen Utama Model IPO</h2>
+                <p><strong>Klik pada setiap komponen</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="komponen-grid" id="komponenGrid">
+                    <div class="komponen-card input" data-komponen="input">
+                        <div class="komponen-icon"><i class="fas fa-keyboard"></i></div>
+                        <div class="komponen-title">INPUT (Masukan)</div>
+                        <div class="komponen-desc">Data atau perintah yang dimasukkan ke dalam sistem untuk diproses. Contoh: keyboard, mouse, sensor, mikrofon, kamera.</div>
+                    </div>
+                    <div class="komponen-card process" data-komponen="process">
+                        <div class="komponen-icon"><i class="fas fa-microchip"></i></div>
+                        <div class="komponen-title">PROCESS (Proses)</div>
+                        <div class="komponen-desc">Langkah-langkah pengolahan data: perhitungan, perbandingan, pengambilan keputusan, penyimpanan, pengambilan data.</div>
+                    </div>
+                    <div class="komponen-card output" data-komponen="output">
+                        <div class="komponen-icon"><i class="fas fa-desktop"></i></div>
+                        <div class="komponen-title">OUTPUT (Keluaran)</div>
+                        <div class="komponen-desc">Hasil dari proses yang dikeluarkan sistem. Contoh: monitor, speaker, printer, lampu, file data.</div>
+                    </div>
+                </div>
+
+                <h2>C. Contoh IPO dalam Kehidupan Sehari-Hari</h2>
+                <p><strong>Klik pada setiap contoh</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="contoh-ipo-grid" id="contohGrid">
+                    <div class="contoh-ipo-card" data-contoh="atm">
+                        <div class="contoh-title"><i class="fas fa-credit-card"></i> Mesin ATM</div>
+                        <div class="contoh-detail"><strong>Input:</strong> Kartu ATM, PIN, angka nominal<br><strong>Proses:</strong> Verifikasi PIN, cek saldo, kurangi saldo<br><strong>Output:</strong> Uang keluar, struk, layar informasi</div>
+                    </div>
+                    <div class="contoh-ipo-card" data-contoh="kalkulator">
+                        <div class="contoh-title"><i class="fas fa-calculator"></i> Kalkulator</div>
+                        <div class="contoh-detail"><strong>Input:</strong> Angka, operator (+, -, ×, ÷)<br><strong>Proses:</strong> Perhitungan matematika sesuai operator<br><strong>Output:</strong> Hasil perhitungan di layar</div>
+                    </div>
+                    <div class="contoh-ipo-card" data-contoh="gojek">
+                        <div class="contoh-title"><i class="fas fa-motorcycle"></i> Aplikasi Gojek</div>
+                        <div class="contoh-detail"><strong>Input:</strong> Lokasi jemput, lokasi tujuan, pilihan layanan<br><strong>Proses:</strong> Cari driver terdekat, hitung tarif<br><strong>Output:</strong> Info driver, perkiraan tarif</div>
+                    </div>
+                    <div class="contoh-ipo-card" data-contoh="ac">
+                        <div class="contoh-title"><i class="fas fa-snowflake"></i> AC (Air Conditioner)</div>
+                        <div class="contoh-detail"><strong>Input:</strong> Remote (suhu yang diinginkan), sensor suhu ruangan<br><strong>Proses:</strong> Bandingkan suhu, aktifkan kompresor<br><strong>Output:</strong> Udara dingin keluar</div>
+                    </div>
+                </div>
+
+                <h2>D. Tabel Contoh IPO Berbagai Sistem</h2>
+                <table class="ipo-table">
+                    <thead>
+                        <tr><th>Sistem</th><th>Input</th><th>Proses</th><th>Output</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Mesin ATM</td><td>Kartu, PIN, nominal</td><td>Verifikasi, cek saldo</td><td>Uang, struk</td></tr>
+                        <tr><td>Kalkulator</td><td>Angka, operator</td><td>Perhitungan</td><td>Hasil angka</td></tr>
+                        <tr><td>AC</td><td>Remote, sensor</td><td>Bandingkan suhu</td><td>Udara dingin</td></tr>
+                        <tr><td>Mesin Cuci</td><td>Pakaian, deterjen, air</td><td>Putaran, pembilasan</td><td>Pakaian bersih</td></tr>
+                        <tr><td>Rice Cooker</td><td>Beras, air, listrik</td><td>Memasak, menghangatkan</td><td>Nasi matang</td></tr>
+                    </tbody>
+                </table>
+
+                <h2>E. IPO dalam Sistem Komputer</h2>
+                <div class="info-box">
+                    <i class="fas fa-computer"></i> <strong>Sistem Komputer:</strong><br>
+                    • <strong>Input Device:</strong> Keyboard, mouse, scanner, mikrofon<br>
+                    • <strong>Process:</strong> CPU (Central Processing Unit) - melakukan perhitungan dan pengolahan data<br>
+                    • <strong>Memory:</strong> RAM (menyimpan data sementara), Storage (menyimpan data permanen)<br>
+                    • <strong>Output Device:</strong> Monitor, speaker, printer
+                </div>
+
+                <h2>F. IPO dalam Program Sederhana</h2>
+                <div class="success-box">
+                    <strong>📝 Program Luas Persegi Panjang:</strong>
+                    <div class="code-block" style="margin-top: 0.5rem;">
+                        // INPUT<br>
+                        var panjang = document.getElementById('panjang').value;<br>
+                        var lebar = document.getElementById('lebar').value;<br><br>
+                        // PROCESS<br>
+                        var luas = panjang * lebar;<br><br>
+                        // OUTPUT<br>
+                        document.getElementById('hasil').innerHTML = "Luas = " + luas;
+                    </div>
+                    <strong>Analisis IPO:</strong><br>
+                    • <strong>Input:</strong> Nilai panjang dan lebar dari pengguna<br>
+                    • <strong>Proses:</strong> Perhitungan luas = panjang × lebar<br>
+                    • <strong>Output:</strong> Tampilan hasil perhitungan di layar
+                </div>
+
+                <h2>G. Diagram IPO</h2>
+                <div class="diagram-ipo">
++------------------+     +------------------+     +------------------+
+|                  |     |                  |     |                  |
+|     INPUT        |────▶│     PROCESS      |────▶│     OUTPUT       |
+|                  |     |                  |     |                  |
++------------------+     +------------------+     +------------------+
+        │                          │                          │
+        ▼                          ▼                          ▼
+  - Kartu ATM               - Verifikasi PIN           - Uang keluar
+  - PIN                     - Cek saldo                - Struk
+  - Angka nominal           - Kurangi saldo            - Layar informasi
+                </div>
+
+                <h2>H. Studi Kasus: Merancang Mesin Kasir Mini</h2>
+                <div class="diagram-ipo">
++--------------------------+     +--------------------------+     +--------------------------+
+|                          |     |                          |     |                          |
+|         INPUT            |────▶│         PROCESS          |────▶│         OUTPUT           |
+|                          |     |                          |     |                          |
++--------------------------+     +--------------------------+     +--------------------------+
+            │                                  │                                  │
+            ▼                                  ▼                                  ▼
+  - Harga item1 (Rp15000)              - total1 = 15000×2                    - Rincian item1
+  - Jumlah item1 (2)                   - total2 = 10000×3                    - Rincian item2
+  - Harga item2 (Rp10000)              - total3 = 20000×1                    - Rincian item3
+  - Jumlah item2 (3)                   - totalSemua = total1+total2+total3   - Total belanja
+  - Harga item3 (Rp20000)              - IF totalSemua > 100000              - Diskon (jika ada)
+  - Jumlah item3 (1)                    THEN diskon = totalSemua×0.1         - Total bayar
+                                      - totalBayar = totalSemua - diskon
+                </div>
+
+                <h2>I. Rangkuman</h2>
+                <ul>
+                    <li><strong>Model IPO (Input-Process-Output)</strong> adalah kerangka kerja yang menggambarkan aliran data dalam suatu sistem.</li>
+                    <li><strong>Input</strong> adalah data atau perintah yang dimasukkan ke sistem.</li>
+                    <li><strong>Proses</strong> adalah langkah-langkah pengolahan data (perhitungan, perbandingan, keputusan).</li>
+                    <li><strong>Output</strong> adalah hasil yang dikeluarkan sistem.</li>
+                    <li>Model IPO diterapkan di berbagai sistem: mesin ATM, mesin penjual otomatis, aplikasi, dan sistem komputer.</li>
+                    <li>Dalam sistem komputer, input device, CPU, dan output device mengimplementasikan model IPO.</li>
+                    <li>Diagram IPO membantu memvisualisasikan aliran data dalam sistem.</li>
+                    <li>Memahami model IPO penting untuk merancang program dan sistem komputer.</li>
+                </ul>
+
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Ingat!</strong> Setiap sistem komputer, sekecil apa pun, selalu mengikuti pola IPO. Pahami input, proses, dan output-nya!
+                </div>
+
+                <!-- Refleksi Diri -->
+                <div class="refleksi-card">
+                    <h3><i class="fas fa-smile-wink"></i> 🎯 Refleksi Diri</h3>
+                    <p>Setelah mempelajari materi ini, renungkan pertanyaan-pertanyaan berikut:</p>
+                    <ul>
+                        <li>Apakah kamu sudah memahami konsep model IPO?</li>
+                        <li>Contoh sistem apa dalam kehidupan sehari-hari yang paling menarik menurutmu?</li>
+                        <li>Bagaimana model IPO diterapkan dalam program yang pernah kamu buat?</li>
+                        <li>Apakah kamu bisa membuat diagram IPO untuk sistem yang kamu kenal?</li>
+                        <li>Mengapa model IPO penting dalam memahami cara kerja komputer?</li>
+                    </ul>
+                </div>
+
+                <!-- Latihan Soal -->
+                <div class="soal-section">
+                    <h3><i class="fas fa-question-circle"></i> ❓ Latihan Soal</h3>
+                    
+                    <div class="soal-item">
+                        <p><strong>1.</strong> Model IPO adalah singkatan dari...</p>
+                        <div class="option"><input type="radio" name="q1" value="a"> a. Input-Process-Output</div>
+                        <div class="option"><input type="radio" name="q1" value="b"> b. Input-Program-Output</div>
+                        <div class="option"><input type="radio" name="q1" value="c"> c. Internet-Process-Online</div>
+                        <div class="option"><input type="radio" name="q1" value="d"> d. Input-Password-Output</div>
+                        <div class="jawaban-feedback" id="feedback1"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>2.</strong> Dalam mesin ATM, yang termasuk input adalah...</p>
+                        <div class="option"><input type="radio" name="q2" value="a"> a. Uang keluar</div>
+                        <div class="option"><input type="radio" name="q2" value="b"> b. Struk</div>
+                        <div class="option"><input type="radio" name="q2" value="c"> c. Kartu ATM dan PIN</div>
+                        <div class="option"><input type="radio" name="q2" value="d"> d. Layar informasi</div>
+                        <div class="jawaban-feedback" id="feedback2"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>3.</strong> Berikut ini yang termasuk dalam komponen proses (process) adalah...</p>
+                        <div class="option"><input type="radio" name="q3" value="a"> a. Keyboard dan mouse</div>
+                        <div class="option"><input type="radio" name="q3" value="b"> b. Monitor dan speaker</div>
+                        <div class="option"><input type="radio" name="q3" value="c"> c. Perhitungan dan perbandingan</div>
+                        <div class="option"><input type="radio" name="q3" value="d"> d. Printer dan scanner</div>
+                        <div class="jawaban-feedback" id="feedback3"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>4.</strong> Dalam program menghitung luas persegi panjang, yang merupakan output adalah...</p>
+                        <div class="option"><input type="radio" name="q4" value="a"> a. Nilai panjang dan lebar</div>
+                        <div class="option"><input type="radio" name="q4" value="b"> b. Perhitungan panjang × lebar</div>
+                        <div class="option"><input type="radio" name="q4" value="c"> c. Tampilan hasil luas di layar</div>
+                        <div class="option"><input type="radio" name="q4" value="d"> d. Variabel panjang dan lebar</div>
+                        <div class="jawaban-feedback" id="feedback4"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>5.</strong> Berikut adalah contoh penerapan model IPO dalam kehidupan sehari-hari, KECUALI...</p>
+                        <div class="option"><input type="radio" name="q5" value="a"> a. Mesin ATM</div>
+                        <div class="option"><input type="radio" name="q5" value="b"> b. Kalkulator</div>
+                        <div class="option"><input type="radio" name="q5" value="c"> c. Buku tulis</div>
+                        <div class="option"><input type="radio" name="q5" value="d"> d. Rice cooker</div>
+                        <div class="jawaban-feedback" id="feedback5"></div>
+                    </div>
+                    
+                    <button id="checkAnswers" class="btn-check"><i class="fas fa-check"></i> Cek Jawaban</button>
+                </div>
+
+                <div class="quote-box" style="margin-top: 1.5rem; text-align: center;">
+                    <i class="fas fa-chart-line"></i> Selamat Belajar Model IPO! 💻
+                </div>
+            </div>
+
+            <!-- Navigasi -->
+            <div class="materi-navigation">
+                <a href="../index-materi-informatika.html" class="nav-btn secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Daftar Materi
+                </a>
+                <a href="materi4-2.html" class="nav-btn primary">
+                    Lanjut ke Materi 4.2: Arsitektur Von Neumann
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="../../../script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // IPO Flow Interaktif
+            const ipoBoxes = document.querySelectorAll('.ipo-box');
+            ipoBoxes.forEach(box => {
+                box.addEventListener('click', function() {
+                    ipoBoxes.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Komponen Interaktif
+            const komponenCards = document.querySelectorAll('.komponen-card');
+            komponenCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    komponenCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Contoh Interaktif
+            const contohCards = document.querySelectorAll('.contoh-ipo-card');
+            contohCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    contohCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Latihan Soal
+            const jawabanBenar = {
+                q1: 'a',
+                q2: 'c',
+                q3: 'c',
+                q4: 'c',
+                q5: 'c'
+            };
+            
+            document.getElementById('checkAnswers').addEventListener('click', function() {
+                let semuaTerjawab = true;
+                for(let i = 1; i <= 5; i++) {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    const feedback = document.getElementById(`feedback${i}`);
+                    if(selected) {
+                        if(selected.value === jawabanBenar[`q${i}`]) {
+                            feedback.innerHTML = '<i class="fas fa-check-circle"></i> Jawaban benar!';
+                            feedback.className = 'jawaban-feedback benar';
+                        } else {
+                            feedback.innerHTML = '<i class="fas fa-times-circle"></i> Jawaban salah. Coba lagi!';
+                            feedback.className = 'jawaban-feedback salah';
+                        }
+                    } else {
+                        feedback.innerHTML = '<i class="fas fa-exclamation-circle"></i> Pilih jawaban terlebih dahulu';
+                        feedback.className = 'jawaban-feedback salah';
+                        semuaTerjawab = false;
+                    }
+                }
+                if(!semuaTerjawab) {
+                    alert('Pastikan semua soal telah dijawab!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi 6.2: Lembar Kerja (Google Sheets) - Informatika Kelas X</title>
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --informatika-primary: #3498db;
+            --informatika-secondary: #2980b9;
+            --informatika-light: #ebf5fb;
+            --informatika-dark: #21618c;
+            --informatika-semester1: #3498db;
+            --success: #27ae60;
+            --warning: #e74c3c;
+            --info: #f39c12;
+            --purple: #9b59b6;
+            --sheets: #0F9D58;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .materi-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        
+        .materi-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(52, 152, 219, 0.15);
+            border-left: 8px solid var(--informatika-semester1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .materi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .materi-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .materi-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid var(--informatika-light);
+            flex-wrap: wrap;
+        }
+        
+        .materi-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--sheets), var(--informatika-primary));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .materi-title-wrapper {
+            flex: 1;
+        }
+        
+        .materi-title-wrapper h1 {
+            color: var(--informatika-dark);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .materi-subtitle {
+            color: var(--informatika-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .materi-badge {
+            background: var(--informatika-light);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: var(--informatika-dark);
+        }
+        
+        .tujuan-card {
+            background: linear-gradient(135deg, var(--informatika-light), white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+        
+        .tujuan-card h3 {
+            color: var(--informatika-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tujuan-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.8rem;
+        }
+        
+        .tujuan-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 0.8rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .tujuan-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .tujuan-item i {
+            color: var(--success);
+        }
+        
+        .materi-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(52, 152, 219, 0.1);
+        }
+        
+        .materi-content h2 {
+            color: var(--informatika-dark);
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem 0;
+            border-bottom: 2px solid var(--informatika-light);
+            padding-bottom: 0.5rem;
+        }
+        
+        .materi-content h2:first-of-type {
+            margin-top: 0;
+        }
+        
+        .materi-content h3 {
+            color: var(--informatika-dark);
+            font-size: 1.3rem;
+            margin: 1.2rem 0 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .materi-content h3 i {
+            color: var(--informatika-primary);
+        }
+        
+        .materi-content p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        .materi-content ul, .materi-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .materi-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote-box {
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            background: var(--informatika-light);
+            border-left: 4px solid var(--informatika-primary);
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .note-box {
+            background: #fff3e0;
+            border-left: 4px solid var(--info);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--informatika-primary);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .warning-box {
+            background: #fee2e2;
+            border-left: 4px solid var(--warning);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        /* Keunggulan Grid */
+        .keunggulan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .keunggulan-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .keunggulan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .keunggulan-card.active {
+            border: 2px solid var(--sheets);
+            background: #d4edda;
+        }
+        
+        .keunggulan-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .keunggulan-title {
+            font-weight: bold;
+        }
+        
+        /* Rumus Grid */
+        .rumus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .rumus-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .rumus-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .rumus-card.active {
+            border: 2px solid var(--info);
+            background: #fff3e0;
+        }
+        
+        .rumus-nama {
+            font-weight: bold;
+            color: var(--info);
+        }
+        
+        .rumus-contoh {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 0.3rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+        
+        /* Tabel Data */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        .data-table th {
+            background: var(--sheets);
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .data-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .data-table tr:hover {
+            background: var(--informatika-light);
+        }
+        
+        /* Grafik Jenis */
+        .grafik-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .grafik-card {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .grafik-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .grafik-card.active {
+            border: 2px solid var(--purple);
+            background: #f3e5f5;
+        }
+        
+        .grafik-icon {
+            font-size: 2rem;
+        }
+        
+        /* Level Akses */
+        .akses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .akses-card {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .akses-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .akses-card.active {
+            border: 2px solid var(--success);
+            background: #d4edda;
+        }
+        
+        .refleksi-card {
+            background: linear-gradient(135deg, var(--purple), #8e44ad);
+            color: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .refleksi-card h3 {
+            color: white;
+        }
+        
+        .refleksi-card ul {
+            margin-left: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .refleksi-card li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .demo-kalkulator {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .calc-display {
+            grid-column: span 4;
+            background: #2c3e50;
+            color: white;
+            padding: 0.8rem;
+            text-align: right;
+            font-size: 1.5rem;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+        
+        .calc-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .calc-btn:hover {
+            background: var(--sheets);
+            color: white;
+        }
+        
+        .soal-section {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .soal-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .soal-item p {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        
+        .option:hover {
+            background: var(--informatika-light);
+        }
+        
+        .jawaban-feedback {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .jawaban-feedback.benar {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .jawaban-feedback.salah {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .btn-check {
+            background: var(--informatika-primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        .btn-check:hover {
+            background: var(--informatika-secondary);
+        }
+        
+        .materi-navigation {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--informatika-primary), var(--informatika-secondary));
+            color: white;
+        }
+        
+        .nav-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-btn.secondary {
+            background: white;
+            color: var(--informatika-dark);
+            border: 2px solid var(--informatika-light);
+        }
+        
+        .nav-btn.secondary:hover {
+            background: var(--informatika-light);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .materi-container { padding: 1rem; }
+            .materi-card { padding: 1.5rem; }
+            .materi-header { flex-direction: column; text-align: center; }
+            .data-table { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>INFORMATIKA - MATERI PEMBELAJARAN</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../../index-informatika.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda Informatika</a></li>
+                    <li><a href="../../aktivitas-pembelajaran/index-aktivitas-informatika.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../index-materi-informatika.html" class="nav-link active"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="../../penilaian/index-penilaian-inform.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="materi-container">
+        <div class="materi-card">
+            <!-- Header -->
+            <div class="materi-header">
+                <div class="materi-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <div class="materi-title-wrapper">
+                    <h1>Lembar Kerja (Google Sheets)</h1>
+                    <div class="materi-subtitle">
+                        <i class="fas fa-circle"></i>
+                        <span>Proyek 6: Saya Siap Jadi Kreator Digital - Pertemuan 1</span>
+                        <span class="materi-badge"><i class="fas fa-clock"></i> 4 JP</span>
+                        <span class="materi-badge"><i class="fas fa-tag"></i> TP 2.4</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tujuan Pembelajaran -->
+            <div class="tujuan-card">
+                <h3><i class="fas fa-bullseye"></i> 🎯 Tujuan Pembelajaran</h3>
+                <div class="tujuan-list">
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Memahami pengertian dan fungsi Google Sheets sebagai aplikasi lembar kerja</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Membuat dan mengelola spreadsheet di Google Sheets</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Menggunakan rumus dan fungsi dasar untuk mengolah data</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Membuat tabel, grafik, dan visualisasi data</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Berkontribusi secara daring dalam mengolah data bersama tim</div>
+                </div>
+            </div>
+
+            <!-- Konten Materi -->
+            <div class="materi-content">
+                <h2>A. Apa Itu Google Sheets?</h2>
+                <p><strong>Google Sheets</strong> adalah aplikasi spreadsheet berbasis web yang dikembangkan oleh Google. Aplikasi ini memungkinkan pengguna untuk membuat, mengedit, dan mengolah data dalam bentuk tabel, serta berkolaborasi dengan pengguna lain secara real-time.</p>
+                
+                <div class="quote-box">
+                    <i class="fas fa-quote-left"></i> <strong>Google:</strong> "Google Sheets adalah program spreadsheet online yang memungkinkan Anda membuat dan memformat lembar kerja, serta berkolaborasi dengan orang lain secara real-time."
+                </div>
+
+                <div class="info-box">
+                    <i class="fas fa-lightbulb"></i> <strong>Perbedaan Excel vs Google Sheets:</strong><br>
+                    <strong>Microsoft Excel (Offline):</strong> Install dulu, simpan di PC, rumus kompleks, Makro/VBA<br>
+                    <strong>Google Sheets (Online):</strong> Buka browser, simpan di cloud, rumus lengkap, kolaborasi real-time
+                </div>
+
+                <h2>B. Keunggulan Google Sheets</h2>
+                <p><strong>Klik pada setiap keunggulan</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="keunggulan-grid" id="keunggulanGrid">
+                    <div class="keunggulan-card" data-keunggulan="gratis">
+                        <div class="keunggulan-icon"><i class="fas fa-wallet"></i></div>
+                        <div class="keunggulan-title">Gratis</div>
+                        <div class="keunggulan-desc" style="font-size: 0.7rem;">Tidak perlu bayar lisensi</div>
+                    </div>
+                    <div class="keunggulan-card" data-keunggulan="cloud">
+                        <div class="keunggulan-icon"><i class="fas fa-cloud"></i></div>
+                        <div class="keunggulan-title">Berbasis Cloud</div>
+                        <div class="keunggulan-desc" style="font-size: 0.7rem;">Tersimpan otomatis</div>
+                    </div>
+                    <div class="keunggulan-card" data-keunggulan="kolaborasi">
+                        <div class="keunggulan-icon"><i class="fas fa-users"></i></div>
+                        <div class="keunggulan-title">Kolaborasi Real-time</div>
+                        <div class="keunggulan-desc" style="font-size: 0.7rem;">Edit bersama</div>
+                    </div>
+                    <div class="keunggulan-card" data-keunggulan="riwayat">
+                        <div class="keunggulan-icon"><i class="fas fa-history"></i></div>
+                        <div class="keunggulan-title">Riwayat Revisi</div>
+                        <div class="keunggulan-desc" style="font-size: 0.7rem;">Kembali ke versi sebelumnya</div>
+                    </div>
+                    <div class="keunggulan-card" data-keunggulan="rumus">
+                        <div class="keunggulan-icon"><i class="fas fa-calculator"></i></div>
+                        <div class="keunggulan-title">Rumus Lengkap</div>
+                        <div class="keunggulan-desc" style="font-size: 0.7rem;">SUM, AVERAGE, IF, dll</div>
+                    </div>
+                </div>
+
+                <h2>C. Struktur Dasar Google Sheets</h2>
+                <div class="code-block">
+                    A       B       C       D
+                 ┌──────┬──────┬──────┬──────┐
+                1│ No   │ Nama │ Nilai│ Grade│
+                 ├──────┼──────┼──────┼──────┤
+                2│ 1    │ Andi │ 85   │ B    │
+                 ├──────┼──────┼──────┼──────┤
+                3│ 2    │ Budi │ 92   │ A    │
+                 └──────┴──────┴──────┴──────┘
+                 ↑      ↑      ↑      ↑
+               Kolom A Kolom B Kolom C Kolom D
+                </div>
+
+                <div class="success-box">
+                    <strong>📌 Istilah Penting:</strong><br>
+                    • <strong>Cell (Sel):</strong> Pertemuan baris dan kolom, contoh: A1, B2<br>
+                    • <strong>Row (Baris):</strong> Deretan horizontal, diberi nomor 1, 2, 3<br>
+                    • <strong>Column (Kolom):</strong> Deretan vertikal, diberi huruf A, B, C<br>
+                    • <strong>Range:</strong> Kumpulan sel, contoh: A1:C3<br>
+                    • <strong>Sheet:</strong> Satu halaman spreadsheet<br>
+                    • <strong>Workbook:</strong> Kumpulan sheet dalam satu file
+                </div>
+
+                <h2>D. Rumus dan Fungsi Dasar</h2>
+                <p><strong>Klik pada setiap rumus</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="rumus-grid" id="rumusGrid">
+                    <div class="rumus-card" data-rumus="sum">
+                        <div class="rumus-nama">=SUM(range)</div>
+                        <div class="rumus-contoh">=SUM(A1:A10)</div>
+                        <div class="rumus-desc" style="font-size: 0.8rem;">Menjumlahkan data</div>
+                    </div>
+                    <div class="rumus-card" data-rumus="average">
+                        <div class="rumus-nama">=AVERAGE(range)</div>
+                        <div class="rumus-contoh">=AVERAGE(B1:B10)</div>
+                        <div class="rumus-desc" style="font-size: 0.8rem;">Rata-rata data</div>
+                    </div>
+                    <div class="rumus-card" data-rumus="count">
+                        <div class="rumus-nama">=COUNT(range)</div>
+                        <div class="rumus-contoh">=COUNT(C1:C10)</div>
+                        <div class="rumus-desc" style="font-size: 0.8rem;">Menghitung sel berisi angka</div>
+                    </div>
+                    <div class="rumus-card" data-rumus="max">
+                        <div class="rumus-nama">=MAX(range)</div>
+                        <div class="rumus-contoh">=MAX(D1:D10)</div>
+                        <div class="rumus-desc" style="font-size: 0.8rem;">Nilai tertinggi</div>
+                    </div>
+                    <div class="rumus-card" data-rumus="min">
+                        <div class="rumus-nama">=MIN(range)</div>
+                        <div class="rumus-contoh">=MIN(E1:E10)</div>
+                        <div class="rumus-desc" style="font-size: 0.8rem;">Nilai terendah</div>
+                    </div>
+                    <div class="rumus-card" data-rumus="if">
+                        <div class="rumus-nama">=IF(logika, benar, salah)</div>
+                        <div class="rumus-contoh">=IF(F1>=75,"Lulus","Tidak Lulus")</div>
+                        <div class="rumus-desc" style="font-size: 0.8rem;">Percabangan kondisi</div>
+                    </div>
+                </div>
+
+                <h2>E. Contoh Data Nilai Siswa</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>No</th><th>Nama</th><th>Tugas</th><th>UTS</th><th>UAS</th><th>Nilai Akhir</th><th>Grade</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Andi</td><td>85</td><td>80</td><td>90</td><td>85.5</td><td>B</td></tr>
+                        <tr><td>2</td><td>Budi</td><td>75</td><td>85</td><td>80</td><td>80.0</td><td>B</td></tr>
+                        <tr><td>3</td><td>Cici</td><td>90</td><td>95</td><td>85</td><td>89.5</td><td>A</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="note-box">
+                    <strong>📌 Rumus Nilai Akhir:</strong> = (Tugas*0.3) + (UTS*0.3) + (UAS*0.4)<br>
+                    <strong>📌 Rumus Grade:</strong> =IF(F2>=86,"A", IF(F2>=71,"B", IF(F2>=56,"C", IF(F2>=41,"D","E"))))
+                </div>
+
+                <h2>F. Jenis Grafik di Google Sheets</h2>
+                <p><strong>Klik pada setiap jenis grafik</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="grafik-grid" id="grafikGrid">
+                    <div class="grafik-card" data-grafik="column">
+                        <div class="grafik-icon"><i class="fas fa-chart-bar"></i></div>
+                        <div class="grafik-title">Column Chart</div>
+                        <div class="grafik-desc" style="font-size: 0.7rem;">Membandingkan data antar kategori</div>
+                    </div>
+                    <div class="grafik-card" data-grafik="line">
+                        <div class="grafik-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="grafik-title">Line Chart</div>
+                        <div class="grafik-desc" style="font-size: 0.7rem;">Menunjukkan tren dari waktu ke waktu</div>
+                    </div>
+                    <div class="grafik-card" data-grafik="pie">
+                        <div class="grafik-icon"><i class="fas fa-chart-pie"></i></div>
+                        <div class="grafik-title">Pie Chart</div>
+                        <div class="grafik-desc" style="font-size: 0.7rem;">Proporsi dari total</div>
+                    </div>
+                    <div class="grafik-card" data-grafik="bar">
+                        <div class="grafik-icon"><i class="fas fa-chart-simple"></i></div>
+                        <div class="grafik-title">Bar Chart</div>
+                        <div class="grafik-desc" style="font-size: 0.7rem;">Sama dengan column, horizontal</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <i class="fas fa-chart-simple"></i> <strong>Cara Membuat Grafik:</strong><br>
+                    1. Blok data yang ingin dibuat grafik (termasuk header)<br>
+                    2. Klik menu Insert → Chart<br>
+                    3. Pilih jenis grafik (Column, Line, Pie, Bar)<br>
+                    4. Atur judul, label sumbu, dan warna
+                </div>
+
+                <h2>G. Fitur Kolaborasi</h2>
+                <div class="note-box">
+                    <i class="fas fa-share-alt"></i> <strong>Cara Membagikan Spreadsheet:</strong><br>
+                    1. Klik tombol <strong>Share</strong> di pojok kanan atas<br>
+                    2. Masukkan email orang yang ingin di-share<br>
+                    3. Pilih level akses: Viewer, Commenter, Editor<br>
+                    4. Klik Send
+                </div>
+
+                <div class="akses-grid" id="aksesGrid">
+                    <div class="akses-card" data-akses="viewer">
+                        <div class="akses-icon"><i class="fas fa-eye"></i></div>
+                        <div class="akses-title">Viewer</div>
+                        <div class="akses-desc" style="font-size: 0.7rem;">Hanya bisa melihat</div>
+                    </div>
+                    <div class="akses-card" data-akses="commenter">
+                        <div class="akses-icon"><i class="fas fa-comment"></i></div>
+                        <div class="akses-title">Commenter</div>
+                        <div class="akses-desc" style="font-size: 0.7rem;">Lihat + komentar</div>
+                    </div>
+                    <div class="akses-card" data-akses="editor">
+                        <div class="akses-icon"><i class="fas fa-edit"></i></div>
+                        <div class="akses-title">Editor</div>
+                        <div class="akses-desc" style="font-size: 0.7rem;">Lihat + komentar + edit</div>
+                    </div>
+                </div>
+
+                <h2>H. Demo Kalkulator Sederhana</h2>
+                <div class="demo-kalkulator">
+                    <h3><i class="fas fa-calculator"></i> Demo Kalkulator (Simulasi Rumus Sheets)</h3>
+                    <p>Di Google Sheets, kita bisa pakai rumus seperti =A1+B1 untuk perhitungan otomatis!</p>
+                    <div class="calculator">
+                        <div class="calc-display" id="calcDisplay">0</div>
+                        <div class="calc-btn" onclick="inputNumber('7')">7</div>
+                        <div class="calc-btn" onclick="inputNumber('8')">8</div>
+                        <div class="calc-btn" onclick="inputNumber('9')">9</div>
+                        <div class="calc-btn" onclick="operator('+')">+</div>
+                        <div class="calc-btn" onclick="inputNumber('4')">4</div>
+                        <div class="calc-btn" onclick="inputNumber('5')">5</div>
+                        <div class="calc-btn" onclick="inputNumber('6')">6</div>
+                        <div class="calc-btn" onclick="operator('-')">-</div>
+                        <div class="calc-btn" onclick="inputNumber('1')">1</div>
+                        <div class="calc-btn" onclick="inputNumber('2')">2</div>
+                        <div class="calc-btn" onclick="inputNumber('3')">3</div>
+                        <div class="calc-btn" onclick="operator('*')">×</div>
+                        <div class="calc-btn" onclick="inputNumber('0')">0</div>
+                        <div class="calc-btn" onclick="inputNumber('.')">.</div>
+                        <div class="calc-btn" onclick="calculate()">=</div>
+                        <div class="calc-btn" onclick="operator('/')">÷</div>
+                        <div class="calc-btn" colspan="2" onclick="clearCalc()">C</div>
+                    </div>
+                </div>
+
+                <h2>I. Rangkuman</h2>
+                <ul>
+                    <li><strong>Google Sheets</strong> adalah aplikasi spreadsheet online gratis dari Google.</li>
+                    <li><strong>Struktur:</strong> Cell (pertemuan baris dan kolom), Row (baris), Column (kolom), Range (kumpulan sel).</li>
+                    <li><strong>Rumus dasar:</strong> SUM, AVERAGE, COUNT, MAX, MIN, IF.</li>
+                    <li><strong>Operator aritmatika:</strong> +, -, *, /, ^.</li>
+                    <li><strong>Grafik:</strong> Column Chart, Line Chart, Pie Chart, Bar Chart.</li>
+                    <li><strong>Kolaborasi:</strong> Share dengan level akses Viewer, Commenter, Editor.</li>
+                    <li><strong>Proteksi:</strong> Bisa memproteksi sel/range agar tidak diedit sembarangan.</li>
+                </ul>
+
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Ingat!</strong> Google Sheets menyimpan data secara otomatis. Pastikan koneksi internet stabil saat bekerja!
+                </div>
+
+                <!-- Refleksi Diri -->
+                <div class="refleksi-card">
+                    <h3><i class="fas fa-smile-wink"></i> 🎯 Refleksi Diri</h3>
+                    <p>Setelah mempelajari materi ini, renungkan pertanyaan-pertanyaan berikut:</p>
+                    <ul>
+                        <li>Apakah kamu pernah menggunakan Google Sheets sebelumnya?</li>
+                        <li>Rumus apa yang paling berguna menurutmu?</li>
+                        <li>Data apa yang ingin kamu olah dengan Google Sheets?</li>
+                        <li>Apa perbedaan Google Sheets dengan Microsoft Excel?</li>
+                        <li>Bagaimana fitur kolaborasi bisa membantu pekerjaan kelompok?</li>
+                    </ul>
+                </div>
+
+                <!-- Latihan Soal -->
+                <div class="soal-section">
+                    <h3><i class="fas fa-question-circle"></i> ❓ Latihan Soal</h3>
+                    
+                    <div class="soal-item">
+                        <p><strong>1.</strong> Google Sheets adalah aplikasi...</p>
+                        <div class="option"><input type="radio" name="q1" value="a"> a. Pengolah kata</div>
+                        <div class="option"><input type="radio" name="q1" value="b"> b. Spreadsheet online</div>
+                        <div class="option"><input type="radio" name="q1" value="c"> c. Desain grafis</div>
+                        <div class="option"><input type="radio" name="q1" value="d"> d. Edit video</div>
+                        <div class="jawaban-feedback" id="feedback1"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>2.</strong> Rumus untuk menjumlahkan data dari sel A1 sampai A10 adalah...</p>
+                        <div class="option"><input type="radio" name="q2" value="a"> a. =AVERAGE(A1:A10)</div>
+                        <div class="option"><input type="radio" name="q2" value="b"> b. =COUNT(A1:A10)</div>
+                        <div class="option"><input type="radio" name="q2" value="c"> c. =SUM(A1:A10)</div>
+                        <div class="option"><input type="radio" name="q2" value="d"> d. =MAX(A1:A10)</div>
+                        <div class="jawaban-feedback" id="feedback2"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>3.</strong> Fungsi IF di Google Sheets digunakan untuk...</p>
+                        <div class="option"><input type="radio" name="q3" value="a"> a. Menjumlahkan data</div>
+                        <div class="option"><input type="radio" name="q3" value="b"> b. Rata-rata data</div>
+                        <div class="option"><input type="radio" name="q3" value="c"> c. Percabangan kondisi</div>
+                        <div class="option"><input type="radio" name="q3" value="d"> d. Mencari nilai tertinggi</div>
+                        <div class="jawaban-feedback" id="feedback3"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>4.</strong> Jenis grafik yang cocok untuk menunjukkan proporsi dari total adalah...</p>
+                        <div class="option"><input type="radio" name="q4" value="a"> a. Line Chart</div>
+                        <div class="option"><input type="radio" name="q4" value="b"> b. Column Chart</div>
+                        <div class="option"><input type="radio" name="q4" value="c"> c. Bar Chart</div>
+                        <div class="option"><input type="radio" name="q4" value="d"> d. Pie Chart</div>
+                        <div class="jawaban-feedback" id="feedback4"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>5.</strong> Level akses yang hanya bisa melihat spreadsheet tanpa bisa mengedit adalah...</p>
+                        <div class="option"><input type="radio" name="q5" value="a"> a. Editor</div>
+                        <div class="option"><input type="radio" name="q5" value="b"> b. Commenter</div>
+                        <div class="option"><input type="radio" name="q5" value="c"> c. Viewer</div>
+                        <div class="option"><input type="radio" name="q5" value="d"> d. Owner</div>
+                        <div class="jawaban-feedback" id="feedback5"></div>
+                    </div>
+                    
+                    <button id="checkAnswers" class="btn-check"><i class="fas fa-check"></i> Cek Jawaban</button>
+                </div>
+
+                <div class="quote-box" style="margin-top: 1.5rem; text-align: center;">
+                    <i class="fas fa-table"></i> Selamat Belajar Google Sheets! 📊
+                </div>
+            </div>
+
+            <!-- Navigasi -->
+            <div class="materi-navigation">
+                <a href="materi6-1.html" class="nav-btn secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Materi 6.1
+                </a>
+                <a href="materi6-3.html" class="nav-btn primary">
+                    Lanjut ke Materi 6.3: Presentasi Digital (Google Slides)
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="../../../script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Keunggulan Interaktif
+            const keunggulanCards = document.querySelectorAll('.keunggulan-card');
+            keunggulanCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    keunggulanCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Rumus Interaktif
+            const rumusCards = document.querySelectorAll('.rumus-card');
+            rumusCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    rumusCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Grafik Interaktif
+            const grafikCards = document.querySelectorAll('.grafik-card');
+            grafikCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    grafikCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Akses Interaktif
+            const aksesCards = document.querySelectorAll('.akses-card');
+            aksesCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    aksesCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Latihan Soal
+            const jawabanBenar = {
+                q1: 'b',
+                q2: 'c',
+                q3: 'c',
+                q4: 'd',
+                q5: 'c'
+            };
+            
+            document.getElementById('checkAnswers').addEventListener('click', function() {
+                let semuaTerjawab = true;
+                for(let i = 1; i <= 5; i++) {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    const feedback = document.getElementById(`feedback${i}`);
+                    if(selected) {
+                        if(selected.value === jawabanBenar[`q${i}`]) {
+                            feedback.innerHTML = '<i class="fas fa-check-circle"></i> Jawaban benar!';
+                            feedback.className = 'jawaban-feedback benar';
+                        } else {
+                            feedback.innerHTML = '<i class="fas fa-times-circle"></i> Jawaban salah. Coba lagi!';
+                            feedback.className = 'jawaban-feedback salah';
+                        }
+                    } else {
+                        feedback.innerHTML = '<i class="fas fa-exclamation-circle"></i> Pilih jawaban terlebih dahulu';
+                        feedback.className = 'jawaban-feedback salah';
+                        semuaTerjawab = false;
+                    }
+                }
+                if(!semuaTerjawab) {
+                    alert('Pastikan semua soal telah dijawab!');
+                }
+            });
+        });
+        
+        // Kalkulator Demo
+        let display = '0';
+        let firstNumber = null;
+        let secondNumber = null;
+        let currentOperator = null;
+        let shouldResetDisplay = false;
+
+        function updateDisplay() {
+            document.getElementById('calcDisplay').innerText = display;
+        }
+
+        function inputNumber(num) {
+            if (display === '0' || shouldResetDisplay) {
+                display = num;
+                shouldResetDisplay = false;
+            } else {
+                display += num;
+            }
+            updateDisplay();
+        }
+
+        function operator(op) {
+            if (currentOperator !== null) {
+                calculate();
+            }
+            firstNumber = parseFloat(display);
+            currentOperator = op;
+            shouldResetDisplay = true;
+        }
+
+        function calculate() {
+            if (currentOperator === null || shouldResetDisplay) return;
+            
+            secondNumber = parseFloat(display);
+            let result = 0;
+            
+            switch(currentOperator) {
+                case '+':
+                    result = firstNumber + secondNumber;
+                    break;
+                case '-':
+                    result = firstNumber - secondNumber;
+                    break;
+                case '*':
+                    result = firstNumber * secondNumber;
+                    break;
+                case '/':
+                    result = firstNumber / secondNumber;
+                    break;
+            }
+            
+            display = result.toString();
+            firstNumber = result;
+            currentOperator = null;
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function clearCalc() {
+            display = '0';
+            firstNumber = null;
+            secondNumber = null;
+            currentOperator = null;
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>

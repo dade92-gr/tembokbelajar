@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi 4.2: Arsitektur Von Neumann - Informatika Kelas X</title>
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --informatika-primary: #3498db;
+            --informatika-secondary: #2980b9;
+            --informatika-light: #ebf5fb;
+            --informatika-dark: #21618c;
+            --informatika-semester1: #3498db;
+            --success: #27ae60;
+            --warning: #e74c3c;
+            --info: #f39c12;
+            --purple: #9b59b6;
+            --cpu-color: #e74c3c;
+            --memory-color: #3498db;
+            --input-color: #27ae60;
+            --output-color: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .materi-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        
+        .materi-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(52, 152, 219, 0.15);
+            border-left: 8px solid var(--informatika-semester1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .materi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .materi-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .materi-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid var(--informatika-light);
+            flex-wrap: wrap;
+        }
+        
+        .materi-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--cpu-color), var(--memory-color));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .materi-title-wrapper {
+            flex: 1;
+        }
+        
+        .materi-title-wrapper h1 {
+            color: var(--informatika-dark);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .materi-subtitle {
+            color: var(--informatika-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .materi-badge {
+            background: var(--informatika-light);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: var(--informatika-dark);
+        }
+        
+        .tujuan-card {
+            background: linear-gradient(135deg, var(--informatika-light), white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+        
+        .tujuan-card h3 {
+            color: var(--informatika-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tujuan-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.8rem;
+        }
+        
+        .tujuan-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 0.8rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .tujuan-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .tujuan-item i {
+            color: var(--success);
+        }
+        
+        .materi-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(52, 152, 219, 0.1);
+        }
+        
+        .materi-content h2 {
+            color: var(--informatika-dark);
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem 0;
+            border-bottom: 2px solid var(--informatika-light);
+            padding-bottom: 0.5rem;
+        }
+        
+        .materi-content h2:first-of-type {
+            margin-top: 0;
+        }
+        
+        .materi-content h3 {
+            color: var(--informatika-dark);
+            font-size: 1.3rem;
+            margin: 1.2rem 0 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .materi-content h3 i {
+            color: var(--informatika-primary);
+        }
+        
+        .materi-content p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        .materi-content ul, .materi-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .materi-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote-box {
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            background: var(--informatika-light);
+            border-left: 4px solid var(--informatika-primary);
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .note-box {
+            background: #fff3e0;
+            border-left: 4px solid var(--info);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--informatika-primary);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .warning-box {
+            background: #fee2e2;
+            border-left: 4px solid var(--warning);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        /* Diagram Arsitektur */
+        .architecture-diagram {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .arch-components {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .arch-component {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+            min-width: 150px;
+        }
+        
+        .arch-component:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .arch-component.active {
+            border: 2px solid;
+        }
+        
+        .arch-component.cpu.active { border-color: var(--cpu-color); background: #fee2e2; }
+        .arch-component.memory.active { border-color: var(--memory-color); background: #ebf5fb; }
+        .arch-component.input.active { border-color: var(--input-color); background: #d4edda; }
+        .arch-component.output.active { border-color: var(--output-color); background: #fff3e0; }
+        
+        .arch-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .arch-title {
+            font-weight: bold;
+        }
+        
+        .arch-desc {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* CPU Components Grid */
+        .cpu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .cpu-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .cpu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .cpu-card.active {
+            border: 2px solid var(--cpu-color);
+            background: #fee2e2;
+        }
+        
+        .cpu-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .cpu-title {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        
+        .cpu-desc {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* Siklus Instruksi */
+        .cycle-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .cycle-step {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+            min-width: 120px;
+        }
+        
+        .cycle-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .cycle-step.active {
+            border: 2px solid var(--success);
+            background: #d4edda;
+        }
+        
+        .cycle-number {
+            width: 35px;
+            height: 35px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: bold;
+        }
+        
+        .cycle-title {
+            font-weight: bold;
+        }
+        
+        .cycle-desc {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.3rem;
+        }
+        
+        .cycle-arrow {
+            font-size: 1.5rem;
+            color: var(--informatika-primary);
+        }
+        
+        /* Tabel */
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        .custom-table th {
+            background: var(--informatika-primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .custom-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .custom-table tr:hover {
+            background: var(--informatika-light);
+        }
+        
+        /* Hierarchy Memory */
+        .memory-hierarchy {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .memory-level {
+            width: 100%;
+            max-width: 500px;
+            padding: 0.8rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .memory-level:hover {
+            transform: translateX(10px);
+        }
+        
+        .memory-level.register { background: #fee2e2; border-left: 4px solid #e74c3c; }
+        .memory-level.cache { background: #fff3e0; border-left: 4px solid #f39c12; }
+        .memory-level.ram { background: #ebf5fb; border-left: 4px solid #3498db; }
+        .memory-level.storage { background: #d4edda; border-left: 4px solid #27ae60; }
+        
+        .memory-level.active {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .refleksi-card {
+            background: linear-gradient(135deg, var(--purple), #8e44ad);
+            color: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .refleksi-card h3 {
+            color: white;
+        }
+        
+        .refleksi-card ul {
+            margin-left: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .refleksi-card li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .soal-section {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .soal-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .soal-item p {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        
+        .option:hover {
+            background: var(--informatika-light);
+        }
+        
+        .jawaban-feedback {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .jawaban-feedback.benar {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .jawaban-feedback.salah {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .btn-check {
+            background: var(--informatika-primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        .btn-check:hover {
+            background: var(--informatika-secondary);
+        }
+        
+        .materi-navigation {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--informatika-primary), var(--informatika-secondary));
+            color: white;
+        }
+        
+        .nav-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-btn.secondary {
+            background: white;
+            color: var(--informatika-dark);
+            border: 2px solid var(--informatika-light);
+        }
+        
+        .nav-btn.secondary:hover {
+            background: var(--informatika-light);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .materi-container { padding: 1rem; }
+            .materi-card { padding: 1.5rem; }
+            .materi-header { flex-direction: column; text-align: center; }
+            .cycle-flow { flex-direction: column; }
+            .cycle-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>INFORMATIKA - MATERI PEMBELAJARAN</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../../index-informatika.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda Informatika</a></li>
+                    <li><a href="../../aktivitas-pembelajaran/index-aktivitas-informatika.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../index-materi-informatika.html" class="nav-link active"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="../../penilaian/index-penilaian-inform.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="materi-container">
+        <div class="materi-card">
+            <!-- Header -->
+            <div class="materi-header">
+                <div class="materi-icon">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div class="materi-title-wrapper">
+                    <h1>Arsitektur Von Neumann</h1>
+                    <div class="materi-subtitle">
+                        <i class="fas fa-circle"></i>
+                        <span>Proyek 4: Rancang Mesin Pintar Mini - Pertemuan 2</span>
+                        <span class="materi-badge"><i class="fas fa-clock"></i> 4 JP</span>
+                        <span class="materi-badge"><i class="fas fa-tag"></i> TP 1.6</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tujuan Pembelajaran -->
+            <div class="tujuan-card">
+                <h3><i class="fas fa-bullseye"></i> 🎯 Tujuan Pembelajaran</h3>
+                <div class="tujuan-list">
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Memahami sejarah dan konsep dasar arsitektur Von Neumann</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Mengenal komponen-komponen utama arsitektur Von Neumann</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Menjelaskan fungsi CPU, memori, input, dan output dalam sistem komputer</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Memahami bagaimana data mengalir dalam arsitektur Von Neumann</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Menghubungkan arsitektur Von Neumann dengan model IPO</div>
+                </div>
+            </div>
+
+            <!-- Konten Materi -->
+            <div class="materi-content">
+                <h2>A. Sejarah Arsitektur Von Neumann</h2>
+                <p><strong>Arsitektur Von Neumann</strong> adalah desain arsitektur komputer yang pertama kali diperkenalkan oleh matematikawan dan fisikawan <strong>John von Neumann</strong> pada tahun 1945. Konsep ini menjadi dasar dari hampir semua komputer modern hingga saat ini.</p>
+                
+                <div class="quote-box">
+                    <i class="fas fa-quote-left"></i> <strong>John von Neumann (1903-1957):</strong> Matematikawan dan fisikawan Hungaria-Amerika yang pada tahun 1945 menulis laporan "First Draft of a Report on the EDVAC" yang memperkenalkan konsep komputer dengan program tersimpan.
+                </div>
+                
+                <div class="info-box">
+                    <i class="fas fa-history"></i> <strong>Perkembangan Komputer:</strong><br>
+                    1945: John von Neumann menulis konsep → 1950-an: Komputer pertama berbasis Von Neumann → 1960-70an: Perkembangan mikroprosesor → 1980-90an: Komputer pribadi (PC) → 2000-sekarang: Smartphone, tablet, semua berbasis Von Neumann
+                </div>
+
+                <h2>B. Konsep Dasar Arsitektur Von Neumann</h2>
+                <p>Konsep utama arsitektur Von Neumann adalah <strong>stored-program concept (konsep program tersimpan)</strong>, di mana instruksi program dan data disimpan dalam memori yang sama.</p>
+                
+                <div class="success-box">
+                    <strong>Prinsip Utama:</strong><br>
+                    • Program dan data disimpan dalam memori yang sama<br>
+                    • Instruksi dieksekusi secara berurutan (kecuali ada lompatan)<br>
+                    • Memori bersifat linear dan dialamati berdasarkan alamat
+                </div>
+
+                <h2>C. Komponen Utama Arsitektur Von Neumann</h2>
+                <p><strong>Klik pada setiap komponen</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="architecture-diagram">
+                    <div class="arch-components" id="archComponents">
+                        <div class="arch-component cpu" data-arch="cpu">
+                            <div class="arch-icon"><i class="fas fa-microchip"></i></div>
+                            <div class="arch-title">CPU</div>
+                            <div class="arch-desc">Central Processing Unit - Otak komputer yang menjalankan instruksi</div>
+                        </div>
+                        <div class="arch-component memory" data-arch="memory">
+                            <div class="arch-icon"><i class="fas fa-database"></i></div>
+                            <div class="arch-title">MEMORI</div>
+                            <div class="arch-desc">Menyimpan data dan program (RAM/ROM)</div>
+                        </div>
+                        <div class="arch-component input" data-arch="input">
+                            <div class="arch-icon"><i class="fas fa-keyboard"></i></div>
+                            <div class="arch-title">INPUT DEVICE</div>
+                            <div class="arch-desc">Menerima data dari luar (keyboard, mouse, scanner)</div>
+                        </div>
+                        <div class="arch-component output" data-arch="output">
+                            <div class="arch-icon"><i class="fas fa-desktop"></i></div>
+                            <div class="arch-title">OUTPUT DEVICE</div>
+                            <div class="arch-desc">Menampilkan/mengeluarkan hasil (monitor, printer, speaker)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>D. CPU (Central Processing Unit)</h2>
+                <p>CPU terdiri dari tiga bagian utama. <strong>Klik pada setiap bagian</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="cpu-grid" id="cpuGrid">
+                    <div class="cpu-card" data-cpu="alu">
+                        <div class="cpu-icon"><i class="fas fa-calculator"></i></div>
+                        <div class="cpu-title">ALU (Arithmetic Logic Unit)</div>
+                        <div class="cpu-desc">Bertugas melakukan operasi aritmatika (+, -, ×, ÷) dan operasi logika (AND, OR, NOT, perbandingan >, <, =).</div>
+                    </div>
+                    <div class="cpu-card" data-cpu="cu">
+                        <div class="cpu-icon"><i class="fas fa-sliders-h"></i></div>
+                        <div class="cpu-title">CU (Control Unit)</div>
+                        <div class="cpu-desc">Mengambil instruksi dari memori, menerjemahkan, mengontrol aliran data, dan mengatur timing/sinkronisasi.</div>
+                    </div>
+                    <div class="cpu-card" data-cpu="register">
+                        <div class="cpu-icon"><i class="fas fa-boxes"></i></div>
+                        <div class="cpu-title">Register</div>
+                        <div class="cpu-desc">Memori sementara dalam CPU: Program Counter (PC), Instruction Register (IR), Memory Address Register (MAR), Memory Data Register (MDR), Accumulator (ACC).</div>
+                    </div>
+                </div>
+
+                <h2>E. Siklus Instruksi (Instruction Cycle)</h2>
+                <p><strong>Klik pada setiap tahap</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="cycle-flow" id="cycleFlow">
+                    <div class="cycle-step" data-cycle="fetch">
+                        <div class="cycle-number">1</div>
+                        <div class="cycle-title">FETCH</div>
+                        <div class="cycle-desc">Ambil instruksi dari memori</div>
+                    </div>
+                    <div class="cycle-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="cycle-step" data-cycle="decode">
+                        <div class="cycle-number">2</div>
+                        <div class="cycle-title">DECODE</div>
+                        <div class="cycle-desc">Terjemahkan instruksi</div>
+                    </div>
+                    <div class="cycle-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="cycle-step" data-cycle="execute">
+                        <div class="cycle-number">3</div>
+                        <div class="cycle-title">EXECUTE</div>
+                        <div class="cycle-desc">Jalankan instruksi</div>
+                    </div>
+                    <div class="cycle-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="cycle-step" data-cycle="store">
+                        <div class="cycle-number">4</div>
+                        <div class="cycle-title">STORE</div>
+                        <div class="cycle-desc">Simpan hasil</div>
+                    </div>
+                </div>
+
+                <h2>F. Hierarki Memori</h2>
+                <div class="memory-hierarchy" id="memoryHierarchy">
+                    <div class="memory-level register" data-memory="register">
+                        <strong>📝 REGISTER</strong> - Paling cepat, kapasitas kecil (dalam CPU)
+                    </div>
+                    <div class="memory-level cache" data-memory="cache">
+                        <strong>⚡ CACHE</strong> - Cepat, kapasitas sedang (L1, L2, L3 Cache)
+                    </div>
+                    <div class="memory-level ram" data-memory="ram">
+                        <strong>💾 RAM</strong> - Sedang, kapasitas besar (Random Access Memory)
+                    </div>
+                    <div class="memory-level storage" data-memory="storage">
+                        <strong>💿 STORAGE</strong> - Lambat, kapasitas sangat besar (HDD/SSD)
+                    </div>
+                </div>
+
+                <h2>G. Hubungan Arsitektur Von Neumann dengan Model IPO</h2>
+                <div class="success-box">
+                    <strong>📌 Pemetaan IPO ke Arsitektur Von Neumann:</strong><br>
+                    • <strong>INPUT</strong> → Input Device (keyboard, mouse, scanner) + Memori<br>
+                    • <strong>PROCESS</strong> → CPU (ALU, CU, Register) + Memori<br>
+                    • <strong>OUTPUT</strong> → Output Device (monitor, printer, speaker) + Memori
+                </div>
+
+                <div class="info-box">
+                    <i class="fas fa-chart-line"></i> <strong>Contoh Aliran Data (Menghitung Luas Persegi Panjang):</strong><br>
+                    1. <strong>Input Device:</strong> User mengetik panjang=10, lebar=5<br>
+                    2. <strong>Memori:</strong> Angka 10 dan 5 disimpan<br>
+                    3. <strong>CPU (Fetch):</strong> Mengambil instruksi perkalian<br>
+                    4. <strong>CPU (Decode):</strong> Memahami instruksi perkalian<br>
+                    5. <strong>CPU (Execute):</strong> ALU menghitung 10 × 5 = 50<br>
+                    6. <strong>Memori:</strong> Hasil 50 disimpan<br>
+                    7. <strong>Output Device:</strong> Monitor menampilkan angka 50
+                </div>
+
+                <h2>H. Kelemahan dan Perkembangan</h2>
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Von Neumann Bottleneck:</strong><br>
+                    Kecepatan transfer data antara CPU dan memori menjadi penghambat karena instruksi dan data dalam bus yang sama.
+                </div>
+                
+                <div class="success-box">
+                    <strong>✅ Solusi Modern:</strong><br>
+                    • <strong>Arsitektur Harvard</strong> - Memisahkan bus instruksi dan data<br>
+                    • <strong>Cache memory</strong> - Memori cepat di dalam CPU<br>
+                    • <strong>Pipeline</strong> - Eksekusi instruksi paralel
+                </div>
+
+                <h2>I. Rangkuman</h2>
+                <ul>
+                    <li><strong>Arsitektur Von Neumann</strong> adalah desain dasar komputer modern yang diperkenalkan John von Neumann pada 1945.</li>
+                    <li><strong>Konsep utama:</strong> program dan data disimpan dalam memori yang sama (stored-program concept).</li>
+                    <li><strong>4 komponen utama:</strong> CPU, Memori, Input Device, Output Device.</li>
+                    <li><strong>CPU terdiri dari:</strong> ALU (operasi aritmatika/logika), CU (kontrol), dan Register (memori sementara).</li>
+                    <li><strong>Siklus instruksi:</strong> Fetch → Decode → Execute → Store.</li>
+                    <li><strong>Memori berjenjang:</strong> Register → Cache → RAM → Storage.</li>
+                    <li><strong>Hubungan dengan IPO:</strong> Input device (input), CPU & memori (proses), output device (output).</li>
+                    <li><strong>Kelemahan:</strong> Von Neumann bottleneck (lambat transfer CPU-memori).</li>
+                </ul>
+
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Ingat!</strong> Arsitektur Von Neumann adalah fondasi dari semua komputer modern. Memahami konsep ini akan membantumu memahami cara kerja komputer!
+                </div>
+
+                <!-- Refleksi Diri -->
+                <div class="refleksi-card">
+                    <h3><i class="fas fa-smile-wink"></i> 🎯 Refleksi Diri</h3>
+                    <p>Setelah mempelajari materi ini, renungkan pertanyaan-pertanyaan berikut:</p>
+                    <ul>
+                        <li>Apakah kamu sudah memahami 4 komponen utama arsitektur Von Neumann?</li>
+                        <li>Apa fungsi masing-masing bagian dalam CPU (ALU, CU, Register)?</li>
+                        <li>Bagaimana aliran data dari input hingga output dalam arsitektur Von Neumann?</li>
+                        <li>Apa hubungan arsitektur Von Neumann dengan model IPO?</li>
+                        <li>Mengapa arsitektur Von Neumann masih digunakan sampai sekarang?</li>
+                    </ul>
+                </div>
+
+                <!-- Latihan Soal -->
+                <div class="soal-section">
+                    <h3><i class="fas fa-question-circle"></i> ❓ Latihan Soal</h3>
+                    
+                    <div class="soal-item">
+                        <p><strong>1.</strong> Arsitektur Von Neumann pertama kali diperkenalkan oleh...</p>
+                        <div class="option"><input type="radio" name="q1" value="a"> a. Alan Turing</div>
+                        <div class="option"><input type="radio" name="q1" value="b"> b. John von Neumann</div>
+                        <div class="option"><input type="radio" name="q1" value="c"> c. Charles Babbage</div>
+                        <div class="option"><input type="radio" name="q1" value="d"> d. Bill Gates</div>
+                        <div class="jawaban-feedback" id="feedback1"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>2.</strong> Konsep utama arsitektur Von Neumann adalah...</p>
+                        <div class="option"><input type="radio" name="q2" value="a"> a. Program dan data disimpan dalam memori terpisah</div>
+                        <div class="option"><input type="radio" name="q2" value="b"> b. Program dan data disimpan dalam memori yang sama</div>
+                        <div class="option"><input type="radio" name="q2" value="c"> c. Tidak menggunakan memori</div>
+                        <div class="option"><input type="radio" name="q2" value="d"> d. Hanya data yang disimpan di memori</div>
+                        <div class="jawaban-feedback" id="feedback2"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>3.</strong> Bagian CPU yang bertugas melakukan operasi aritmatika dan logika adalah...</p>
+                        <div class="option"><input type="radio" name="q3" value="a"> a. Control Unit (CU)</div>
+                        <div class="option"><input type="radio" name="q3" value="b"> b. Arithmetic Logic Unit (ALU)</div>
+                        <div class="option"><input type="radio" name="q3" value="c"> c. Register</div>
+                        <div class="option"><input type="radio" name="q3" value="d"> d. Cache Memory</div>
+                        <div class="jawaban-feedback" id="feedback3"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>4.</strong> Urutan siklus instruksi yang benar adalah...</p>
+                        <div class="option"><input type="radio" name="q4" value="a"> a. Execute → Fetch → Decode → Store</div>
+                        <div class="option"><input type="radio" name="q4" value="b"> b. Store → Execute → Decode → Fetch</div>
+                        <div class="option"><input type="radio" name="q4" value="c"> c. Fetch → Decode → Execute → Store</div>
+                        <div class="option"><input type="radio" name="q4" value="d"> d. Decode → Fetch → Store → Execute</div>
+                        <div class="jawaban-feedback" id="feedback4"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>5.</strong> Dalam arsitektur Von Neumann, komponen yang berfungsi sebagai output device adalah...</p>
+                        <div class="option"><input type="radio" name="q5" value="a"> a. Keyboard</div>
+                        <div class="option"><input type="radio" name="q5" value="b"> b. Mouse</div>
+                        <div class="option"><input type="radio" name="q5" value="c"> c. Monitor</div>
+                        <div class="option"><input type="radio" name="q5" value="d"> d. Scanner</div>
+                        <div class="jawaban-feedback" id="feedback5"></div>
+                    </div>
+                    
+                    <button id="checkAnswers" class="btn-check"><i class="fas fa-check"></i> Cek Jawaban</button>
+                </div>
+
+                <div class="quote-box" style="margin-top: 1.5rem; text-align: center;">
+                    <i class="fas fa-microchip"></i> Selamat Belajar Arsitektur Komputer! 🖥️
+                </div>
+            </div>
+
+            <!-- Navigasi -->
+            <div class="materi-navigation">
+                <a href="materi4-1.html" class="nav-btn secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Materi 4.1
+                </a>
+                <a href="materi4-3.html" class="nav-btn primary">
+                    Lanjut ke Materi 4.3: Sistem Operasi
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="../../../script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Komponen Arsitektur Interaktif
+            const archComponents = document.querySelectorAll('.arch-component');
+            archComponents.forEach(comp => {
+                comp.addEventListener('click', function() {
+                    archComponents.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // CPU Components Interaktif
+            const cpuCards = document.querySelectorAll('.cpu-card');
+            cpuCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    cpuCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Siklus Instruksi Interaktif
+            const cycleSteps = document.querySelectorAll('.cycle-step');
+            cycleSteps.forEach(step => {
+                step.addEventListener('click', function() {
+                    cycleSteps.forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Memory Hierarchy Interaktif
+            const memoryLevels = document.querySelectorAll('.memory-level');
+            memoryLevels.forEach(level => {
+                level.addEventListener('click', function() {
+                    memoryLevels.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Latihan Soal
+            const jawabanBenar = {
+                q1: 'b',
+                q2: 'b',
+                q3: 'b',
+                q4: 'c',
+                q5: 'c'
+            };
+            
+            document.getElementById('checkAnswers').addEventListener('click', function() {
+                let semuaTerjawab = true;
+                for(let i = 1; i <= 5; i++) {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    const feedback = document.getElementById(`feedback${i}`);
+                    if(selected) {
+                        if(selected.value === jawabanBenar[`q${i}`]) {
+                            feedback.innerHTML = '<i class="fas fa-check-circle"></i> Jawaban benar!';
+                            feedback.className = 'jawaban-feedback benar';
+                        } else {
+                            feedback.innerHTML = '<i class="fas fa-times-circle"></i> Jawaban salah. Coba lagi!';
+                            feedback.className = 'jawaban-feedback salah';
+                        }
+                    } else {
+                        feedback.innerHTML = '<i class="fas fa-exclamation-circle"></i> Pilih jawaban terlebih dahulu';
+                        feedback.className = 'jawaban-feedback salah';
+                        semuaTerjawab = false;
+                    }
+                }
+                if(!semuaTerjawab) {
+                    alert('Pastikan semua soal telah dijawab!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

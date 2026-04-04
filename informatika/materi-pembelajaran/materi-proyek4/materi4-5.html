@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi 4.5: Implementasi HTML untuk Mesin Sederhana - Informatika Kelas X</title>
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --informatika-primary: #3498db;
+            --informatika-secondary: #2980b9;
+            --informatika-light: #ebf5fb;
+            --informatika-dark: #21618c;
+            --informatika-semester1: #3498db;
+            --success: #27ae60;
+            --warning: #e74c3c;
+            --info: #f39c12;
+            --purple: #9b59b6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .materi-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        
+        .materi-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(52, 152, 219, 0.15);
+            border-left: 8px solid var(--informatika-semester1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .materi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .materi-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .materi-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid var(--informatika-light);
+            flex-wrap: wrap;
+        }
+        
+        .materi-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success), var(--informatika-primary));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .materi-title-wrapper {
+            flex: 1;
+        }
+        
+        .materi-title-wrapper h1 {
+            color: var(--informatika-dark);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .materi-subtitle {
+            color: var(--informatika-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .materi-badge {
+            background: var(--informatika-light);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: var(--informatika-dark);
+        }
+        
+        .tujuan-card {
+            background: linear-gradient(135deg, var(--informatika-light), white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+        
+        .tujuan-card h3 {
+            color: var(--informatika-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tujuan-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.8rem;
+        }
+        
+        .tujuan-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 0.8rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .tujuan-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .tujuan-item i {
+            color: var(--success);
+        }
+        
+        .materi-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(52, 152, 219, 0.1);
+        }
+        
+        .materi-content h2 {
+            color: var(--informatika-dark);
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem 0;
+            border-bottom: 2px solid var(--informatika-light);
+            padding-bottom: 0.5rem;
+        }
+        
+        .materi-content h2:first-of-type {
+            margin-top: 0;
+        }
+        
+        .materi-content h3 {
+            color: var(--informatika-dark);
+            font-size: 1.3rem;
+            margin: 1.2rem 0 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .materi-content h3 i {
+            color: var(--informatika-primary);
+        }
+        
+        .materi-content p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        .materi-content ul, .materi-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .materi-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote-box {
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            background: var(--informatika-light);
+            border-left: 4px solid var(--informatika-primary);
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .note-box {
+            background: #fff3e0;
+            border-left: 4px solid var(--info);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--informatika-primary);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .warning-box {
+            background: #fee2e2;
+            border-left: 4px solid var(--warning);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        /* Alur Diagram */
+        .alur-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 20px;
+        }
+        
+        .alur-step {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 16px;
+            min-width: 150px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .alur-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .alur-step.active {
+            border: 2px solid var(--success);
+            background: #d4edda;
+        }
+        
+        .alur-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .alur-arrow {
+            font-size: 1.5rem;
+            color: var(--informatika-primary);
+        }
+        
+        /* Struktur Grid */
+        .struktur-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .struktur-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .struktur-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .struktur-card.active {
+            border: 2px solid var(--info);
+            background: #fff3e0;
+        }
+        
+        .struktur-title {
+            font-weight: bold;
+            color: var(--info);
+            margin-bottom: 0.5rem;
+        }
+        
+        .struktur-code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            overflow-x: auto;
+        }
+        
+        /* Mesin Grid */
+        .mesin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .mesin-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .mesin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .mesin-card.active {
+            border: 2px solid var(--purple);
+            background: #f3e5f5;
+        }
+        
+        .mesin-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--purple);
+        }
+        
+        .mesin-desc {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* Error Types Grid */
+        .error-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .error-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .error-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .error-card.active {
+            border: 2px solid var(--warning);
+            background: #fee2e2;
+        }
+        
+        .error-title {
+            font-weight: bold;
+            color: var(--warning);
+        }
+        
+        .error-desc {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* Tips Grid */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .tips-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            border-radius: 12px;
+            padding: 0.8rem;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .tips-card:hover {
+            transform: translateX(5px);
+            background: var(--informatika-light);
+        }
+        
+        .tips-number {
+            width: 35px;
+            height: 35px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .refleksi-card {
+            background: linear-gradient(135deg, var(--purple), #8e44ad);
+            color: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .refleksi-card h3 {
+            color: white;
+        }
+        
+        .refleksi-card ul {
+            margin-left: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .refleksi-card li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .soal-section {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .soal-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .soal-item p {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        
+        .option:hover {
+            background: var(--informatika-light);
+        }
+        
+        .jawaban-feedback {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .jawaban-feedback.benar {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .jawaban-feedback.salah {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .btn-check {
+            background: var(--informatika-primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        .btn-check:hover {
+            background: var(--informatika-secondary);
+        }
+        
+        .materi-navigation {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--informatika-primary), var(--informatika-secondary));
+            color: white;
+        }
+        
+        .nav-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-btn.secondary {
+            background: white;
+            color: var(--informatika-dark);
+            border: 2px solid var(--informatika-light);
+        }
+        
+        .nav-btn.secondary:hover {
+            background: var(--informatika-light);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .materi-container { padding: 1rem; }
+            .materi-card { padding: 1.5rem; }
+            .materi-header { flex-direction: column; text-align: center; }
+            .alur-diagram { flex-direction: column; }
+            .alur-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>INFORMATIKA - MATERI PEMBELAJARAN</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../../index-informatika.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda Informatika</a></li>
+                    <li><a href="../../aktivitas-pembelajaran/index-aktivitas-informatika.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../index-materi-informatika.html" class="nav-link active"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="../../penilaian/index-penilaian-inform.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="materi-container">
+        <div class="materi-card">
+            <!-- Header -->
+            <div class="materi-header">
+                <div class="materi-icon">
+                    <i class="fab fa-html5"></i>
+                </div>
+                <div class="materi-title-wrapper">
+                    <h1>Implementasi HTML untuk Mesin Sederhana</h1>
+                    <div class="materi-subtitle">
+                        <i class="fas fa-circle"></i>
+                        <span>Proyek 4: Rancang Mesin Pintar Mini - Pertemuan 4</span>
+                        <span class="materi-badge"><i class="fas fa-clock"></i> 4 JP</span>
+                        <span class="materi-badge"><i class="fas fa-tag"></i> TP 1.4</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tujuan Pembelajaran -->
+            <div class="tujuan-card">
+                <h3><i class="fas fa-bullseye"></i> 🎯 Tujuan Pembelajaran</h3>
+                <div class="tujuan-list">
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Mengimplementasikan pseudocode mesin sederhana ke dalam program HTML</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Membuat antarmuka pengguna (UI) untuk mesin sederhana</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Menulis kode JavaScript untuk menjalankan logika mesin</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Menguji program dan memperbaiki kesalahan (debugging)</div>
+                    <div class="tujuan-item"><i class="fas fa-check-circle"></i> Menyajikan program mesin sederhana yang siap digunakan</div>
+                </div>
+            </div>
+
+            <!-- Konten Materi -->
+            <div class="materi-content">
+                <h2>A. Dari Pseudocode ke Program HTML</h2>
+                <p>Setelah menulis pseudocode untuk mesin sederhana, langkah selanjutnya adalah mengimplementasikannya ke dalam program HTML. Program HTML akan terdiri dari tiga bagian utama: <strong>HTML</strong> (struktur antarmuka), <strong>CSS</strong> (tampilan), dan <strong>JavaScript</strong> (logika mesin).</p>
+                
+                <div class="alur-diagram" id="alurDiagram">
+                    <div class="alur-step" data-alur="pseudocode">
+                        <div class="alur-icon"><i class="fas fa-code"></i></div>
+                        <div class="alur-title">PSEUDOCODE</div>
+                        <div class="alur-desc" style="font-size: 0.8rem;">Rancangan algoritma</div>
+                    </div>
+                    <div class="alur-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="alur-step" data-alur="html">
+                        <div class="alur-icon"><i class="fab fa-html5"></i></div>
+                        <div class="alur-title">HTML + CSS</div>
+                        <div class="alur-desc" style="font-size: 0.8rem;">Struktur & Tampilan</div>
+                    </div>
+                    <div class="alur-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="alur-step" data-alur="javascript">
+                        <div class="alur-icon"><i class="fab fa-js"></i></div>
+                        <div class="alur-title">JAVASCRIPT</div>
+                        <div class="alur-desc" style="font-size: 0.8rem;">Logika mesin</div>
+                    </div>
+                    <div class="alur-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="alur-step" data-alur="program">
+                        <div class="alur-icon"><i class="fas fa-laptop-code"></i></div>
+                        <div class="alur-title">PROGRAM SIAP</div>
+                        <div class="alur-desc" style="font-size: 0.8rem;">Mesin siap digunakan</div>
+                    </div>
+                </div>
+
+                <h2>B. Struktur Dasar Program HTML untuk Mesin</h2>
+                <p><strong>Klik pada setiap bagian</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="struktur-grid" id="strukturGrid">
+                    <div class="struktur-card" data-struktur="html">
+                        <div class="struktur-title"><i class="fab fa-html5"></i> HTML (Struktur)</div>
+                        <div class="struktur-code">
+                            &lt;div&gt;<br>
+                            &nbsp;&nbsp;&lt;label&gt;Input:&lt;/label&gt;<br>
+                            &nbsp;&nbsp;&lt;input type="number" id="input1"&gt;<br>
+                            &nbsp;&nbsp;&lt;button onclick="proses()"&gt;Jalankan&lt;/button&gt;<br>
+                            &nbsp;&nbsp;&lt;div id="hasil"&gt;&lt;/div&gt;<br>
+                            &lt;/div&gt;
+                        </div>
+                    </div>
+                    <div class="struktur-card" data-struktur="css">
+                        <div class="struktur-title"><i class="fab fa-css3"></i> CSS (Tampilan)</div>
+                        <div class="struktur-code">
+                            body {<br>
+                            &nbsp;&nbsp;font-family: Arial;<br>
+                            &nbsp;&nbsp;background: #f0f0f0;<br>
+                            }<br>
+                            button {<br>
+                            &nbsp;&nbsp;background: #0066cc;<br>
+                            &nbsp;&nbsp;color: white;<br>
+                            }
+                        </div>
+                    </div>
+                    <div class="struktur-card" data-struktur="js">
+                        <div class="struktur-title"><i class="fab fa-js"></i> JavaScript (Logika)</div>
+                        <div class="struktur-code">
+                            function proses() {<br>
+                            &nbsp;&nbsp;var input = document.getElementById('input1').value;<br>
+                            &nbsp;&nbsp;var hasil = input * 2;<br>
+                            &nbsp;&nbsp;document.getElementById('hasil').innerHTML = hasil;<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <h2>C. Contoh Implementasi Mesin Sederhana</h2>
+                <p><strong>Klik pada setiap mesin</strong> untuk melihat detail implementasi:</p>
+                
+                <div class="mesin-grid" id="mesinGrid">
+                    <div class="mesin-card" data-mesin="atm">
+                        <div class="mesin-title"><i class="fas fa-credit-card"></i> Mesin ATM Mini</div>
+                        <div class="mesin-desc">Implementasi lengkap dengan PIN verifikasi, cek saldo, dan tarik tunai. Menggunakan 3 tahap tampilan yang berbeda.</div>
+                    </div>
+                    <div class="mesin-card" data-mesin="kasir">
+                        <div class="mesin-title"><i class="fas fa-cash-register"></i> Mesin Kasir Mini</div>
+                        <div class="mesin-desc">Menghitung total belanja, diskon bertingkat (5%, 10%, 15%), dan menampilkan rincian lengkap.</div>
+                    </div>
+                    <div class="mesin-card" data-mesin="antrean">
+                        <div class="mesin-title"><i class="fas fa-ticket-alt"></i> Mesin Antrean</div>
+                        <div class="mesin-desc">Sistem antrean dengan tampilan nomor besar, informasi antrean, dan tombol reset.</div>
+                    </div>
+                    <div class="mesin-card" data-mesin="vending">
+                        <div class="mesin-title"><i class="fas fa-vending-machine"></i> Mesin Vending</div>
+                        <div class="mesin-desc">6 pilihan minuman, stok terbatas, sistem pembayaran dengan kembalian, stok otomatis berkurang.</div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <strong>📝 Kode Lengkap Mesin ATM Mini (Contoh):</strong>
+                    <div class="code-block" style="margin-top: 0.5rem;">
+                        // Data ATM<br>
+                        var saldo = 1000000;<br>
+                        var pinBenar = "1234";<br><br>
+                        function verifikasiPin() {<br>
+                        &nbsp;&nbsp;if (pin === pinBenar) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;tampilkanMenu();<br>
+                        &nbsp;&nbsp;}<br>
+                        }<br><br>
+                        function tarikTunai() {<br>
+                        &nbsp;&nbsp;if (jumlah <= saldo) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;saldo -= jumlah;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;alert("Silakan ambil uang");<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </div>
+
+                <h2>D. Jenis Error dan Cara Debugging</h2>
+                <p><strong>Klik pada setiap jenis error</strong> untuk memperjelas tampilan:</p>
+                
+                <div class="error-grid" id="errorGrid">
+                    <div class="error-card" data-error="syntax">
+                        <div class="error-title">Syntax Error</div>
+                        <div class="error-desc">Salah penulisan kode. Cek typo, kurung, titik koma. Contoh: lupa tanda kurung tutup.</div>
+                    </div>
+                    <div class="error-card" data-error="runtime">
+                        <div class="error-title">Runtime Error</div>
+                        <div class="error-desc">Error saat program berjalan. Contoh: membagi dengan nol, memanggil variabel belum didefinisikan.</div>
+                    </div>
+                    <div class="error-card" data-error="logic">
+                        <div class="error-title">Logic Error</div>
+                        <div class="error-desc">Program jalan tapi hasil salah. Contoh: rumus luas = panjang + lebar (harusnya dikali).</div>
+                    </div>
+                    <div class="error-card" data-error="input">
+                        <div class="error-title">Input Error</div>
+                        <div class="error-desc">User memasukkan data tidak valid. Contoh: input huruf di field angka, input kosong.</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <i class="fas fa-bug"></i> <strong>Tools Debugging:</strong><br>
+                    • <strong>console.log()</strong> - Melihat nilai variabel di konsol browser<br>
+                    • <strong>alert()</strong> - Notifikasi sederhana untuk pengecekan<br>
+                    • <strong>Browser DevTools (F12)</strong> - Melihat error dan inspect kode<br>
+                    • <strong>debugger</strong> - Menghentikan eksekusi di titik tertentu
+                </div>
+
+                <h2>E. Tips Implementasi Program Mesin</h2>
+                <div class="tips-grid">
+                    <div class="tips-card"><div class="tips-number">1</div><div><strong>Mulai dari Pseudocode</strong><br>Jangan langsung coding, buat pseudocode dulu</div></div>
+                    <div class="tips-card"><div class="tips-number">2</div><div><strong>Buat Antarmuka Sederhana</strong><br>Fokus pada fungsi dulu, perbaiki tampilan nanti</div></div>
+                    <div class="tips-card"><div class="tips-number">3</div><div><strong>Uji Setiap Fungsi</strong><br>Uji satu per satu fungsi yang dibuat</div></div>
+                    <div class="tips-card"><div class="tips-number">4</div><div><strong>Handle Input Tidak Valid</strong><br>Antisipasi jika user memasukkan data salah</div></div>
+                    <div class="tips-card"><div class="tips-number">5</div><div><strong>Gunakan Nama Variabel Jelas</strong><br>Memudahkan debugging</div></div>
+                    <div class="tips-card"><div class="tips-number">6</div><div><strong>Tambahkan Komentar</strong><br>Jelaskan bagian-bagian penting</div></div>
+                </div>
+
+                <h2>F. Rangkuman</h2>
+                <ul>
+                    <li><strong>Implementasi HTML</strong> adalah proses mengubah pseudocode menjadi program sungguhan.</li>
+                    <li><strong>Struktur program</strong> terdiri dari HTML (struktur), CSS (tampilan), JavaScript (logika).</li>
+                    <li><strong>Setiap mesin</strong> memiliki antarmuka dan logika yang berbeda sesuai kebutuhannya.</li>
+                    <li><strong>Contoh mesin:</strong> ATM, kasir, antrean, vending - semuanya bisa diimplementasikan dengan HTML/JavaScript.</li>
+                    <li><strong>Tips penting:</strong> mulai dari pseudocode, uji setiap fungsi, handle input tidak valid.</li>
+                    <li><strong>Debugging</strong> adalah proses mencari dan memperbaiki error dalam program.</li>
+                </ul>
+
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Ingat!</strong> Program yang baik tidak hanya berjalan saat input benar, tapi juga harus bisa menangani input yang salah dengan memberikan pesan yang jelas!
+                </div>
+
+                <!-- Refleksi Diri -->
+                <div class="refleksi-card">
+                    <h3><i class="fas fa-smile-wink"></i> 🎯 Refleksi Diri</h3>
+                    <p>Setelah mempelajari materi ini, renungkan pertanyaan-pertanyaan berikut:</p>
+                    <ul>
+                        <li>Apakah kamu sudah bisa mengimplementasikan pseudocode ke dalam program HTML?</li>
+                        <li>Mesin apa yang paling menarik untuk kamu implementasikan?</li>
+                        <li>Bagian mana yang paling sulit dalam proses implementasi?</li>
+                        <li>Apa yang akan kamu lakukan jika program tidak berjalan sesuai harapan?</li>
+                        <li>Apakah kamu sudah mencoba menguji program dengan berbagai input?</li>
+                    </ul>
+                </div>
+
+                <!-- Latihan Soal -->
+                <div class="soal-section">
+                    <h3><i class="fas fa-question-circle"></i> ❓ Latihan Soal</h3>
+                    
+                    <div class="soal-item">
+                        <p><strong>1.</strong> Tiga komponen utama dalam program HTML untuk mesin sederhana adalah...</p>
+                        <div class="option"><input type="radio" name="q1" value="a"> a. HTML, CSS, JavaScript</div>
+                        <div class="option"><input type="radio" name="q1" value="b"> b. HTML, PHP, MySQL</div>
+                        <div class="option"><input type="radio" name="q1" value="c"> c. Python, Java, C++</div>
+                        <div class="option"><input type="radio" name="q1" value="d"> d. Word, Excel, PowerPoint</div>
+                        <div class="jawaban-feedback" id="feedback1"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>2.</strong> Fungsi JavaScript yang digunakan untuk menampilkan hasil ke halaman HTML adalah...</p>
+                        <div class="option"><input type="radio" name="q2" value="a"> a. alert()</div>
+                        <div class="option"><input type="radio" name="q2" value="b"> b. console.log()</div>
+                        <div class="option"><input type="radio" name="q2" value="c"> c. document.getElementById().innerHTML</div>
+                        <div class="option"><input type="radio" name="q2" value="d"> d. prompt()</div>
+                        <div class="jawaban-feedback" id="feedback2"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>3.</strong> Error yang terjadi karena rumus perhitungan salah (program jalan tapi hasil tidak sesuai) disebut...</p>
+                        <div class="option"><input type="radio" name="q3" value="a"> a. Syntax Error</div>
+                        <div class="option"><input type="radio" name="q3" value="b"> b. Runtime Error</div>
+                        <div class="option"><input type="radio" name="q3" value="c"> c. Logic Error</div>
+                        <div class="option"><input type="radio" name="q3" value="d"> d. Input Error</div>
+                        <div class="jawaban-feedback" id="feedback3"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>4.</strong> Untuk melihat nilai variabel saat debugging, kita bisa menggunakan...</p>
+                        <div class="option"><input type="radio" name="q4" value="a"> a. console.log()</div>
+                        <div class="option"><input type="radio" name="q4" value="b"> b. document.write()</div>
+                        <div class="option"><input type="radio" name="q4" value="c"> c. confirm()</div>
+                        <div class="option"><input type="radio" name="q4" value="d"> d. prompt()</div>
+                        <div class="jawaban-feedback" id="feedback4"></div>
+                    </div>
+                    
+                    <div class="soal-item">
+                        <p><strong>5.</strong> Langkah pertama yang sebaiknya dilakukan sebelum mengimplementasikan mesin ke HTML adalah...</p>
+                        <div class="option"><input type="radio" name="q5" value="a"> a. Langsung membuat tampilan</div>
+                        <div class="option"><input type="radio" name="q5" value="b"> b. Membuat pseudocode terlebih dahulu</div>
+                        <div class="option"><input type="radio" name="q5" value="c"> c. Menginstal software</div>
+                        <div class="option"><input type="radio" name="q5" value="d"> d. Mencari template di internet</div>
+                        <div class="jawaban-feedback" id="feedback5"></div>
+                    </div>
+                    
+                    <button id="checkAnswers" class="btn-check"><i class="fas fa-check"></i> Cek Jawaban</button>
+                </div>
+
+                <div class="quote-box" style="margin-top: 1.5rem; text-align: center;">
+                    <i class="fab fa-html5"></i> Selamat Membuat Program Mesin Pintar! 💻
+                </div>
+            </div>
+
+            <!-- Navigasi -->
+            <div class="materi-navigation">
+                <a href="materi4-4.html" class="nav-btn secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Materi 4.4
+                </a>
+                <a href="../index-materi-informatika.html" class="nav-btn primary">
+                    <i class="fas fa-check-circle"></i> Selesai! Kembali ke Daftar Materi
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="../../../script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Alur Diagram Interaktif
+            const alurSteps = document.querySelectorAll('.alur-step');
+            alurSteps.forEach(step => {
+                step.addEventListener('click', function() {
+                    alurSteps.forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Struktur Interaktif
+            const strukturCards = document.querySelectorAll('.struktur-card');
+            strukturCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    strukturCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Mesin Interaktif
+            const mesinCards = document.querySelectorAll('.mesin-card');
+            mesinCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    mesinCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Error Interaktif
+            const errorCards = document.querySelectorAll('.error-card');
+            errorCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    errorCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Latihan Soal
+            const jawabanBenar = {
+                q1: 'a',
+                q2: 'c',
+                q3: 'c',
+                q4: 'a',
+                q5: 'b'
+            };
+            
+            document.getElementById('checkAnswers').addEventListener('click', function() {
+                let semuaTerjawab = true;
+                for(let i = 1; i <= 5; i++) {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    const feedback = document.getElementById(`feedback${i}`);
+                    if(selected) {
+                        if(selected.value === jawabanBenar[`q${i}`]) {
+                            feedback.innerHTML = '<i class="fas fa-check-circle"></i> Jawaban benar!';
+                            feedback.className = 'jawaban-feedback benar';
+                        } else {
+                            feedback.innerHTML = '<i class="fas fa-times-circle"></i> Jawaban salah. Coba lagi!';
+                            feedback.className = 'jawaban-feedback salah';
+                        }
+                    } else {
+                        feedback.innerHTML = '<i class="fas fa-exclamation-circle"></i> Pilih jawaban terlebih dahulu';
+                        feedback.className = 'jawaban-feedback salah';
+                        semuaTerjawab = false;
+                    }
+                }
+                if(!semuaTerjawab) {
+                    alert('Pastikan semua soal telah dijawab!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
