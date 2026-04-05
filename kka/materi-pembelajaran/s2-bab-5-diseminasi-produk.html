@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Materi Pembelajaran KKA - PROJEK KKA</title>
+    <title>Materi 11: Implementasi Aplikasi Web dan Pengujian - KKA Kelas X</title>
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* KKA THEME COLORS - Nuansa ungu/teknologi */
         :root {
             --kka-primary: #9b59b6;
             --kka-secondary: #8e44ad;
             --kka-light: #f3e5f5;
             --kka-dark: #6c3483;
             --kka-accent: #3498db;
-            --kka-semester1: #9b59b6;
             --kka-semester2: #e67e22;
-            --kka-gray: #f5f7fa;
+            --success: #27ae60;
+            --warning: #e74c3c;
+            --info: #f39c12;
+            --implement: #0F9D58;
         }
         
         * {
@@ -32,475 +33,552 @@
             line-height: 1.6;
         }
         
-        /* MAIN CONTENT */
-        .materials-container {
+        .materi-container {
             padding: 2rem;
             max-width: 1200px;
             margin: 0 auto;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
         }
         
-        /* CARD STYLE */
-        .kka-content-card {
+        .materi-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.1);
-            border-left: 5px solid var(--kka-primary);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(155, 89, 182, 0.15);
+            border-left: 8px solid var(--kka-semester2);
             position: relative;
             overflow: hidden;
-            margin-bottom: 2rem;
+            width: 100%;
+            animation: fadeInUp 0.6s ease-out;
         }
         
-        .kka-content-card::before {
+        .materi-card::before {
             content: '';
             position: absolute;
             top: 0;
             right: 0;
-            width: 150px;
-            height: 150px;
+            width: 250px;
+            height: 250px;
             background: radial-gradient(circle, rgba(155, 89, 182, 0.1) 0%, transparent 70%);
             z-index: 0;
         }
         
-        .kka-content-card > * {
+        .materi-card > * {
             position: relative;
             z-index: 1;
         }
         
-        .kka-content-card h2 {
-            color: var(--kka-dark);
-            font-size: 2.2rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-block;
-            padding-bottom: 10px;
-        }
-        
-        .kka-content-card h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--kka-primary), var(--kka-secondary));
-            border-radius: 2px;
-        }
-        
-        .kka-content-card > p {
-            font-size: 1.1rem;
-            line-height: 1.7;
-            color: #555;
-            margin-bottom: 2.5rem;
-            padding: 1rem 1.5rem;
-            background: var(--kka-light);
-            border-radius: 10px;
-            border-left: 4px solid var(--kka-primary);
-        }
-        
-        /* SIMPLE CARD */
-        .simple-card {
-            background: white;
-            border-radius: 20px;
-            padding: 1.8rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
-            border: 1px solid rgba(155, 89, 182, 0.1);
-        }
-        
-        .section-title {
+        .materi-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 2px solid var(--kka-light);
-        }
-        
-        .section-title i {
-            width: 40px;
-            height: 40px;
-            background: var(--kka-light);
-            color: var(--kka-primary);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-        
-        .section-title h1 {
-            font-size: 1.8rem;
-            color: var(--kka-dark);
-            font-weight: 600;
-        }
-        
-        .section-title h3 {
-            font-size: 1.2rem;
-            color: var(--kka-dark);
-            font-weight: 600;
-        }
-        
-        /* SEMESTER NAVIGATION */
-        .semester-nav-simple {
-            display: flex;
-            justify-content: center;
             gap: 1rem;
-            margin: 2rem 0;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid var(--kka-light);
+            flex-wrap: wrap;
         }
         
-        .semester-btn {
-            background: white;
-            border: 2px solid var(--kka-light);
+        .materi-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--implement), var(--kka-primary));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 20px rgba(155, 89, 182, 0.3);
+        }
+        
+        .materi-title-wrapper {
+            flex: 1;
+        }
+        
+        .materi-title-wrapper h1 {
             color: var(--kka-dark);
-            padding: 0.8rem 2rem;
-            border-radius: 40px;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .materi-subtitle {
+            color: var(--kka-primary);
             font-size: 1rem;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .semester-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.1);
-        }
-        
-        .semester-btn.active {
-            background: var(--kka-primary);
-            color: white;
-            border-color: var(--kka-primary);
-        }
-        
-        .semester-btn.ganjil.active {
-            background: var(--kka-semester1);
-            border-color: var(--kka-semester1);
-        }
-        
-        .semester-btn.genap.active {
-            background: var(--kka-semester2);
-            border-color: var(--kka-semester2);
-        }
-        
-        /* BAB GRID */
-        .bab-grid-simple {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.2rem;
-            margin: 1.5rem 0;
-        }
-        
-        .bab-item-simple {
-            background: #f5f7fa;
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .bab-item-simple:hover {
-            background: white;
-            border-color: var(--kka-primary);
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(155, 89, 182, 0.1);
-        }
-        
-        .bab-item-simple.ganjil:hover {
-            border-color: var(--kka-semester1);
-        }
-        
-        .bab-item-simple.genap:hover {
-            border-color: var(--kka-semester2);
-        }
-        
-        .bab-header-simple {
-            margin-bottom: 0.8rem;
-        }
-        
-        .bab-header-simple h4 {
-            color: var(--kka-dark);
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-        
-        .bab-subtitle {
-            color: #888;
-            font-size: 0.8rem;
             display: flex;
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
         }
         
-        .bab-subtitle .jp-badge {
+        .materi-badge {
             background: var(--kka-light);
-            color: var(--kka-dark);
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.7rem;
-        }
-        
-        .bab-subtitle i {
-            font-size: 0.7rem;
-            color: var(--kka-primary);
-        }
-        
-        .bab-item-simple.ganjil .bab-subtitle i {
-            color: var(--kka-semester1);
-        }
-        
-        .bab-item-simple.genap .bab-subtitle i {
-            color: var(--kka-semester2);
-        }
-        
-        .tp-code-badge {
-            display: inline-block;
-            background: var(--kka-light);
-            color: var(--kka-primary);
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 12px;
-            margin-bottom: 0.5rem;
-        }
-        
-        .bab-item-simple.ganjil .tp-code-badge {
-            background: rgba(155, 89, 182, 0.1);
-            color: var(--kka-semester1);
-        }
-        
-        .bab-desc-simple {
-            color: #666;
-            font-size: 0.9rem;
-            margin: 0.8rem 0;
-            line-height: 1.5;
-            flex: 1;
-        }
-        
-        .bab-materi-list {
-            margin: 0.5rem 0 1rem 0;
-            padding-left: 0;
-        }
-        
-        .bab-materi-list li {
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
             font-size: 0.8rem;
-            color: #777;
-            margin-bottom: 0.3rem;
-            list-style-type: none;
-            position: relative;
-            padding-left: 1rem;
-        }
-        
-        .bab-materi-list li::before {
-            content: "✓";
-            color: var(--kka-primary);
-            font-weight: bold;
-            position: absolute;
-            left: 0;
-            font-size: 0.7rem;
-        }
-        
-        .bab-item-simple.ganjil .bab-materi-list li::before {
-            color: var(--kka-semester1);
-        }
-        
-        .bab-item-simple.genap .bab-materi-list li::before {
-            color: var(--kka-semester2);
-        }
-               
-        /* TOMBOL MASUK */
-        .bab-btn-masuk {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: var(--kka-primary);
-            color: white;
-            text-decoration: none;
-            padding: 0.7rem 1rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 0.5rem;
-        }
-        
-        .bab-item-simple.ganjil .bab-btn-masuk {
-            background: var(--kka-semester1);
-        }
-        
-        .bab-item-simple.genap .bab-btn-masuk {
-            background: var(--kka-semester2);
-        }
-        
-        .bab-btn-masuk:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            filter: brightness(1.05);
-        }
-        
-        .bab-btn-masuk:active {
-            transform: translateY(0);
-        }
-        
-        /* BACK BUTTON */
-        .back-nav-simple {
-            text-align: center;
-            margin-top: 2rem;
-        }
-        
-        .back-btn-simple {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
             color: var(--kka-dark);
-            padding: 0.8rem 2rem;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: 1px solid var(--kka-light);
         }
         
-        .back-btn-simple:hover {
-            background: var(--kka-primary);
-            color: white;
-            transform: translateX(-5px);
+        .tujuan-card {
+            background: linear-gradient(135deg, var(--kka-light), white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(155, 89, 182, 0.2);
         }
         
-        /* FOOTER */
-        .kka-footer {
-            background: linear-gradient(135deg, var(--kka-dark), var(--kka-primary));
-            color: white;
-            padding: 3rem 0;
-            margin-top: 4rem;
-            border-radius: 20px 20px 0 0;
-            width: 100%;
-        }
-        
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-        
-        .footer-section h3 {
-            color: white;
-            font-size: 1.2rem;
+        .tujuan-card h3 {
+            color: var(--kka-dark);
             margin-bottom: 1rem;
-        }
-        
-        .footer-section p {
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        .footer-section i {
-            width: 20px;
+        .tujuan-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.8rem;
         }
         
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
+        .tujuan-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 0.8rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .tujuan-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .tujuan-item i {
+            color: var(--success);
+        }
+        
+        .materi-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(155, 89, 182, 0.1);
+        }
+        
+        .materi-content h2 {
+            color: var(--kka-dark);
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem 0;
+            border-bottom: 2px solid var(--kka-light);
+            padding-bottom: 0.5rem;
+        }
+        
+        .materi-content h2:first-of-type {
+            margin-top: 0;
+        }
+        
+        .materi-content h3 {
+            color: var(--kka-dark);
+            font-size: 1.3rem;
+            margin: 1.2rem 0 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .materi-content h3 i {
+            color: var(--kka-primary);
+        }
+        
+        .materi-content p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        .materi-content ul, .materi-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .materi-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote-box {
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            background: var(--kka-light);
+            border-left: 4px solid var(--kka-primary);
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .note-box {
+            background: #fff3e0;
+            border-left: 4px solid var(--info);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--kka-primary);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .warning-box {
+            background: #fee2e2;
+            border-left: 4px solid var(--warning);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        /* Struktur Folder */
+        .folder-tree {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-family: monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+        
+        /* Lingkungan Grid */
+        .env-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .env-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .env-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(155, 89, 182, 0.15);
+        }
+        
+        .env-card.active {
+            border: 2px solid var(--kka-primary);
+            background: var(--kka-light);
+        }
+        
+        /* Testing Grid */
+        .testing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .testing-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .testing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(155, 89, 182, 0.15);
+        }
+        
+        .testing-card.active {
+            border: 2px solid var(--success);
+            background: #d4edda;
+        }
+        
+        /* Error Grid */
+        .error-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .error-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .error-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(155, 89, 182, 0.15);
+        }
+        
+        .error-card.active {
+            border: 2px solid var(--warning);
+            background: #fee2e2;
+        }
+        
+        /* Deployment Steps */
+        .deploy-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .deploy-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .deploy-step:hover {
+            transform: translateX(5px);
+            background: var(--kka-light);
+        }
+        
+        .deploy-step.active {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+        }
+        
+        .step-number {
+            width: 35px;
+            height: 35px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Test Case Table */
+        .testcase-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        .testcase-table th {
+            background: var(--kka-primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .testcase-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .testcase-table tr:hover {
+            background: var(--kka-light);
+        }
+        
+        .status-success {
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .refleksi-card {
+            background: linear-gradient(135deg, var(--kka-dark), var(--kka-primary));
+            color: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .refleksi-card h3 {
+            color: white;
+        }
+        
+        .refleksi-card ul {
+            margin-left: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .refleksi-card li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .soal-section {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 1.5rem;
             margin-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9rem;
         }
         
-        /* ANIMATIONS */
-        @keyframes fadeIn {
+        .soal-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .soal-item p {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        
+        .option:hover {
+            background: var(--kka-light);
+        }
+        
+        .jawaban-feedback {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .jawaban-feedback.benar {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .jawaban-feedback.salah {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .btn-check {
+            background: var(--kka-primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        .btn-check:hover {
+            background: var(--kka-secondary);
+        }
+        
+        .materi-navigation {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--kka-primary), var(--kka-secondary));
+            color: white;
+        }
+        
+        .nav-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+        }
+        
+        .nav-btn.secondary {
+            background: white;
+            color: var(--kka-dark);
+            border: 2px solid var(--kka-light);
+        }
+        
+        .nav-btn.secondary:hover {
+            background: var(--kka-light);
+        }
+        
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
+                transform: translateY(0);
             }
         }
         
-        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .materials-container {
-                padding: 1rem;
-            }
-            
-            .semester-nav-simple {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .semester-btn {
-                width: 100%;
-                max-width: 300px;
-                justify-content: center;
-            }
-            
-            .bab-grid-simple {
-                grid-template-columns: 1fr;
-            }
-            
-            .section-title h1 {
-                font-size: 1.5rem;
-            }
-            
-            .kka-content-card {
-                padding: 1.5rem;
-            }
-            
-            .kka-content-card h2 {
-                font-size: 1.8rem;
-            }
-            
-            .footer-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .footer-section p {
-                justify-content: center;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .kka-content-card {
-                padding: 1rem;
-            }
-            
-            .kka-content-card h2 {
-                font-size: 1.5rem;
-            }
-            
-            .bab-header-simple h4 {
-                font-size: 1rem;
-            }
+            .materi-container { padding: 1rem; }
+            .materi-card { padding: 1.5rem; }
+            .materi-header { flex-direction: column; text-align: center; }
+            .testcase-table { font-size: 0.7rem; }
+            .folder-tree { font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Header - Menggunakan style dari file eksternal -->
     <header>
         <nav class="navbar">
             <div class="nav-container">
                 <div class="logo">
                     <img src="../../assets/images/logo.png" alt="Logo Sekolah">
-                    <h1>TEMBOK BELAJAR - PROJEK KKA</h1>
+                    <h1>KKA - MATERI PEMBELAJARAN</h1>
                 </div>
                 <ul class="nav-menu" id="nav-menu">
                     <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
@@ -518,392 +596,516 @@
         </nav>
     </header>
 
-    <!-- Materials Content -->
-    <section class="materials-container">
-        <!-- Semester Navigation -->
-        <div class="semester-nav-simple">
-            <button class="semester-btn ganjil active" data-semester="ganjil">
-                <i class="fas fa-sun"></i> Semester Ganjil
-            </button>
-            <button class="semester-btn genap" data-semester="genap">
-                <i class="fas fa-cloud-rain"></i> Semester Genap
-            </button>
-        </div>
-
-        <!-- Semester Ganjil Content -->
-        <div id="ganjil-content" class="semester-content">
-            <div class="simple-card">
-                <div class="section-title">
-                    <i class="fas fa-book-open"></i>
-                    <h3>Daftar Materi Semester Ganjil</h3>
+    <section class="materi-container">
+        <div class="materi-card">
+            <!-- Header -->
+            <div class="materi-header">
+                <div class="materi-icon">
+                    <i class="fas fa-code"></i>
                 </div>
-                <p style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">Materi semester ganjil berfokus pada penguasaan konsep komputasi, pemrograman, dan literasi teknologi. Total alokasi waktu: <strong>32 JP</strong>.</p>
-                
-                <div class="bab-grid-simple">
-                    <!-- Berpikir Komputasional -->
-                    <div class="bab-item-simple ganjil">
-                        <span class="tp-code-badge">TP.1.1</span>
-                        <div class="bab-header-simple">
-                            <h4>Berpikir Komputasional</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Ganjil
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 4 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Menerapkan konsep dekomposisi, pengenalan pola, abstraksi, dan algoritma untuk memecahkan permasalahan.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Dekomposisi (Memecah Masalah)</li>
-                            <li>Pengenalan Pola (Pattern Recognition)</li>
-                            <li>Abstraksi (Mengabstraksikan Masalah)</li>
-                            <li>Algoritma (Langkah Penyelesaian)</li>
-                        </ul>
-                        <a href="s1-bab-1-berpikir-komputasional.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
-                    </div>
-                    
-                    <!-- Analisis Data -->
-                    <div class="bab-item-simple ganjil">
-                        <span class="tp-code-badge">TP.4.1</span>
-                        <div class="bab-header-simple">
-                            <h4>Analisis Data</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Ganjil
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 4 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Memahami konsep dasar basis data serta menerapkan pengolahan data (input, olah, analisis, sajian).
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Konsep Basis Data</li>
-                            <li>Pengolahan Data (Input, Olah)</li>
-                            <li>Analisis Data Sederhana</li>
-                            <li>Visualisasi & Penyajian Data</li>
-                        </ul>
-                        <a href="s1-bab-2-analisis-data.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
-                    </div>
-                    
-                    <!-- Algoritma Pemrograman -->
-                    <div class="bab-item-simple ganjil">
-                        <span class="tp-code-badge">TP.3.1</span>
-                        <div class="bab-header-simple">
-                            <h4>Algoritma Pemrograman</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Ganjil
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 8 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Membandingkan algoritma dan menerapkannya dalam bentuk program/aplikasi sederhana.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Flowchart & Pseudocode</li>
-                            <li>Perbandingan Algoritma</li>
-                            <li>Dasar Pemrograman (Python/Block)</li>
-                            <li>Implementasi Program Sederhana</li>
-                        </ul>
-                        <a href="s1-bab-3-algoritma-pemrograman.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
-                    </div>
-                    
-                    <!-- Literasi & Etika Kecerdasan Artifisial -->
-                    <div class="bab-item-simple ganjil">
-                        <span class="tp-code-badge">TP.5.1</span>
-                        <div class="bab-header-simple">
-                            <h4>Literasi & Etika Kecerdasan Artifisial</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Ganjil
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 4 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Memahami prinsip kerja AI, etika penggunaan, keamanan data, dan dampak sosial.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Prinsip Kerja AI</li>
-                            <li>Etika Penggunaan AI</li>
-                            <li>Keamanan Data & Privasi</li>
-                            <li>Dampak Sosial Teknologi AI</li>
-                        </ul>
-                        <a href="s1-bab-4-literasi-ai.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
-                    </div>
-                    
-                    <!-- Pemanfaatan & Pengembangan AI Generatif -->
-                    <div class="bab-item-simple ganjil">
-                        <span class="tp-code-badge">TP.6.1</span>
-                        <div class="bab-header-simple">
-                            <h4>Pemanfaatan & Pengembangan AI Generatif</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Ganjil
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 4 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Menerapkan prompt engineering untuk merancang, mengevaluasi, dan mengembangkan produk.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Prompt Engineering Dasar</li>
-                            <li>Pemanfaatan Chatbot (ChatGPT dll)</li>
-                            <li>Evaluasi Output AI</li>
-                            <li>Pengembangan Produk dengan AI</li>
-                        </ul>
-                        <a href="s1-bab-5-ai-generatif.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
-                    </div>
-                    
-                    <!-- Literasi Digital -->
-                    <div class="bab-item-simple ganjil">
-                        <span class="tp-code-badge">TP.2.1</span>
-                        <div class="bab-header-simple">
-                            <h4>Literasi Digital</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Ganjil
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 8 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Memproduksi dan menyebarkan konten digital multimedia secara kreatif, etis, aman, dan bertanggung jawab.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Produksi Konten Multimedia</li>
-                            <li>Etika Bermedia Digital</li>
-                            <li>Keamanan Digital</li>
-                            <li>Diseminasi Konten</li>
-                        </ul>
-                        <a href="s1-bab-6-literasi-digital.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
+                <div class="materi-title-wrapper">
+                    <h1>Implementasi Aplikasi Web dan Pengujian</h1>
+                    <div class="materi-subtitle">
+                        <i class="fas fa-circle"></i>
+                        <span>Semester Genap - Kelas X (Proyek Tahap 4)</span>
+                        <span class="materi-badge"><i class="fas fa-clock"></i> 8 JP</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Semester Genap Content (Hidden by default) -->
-        <div id="genap-content" class="semester-content" style="display: none;">
-            <div class="simple-card">
-                <div class="section-title">
-                    <i class="fas fa-project-diagram"></i>
-                    <h3>Daftar Materi Semester Genap</h3>
-                </div>
-                <p style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">Semester genap berfokus pada proyek pengembangan produk digital. Total alokasi waktu: <strong>22 JP</strong>.</p>
+            <!-- Konten Materi -->
+            <div class="materi-content">
+                <h2>A. Pendahuluan</h2>
+                <p>Setelah melewati tahap perencanaan (identifikasi masalah), perumusan solusi, dan perancangan (database dan UI/UX), kini saatnya kita memasuki tahap yang paling dinantikan: membangun aplikasi. Tahap ini disebut implementasi atau pengembangan, di mana rancangan yang sudah dibuat diubah menjadi aplikasi yang benar-benar berfungsi.</p>
                 
-                <div class="bab-grid-simple">
-                    <!-- Identifikasi Masalah -->
-                    <div class="bab-item-simple genap">
-                        <div class="bab-header-simple">
-                            <h4>Identifikasi Masalah</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Genap
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 2 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Mengidentifikasi masalah nyata di lingkungan sekitar yang dapat diselesaikan melalui proyek KKA.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Observasi & Wawancara</li>
-                            <li>Analisis Kebutuhan Pengguna</li>
-                            <li>Perumusan Masalah</li>
-                            <li>Menentukan Ruang Lingkup</li>
-                        </ul>
-                        <a href="s2-bab-1-identifikasi-masalah.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
+                <div class="quote-box">
+                    <i class="fas fa-quote-left"></i> Bayangkan kamu telah membuat denah rumah yang detail, memilih material bangunan, dan merancang interiornya. Sekarang saatnya membangun rumah tersebut—meletakkan batu bata, memasang kusen, menyusun rangka atap, hingga finishing akhir. Tahap ini adalah proses mewujudkan semua rencana menjadi kenyataan.
+                </div>
+
+                <h2>B. Apa Itu Implementasi Aplikasi Web?</h2>
+                <p><strong>Implementasi</strong> adalah proses mengubah rancangan (desain, database, algoritma) menjadi kode program yang dapat dijalankan oleh komputer. Implementasi meliputi: membangun struktur folder, membuat database, menulis kode backend dan frontend, menghubungkan komponen, serta melakukan pengujian dan perbaikan.</p>
+
+                <h3>Lingkungan Pengembangan</h3>
+                <div class="env-grid" id="envGrid">
+                    <div class="env-card" data-env="editor">
+                        <div class="env-icon"><i class="fas fa-code"></i></div>
+                        <div class="env-title">Code Editor</div>
+                        <div class="env-desc" style="font-size: 0.8rem;">VS Code, Sublime Text, PHPStorm</div>
+                    </div>
+                    <div class="env-card" data-env="server">
+                        <div class="env-icon"><i class="fas fa-server"></i></div>
+                        <div class="env-title">Web Server Lokal</div>
+                        <div class="env-desc" style="font-size: 0.8rem;">XAMPP, MAMP, Laragon</div>
+                    </div>
+                    <div class="env-card" data-env="database">
+                        <div class="env-icon"><i class="fas fa-database"></i></div>
+                        <div class="env-title">Database Server</div>
+                        <div class="env-desc" style="font-size: 0.8rem;">MySQL, MariaDB</div>
+                    </div>
+                    <div class="env-card" data-env="browser">
+                        <div class="env-icon"><i class="fas fa-globe"></i></div>
+                        <div class="env-title">Browser</div>
+                        <div class="env-desc" style="font-size: 0.8rem;">Chrome, Firefox, Edge</div>
+                    </div>
+                </div>
+
+                <h2>C. Struktur Proyek Aplikasi Web</h2>
+                <div class="folder-tree">
+                    <strong>Struktur Folder Proyek (MVC):</strong><br>
+                    <pre>
+nama_proyek/
+│
+├── config/                 # File konfigurasi
+│   └── database.php        # Konfigurasi koneksi database
+│
+├── public/                 # File yang dapat diakses publik
+│   ├── css/                # File CSS (styling)
+│   ├── js/                 # File JavaScript
+│   ├── images/             # Gambar
+│   └── index.php           # Halaman utama
+│
+├── src/                    # Kode sumber utama
+│   ├── controllers/        # Controller (logika aplikasi)
+│   ├── models/             # Model (interaksi dengan database)
+│   └── views/              # View (tampilan)
+│
+└── .env                    # File environment (konfigurasi rahasia)
+                    </pre>
+                </div>
+
+                <h2>D. Implementasi Database</h2>
+                <div class="code-block">
+                    -- Membuat database
+                    CREATE DATABASE perpustakaan_digital;
+                    USE perpustakaan_digital;
+
+                    -- Membuat tabel buku
+                    CREATE TABLE buku (
+                        id_buku INT PRIMARY KEY AUTO_INCREMENT,
+                        judul VARCHAR(200) NOT NULL,
+                        penulis VARCHAR(100) NOT NULL,
+                        penerbit VARCHAR(100),
+                        tahun_terbit YEAR,
+                        stok INT DEFAULT 1
+                    );
+
+                    -- Membuat tabel peminjaman
+                    CREATE TABLE peminjaman (
+                        id_peminjaman INT PRIMARY KEY AUTO_INCREMENT,
+                        id_buku INT,
+                        id_anggota INT,
+                        tanggal_pinjam DATE NOT NULL,
+                        tanggal_kembali DATE,
+                        status ENUM('dipinjam', 'dikembalikan') DEFAULT 'dipinjam',
+                        FOREIGN KEY (id_buku) REFERENCES buku(id_buku)
+                    );
+                </div>
+
+                <h2>E. Implementasi Koneksi Database</h2>
+                <div class="code-block">
+                    &lt;?php
+                    // config/database.php
+                    $host = 'localhost';
+                    $dbname = 'perpustakaan_digital';
+                    $username = 'root';
+                    $password = '';
+
+                    try {
+                        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    } catch(PDOException $e) {
+                        die("Koneksi database gagal: " . $e->getMessage());
+                    }
+                    ?&gt;
+                </div>
+
+                <h2>F. Implementasi Model (BukuModel)</h2>
+                <div class="code-block">
+                    &lt;?php
+                    class BukuModel {
+                        private $db;
+                        
+                        public function __construct($pdo) {
+                            $this->db = $pdo;
+                        }
+                        
+                        public function getAll() {
+                            $query = "SELECT * FROM buku ORDER BY id_buku DESC";
+                            $stmt = $this->db->prepare($query);
+                            $stmt->execute();
+                            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        }
+                        
+                        public function getById($id) {
+                            $query = "SELECT * FROM buku WHERE id_buku = :id";
+                            $stmt = $this->db->prepare($query);
+                            $stmt->execute(['id' => $id]);
+                            return $stmt->fetch(PDO::FETCH_ASSOC);
+                        }
+                        
+                        public function create($data) {
+                            $query = "INSERT INTO buku (judul, penulis, penerbit, tahun_terbit, stok) 
+                                      VALUES (:judul, :penulis, :penerbit, :tahun_terbit, :stok)";
+                            $stmt = $this->db->prepare($query);
+                            return $stmt->execute($data);
+                        }
+                    }
+                    ?&gt;
+                </div>
+
+                <h2>G. Implementasi Controller (BukuController)</h2>
+                <div class="code-block">
+                    &lt;?php
+                    class BukuController {
+                        private $bukuModel;
+                        
+                        public function __construct($pdo) {
+                            $this->bukuModel = new BukuModel($pdo);
+                        }
+                        
+                        public function index() {
+                            $bukuList = $this->bukuModel->getAll();
+                            include 'src/views/buku/index.php';
+                        }
+                        
+                        public function store() {
+                            if (empty($_POST['judul'])) {
+                                $_SESSION['error'] = 'Judul harus diisi';
+                                header('Location: index.php?page=buku-create');
+                                return;
+                            }
+                            
+                            $data = [
+                                'judul' => $_POST['judul'],
+                                'penulis' => $_POST['penulis'],
+                                'penerbit' => $_POST['penerbit'] ?? '',
+                                'tahun_terbit' => $_POST['tahun_terbit'] ?? null,
+                                'stok' => $_POST['stok'] ?? 1
+                            ];
+                            
+                            $result = $this->bukuModel->create($data);
+                            
+                            if ($result) {
+                                $_SESSION['success'] = 'Buku berhasil ditambahkan';
+                                header('Location: index.php?page=buku');
+                            }
+                        }
+                    }
+                    ?&gt;
+                </div>
+
+                <h2>H. Jenis-jenis Pengujian</h2>
+                <div class="testing-grid" id="testingGrid">
+                    <div class="testing-card" data-test="unit">
+                        <div class="test-icon"><i class="fas fa-cube"></i></div>
+                        <div class="test-title">Unit Testing</div>
+                        <div class="test-desc" style="font-size: 0.8rem;">Menguji komponen terkecil (fungsi, method) secara terpisah</div>
+                    </div>
+                    <div class="testing-card" data-test="integration">
+                        <div class="test-icon"><i class="fas fa-link"></i></div>
+                        <div class="test-title">Integration Testing</div>
+                        <div class="test-desc" style="font-size: 0.8rem;">Menguji interaksi antar komponen</div>
+                    </div>
+                    <div class="testing-card" data-test="functional">
+                        <div class="test-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="test-title">Functional Testing</div>
+                        <div class="test-desc" style="font-size: 0.8rem;">Menguji fitur dari sudut pandang pengguna</div>
+                    </div>
+                    <div class="testing-card" data-test="uat">
+                        <div class="test-icon"><i class="fas fa-users"></i></div>
+                        <div class="test-title">User Acceptance Testing</div>
+                        <div class="test-desc" style="font-size: 0.8rem;">Menguji dengan pengguna nyata</div>
+                    </div>
+                    <div class="testing-card" data-test="security">
+                        <div class="test-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="test-title">Security Testing</div>
+                        <div class="test-desc" style="font-size: 0.8rem;">Menguji keamanan aplikasi (SQL injection, XSS)</div>
+                    </div>
+                    <div class="testing-card" data-test="performance">
+                        <div class="test-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        <div class="test-title">Performance Testing</div>
+                        <div class="test-desc" style="font-size: 0.8rem;">Menguji kecepatan dan beban aplikasi</div>
+                    </div>
+                </div>
+
+                <h2>I. Kasus Uji (Test Case)</h2>
+                <table class="testcase-table">
+                    <thead>
+                        <tr><th>ID Test</th><th>Fitur</th><th>Skenario</th><th>Output Diharapkan</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>TC-001</td><td>Login</td><td>Username: admin, Password: admin123</td><td>Redirect ke dashboard</td><td class="status-success">✅ Berhasil</td></tr>
+                        <tr><td>TC-002</td><td>Login</td><td>Username: admin, Password: salah</td><td>Tampil pesan error</td><td class="status-success">✅ Berhasil</td></tr>
+                        <tr><td>TC-003</td><td>Login</td><td>Username kosong</td><td>Tampil pesan error</td><td class="status-success">✅ Berhasil</td></tr>
+                        <tr><td>TC-004</td><td>Tambah Buku</td><td>Judul: "Belajar PHP", Penulis: "Andi"</td><td>Data tersimpan</td><td class="status-success">✅ Berhasil</td></tr>
+                        <tr><td>TC-005</td><td>Tambah Buku</td><td>Judul kosong</td><td>Validasi gagal, tampil error</td><td class="status-success">✅ Berhasil</td></tr>
+                    </tbody>
+                </table>
+
+                <h2>J. Jenis Error dan Debugging</h2>
+                <div class="error-grid" id="errorGrid">
+                    <div class="error-card" data-error="syntax">
+                        <div class="error-title">Syntax Error</div>
+                        <div class="error-desc" style="font-size: 0.8rem;">Kesalahan penulisan kode (lupa titik koma, kurung tidak ditutup)</div>
+                    </div>
+                    <div class="error-card" data-error="runtime">
+                        <div class="error-title">Runtime Error</div>
+                        <div class="error-desc" style="font-size: 0.8rem;">Error saat program berjalan (membagi dengan nol, file tidak ditemukan)</div>
+                    </div>
+                    <div class="error-card" data-error="logic">
+                        <div class="error-title">Logic Error</div>
+                        <div class="error-desc" style="font-size: 0.8rem;">Kode berjalan tetapi hasil tidak sesuai (rumus salah, logika terbalik)</div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    // Contoh Debugging dengan echo
+                    function hitung_diskon($harga, $diskon) {
+                        echo "Harga: " . $harga . "<br>";
+                        echo "Diskon: " . $diskon . "<br>";
+                        
+                        $hasil = $harga - ($harga * $diskon / 100);
+                        
+                        echo "Hasil perhitungan: " . $hasil . "<br>";
+                        
+                        return $hasil;
+                    }
+                </div>
+
+                <h2>K. Deployment (Meluncurkan Aplikasi)</h2>
+                <div class="deploy-steps" id="deploySteps">
+                    <div class="deploy-step" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-desc"><strong>Persiapan</strong> - Backup file dan database, ubah konfigurasi ke production</div>
+                    </div>
+                    <div class="deploy-step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-desc"><strong>Upload File</strong> - Upload ke server via FTP atau Git</div>
+                    </div>
+                    <div class="deploy-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-desc"><strong>Setup Database</strong> - Buat database di server, import data, update konfigurasi</div>
+                    </div>
+                    <div class="deploy-step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-desc"><strong>Testing</strong> - Uji semua fitur di server live</div>
+                    </div>
+                    <div class="deploy-step" data-step="5">
+                        <div class="step-number">5</div>
+                        <div class="step-desc"><strong>Final Check</strong> - Periksa keamanan, matikan error_reporting</div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    // Konfigurasi untuk Production
+                    error_reporting(0);
+                    ini_set('display_errors', 0);
+                </div>
+
+                <h2>L. Etika dalam Implementasi</h2>
+                <div class="warning-box">
+                    <i class="fas fa-hand-peace"></i> <strong>Prinsip Etika Implementasi:</strong><br>
+                    • <strong>Keamanan Data:</strong> Jangan simpan password plain text, gunakan password_hash()<br>
+                    • <strong>Validasi Input:</strong> Selalu validasi input untuk cegah SQL injection dan XSS<br>
+                    • <strong>Error Handling:</strong> Jangan tampilkan detail error teknis ke pengguna<br>
+                    • <strong>Hak Cipta:</strong> Gunakan library dan aset dengan lisensi sesuai<br>
+                    • <strong>Dokumentasi:</strong> Dokumentasikan kode agar mudah dipahami orang lain
+                </div>
+
+                <div class="code-block">
+                    // ❌ JANGAN: Menyimpan password plain text
+                    // $query = "INSERT INTO users VALUES ('$username', '$password')";
+
+                    // ✅ LAKUKAN: Hash password sebelum disimpan
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                    
+                    // ❌ JANGAN: Langsung menggunakan input pengguna di query
+                    // $query = "SELECT * FROM users WHERE username = '$username'";
+                    
+                    // ✅ LAKUKAN: Gunakan prepared statement
+                    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
+                    $stmt->execute(['username' => $username]);
+                </div>
+
+                <h2>M. Rangkuman</h2>
+                <ul>
+                    <li><strong>Implementasi</strong> adalah proses mengubah rancangan menjadi kode program yang berfungsi.</li>
+                    <li><strong>Struktur folder</strong> yang rapi memudahkan pengembangan dan pemeliharaan.</li>
+                    <li><strong>Model</strong> berinteraksi dengan database, <strong>Controller</strong> memproses logika, <strong>View</strong> menampilkan tampilan.</li>
+                    <li><strong>Pengujian (testing)</strong> memastikan aplikasi berfungsi sesuai harapan (Unit, Integration, Functional, UAT, Security).</li>
+                    <li><strong>Kasus uji (test case)</strong> mendokumentasikan skenario pengujian dan hasil yang diharapkan.</li>
+                    <li><strong>Debugging</strong> adalah proses mencari dan memperbaiki error dalam kode.</li>
+                    <li><strong>Deployment</strong> adalah proses meluncurkan aplikasi ke server produksi.</li>
+                    <li><strong>Keamanan</strong> harus menjadi perhatian utama dalam implementasi.</li>
+                </ul>
+
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Ingat!</strong> Implementasi adalah tahap di mana ide dan rancanganmu menjadi kenyataan. Pastikan untuk selalu menguji setiap fitur yang kamu buat, karena aplikasi yang baik adalah aplikasi yang berfungsi dengan baik dan aman digunakan!
+                </div>
+
+                <!-- Refleksi Diri -->
+                <div class="refleksi-card">
+                    <h3><i class="fas fa-smile-wink"></i> 🎯 Refleksi Diri</h3>
+                    <p>Setelah mempelajari materi ini, renungkan pertanyaan-pertanyaan berikut:</p>
+                    <ul>
+                        <li>Mengapa penting untuk memiliki struktur folder yang rapi dalam proyek aplikasi web?</li>
+                        <li>Apa perbedaan antara Model, View, dan Controller dalam arsitektur MVC?</li>
+                        <li>Mengapa kita perlu melakukan pengujian (testing) sebelum aplikasi diluncurkan?</li>
+                        <li>Apa yang dimaksud dengan SQL injection dan bagaimana cara mencegahnya?</li>
+                        <li>Apa perbedaan antara environment development dan production?</li>
+                    </ul>
+                </div>
+
+                <!-- Latihan Soal -->
+                <div class="soal-section">
+                    <h3><i class="fas fa-question-circle"></i> ❓ Latihan Soal</h3>
+                    
+                    <div class="soal-item">
+                        <p><strong>1.</strong> Implementasi aplikasi web adalah...</p>
+                        <div class="option"><input type="radio" name="q1" value="a"> a. Proses merancang database</div>
+                        <div class="option"><input type="radio" name="q1" value="b"> b. Proses mengubah rancangan menjadi kode program</div>
+                        <div class="option"><input type="radio" name="q1" value="c"> c. Proses menguji aplikasi</div>
+                        <div class="option"><input type="radio" name="q1" value="d"> d. Proses mendesain antarmuka</div>
+                        <div class="jawaban-feedback" id="feedback1"></div>
                     </div>
                     
-                    <!-- Penentuan Solusi -->
-                    <div class="bab-item-simple genap">
-                        <div class="bab-header-simple">
-                            <h4>Penentuan Solusi</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Genap
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 2 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Merumuskan alternatif solusi dan memilih solusi terbaik untuk masalah yang diidentifikasi.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Brainstorming Solusi</li>
-                            <li>Analisis SWOT Sederhana</li>
-                            <li>Seleksi Solusi Terbaik</li>
-                            <li>Justifikasi Pemilihan</li>
-                        </ul>
-                        <a href="s2-bab-2-penentuan-solusi.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
+                    <div class="soal-item">
+                        <p><strong>2.</strong> Dalam arsitektur MVC, bagian yang bertugas berinteraksi dengan database adalah...</p>
+                        <div class="option"><input type="radio" name="q2" value="a"> a. View</div>
+                        <div class="option"><input type="radio" name="q2" value="b"> b. Controller</div>
+                        <div class="option"><input type="radio" name="q2" value="c"> c. Model</div>
+                        <div class="option"><input type="radio" name="q2" value="d"> d. Router</div>
+                        <div class="jawaban-feedback" id="feedback2"></div>
                     </div>
                     
-                    <!-- Perancangan Produk -->
-                    <div class="bab-item-simple genap">
-                        <div class="bab-header-simple">
-                            <h4>Perancangan Produk</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Genap
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 4 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Menyusun rencana proyek, timeline, pembagian tugas, dan metode yang akan digunakan.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Perancangan Arsitektur Produk</li>
-                            <li>Pembuatan Timeline & Gantt Chart</li>
-                            <li>Pembagian Tugas Tim</li>
-                            <li>Spesifikasi Teknis</li>
-                        </ul>
-                        <a href="s2-bab-3-perancangan-produk.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
+                    <div class="soal-item">
+                        <p><strong>3.</strong> Pengujian yang dilakukan dengan menguji komponen terkecil secara terpisah disebut...</p>
+                        <div class="option"><input type="radio" name="q3" value="a"> a. Integration Testing</div>
+                        <div class="option"><input type="radio" name="q3" value="b"> b. Unit Testing</div>
+                        <div class="option"><input type="radio" name="q3" value="c"> c. Functional Testing</div>
+                        <div class="option"><input type="radio" name="q3" value="d"> d. Security Testing</div>
+                        <div class="jawaban-feedback" id="feedback3"></div>
                     </div>
                     
-                    <!-- Pengembangan Produk -->
-                    <div class="bab-item-simple genap">
-                        <div class="bab-header-simple">
-                            <h4>Pengembangan Produk</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Genap
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 8 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Melaksanakan proyek sesuai rancangan, mengumpulkan data, dan melakukan pengembangan produk.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Implementasi Rancangan</li>
-                            <li>Pengumpulan Data & Bahan</li>
-                            <li>Pembuatan Prototype</li>
-                            <li>Uji Coba & Iterasi</li>
-                        </ul>
-                        <a href="s2-bab-4-pengembangan-produk.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
+                    <div class="soal-item">
+                        <p><strong>4.</strong> Teknik untuk mencegah SQL injection adalah...</p>
+                        <div class="option"><input type="radio" name="q4" value="a"> a. Menggunakan GET method</div>
+                        <div class="option"><input type="radio" name="q4" value="b"> b. Menggunakan prepared statement</div>
+                        <div class="option"><input type="radio" name="q4" value="c"> c. Menyimpan password plain text</div>
+                        <div class="option"><input type="radio" name="q4" value="d"> d. Menampilkan error detail</div>
+                        <div class="jawaban-feedback" id="feedback4"></div>
                     </div>
                     
-                    <!-- Diseminasi Produk -->
-                    <div class="bab-item-simple genap">
-                        <div class="bab-header-simple">
-                            <h4>Diseminasi Produk</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Genap
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 4 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Mempresentasikan hasil proyek dan menyebarluaskan produk yang telah dikembangkan.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Pembuatan Laporan Akhir</li>
-                            <li>Persiapan Presentasi</li>
-                            <li>Penyebaran Produk</li>
-                            <li>Pameran Hasil Karya</li>
-                        </ul>
-                        <a href="s2-bab-5-diseminasi-produk.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
+                    <div class="soal-item">
+                        <p><strong>5.</strong> Proses memindahkan aplikasi dari localhost ke server online disebut...</p>
+                        <div class="option"><input type="radio" name="q5" value="a"> a. Debugging</div>
+                        <div class="option"><input type="radio" name="q5" value="b"> b. Testing</div>
+                        <div class="option"><input type="radio" name="q5" value="c"> c. Deployment</div>
+                        <div class="option"><input type="radio" name="q5" value="d"> d. Development</div>
+                        <div class="jawaban-feedback" id="feedback5"></div>
                     </div>
                     
-                    <!-- Refleksi Pembelajaran -->
-                    <div class="bab-item-simple genap">
-                        <div class="bab-header-simple">
-                            <h4>Refleksi Pembelajaran</h4>
-                            <div class="bab-subtitle">
-                                <i class="fas fa-circle"></i> Semester Genap
-                                <span class="jp-badge"><i class="fas fa-clock"></i> 2 JP</span>
-                            </div>
-                        </div>
-                        <div class="bab-desc-simple">
-                            Melakukan refleksi terhadap proses pembelajaran dan evaluasi hasil proyek.
-                        </div>
-                        <ul class="bab-materi-list">
-                            <li>Evaluasi Proses & Hasil</li>
-                            <li>Identifikasi Kelebihan & Kekurangan</li>
-                            <li>Pembelajaran yang Didapat</li>
-                            <li>Rencana Tindak Lanjut</li>
-                        </ul>
-                        <a href="s2-bab-6-refleksi-pembelajaran.html" class="bab-btn-masuk">
-                            <i class="fas fa-arrow-right"></i> Masuk
-                        </a>
-                    </div>
+                    <button id="checkAnswers" class="btn-check"><i class="fas fa-check"></i> Cek Jawaban</button>
+                </div>
+
+                <div class="quote-box" style="margin-top: 1.5rem; text-align: center;">
+                    <i class="fas fa-code"></i> Selamat Belajar Implementasi dan Pengujian! 🚀
                 </div>
             </div>
-        </div>
 
-        <!-- Back Navigation -->
-        <div class="back-nav-simple">
-            <a href="../index-kka.html" class="back-btn-simple">
-                <i class="fas fa-arrow-left"></i> Kembali ke Beranda KKA
-            </a>
+            <!-- Navigasi -->
+            <div class="materi-navigation">
+                <a href="s2-bab-4-pengembangan-produk.html" class="nav-btn secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Materi 10
+                </a>
+                <a href="s2-bab-6-refleksi-pembelajaran.html" class="nav-btn primary">
+                    Lanjut ke Materi 12: Diseminasi Produk
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
         </div>
     </section>
 
     <script src="../../script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
             if (hamburger) {
                 hamburger.addEventListener('click', function() {
                     navMenu.classList.toggle('active');
                 });
             }
             
-            // Semester tab functionality
-            const semesterBtns = document.querySelectorAll('.semester-btn');
-            const ganjilContent = document.getElementById('ganjil-content');
-            const genapContent = document.getElementById('genap-content');
-            
-            semesterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    semesterBtns.forEach(b => b.classList.remove('active'));
+            // Environment Interaktif
+            const envCards = document.querySelectorAll('.env-card');
+            envCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    envCards.forEach(c => c.classList.remove('active'));
                     this.classList.add('active');
-                    
-                    if (this.dataset.semester === 'ganjil') {
-                        ganjilContent.style.display = 'block';
-                        genapContent.style.display = 'none';
+                });
+            });
+            if(envCards.length) envCards[0].classList.add('active');
+            
+            // Testing Interaktif
+            const testingCards = document.querySelectorAll('.testing-card');
+            testingCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    testingCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Error Interaktif
+            const errorCards = document.querySelectorAll('.error-card');
+            errorCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    errorCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Deployment Steps Interaktif
+            const deploySteps = document.querySelectorAll('.deploy-step');
+            deploySteps.forEach(step => {
+                step.addEventListener('click', function() {
+                    deploySteps.forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Latihan Soal
+            const jawabanBenar = {
+                q1: 'b',
+                q2: 'c',
+                q3: 'b',
+                q4: 'b',
+                q5: 'c'
+            };
+            
+            document.getElementById('checkAnswers').addEventListener('click', function() {
+                let semuaTerjawab = true;
+                for(let i = 1; i <= 5; i++) {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    const feedback = document.getElementById(`feedback${i}`);
+                    if(selected) {
+                        if(selected.value === jawabanBenar[`q${i}`]) {
+                            feedback.innerHTML = '<i class="fas fa-check-circle"></i> Jawaban benar!';
+                            feedback.className = 'jawaban-feedback benar';
+                        } else {
+                            feedback.innerHTML = '<i class="fas fa-times-circle"></i> Jawaban salah. Coba lagi!';
+                            feedback.className = 'jawaban-feedback salah';
+                        }
                     } else {
-                        ganjilContent.style.display = 'none';
-                        genapContent.style.display = 'block';
+                        feedback.innerHTML = '<i class="fas fa-exclamation-circle"></i> Pilih jawaban terlebih dahulu';
+                        feedback.className = 'jawaban-feedback salah';
+                        semuaTerjawab = false;
                     }
-                });
-            });
-            
-            // Hover effects for bab cards
-            const babCards = document.querySelectorAll('.bab-item-simple');
-            babCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
-            
-            // Click effect for buttons
-            const buttons = document.querySelectorAll('.bab-btn-masuk, .back-btn-simple');
-            buttons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    this.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 200);
-                });
-            });
-            
-            // Add animation
-            babCards.forEach((card, index) => {
-                card.style.animation = 'fadeIn 0.5s ease-out';
-                card.style.animationDelay = `${index * 0.1}s`;
+                }
+                if(!semuaTerjawab) {
+                    alert('Pastikan semua soal telah dijawab!');
+                }
             });
         });
     </script>
