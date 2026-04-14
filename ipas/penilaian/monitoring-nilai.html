@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penilaian IPAS - Kelas X</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* IPAS THEME COLORS - Mengikuti patokan */
+        :root {
+            --ipas-primary: #2ecc71;
+            --ipas-secondary: #27ae60;
+            --ipas-light: #d5f4e6;
+            --ipas-dark: #229954;
+            --ipas-accent: #3498db;
+            --ipas-semester1: #3498db;
+            --ipas-semester2: #e74c3c;
+            --ipas-gray: #f5f7fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        /* MAIN CONTENT */
+        .activities-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* CARD STYLE */
+        .ipas-content-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.1);
+            border-left: 5px solid var(--ipas-primary);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .ipas-content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .ipas-content-card h2 {
+            color: var(--ipas-dark);
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .ipas-content-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 2px;
+        }
+        
+        .ipas-content-card > p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 2.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--ipas-light);
+            border-radius: 10px;
+            border-left: 4px solid var(--ipas-primary);
+        }
+        
+        /* SIMPLE CARD */
+        .simple-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
+            border: 1px solid rgba(46, 204, 113, 0.1);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--ipas-light);
+        }
+        
+        .section-title i {
+            width: 40px;
+            height: 40px;
+            background: var(--ipas-light);
+            color: var(--ipas-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .section-title h1 {
+            font-size: 1.8rem;
+            color: var(--ipas-dark);
+            font-weight: 600;
+        }
+        
+        .section-title h3 {
+            font-size: 1.2rem;
+            color: var(--ipas-dark);
+            font-weight: 600;
+        }
+        
+        /* MENU BUTTONS GRID */
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .assessment-card {
+            background: #f5f7fa;
+            border-radius: 20px;
+            padding: 1.8rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(46, 204, 113, 0.1);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .assessment-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(46, 204, 113, 0.15);
+            background: white;
+            border-color: var(--ipas-primary);
+        }
+        
+        .assessment-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--ipas-light), white);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem auto;
+            transition: all 0.3s ease;
+        }
+        
+        .assessment-card:hover .assessment-icon {
+            background: var(--ipas-primary);
+            transform: scale(1.05);
+        }
+        
+        .assessment-card:hover .assessment-icon i {
+            color: white;
+        }
+        
+        .assessment-icon i {
+            font-size: 2.2rem;
+            color: var(--ipas-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .assessment-card h4 {
+            font-size: 1.3rem;
+            color: var(--ipas-dark);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .assessment-card p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        /* Admin Card */
+        .assessment-card.admin-card {
+            background: linear-gradient(135deg, #e8f8f5, #fff);
+            border-color: #1abc9c;
+        }
+        
+        .assessment-card.admin-card .assessment-icon {
+            background: linear-gradient(135deg, #d5f4e6, white);
+        }
+        
+        .assessment-card.admin-card .assessment-icon i {
+            color: #1abc9c;
+        }
+        
+        .assessment-card.admin-card:hover {
+            border-color: #1abc9c;
+        }
+        
+        .assessment-card.admin-card:hover .assessment-icon {
+            background: #1abc9c;
+        }
+        
+        .assessment-card.admin-card:hover .assessment-icon i {
+            color: white;
+        }
+        
+        /* Role Badge */
+        .role-badge {
+            display: inline-block;
+            background: var(--ipas-light);
+            color: var(--ipas-dark);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 0.8rem;
+        }
+        
+        .admin-badge {
+            background: #d5f4e6;
+            color: #1abc9c;
+        }
+        
+        /* BACK BUTTON */
+        .back-nav-simple {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .back-btn-simple {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--ipas-dark);
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid var(--ipas-light);
+        }
+        
+        .back-btn-simple:hover {
+            background: var(--ipas-primary);
+            color: white;
+            transform: translateX(-5px);
+        }
+        
+        /* INFO PANEL */
+        .info-panel {
+            background: var(--ipas-light);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .info-panel span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--ipas-dark);
+            font-size: 0.9rem;
+        }
+        
+        .info-panel i {
+            color: var(--ipas-primary);
+            font-size: 1.1rem;
+        }
+        
+        /* Role Toggle */
+        .role-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .role-btn {
+            background: white;
+            border: 2px solid var(--ipas-light);
+            color: var(--ipas-dark);
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .role-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.1);
+        }
+        
+        .role-btn.active {
+            background: var(--ipas-primary);
+            color: white;
+            border-color: var(--ipas-primary);
+        }
+        
+        .role-btn.admin.active {
+            background: #1abc9c;
+            border-color: #1abc9c;
+        }
+        
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .assessment-card {
+            animation: fadeInUp 0.4s ease forwards;
+            opacity: 0;
+        }
+        
+        .assessment-card:nth-child(1) { animation-delay: 0.1s; }
+        .assessment-card:nth-child(2) { animation-delay: 0.2s; }
+        .assessment-card:nth-child(3) { animation-delay: 0.3s; }
+        .assessment-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* Section toggle */
+        .role-section {
+            display: none;
+        }
+        
+        .role-section.active-section {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>TEMBOK BELAJAR - PROJEK IPAS</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index-ipas.html" class="nav-link"><i class="fas fa-flask"></i> Beranda IPAS</a></li>
+                    <li><a href="../aktivitas-pembelajaran/index-aktifitas-ipas.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-ipas.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="index-aktifitas-ipas.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Penilaian Content -->
+    <section class="activities-container">
+        <!-- Welcome Card -->
+        <div class="ipas-content-card">
+            <h2><i class="fas fa-chart-line"></i> Pusat Penilaian IPAS</h2>
+            <p>Kelola dan pantau seluruh aktivitas penilaian pembelajaran IPAS Kelas X. Pilih menu di bawah sesuai dengan kebutuhan Anda.</p>
+        </div>
+
+        <!-- Role Toggle -->
+        <div class="role-toggle">
+            <button class="role-btn umum active" data-role="umum">
+                <i class="fas fa-users"></i> Pengguna Umum
+            </button>
+            <button class="role-btn admin" data-role="admin">
+                <i class="fas fa-user-shield"></i> Admin / Guru
+            </button>
+        </div>
+
+        <!-- Section Pengguna Umum -->
+        <div id="umum-section" class="role-section active-section">
+            <div class="simple-card">
+                <div class="section-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>Menu Pengguna Umum</h3>
+                </div>
+                
+                <div class="assessment-grid">
+                    <!-- Tombol 1: Monitoring Aktivitas -->
+                    <a href="monitoring-aktivitas.html" class="assessment-card">
+                        <div class="assessment-icon">
+                            <i class="fas fa-chart-simple"></i>
+                        </div>
+                        <h4>Monitoring Aktivitas</h4>
+                        <p>Pantau progres aktivitas pembelajaran, lihat capaian dan status penyelesaian setiap tugas</p>
+                        <span class="role-badge"><i class="fas fa-user"></i> Pengguna Umum</span>
+                    </a>
+                    
+                    <!-- Tombol 2: Preview Lembar Aktivitas -->
+                    <a href="preview-lembar-aktivitas.html" class="assessment-card">
+                        <div class="assessment-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h4>Preview Lembar Aktivitas</h4>
+                        <p>Lihat dan pratinjau seluruh lembar aktivitas sebelum dikerjakan atau setelah diisi</p>
+                        <span class="role-badge"><i class="fas fa-user"></i> Pengguna Umum</span>
+                    </a>
+                    
+                    <!-- Tombol 3: Monitoring Nilai -->
+                    <a href="monitoring-nilai.html" class="assessment-card">
+                        <div class="assessment-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h4>Monitoring Nilai</h4>
+                        <p>Lihat rekapitulasi nilai tugas, eksplorasi, proyek, dan capaian akademik secara lengkap</p>
+                        <span class="role-badge"><i class="fas fa-user"></i> Pengguna Umum</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Admin / Guru -->
+        <div id="admin-section" class="role-section">
+            <div class="simple-card">
+                <div class="section-title">
+                    <i class="fas fa-user-shield"></i>
+                    <h3>Menu Administrator / Guru</h3>
+                </div>
+                
+                <div class="assessment-grid">
+                    <!-- Tombol: Input Nilai Aktivitas -->
+                    <a href="input-nilai-aktivitas.html" class="assessment-card admin-card">
+                        <div class="assessment-icon">
+                            <i class="fas fa-pen-to-square"></i>
+                        </div>
+                        <h4>Input Nilai Aktivitas</h4>
+                        <p>Menu khusus guru untuk menilai semua lembar kerja, tugas eksplorasi, dan proyek siswa</p>
+                        <span class="role-badge admin-badge"><i class="fas fa-user-tie"></i> Admin / Guru</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Ringkasan penilaian untuk admin -->
+            <div class="simple-card">
+                <div class="section-title">
+                    <i class="fas fa-chart-simple"></i>
+                    <h3>Ringkasan Penilaian Kelas</h3>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; padding: 0.8rem; background: #f8f9fa; border-radius: 12px;">
+                        <span style="font-weight: 600;"><i class="fas fa-users"></i> Total Siswa</span>
+                        <span style="color: #27ae60; background: #d5f4e6; padding: 4px 12px; border-radius: 20px; font-weight: 700;">32 Siswa</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; padding: 0.8rem; background: #f8f9fa; border-radius: 12px;">
+                        <span style="font-weight: 600;"><i class="fas fa-tasks"></i> Tugas Belum Dinilai</span>
+                        <span style="color: #e67e22; background: #fdebd0; padding: 4px 12px; border-radius: 20px; font-weight: 700;">12 Tugas</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; padding: 0.8rem; background: #f8f9fa; border-radius: 12px;">
+                        <span style="font-weight: 600;"><i class="fas fa-check-circle"></i> Tugas Sudah Dinilai</span>
+                        <span style="color: #27ae60; background: #d5f4e6; padding: 4px 12px; border-radius: 20px; font-weight: 700;">48 Tugas</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; padding: 0.8rem; background: #f8f9fa; border-radius: 12px;">
+                        <span style="font-weight: 600;"><i class="fas fa-hourglass-half"></i> Menunggu Pengumpulan</span>
+                        <span style="color: #c0392b; background: #fadbd8; padding: 4px 12px; border-radius: 20px; font-weight: 700;">8 Tugas</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 0.85rem; color: #888; text-align: center;">
+                    <i class="fas fa-info-circle"></i> Klik "Input Nilai Aktivitas" untuk mulai menilai tugas siswa
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Navigation -->
+        <div class="back-nav-simple">
+            <a href="../index-ipas.html" class="back-btn-simple">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda IPAS
+            </a>
+        </div>
+    </section>
+
+    <script src="../../script.js"></script>
+    <script>
+        // Mobile Menu Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Role toggle functionality
+            const roleBtns = document.querySelectorAll('.role-btn');
+            const umumSection = document.getElementById('umum-section');
+            const adminSection = document.getElementById('admin-section');
+            
+            roleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    roleBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Show/hide sections
+                    const role = this.dataset.role;
+                    if (role === 'umum') {
+                        umumSection.classList.add('active-section');
+                        adminSection.classList.remove('active-section');
+                    } else {
+                        umumSection.classList.remove('active-section');
+                        adminSection.classList.add('active-section');
+                    }
+                });
+            });
+            
+            // Efek klik pada assessment cards
+            const assessmentCards = document.querySelectorAll('.assessment-card');
+            assessmentCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Jika href menuju ke file yang belum dibuat, bisa beri notifikasi
+                    if (this.getAttribute('href') === '#') {
+                        e.preventDefault();
+                        alert('Halaman ini sedang dalam pengembangan. Silakan hubungi guru IPAS untuk informasi lebih lanjut.');
+                    }
+                });
+            });
+            
+            // Efek ripple klik
+            const allClickable = document.querySelectorAll('.assessment-card, .back-btn-simple, .role-btn');
+            allClickable.forEach(el => {
+                el.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('ripple');
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    ripple.style.position = 'absolute';
+                    ripple.style.backgroundColor = 'rgba(46, 204, 113, 0.3)';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.transform = 'scale(0)';
+                    ripple.style.animation = 'rippleAnim 0.4s linear';
+                    ripple.style.width = '100px';
+                    ripple.style.height = '100px';
+                    ripple.style.left = e.clientX - this.getBoundingClientRect().left - 50 + 'px';
+                    ripple.style.top = e.clientY - this.getBoundingClientRect().top - 50 + 'px';
+                    ripple.style.pointerEvents = 'none';
+                    this.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 400);
+                });
+            });
+        });
+        
+        // Tambahkan style untuk animasi ripple
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes rippleAnim {
+                from {
+                    transform: scale(0);
+                    opacity: 0.6;
+                }
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+            .assessment-card, .back-btn-simple, .role-btn {
+                position: relative;
+                overflow: hidden;
+                cursor: pointer;
+            }
+            .ripple {
+                position: absolute;
+                background: rgba(46, 204, 113, 0.3);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: rippleAnim 0.4s linear;
+                pointer-events: none;
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

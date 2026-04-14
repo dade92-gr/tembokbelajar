@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Lembar Aktivitas - IPAS Kelas X</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf untuk konversi PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        :root {
+            --ipas-primary: #2ecc71;
+            --ipas-secondary: #27ae60;
+            --ipas-light: #d5f4e6;
+            --ipas-dark: #229954;
+            --ipas-accent: #3498db;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .preview-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* HEADER CARD */
+        .ipas-content-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.1);
+            border-left: 5px solid var(--ipas-primary);
+            margin-bottom: 2rem;
+        }
+        
+        .ipas-content-card h2 {
+            color: var(--ipas-dark);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .ipas-content-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 2px;
+        }
+        
+        .ipas-content-card > p {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        /* SIMPLE CARD */
+        .simple-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
+            border: 1px solid rgba(46, 204, 113, 0.1);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--ipas-light);
+        }
+        
+        .section-title i {
+            width: 40px;
+            height: 40px;
+            background: var(--ipas-light);
+            color: var(--ipas-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .section-title h3 {
+            font-size: 1.2rem;
+            color: var(--ipas-dark);
+            font-weight: 600;
+        }
+        
+        /* FILTER FORM */
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 160px;
+        }
+        
+        .filter-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--ipas-dark);
+            margin-bottom: 0.3rem;
+        }
+        
+        .filter-group select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .filter-group select:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+        
+        .btn-cek {
+            background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cek:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-cek:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* ACTION BUTTONS */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-action {
+            background: white;
+            border: 1px solid var(--ipas-light);
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            color: var(--ipas-dark);
+        }
+        
+        .btn-action:hover {
+            background: var(--ipas-primary);
+            color: white;
+            border-color: var(--ipas-primary);
+        }
+        
+        /* PREVIEW CONTENT - Untuk Print/PDF */
+        .preview-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 1rem;
+        }
+        
+        /* Bagian Card */
+        .bagian-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--ipas-primary);
+        }
+        
+        .bagian-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--ipas-dark);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .bagian-title i {
+            color: var(--ipas-primary);
+        }
+        
+        .field-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .field-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        
+        .field-item.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .field-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--ipas-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .field-value {
+            font-size: 0.9rem;
+            color: #333;
+            background: white;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+        
+        .field-value.long-text {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        /* Tabel Style */
+        .data-table-wrapper {
+            overflow-x: auto;
+            margin-top: 0.5rem;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            background: white;
+        }
+        
+        .data-table th {
+            background: var(--ipas-light);
+            color: var(--ipas-dark);
+            padding: 0.6rem;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #ddd;
+        }
+        
+        .data-table td {
+            padding: 0.5rem 0.6rem;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        /* Identitas khusus */
+        .identitas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            background: var(--ipas-light);
+            padding: 1.2rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-panel {
+            background: var(--ipas-light);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+        }
+        
+        .info-panel span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .loading-message, .error-message, .empty-message {
+            padding: 2rem;
+            text-align: center;
+            border-radius: 16px;
+            display: none;
+        }
+        
+        .loading-message { background: #fff3cd; color: #856404; }
+        .error-message { background: #f8d7da; color: #721c24; }
+        .empty-message { background: #e2e3e5; color: #383d41; }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .preview-container {
+                padding: 0;
+                margin: 0;
+                max-width: 100%;
+            }
+            .filter-form, .action-buttons, .back-nav-simple, .simple-card:first-child, header, .btn-action, .btn-cek {
+                display: none !important;
+            }
+            .preview-content {
+                padding: 0;
+                margin: 0;
+                box-shadow: none;
+            }
+            .bagian-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            .data-table {
+                font-size: 0.7rem;
+            }
+        }
+        
+        .back-nav-simple {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .back-btn-simple {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--ipas-dark);
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid var(--ipas-light);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn-simple:hover {
+            background: var(--ipas-primary);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .preview-container { padding: 1rem; }
+            .filter-form { flex-direction: column; }
+            .btn-cek { width: 100%; justify-content: center; }
+            .field-group { grid-template-columns: 1fr; }
+            .action-buttons { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>TEMBOK BELAJAR - PROJEK IPAS</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index-ipas.html" class="nav-link"><i class="fas fa-flask"></i> Beranda IPAS</a></li>
+                    <li><a href="../aktivitas-pembelajaran/index-aktifitas-ipas.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-ipas.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="index-aktifitas-ipas.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="preview-container">
+        <div class="ipas-content-card">
+            <h2><i class="fas fa-file-alt"></i> Preview Lembar Aktivitas</h2>
+            <p>Lihat dan cetak lembar jawaban aktivitas siswa</p>
+        </div>
+
+        <!-- Filter Card -->
+        <div class="simple-card">
+            <div class="section-title">
+                <i class="fas fa-filter"></i>
+                <h3>Filter Pencarian</h3>
+            </div>
+            
+            <div class="filter-form">
+                <div class="filter-group">
+                    <label><i class="fas fa-calendar"></i> Semester</label>
+                    <select id="filterSemester">
+                        <option value="">-- Pilih Semester --</option>
+                        <option value="ganjil">Semester Ganjil</option>
+                        <option value="genap">Semester Genap</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-tasks"></i> Aktivitas</label>
+                    <select id="filterAktivitas" disabled>
+                        <option value="">-- Pilih Semester Dulu --</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-building"></i> Kelas</label>
+                    <select id="filterKelas" disabled>
+                        <option value="">-- Pilih Aktivitas Dulu --</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-user"></i> Nama Siswa</label>
+                    <select id="filterNama" disabled>
+                        <option value="">-- Pilih Kelas Dulu --</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="btn-cek" id="btnCek">
+                        <i class="fas fa-search"></i> Tampilkan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons" id="actionButtons" style="display: none;">
+            <button class="btn-action" id="btnPrint">
+                <i class="fas fa-print"></i> Cetak / Print
+            </button>
+            <button class="btn-action" id="btnDownloadPDF">
+                <i class="fas fa-file-pdf"></i> Download PDF
+            </button>
+        </div>
+
+        <!-- Preview Content -->
+        <div id="previewArea">
+            <div id="loadingMessage" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i> Memuat data...
+            </div>
+            <div id="errorMessage" class="error-message">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <span id="errorText">Terjadi kesalahan</span>
+            </div>
+            <div id="emptyMessage" class="empty-message">
+                <i class="fas fa-info-circle"></i> 
+                Silakan pilih semester, aktivitas, kelas, dan nama siswa untuk menampilkan preview
+            </div>
+            <div id="previewContent" class="preview-content" style="display: none;"></div>
+        </div>
+
+        <!-- Back Navigation -->
+        <div class="back-nav-simple">
+            <a href="index-aktifitas-ipas.html" class="back-btn-simple">
+                <i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian
+            </a>
+        </div>
+    </section>
+
+    <script src="../../script.js"></script>
+    <script>
+        // ==================== KONFIGURASI URL ====================
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        const URL_SEMESTER_GANJIL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
+        const URL_SEMESTER_GENAP = 'https://script.google.com/macros/s/AKfycbwgfBpxpIZfqm5R6ZS_GzDp70LoAEjS7gwaMGC0H7ks-4h18hip5gPVCjOYYDmC7giy/exec';
+        
+        // Variabel global
+        let dataKelas = [];
+        let dataSiswa = {};
+        let daftarAktivitas = { ganjil: [], genap: [] };
+        let currentData = null;
+        
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataSiswa() {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Date.now();
+                window[callbackName] = function(result) {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) document.head.removeChild(script);
+                    delete window[callbackName];
+                    
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        dataSiswa = result.siswaPerKelas || {};
+                        resolve();
+                    } else {
+                        reject(new Error('Gagal memuat data siswa'));
+                    }
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = () => reject(new Error('Gagal terhubung ke server data siswa'));
+                document.head.appendChild(script);
+            });
+        }
+        
+        // ==================== AMBIL DAFTAR SHEET ====================
+        async function fetchSheets(url) {
+            try {
+                const response = await fetch(`${url}?action=getSheets&_=${Date.now()}`);
+                const data = await response.json();
+                if (data && data.success && data.sheets) {
+                    return data.sheets.filter(s => {
+                        const name = s.name.toUpperCase();
+                        return name.includes('AKTIVITAS') || name.includes('AKTIFITAS');
+                    }).map(s => ({ name: s.name, sheetName: s.name }));
+                }
+            } catch (error) {
+                console.warn('Gagal fetch sheets:', error);
+            }
+            return [];
+        }
+        
+        // ==================== AMBIL SEMUA AKTIVITAS ====================
+        async function loadAllActivities() {
+            const [ganjilSheets, genapSheets] = await Promise.all([
+                fetchSheets(URL_SEMESTER_GANJIL),
+                fetchSheets(URL_SEMESTER_GENAP)
+            ]);
+            
+            daftarAktivitas.ganjil = ganjilSheets;
+            daftarAktivitas.genap = genapSheets;
+            
+            console.log(`Aktivitas Ganjil: ${ganjilSheets.length}, Genap: ${genapSheets.length}`);
+        }
+        
+        // ==================== UPDATE DROPDOWN ====================
+        function updateAktivitasDropdown() {
+            const semester = document.getElementById('filterSemester').value;
+            const aktivitasSelect = document.getElementById('filterAktivitas');
+            
+            if (!semester || !daftarAktivitas[semester] || daftarAktivitas[semester].length === 0) {
+                aktivitasSelect.innerHTML = '<option value="">-- Tidak ada aktivitas --</option>';
+                aktivitasSelect.disabled = true;
+                return;
+            }
+            
+            aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
+            daftarAktivitas[semester].forEach(aktivitas => {
+                const option = document.createElement('option');
+                option.value = aktivitas.sheetName;
+                option.textContent = aktivitas.name;
+                aktivitasSelect.appendChild(option);
+            });
+            aktivitasSelect.disabled = false;
+        }
+        
+        function updateKelasDropdown() {
+            const kelasSelect = document.getElementById('filterKelas');
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            dataKelas.forEach(kelas => {
+                if (kelas && kelas.trim()) {
+                    const option = document.createElement('option');
+                    option.value = kelas;
+                    option.textContent = kelas;
+                    kelasSelect.appendChild(option);
+                }
+            });
+            kelasSelect.disabled = false;
+        }
+        
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('filterKelas').value;
+            const namaSelect = document.getElementById('filterNama');
+            
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
+                namaSelect.disabled = true;
+                return;
+            }
+            
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                if (nama && nama.trim()) {
+                    const option = document.createElement('option');
+                    option.value = nama;
+                    option.textContent = nama;
+                    namaSelect.appendChild(option);
+                }
+            });
+            namaSelect.disabled = false;
+        }
+        
+        // ==================== AMBIL DATA DARI SHEET (LANGSUNG STATUS AKTIF) ====================
+        async function fetchDataFromSheet(semester, sheetName, kelas, nama) {
+            const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
+            // Selalu ambil data dengan status AKTIF
+            const fetchUrl = `${url}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&status=AKTIF&_=${Date.now()}`;
+            
+            try {
+                const response = await fetch(fetchUrl);
+                const data = await response.json();
+                if (data && data.success && data.data && data.data.length > 0) {
+                    return data.data[0];
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetch data:', error);
+                return null;
+            }
+        }
+        
+        // ==================== FORMAT TANGGAL ====================
+        function formatTanggal(timestamp) {
+            if (!timestamp) return '-';
+            try {
+                const date = new Date(timestamp);
+                if (!isNaN(date.getTime())) {
+                    return date.toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            } catch(e) {}
+            return timestamp;
+        }
+        
+        function formatLabel(key) {
+            return key
+                .replace(/_/g, ' ')
+                .replace(/([A-Z])/g, ' $1')
+                .replace(/^./, str => str.toUpperCase())
+                .trim();
+        }
+        
+        function formatValue(value) {
+            if (value === null || value === undefined) return '-';
+            if (typeof value === 'object') return JSON.stringify(value, null, 2);
+            if (typeof value === 'boolean') return value ? 'Ya' : 'Tidak';
+            if (value === '') return '-';
+            return String(value);
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ==================== RENDER TABEL DARI ARRAY OF OBJECTS ====================
+        function renderTableFromArray(arr) {
+            if (!arr || arr.length === 0) return '<div class="field-value">(Kosong)</div>';
+            
+            // Kumpulkan semua key yang ada
+            const allKeys = new Set();
+            arr.forEach(item => {
+                if (typeof item === 'object' && item !== null) {
+                    Object.keys(item).forEach(key => allKeys.add(key));
+                }
+            });
+            
+            const headers = Array.from(allKeys);
+            if (headers.length === 0) return '<div class="field-value">(Data kosong)</div>';
+            
+            let tableHtml = `<div class="data-table-wrapper"><table class="data-table"><thead><tr>`;
+            headers.forEach(header => {
+                tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`;
+            });
+            tableHtml += `</tr></thead><tbody>`;
+            
+            arr.forEach(item => {
+                tableHtml += `<tr>`;
+                headers.forEach(header => {
+                    let cellValue = item[header];
+                    if (cellValue === undefined || cellValue === null) cellValue = '-';
+                    if (typeof cellValue === 'object') cellValue = JSON.stringify(cellValue);
+                    tableHtml += `<td>${escapeHtml(String(cellValue))}</td>`;
+                });
+                tableHtml += `</tr>`;
+            });
+            
+            tableHtml += `</tbody></table></div>`;
+            return tableHtml;
+        }
+        
+        // ==================== RENDER JSON VALUE (DETEKSI TABEL ATAU BUKAN) ====================
+        function renderJsonValue(value) {
+            if (value === null || value === undefined) {
+                return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">-</div></div>`;
+            }
+            
+            // Jika berupa ARRAY
+            if (Array.isArray(value)) {
+                if (value.length === 0) {
+                    return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
+                }
+                
+                // Cek apakah array berisi object (tabel)
+                if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null && !Array.isArray(value[0])) {
+                    // Tampilkan sebagai TABEL
+                    return `<div class="field-item full-width">
+                        <div class="field-label">Data Tabel</div>
+                        ${renderTableFromArray(value)}
+                    </div>`;
+                } else {
+                    // Tampilkan sebagai list biasa
+                    let listHtml = `<div class="field-item"><div class="field-label">Daftar</div><div class="field-value">`;
+                    value.forEach((item, idx) => {
+                        listHtml += `<div>${idx + 1}. ${escapeHtml(formatValue(item))}</div>`;
+                    });
+                    listHtml += `</div></div>`;
+                    return listHtml;
+                }
+            }
+            
+            // Jika berupa OBJECT (bukan array)
+            if (typeof value === 'object') {
+                if (Object.keys(value).length === 0) {
+                    return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
+                }
+                
+                // Tampilkan sebagai field-group
+                let objectHtml = `<div class="field-group">`;
+                for (const [objKey, objValue] of Object.entries(value)) {
+                    if (Array.isArray(objValue) && objValue.length > 0 && typeof objValue[0] === 'object') {
+                        objectHtml += `<div class="field-item full-width">
+                            <div class="field-label">${escapeHtml(formatLabel(objKey))}</div>
+                            ${renderTableFromArray(objValue)}
+                        </div>`;
+                    } else {
+                        objectHtml += `
+                            <div class="field-item">
+                                <div class="field-label">${escapeHtml(formatLabel(objKey))}</div>
+                                <div class="field-value">${escapeHtml(formatValue(objValue))}</div>
+                            </div>
+                        `;
+                    }
+                }
+                objectHtml += `</div>`;
+                return objectHtml;
+            }
+            
+            // Nilai primitif
+            return `<div class="field-item">
+                <div class="field-label">Isi</div>
+                <div class="field-value ${String(value).length > 100 ? 'long-text' : ''}">${escapeHtml(formatValue(value))}</div>
+            </div>`;
+        }
+        
+        // ==================== RENDER PREVIEW DINAMIS ====================
+        function renderPreview(data, sheetName) {
+            if (!data) return null;
+            
+            let html = `
+                <div class="info-panel">
+                    <span><i class="fas fa-file-alt"></i> <strong>${escapeHtml(sheetName)}</strong></span>
+                    <span><i class="fas fa-tag"></i> Status: <strong>AKTIF</strong></span>
+                    <span><i class="fas fa-calendar"></i> ${formatTanggal(data.Timestamp || data._timestamp || '')}</span>
+                </div>
+            `;
+            
+            // Cari semua kolom yang dimulai dengan "Bagian_"
+            const bagianKeys = Object.keys(data).filter(key => 
+                key.startsWith('Bagian_') || key === 'Bagian_A' || key === 'Bagian_B' || 
+                key === 'Bagian_C' || key === 'Bagian_D' || key === 'Bagian_E' || key === 'Bagian_F' ||
+                key === 'Bagian_G' || key === 'Bagian_H' || key === 'Bagian_I' || key === 'Bagian_J'
+            ).sort();
+            
+            if (bagianKeys.length === 0) {
+                // Fallback: tampilkan semua data
+                html += `<div class="bagian-card">
+                    <div class="bagian-title"><i class="fas fa-database"></i> Semua Data</div>
+                    <div class="field-group">
+                `;
+                for (const [key, value] of Object.entries(data)) {
+                    if (key === 'Timestamp' || key === 'Status' || key === '_timestamp' || key === '_status') continue;
+                    if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+                        try {
+                            const parsed = JSON.parse(value);
+                            html += renderJsonValue(parsed);
+                        } catch(e) {
+                            html += `<div class="field-item">
+                                <div class="field-label">${escapeHtml(formatLabel(key))}</div>
+                                <div class="field-value">${escapeHtml(formatValue(value))}</div>
+                            </div>`;
+                        }
+                    } else {
+                        html += `<div class="field-item">
+                            <div class="field-label">${escapeHtml(formatLabel(key))}</div>
+                            <div class="field-value">${escapeHtml(formatValue(value))}</div>
+                        </div>`;
+                    }
+                }
+                html += `</div></div>`;
+            } else {
+                // Tampilkan per bagian
+                for (const bagianKey of bagianKeys) {
+                    const bagianValue = data[bagianKey];
+                    if (!bagianValue) continue;
+                    
+                    const bagianTitle = bagianKey.replace('_', ' ');
+                    
+                    html += `<div class="bagian-card">
+                        <div class="bagian-title"><i class="fas fa-folder-open"></i> ${escapeHtml(bagianTitle)}</div>
+                    `;
+                    
+                    // Coba parse JSON
+                    if (typeof bagianValue === 'string' && (bagianValue.startsWith('{') || bagianValue.startsWith('['))) {
+                        try {
+                            const parsed = JSON.parse(bagianValue);
+                            html += renderJsonValue(parsed);
+                        } catch(e) {
+                            html += `<div class="field-item">
+                                <div class="field-label">Isi</div>
+                                <div class="field-value ${String(bagianValue).length > 100 ? 'long-text' : ''}">${escapeHtml(formatValue(bagianValue))}</div>
+                            </div>`;
+                        }
+                    } else {
+                        html += `<div class="field-item">
+                            <div class="field-label">Isi</div>
+                            <div class="field-value ${String(bagianValue).length > 100 ? 'long-text' : ''}">${escapeHtml(formatValue(bagianValue))}</div>
+                        </div>`;
+                    }
+                    
+                    html += `</div>`;
+                }
+            }
+            
+            return html;
+        }
+        
+        // ==================== FUNGSI CEK UTAMA ====================
+        async function cekPreview() {
+            const semester = document.getElementById('filterSemester').value;
+            const sheetName = document.getElementById('filterAktivitas').value;
+            const kelas = document.getElementById('filterKelas').value;
+            const nama = document.getElementById('filterNama').value;
+            
+            // Validasi
+            if (!semester) { alert('Pilih semester terlebih dahulu'); return; }
+            if (!sheetName) { alert('Pilih aktivitas terlebih dahulu'); return; }
+            if (!kelas) { alert('Pilih kelas terlebih dahulu'); return; }
+            if (!nama) { alert('Pilih nama siswa terlebih dahulu'); return; }
+            
+            // Tampilkan loading
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('emptyMessage').style.display = 'none';
+            document.getElementById('previewContent').style.display = 'none';
+            document.getElementById('actionButtons').style.display = 'none';
+            
+            try {
+                const data = await fetchDataFromSheet(semester, sheetName, kelas, nama);
+                
+                if (data) {
+                    currentData = data;
+                    const previewHtml = renderPreview(data, sheetName);
+                    document.getElementById('previewContent').innerHTML = previewHtml;
+                    document.getElementById('previewContent').style.display = 'block';
+                    document.getElementById('actionButtons').style.display = 'flex';
+                    document.getElementById('emptyMessage').style.display = 'none';
+                } else {
+                    document.getElementById('emptyMessage').style.display = 'block';
+                    document.getElementById('emptyMessage').innerHTML = '<i class="fas fa-info-circle"></i> Data tidak ditemukan untuk filter yang dipilih. Pastikan siswa sudah mengirimkan tugas.';
+                    document.getElementById('previewContent').style.display = 'none';
+                    document.getElementById('actionButtons').style.display = 'none';
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = error.message || 'Terjadi kesalahan saat memuat data';
+            } finally {
+                document.getElementById('loadingMessage').style.display = 'none';
+            }
+        }
+        
+        // ==================== PRINT DAN PDF ====================
+        function printPreview() {
+            window.print();
+        }
+        
+        function downloadPDF() {
+            const element = document.getElementById('previewContent');
+            if (!element || !element.innerHTML.trim()) {
+                alert('Tidak ada data untuk di-download');
+                return;
+            }
+            
+            const actionButtons = document.getElementById('actionButtons');
+            const originalDisplay = actionButtons.style.display;
+            actionButtons.style.display = 'none';
+            
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `preview_aktivitas_${Date.now()}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, letterRendering: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                actionButtons.style.display = originalDisplay;
+            }).catch(() => {
+                actionButtons.style.display = originalDisplay;
+                alert('Gagal generate PDF');
+            });
+        }
+        
+        // ==================== EVENT LISTENER ====================
+        function initEventListeners() {
+            document.getElementById('filterSemester').addEventListener('change', () => {
+                updateAktivitasDropdown();
+                document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
+                document.getElementById('filterKelas').disabled = true;
+                document.getElementById('filterNama').innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
+                document.getElementById('filterNama').disabled = true;
+            });
+            
+            document.getElementById('filterAktivitas').addEventListener('change', () => {
+                updateKelasDropdown();
+            });
+            
+            document.getElementById('filterKelas').addEventListener('change', updateNamaDropdown);
+            document.getElementById('btnCek').addEventListener('click', cekPreview);
+            document.getElementById('btnPrint').addEventListener('click', printPreview);
+            document.getElementById('btnDownloadPDF').addEventListener('click', downloadPDF);
+        }
+        
+        // ==================== INIT ====================
+        async function init() {
+            // Mobile menu
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            }
+            
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.getElementById('loadingMessage').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data...';
+            
+            try {
+                await Promise.all([
+                    loadDataSiswa(),
+                    loadAllActivities()
+                ]);
+                
+                updateAktivitasDropdown();
+                initEventListeners();
+                
+                document.getElementById('loadingMessage').style.display = 'none';
+            } catch (error) {
+                console.error('Init error:', error);
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = 'Gagal memuat data awal. Silakan refresh halaman.';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
