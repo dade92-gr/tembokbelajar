@@ -9,6 +9,7 @@
     <!-- html2pdf untuk konversi PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
+        /* style sama seperti sebelumnya - tidak diubah */
         :root {
             --ipas-primary: #2ecc71;
             --ipas-secondary: #27ae60;
@@ -32,7 +33,6 @@
             margin: 0 auto;
         }
         
-        /* HEADER CARD */
         .ipas-content-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             border-radius: 20px;
@@ -68,7 +68,6 @@
             margin-top: 0.5rem;
         }
         
-        /* SIMPLE CARD */
         .simple-card {
             background: white;
             border-radius: 20px;
@@ -105,7 +104,6 @@
             font-weight: 600;
         }
         
-        /* FILTER FORM */
         .filter-form {
             display: flex;
             flex-wrap: wrap;
@@ -169,7 +167,6 @@
             transform: none;
         }
         
-        /* ACTION BUTTONS */
         .action-buttons {
             display: flex;
             gap: 1rem;
@@ -199,7 +196,6 @@
             border-color: var(--ipas-primary);
         }
         
-        /* PREVIEW CONTENT - Untuk Print/PDF */
         .preview-content {
             background: white;
             border-radius: 20px;
@@ -207,7 +203,6 @@
             margin-top: 1rem;
         }
         
-        /* Bagian Card */
         .bagian-card {
             background: #f8f9fa;
             border-radius: 16px;
@@ -273,7 +268,6 @@
             overflow-y: auto;
         }
         
-        /* Tabel Style */
         .data-table-wrapper {
             overflow-x: auto;
             margin-top: 0.5rem;
@@ -301,17 +295,6 @@
             padding: 0.5rem 0.6rem;
             border: 1px solid #ddd;
             vertical-align: top;
-        }
-        
-        /* Identitas khusus */
-        .identitas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            background: var(--ipas-light);
-            padding: 1.2rem;
-            border-radius: 16px;
-            margin-bottom: 1.5rem;
         }
         
         .info-panel {
@@ -342,7 +325,6 @@
         .error-message { background: #f8d7da; color: #721c24; }
         .empty-message { background: #e2e3e5; color: #383d41; }
         
-        /* Print styles */
         @media print {
             body {
                 background: white;
@@ -417,7 +399,7 @@
                     <li><a href="../index-ipas.html" class="nav-link"><i class="fas fa-flask"></i> Beranda IPAS</a></li>
                     <li><a href="../aktivitas-pembelajaran/index-aktifitas-ipas.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
                     <li><a href="../materi-pembelajaran/index-materi-ipas.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
-                    <li><a href="index-aktifitas-ipas.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                    <li><a href="index-penilaian-ipas.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
                 </ul>
                 <div class="hamburger" id="hamburger">
                     <span class="bar"></span>
@@ -434,7 +416,6 @@
             <p>Lihat dan cetak lembar jawaban aktivitas siswa</p>
         </div>
 
-        <!-- Filter Card -->
         <div class="simple-card">
             <div class="section-title">
                 <i class="fas fa-filter"></i>
@@ -476,7 +457,6 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="action-buttons" id="actionButtons" style="display: none;">
             <button class="btn-action" id="btnPrint">
                 <i class="fas fa-print"></i> Cetak / Print
@@ -486,7 +466,6 @@
             </button>
         </div>
 
-        <!-- Preview Content -->
         <div id="previewArea">
             <div id="loadingMessage" class="loading-message">
                 <i class="fas fa-spinner fa-spin"></i> Memuat data...
@@ -502,7 +481,6 @@
             <div id="previewContent" class="preview-content" style="display: none;"></div>
         </div>
 
-        <!-- Back Navigation -->
         <div class="back-nav-simple">
             <a href="index-aktifitas-ipas.html" class="back-btn-simple">
                 <i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian
@@ -517,13 +495,11 @@
         const URL_SEMESTER_GANJIL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
         const URL_SEMESTER_GENAP = 'https://script.google.com/macros/s/AKfycbwgfBpxpIZfqm5R6ZS_GzDp70LoAEjS7gwaMGC0H7ks-4h18hip5gPVCjOYYDmC7giy/exec';
         
-        // Variabel global
         let dataKelas = [];
         let dataSiswa = {};
         let daftarAktivitas = { ganjil: [], genap: [] };
         let currentData = null;
         
-        // ==================== LOAD DATA SISWA ====================
         function loadDataSiswa() {
             return new Promise((resolve, reject) => {
                 const callbackName = 'jsonp_callback_' + Date.now();
@@ -548,7 +524,6 @@
             });
         }
         
-        // ==================== AMBIL DAFTAR SHEET ====================
         async function fetchSheets(url) {
             try {
                 const response = await fetch(`${url}?action=getSheets&_=${Date.now()}`);
@@ -565,20 +540,15 @@
             return [];
         }
         
-        // ==================== AMBIL SEMUA AKTIVITAS ====================
         async function loadAllActivities() {
             const [ganjilSheets, genapSheets] = await Promise.all([
                 fetchSheets(URL_SEMESTER_GANJIL),
                 fetchSheets(URL_SEMESTER_GENAP)
             ]);
-            
             daftarAktivitas.ganjil = ganjilSheets;
             daftarAktivitas.genap = genapSheets;
-            
-            console.log(`Aktivitas Ganjil: ${ganjilSheets.length}, Genap: ${genapSheets.length}`);
         }
         
-        // ==================== UPDATE DROPDOWN ====================
         function updateAktivitasDropdown() {
             const semester = document.getElementById('filterSemester').value;
             const aktivitasSelect = document.getElementById('filterAktivitas');
@@ -635,10 +605,8 @@
             namaSelect.disabled = false;
         }
         
-        // ==================== AMBIL DATA DARI SHEET (LANGSUNG STATUS AKTIF) ====================
         async function fetchDataFromSheet(semester, sheetName, kelas, nama) {
             const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
-            // Selalu ambil data dengan status AKTIF
             const fetchUrl = `${url}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&status=AKTIF&_=${Date.now()}`;
             
             try {
@@ -654,7 +622,6 @@
             }
         }
         
-        // ==================== FORMAT TANGGAL ====================
         function formatTanggal(timestamp) {
             if (!timestamp) return '-';
             try {
@@ -695,11 +662,9 @@
             return div.innerHTML;
         }
         
-        // ==================== RENDER TABEL DARI ARRAY OF OBJECTS ====================
         function renderTableFromArray(arr) {
             if (!arr || arr.length === 0) return '<div class="field-value">(Kosong)</div>';
             
-            // Kumpulkan semua key yang ada
             const allKeys = new Set();
             arr.forEach(item => {
                 if (typeof item === 'object' && item !== null) {
@@ -731,27 +696,22 @@
             return tableHtml;
         }
         
-        // ==================== RENDER JSON VALUE (DETEKSI TABEL ATAU BUKAN) ====================
         function renderJsonValue(value) {
             if (value === null || value === undefined) {
                 return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">-</div></div>`;
             }
             
-            // Jika berupa ARRAY
             if (Array.isArray(value)) {
                 if (value.length === 0) {
                     return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
                 }
                 
-                // Cek apakah array berisi object (tabel)
                 if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null && !Array.isArray(value[0])) {
-                    // Tampilkan sebagai TABEL
                     return `<div class="field-item full-width">
                         <div class="field-label">Data Tabel</div>
                         ${renderTableFromArray(value)}
                     </div>`;
                 } else {
-                    // Tampilkan sebagai list biasa
                     let listHtml = `<div class="field-item"><div class="field-label">Daftar</div><div class="field-value">`;
                     value.forEach((item, idx) => {
                         listHtml += `<div>${idx + 1}. ${escapeHtml(formatValue(item))}</div>`;
@@ -761,13 +721,11 @@
                 }
             }
             
-            // Jika berupa OBJECT (bukan array)
             if (typeof value === 'object') {
                 if (Object.keys(value).length === 0) {
                     return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
                 }
                 
-                // Tampilkan sebagai field-group
                 let objectHtml = `<div class="field-group">`;
                 for (const [objKey, objValue] of Object.entries(value)) {
                     if (Array.isArray(objValue) && objValue.length > 0 && typeof objValue[0] === 'object') {
@@ -788,14 +746,12 @@
                 return objectHtml;
             }
             
-            // Nilai primitif
             return `<div class="field-item">
                 <div class="field-label">Isi</div>
                 <div class="field-value ${String(value).length > 100 ? 'long-text' : ''}">${escapeHtml(formatValue(value))}</div>
             </div>`;
         }
         
-        // ==================== RENDER PREVIEW DINAMIS ====================
         function renderPreview(data, sheetName) {
             if (!data) return null;
             
@@ -807,7 +763,6 @@
                 </div>
             `;
             
-            // Cari semua kolom yang dimulai dengan "Bagian_"
             const bagianKeys = Object.keys(data).filter(key => 
                 key.startsWith('Bagian_') || key === 'Bagian_A' || key === 'Bagian_B' || 
                 key === 'Bagian_C' || key === 'Bagian_D' || key === 'Bagian_E' || key === 'Bagian_F' ||
@@ -815,7 +770,6 @@
             ).sort();
             
             if (bagianKeys.length === 0) {
-                // Fallback: tampilkan semua data
                 html += `<div class="bagian-card">
                     <div class="bagian-title"><i class="fas fa-database"></i> Semua Data</div>
                     <div class="field-group">
@@ -841,7 +795,6 @@
                 }
                 html += `</div></div>`;
             } else {
-                // Tampilkan per bagian
                 for (const bagianKey of bagianKeys) {
                     const bagianValue = data[bagianKey];
                     if (!bagianValue) continue;
@@ -852,7 +805,6 @@
                         <div class="bagian-title"><i class="fas fa-folder-open"></i> ${escapeHtml(bagianTitle)}</div>
                     `;
                     
-                    // Coba parse JSON
                     if (typeof bagianValue === 'string' && (bagianValue.startsWith('{') || bagianValue.startsWith('['))) {
                         try {
                             const parsed = JSON.parse(bagianValue);
@@ -877,20 +829,17 @@
             return html;
         }
         
-        // ==================== FUNGSI CEK UTAMA ====================
         async function cekPreview() {
             const semester = document.getElementById('filterSemester').value;
             const sheetName = document.getElementById('filterAktivitas').value;
             const kelas = document.getElementById('filterKelas').value;
             const nama = document.getElementById('filterNama').value;
             
-            // Validasi
             if (!semester) { alert('Pilih semester terlebih dahulu'); return; }
             if (!sheetName) { alert('Pilih aktivitas terlebih dahulu'); return; }
             if (!kelas) { alert('Pilih kelas terlebih dahulu'); return; }
             if (!nama) { alert('Pilih nama siswa terlebih dahulu'); return; }
             
-            // Tampilkan loading
             document.getElementById('loadingMessage').style.display = 'block';
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('emptyMessage').style.display = 'none';
@@ -921,7 +870,6 @@
             }
         }
         
-        // ==================== PRINT DAN PDF ====================
         function printPreview() {
             window.print();
         }
@@ -953,7 +901,72 @@
             });
         }
         
-        // ==================== EVENT LISTENER ====================
+        // ==================== BACA PARAMETER URL ====================
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                semester: params.get('semester'),
+                sheetName: params.get('sheetName'),
+                kelas: params.get('kelas'),
+                nama: params.get('nama')
+            };
+        }
+        
+        async function setParamsFromUrl() {
+            const params = getUrlParams();
+            
+            if (!params.semester || !params.sheetName || !params.kelas || !params.nama) {
+                return false;
+            }
+            
+            console.log('Parameter URL ditemukan:', params);
+            
+            // Set semester
+            const semesterSelect = document.getElementById('filterSemester');
+            semesterSelect.value = params.semester;
+            semesterSelect.dispatchEvent(new Event('change'));
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Set aktivitas
+            const aktivitasSelect = document.getElementById('filterAktivitas');
+            const sheetNameDecoded = decodeURIComponent(params.sheetName);
+            for (let i = 0; i < aktivitasSelect.options.length; i++) {
+                if (aktivitasSelect.options[i].value === sheetNameDecoded) {
+                    aktivitasSelect.selectedIndex = i;
+                    break;
+                }
+            }
+            aktivitasSelect.dispatchEvent(new Event('change'));
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Set kelas
+            const kelasSelect = document.getElementById('filterKelas');
+            const kelasDecoded = decodeURIComponent(params.kelas);
+            for (let i = 0; i < kelasSelect.options.length; i++) {
+                if (kelasSelect.options[i].value === kelasDecoded) {
+                    kelasSelect.selectedIndex = i;
+                    break;
+                }
+            }
+            kelasSelect.dispatchEvent(new Event('change'));
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Set nama
+            const namaSelect = document.getElementById('filterNama');
+            const namaDecoded = decodeURIComponent(params.nama);
+            for (let i = 0; i < namaSelect.options.length; i++) {
+                if (namaSelect.options[i].value === namaDecoded) {
+                    namaSelect.selectedIndex = i;
+                    break;
+                }
+            }
+            
+            return true;
+        }
+        
         function initEventListeners() {
             document.getElementById('filterSemester').addEventListener('change', () => {
                 updateAktivitasDropdown();
@@ -973,9 +986,7 @@
             document.getElementById('btnDownloadPDF').addEventListener('click', downloadPDF);
         }
         
-        // ==================== INIT ====================
         async function init() {
-            // Mobile menu
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
             if (hamburger) {
@@ -993,6 +1004,11 @@
                 
                 updateAktivitasDropdown();
                 initEventListeners();
+                
+                const hasParams = await setParamsFromUrl();
+                if (hasParams) {
+                    document.getElementById('btnCek').click();
+                }
                 
                 document.getElementById('loadingMessage').style.display = 'none';
             } catch (error) {
