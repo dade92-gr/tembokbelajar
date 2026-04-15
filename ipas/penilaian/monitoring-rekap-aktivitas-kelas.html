@@ -13,8 +13,6 @@
             --ipas-light: #d5f4e6;
             --ipas-dark: #229954;
             --ipas-accent: #3498db;
-            --ipas-semester1: #3498db;
-            --ipas-semester2: #e74c3c;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -109,12 +107,12 @@
             flex-wrap: wrap;
             gap: 1rem;
             align-items: flex-end;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
         
         .filter-group {
             flex: 1;
-            min-width: 180px;
+            min-width: 200px;
         }
         
         .filter-group label {
@@ -164,14 +162,13 @@
         .btn-cek:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
         
         .info-panel {
             background: var(--ipas-light);
             border-radius: 16px;
             padding: 0.8rem 1.2rem;
-            margin-bottom: 1.5rem;
+            margin-top: 1rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -196,19 +193,21 @@
         .rekap-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            min-width: 800px;
         }
         
         .rekap-table th {
             background: var(--ipas-light);
             color: var(--ipas-dark);
-            padding: 1rem;
+            padding: 0.8rem;
             text-align: left;
             font-weight: 600;
+            border-bottom: 2px solid var(--ipas-primary);
         }
         
         .rekap-table td {
-            padding: 0.8rem 1rem;
+            padding: 0.7rem 0.8rem;
             border-bottom: 1px solid #f0f0f0;
         }
         
@@ -222,10 +221,11 @@
             gap: 5px;
             background: #d5f4e6;
             color: #27ae60;
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 30px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
+            white-space: nowrap;
         }
         
         .status-belum {
@@ -234,10 +234,11 @@
             gap: 5px;
             background: #fadbd8;
             color: #e74c3c;
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 30px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
+            white-space: nowrap;
         }
         
         .loading-message, .error-message {
@@ -309,21 +310,24 @@
             transform: translateX(-5px);
         }
         
-        .empty-row td {
-            text-align: center;
-            padding: 3rem;
-            color: #999;
-        }
-        
         .preview-link {
             color: var(--ipas-primary);
             text-decoration: none;
-            font-size: 0.8rem;
-            margin-left: 8px;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
         
         .preview-link:hover {
             text-decoration: underline;
+        }
+        
+        .fixed-col {
+            background: white;
+            position: sticky;
+            left: 0;
+            z-index: 1;
         }
         
         @keyframes spin {
@@ -339,8 +343,8 @@
             .activities-container { padding: 1rem; }
             .filter-form { flex-direction: column; }
             .btn-cek { width: 100%; justify-content: center; }
-            .rekap-table th, .rekap-table td { padding: 0.6rem; font-size: 0.8rem; }
-            .summary-stats { flex-direction: column; }
+            .rekap-table th, .rekap-table td { padding: 0.5rem; font-size: 0.75rem; }
+            .status-sudah, .status-belum { padding: 2px 6px; font-size: 0.65rem; }
         }
     </style>
 </head>
@@ -371,7 +375,7 @@
     <section class="activities-container">
         <div class="ipas-content-card">
             <h2><i class="fas fa-chart-line"></i> Rekap Aktivitas Per Kelas</h2>
-            <p>Khusus Guru - Lihat status pengumpulan tugas seluruh siswa dalam satu kelas</p>
+            <p>Khusus Guru - Lihat status pengumpulan seluruh aktivitas siswa dalam satu kelas</p>
         </div>
 
         <div class="simple-card">
@@ -390,15 +394,9 @@
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label><i class="fas fa-tasks"></i> Aktivitas</label>
-                    <select id="filterAktivitas" disabled>
-                        <option value="">-- Pilih Semester Dulu --</option>
-                    </select>
-                </div>
-                <div class="filter-group">
                     <label><i class="fas fa-building"></i> Kelas</label>
                     <select id="filterKelas" disabled>
-                        <option value="">-- Pilih Aktivitas Dulu --</option>
+                        <option value="">-- Pilih Semester Dulu --</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -410,8 +408,8 @@
             
             <div class="info-panel" id="infoPanel" style="display: none;">
                 <span><i class="fas fa-building"></i> Kelas: <strong id="infoKelas">-</strong></span>
-                <span><i class="fas fa-tasks"></i> Aktivitas: <strong id="infoAktivitas">-</strong></span>
                 <span><i class="fas fa-calendar"></i> Semester: <strong id="infoSemester">-</strong></span>
+                <span><i class="fas fa-users"></i> Total Siswa: <strong id="infoTotalSiswa">0</strong></span>
             </div>
         </div>
 
@@ -432,45 +430,37 @@
             
             <div class="table-wrapper" id="tableWrapper" style="display: none;">
                 <table class="rekap-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Siswa</th>
-                            <th>Status Pengumpulan</th>
-                            <th>Tanggal Pengumpulan</th>
-                            <th>Aksi</th>
-                        </tr>
+                    <thead id="tableHeader">
+                        <!-- Header akan di-generate oleh JS -->
                     </thead>
                     <tbody id="tableBody">
-                        <tr class="empty-row"><td colspan="5">Belum ada data. Silakan pilih filter dan klik Tampilkan Rekap.</td></tr>
+                        <tr class="empty-row"><td colspan="10">Belum ada data. Silakan pilih filter dan klik Tampilkan Rekap.</td></tr>
                     </tbody>
                 </table>
             </div>
             
             <div id="summaryStats" class="summary-stats" style="display: none;">
                 <div class="stat-card"><div class="number" id="totalSiswa">0</div><div class="label">Total Siswa</div></div>
-                <div class="stat-card"><div class="number" id="sudahDikumpulkan">0</div><div class="label">Sudah Dikumpulkan</div></div>
-                <div class="stat-card"><div class="number" id="belumDikumpulkan">0</div><div class="label">Belum Dikumpulkan</div></div>
-                <div class="stat-card"><div class="number" id="persentase">0%</div><div class="label">Persentase</div></div>
+                <div class="stat-card"><div class="number" id="totalAktivitas">0</div><div class="label">Total Aktivitas</div></div>
+                <div class="stat-card"><div class="number" id="rataPengumpulan">0%</div><div class="label">Rata-rata Pengumpulan</div></div>
             </div>
         </div>
 
         <div class="back-nav-simple">
-            <a href="index-aktifitas-ipas.html" class="back-btn-simple">
+            <a href="index-penilaian-ipas.html" class="back-btn-simple">
                 <i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian
             </a>
         </div>
     </section>
 
-    <script src="../../script.js"></script>
     <script>
-        // ==================== KONFIGURASI URL APPS SCRIPT ====================
+        // ==================== KONFIGURASI URL ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_SEMESTER_GANJIL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
         const URL_SEMESTER_GENAP = 'https://script.google.com/macros/s/AKfycbwgfBpxpIZfqm5R6ZS_GzDp70LoAEjS7gwaMGC0H7ks-4h18hip5gPVCjOYYDmC7giy/exec';
         
-        // ==================== DAFTAR AKTIVITAS (FALLBACK) ====================
-        let aktivitasGenap = [
+        // ==================== DAFTAR AKTIVITAS (6 AKTIVITAS UTAMA) ====================
+        const DAFTAR_AKTIVITAS = [
             { id: 1, nama: "Aktivitas 1: Menemukan Masalah Proyek", sheetName: "AKTIVITAS 1 - MENEMUKAN MASALAH PROYEK" },
             { id: 2, nama: "Aktivitas 2: Mencari Solusi", sheetName: "AKTIVITAS 2 - MENCARI SOLUSI" },
             { id: 3, nama: "Aktivitas 3: Perancangan Proyek", sheetName: "AKTIVITAS 3 - PERANCANGAN PROYEK" },
@@ -479,20 +469,9 @@
             { id: 6, nama: "Aktivitas 6: Diseminasi Video", sheetName: "AKTIVITAS 6 - DISEMINASI VIDEO" }
         ];
         
-        let aktivitasGanjil = [
-            { id: 1, nama: "Perkenalan IPAS", sheetName: "AKTIVITAS GANJIL 1 - PERKENALAN" },
-            { id: 2, nama: "Makhluk Hidup & Lingkungan", sheetName: "AKTIVITAS GANJIL 2 - MAKHLUK HIDUP" },
-            { id: 3, nama: "Zat & Perubahannya", sheetName: "AKTIVITAS GANJIL 3 - ZAT" },
-            { id: 4, nama: "Energi & Perubahannya", sheetName: "AKTIVITAS GANJIL 4 - ENERGI" },
-            { id: 5, nama: "Keruangan & Konektivitas", sheetName: "AKTIVITAS GANJIL 5 - KERUANGAN" },
-            { id: 6, nama: "Interaksi & Dinamika Sosial", sheetName: "AKTIVITAS GANJIL 6 - INTERAKSI" },
-            { id: 7, nama: "Perilaku Ekonomi", sheetName: "AKTIVITAS GANJIL 7 - EKONOMI" },
-            { id: 8, nama: "Review & Evaluasi", sheetName: "AKTIVITAS GANJIL 8 - REVIEW" }
-        ];
-        
         let dataKelas = [];
         let dataSiswa = {};
-        let daftarAktivitas = { ganjil: [], genap: [] };
+        let daftarSheetAktual = { ganjil: [], genap: [] };
         
         // ==================== AMBIL DAFTAR SHEET DARI URL ====================
         async function fetchSheetNames(url, semester) {
@@ -519,7 +498,7 @@
             } catch (error) {
                 console.warn(`Gagal mengambil daftar sheet dari ${url}:`, error);
             }
-            return semester === 'ganjil' ? aktivitasGanjil : aktivitasGenap;
+            return DAFTAR_AKTIVITAS;
         }
         
         async function loadAllActivities() {
@@ -527,8 +506,8 @@
                 fetchSheetNames(URL_SEMESTER_GANJIL, 'ganjil'),
                 fetchSheetNames(URL_SEMESTER_GENAP, 'genap')
             ]);
-            daftarAktivitas.ganjil = ganjilSheets;
-            daftarAktivitas.genap = genapSheets;
+            daftarSheetAktual.ganjil = ganjilSheets;
+            daftarSheetAktual.genap = genapSheets;
         }
         
         function formatSheetName(sheetName) {
@@ -542,7 +521,7 @@
             return name;
         }
         
-        // ==================== CEK STATUS UNTUK SATU SISWA ====================
+        // ==================== CEK STATUS SATU SISWA UNTUK SATU AKTIVITAS ====================
         async function cekStatusSiswa(semester, sheetName, kelas, nama) {
             const urlPerekap = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
             
@@ -561,31 +540,50 @@
                     };
                 }
             } catch (error) {
-                console.warn(`Gagal cek untuk ${nama}:`, error);
+                console.warn(`Gagal cek untuk ${nama} - ${sheetName}:`, error);
             }
             
             return { status: 'belum', tanggal: '-' };
         }
         
-        // ==================== CEK SEMUA SISWA DALAM KELAS ====================
-        async function cekRekapKelas(semester, sheetName, kelas) {
+        // ==================== CEK SEMUA SISWA UNTUK SEMUA AKTIVITAS ====================
+        async function cekRekapKelas(semester, kelas) {
             const daftarNama = dataSiswa[kelas] || [];
-            if (daftarNama.length === 0) return [];
+            if (daftarNama.length === 0) return { siswa: [], aktivitas: [], matrix: [] };
+            
+            // Ambil daftar aktivitas berdasarkan semester
+            const daftarAktivitas = semester === 'ganjil' ? daftarSheetAktual.ganjil : daftarSheetAktual.genap;
+            if (daftarAktivitas.length === 0) return { siswa: [], aktivitas: [], matrix: [] };
             
             const results = [];
             let no = 1;
             
+            // Untuk setiap siswa, cek semua aktivitas
             for (const nama of daftarNama) {
-                const result = await cekStatusSiswa(semester, sheetName, kelas, nama);
-                results.push({
+                const row = {
                     no: no++,
                     nama: nama,
-                    status: result.status,
-                    tanggal: result.tanggal
-                });
+                    aktivitas: {}
+                };
+                
+                for (const aktivitas of daftarAktivitas) {
+                    const result = await cekStatusSiswa(semester, aktivitas.sheetName, kelas, nama);
+                    row.aktivitas[aktivitas.id] = {
+                        status: result.status,
+                        tanggal: result.tanggal,
+                        sheetName: aktivitas.sheetName,
+                        namaAktivitas: aktivitas.nama
+                    };
+                }
+                
+                results.push(row);
             }
             
-            return results;
+            return {
+                siswa: results,
+                aktivitas: daftarAktivitas,
+                totalSiswa: results.length
+            };
         }
         
         function formatTanggal(timestamp) {
@@ -607,54 +605,75 @@
         }
         
         // ==================== RENDER TABEL ====================
-        function renderTable(results, sheetName, semester) {
+        function renderTable(data, semester, kelas) {
+            const { siswa, aktivitas, totalSiswa } = data;
             const tbody = document.getElementById('tableBody');
+            const thead = document.getElementById('tableHeader');
             const tableWrapper = document.getElementById('tableWrapper');
             const summaryStats = document.getElementById('summaryStats');
             
-            if (!results || results.length === 0) {
-                tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Tidak ada data siswa untuk kelas ini.</td></tr>';
+            if (!siswa || siswa.length === 0 || aktivitas.length === 0) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="10">Tidak ada data siswa untuk kelas ini.</td></tr>';
                 tableWrapper.style.display = 'block';
                 summaryStats.style.display = 'none';
                 return;
             }
             
-            let sudahCount = 0;
+            // Buat Header
+            let headerHtml = `<tr>
+                <th style="position: sticky; left: 0; background: var(--ipas-light); z-index: 2;">No</th>
+                <th style="position: sticky; left: 60px; background: var(--ipas-light); z-index: 2;">Nama Siswa</th>`;
+            
+            aktivitas.forEach(akt => {
+                headerHtml += `<th>${escapeHtml(akt.nama)}</th>`;
+            });
+            headerHtml += `</tr>`;
+            thead.innerHTML = headerHtml;
+            
+            // Buat Body
+            let totalPengumpulan = 0;
+            let totalKeseluruhan = siswa.length * aktivitas.length;
             let html = '';
             
-            results.forEach(item => {
-                if (item.status === 'sudah') sudahCount++;
-                const statusHtml = item.status === 'sudah' 
-                    ? '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah Dikumpulkan</span>'
-                    : '<span class="status-belum"><i class="fas fa-clock"></i> Belum Dikumpulkan</span>';
+            siswa.forEach(sis => {
+                html += `<tr>
+                    <td style="position: sticky; left: 0; background: white; z-index: 1;">${sis.no}</td>
+                    <td style="position: sticky; left: 60px; background: white; z-index: 1;"><strong>${escapeHtml(sis.nama)}</strong></td>`;
                 
-                // Tombol preview untuk melihat lembar jawaban siswa
-                const previewLink = item.status === 'sudah' 
-                    ? `<a href="preview-lembar-aktivitas.html?semester=${semester}&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(document.getElementById('filterKelas').value)}&nama=${encodeURIComponent(item.nama)}" class="preview-link" target="_blank"><i class="fas fa-eye"></i> Preview</a>`
-                    : '<span class="preview-link" style="color:#ccc;"><i class="fas fa-eye-slash"></i> Preview</span>';
-                
-                html += `
-                    <tr>
-                        <td>${item.no}</td>
-                        <td><strong>${escapeHtml(item.nama)}</strong></td>
-                        <td>${statusHtml}</td>
-                        <td>${escapeHtml(item.tanggal)}</td>
-                        <td>${previewLink}</td>
-                    </tr>
-                `;
+                for (const aktivitasItem of aktivitas) {
+                    const dataAkt = sis.aktivitas[aktivitasItem.id];
+                    if (dataAkt && dataAkt.status === 'sudah') {
+                        totalPengumpulan++;
+                        // Tombol preview untuk melihat lembar jawaban
+                        const previewUrl = `preview-lembar-aktivitas.html?semester=${semester}&sheetName=${encodeURIComponent(dataAkt.sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(sis.nama)}`;
+                        html += `<td>
+                            <span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>
+                            <a href="${previewUrl}" class="preview-link" target="_blank" title="Lihat lembar jawaban"><i class="fas fa-eye"></i></a>
+                        </td>`;
+                    } else {
+                        html += `<td>
+                            <span class="status-belum"><i class="fas fa-clock"></i> Belum</span>
+                        </td>`;
+                    }
+                }
+                html += `</tr>`;
             });
             
             tbody.innerHTML = html;
             tableWrapper.style.display = 'block';
             summaryStats.style.display = 'flex';
             
-            const total = results.length;
-            const persen = total > 0 ? Math.round((sudahCount / total) * 100) : 0;
+            // Update summary stats
+            const persenRata = totalKeseluruhan > 0 ? Math.round((totalPengumpulan / totalKeseluruhan) * 100) : 0;
+            document.getElementById('totalSiswa').innerText = siswa.length;
+            document.getElementById('totalAktivitas').innerText = aktivitas.length;
+            document.getElementById('rataPengumpulan').innerText = persenRata + '%';
             
-            document.getElementById('totalSiswa').innerText = total;
-            document.getElementById('sudahDikumpulkan').innerText = sudahCount;
-            document.getElementById('belumDikumpulkan').innerText = total - sudahCount;
-            document.getElementById('persentase').innerText = persen + '%';
+            // Update info panel
+            document.getElementById('infoKelas').innerText = kelas;
+            document.getElementById('infoSemester').innerText = semester === 'ganjil' ? 'Ganjil' : 'Genap';
+            document.getElementById('infoTotalSiswa').innerText = siswa.length;
+            document.getElementById('infoPanel').style.display = 'flex';
         }
         
         function escapeHtml(text) {
@@ -690,26 +709,6 @@
         }
         
         // ==================== UPDATE DROPDOWN ====================
-        function updateAktivitasDropdown() {
-            const semester = document.getElementById('filterSemester').value;
-            const aktivitasSelect = document.getElementById('filterAktivitas');
-            
-            if (!semester || !daftarAktivitas[semester] || daftarAktivitas[semester].length === 0) {
-                aktivitasSelect.innerHTML = '<option value="">-- Tidak ada aktivitas --</option>';
-                aktivitasSelect.disabled = true;
-                return;
-            }
-            
-            aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
-            daftarAktivitas[semester].forEach(aktivitas => {
-                const option = document.createElement('option');
-                option.value = aktivitas.sheetName;
-                option.textContent = aktivitas.nama;
-                aktivitasSelect.appendChild(option);
-            });
-            aktivitasSelect.disabled = false;
-        }
-        
         function updateKelasDropdown() {
             const kelasSelect = document.getElementById('filterKelas');
             kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
@@ -727,22 +726,10 @@
         // ==================== FUNGSI CEK UTAMA ====================
         async function cekRekap() {
             const semester = document.getElementById('filterSemester').value;
-            const sheetName = document.getElementById('filterAktivitas').value;
             const kelas = document.getElementById('filterKelas').value;
             
-            // Validasi
             if (!semester) { alert('Pilih semester terlebih dahulu'); return; }
-            if (!sheetName) { alert('Pilih aktivitas terlebih dahulu'); return; }
             if (!kelas) { alert('Pilih kelas terlebih dahulu'); return; }
-            
-            // Update info panel
-            const aktivitasSelect = document.getElementById('filterAktivitas');
-            const aktivitasNama = aktivitasSelect.options[aktivitasSelect.selectedIndex]?.text || sheetName;
-            
-            document.getElementById('infoPanel').style.display = 'flex';
-            document.getElementById('infoKelas').innerText = kelas;
-            document.getElementById('infoAktivitas').innerText = aktivitasNama;
-            document.getElementById('infoSemester').innerText = semester === 'ganjil' ? 'Ganjil' : 'Genap';
             
             // Tampilkan loading
             const loadingMsg = document.getElementById('loadingMessage');
@@ -753,14 +740,15 @@
             errorMsg.style.display = 'none';
             tableWrapper.style.display = 'none';
             document.getElementById('summaryStats').style.display = 'none';
+            document.getElementById('infoPanel').style.display = 'none';
             
             const btnCek = document.getElementById('btnCek');
             btnCek.disabled = true;
             btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data...';
             
             try {
-                const results = await cekRekapKelas(semester, sheetName, kelas);
-                renderTable(results, sheetName, semester);
+                const results = await cekRekapKelas(semester, kelas);
+                renderTable(results, semester, kelas);
             } catch (error) {
                 console.error('Error:', error);
                 errorMsg.style.display = 'block';
@@ -791,16 +779,10 @@
                     loadAllActivities()
                 ]);
                 
-                updateAktivitasDropdown();
+                updateKelasDropdown();
                 
                 // Event listeners
                 document.getElementById('filterSemester').addEventListener('change', () => {
-                    updateAktivitasDropdown();
-                    document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
-                    document.getElementById('filterKelas').disabled = true;
-                });
-                
-                document.getElementById('filterAktivitas').addEventListener('change', () => {
                     updateKelasDropdown();
                 });
                 
