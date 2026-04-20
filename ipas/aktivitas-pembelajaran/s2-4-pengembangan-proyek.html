@@ -352,7 +352,7 @@
     <script>
         // ==================== KONFIGURASI ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbwgfBpxpIZfqm5R6ZS_GzDp70LoAEjS7gwaMGC0H7ks-4h18hip5gPVCjOYYDmC7giy/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyq2G4viOZ04k1b5nl27IYZ7HD9XUZdgBkhYj-46njXvLLVcjqNBqVElHU-BcpOVhOa/exec';
         
         const URL_AKTIVITAS1 = URL_PEREKAP_AKTIVITAS;
         const URL_AKTIVITAS2 = URL_PEREKAP_AKTIVITAS;
@@ -509,7 +509,7 @@
             [...(dataSiswa[kelas] || [])].sort().forEach(nama => { if (nama?.trim()) namaSelect.appendChild(new Option(nama, nama)); });
         }
 
-        // ==================== CEK DATA DARI AKTIVITAS 1, 2, 3 (DIPERBAIKI) ====================
+        // ==================== CEK DATA DARI AKTIVITAS 1, 2, 3 ====================
         async function cekDataAktivitas() {
             const kelas = document.getElementById('kelas').value;
             const nama = document.getElementById('nama').value;
@@ -529,97 +529,53 @@
             document.getElementById('dataTidakDitemukan').style.display = 'none';
             
             try {
-                // Data dari Aktivitas 1
                 const url1 = `${URL_AKTIVITAS1}?action=getData&sheetName=AKTIVITAS%201%20-%20MENEMUKAN%20MASALAH%20PROYEK&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}`;
                 const response1 = await fetch(url1);
                 const result1 = await response1.json();
                 
-                // Data dari Aktivitas 2
                 const url2 = `${URL_AKTIVITAS2}?action=getData&sheetName=AKTIVITAS%202%20-%20MENCARI%20SOLUSI&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}`;
                 const response2 = await fetch(url2);
                 const result2 = await response2.json();
                 
-                // Data dari Aktivitas 3
                 const url3 = `${URL_AKTIVITAS3}?action=getData&sheetName=AKTIVITAS%203%20-%20PERANCANGAN%20PROYEK&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}`;
                 const response3 = await fetch(url3);
                 const result3 = await response3.json();
                 
                 let tema = '-', masalah = '-', solusi = '-', fungsi = '-', pengguna = '-', kelompok = '';
                 
-                // Ambil data dari Aktivitas 1
                 if (result1 && result1.success && result1.data && result1.data.length > 0) {
                     const row1 = result1.data[0];
                     let bagianC = {}, bagianA = {};
-                    try { bagianC = JSON.parse(row1.Bagian_C || '{}'); } catch(e) { console.error('Parse error Bagian_C Aktivitas 1:', e); }
-                    try { bagianA = JSON.parse(row1.Bagian_A || '{}'); } catch(e) { console.error('Parse error Bagian_A Aktivitas 1:', e); }
+                    try { bagianC = JSON.parse(row1.Bagian_C || '{}'); } catch(e) {}
+                    try { bagianA = JSON.parse(row1.Bagian_A || '{}'); } catch(e) {}
                     tema = bagianC.tema || '-';
                     masalah = bagianC.masalah || '-';
                     kelompok = bagianA.kelompok || '';
                 }
                 
-                // Ambil data dari Aktivitas 2 - coba dari berbagai kemungkinan lokasi
                 if (result2 && result2.success && result2.data && result2.data.length > 0) {
                     const row2 = result2.data[0];
-                    
-                    // Coba dari Bagian_G (format baru)
                     try {
                         let bagianG = JSON.parse(row2.Bagian_G || '{}');
-                        if (bagianG.solusi_utama && bagianG.solusi_utama !== '-') {
-                            solusi = bagianG.solusi_utama;
-                        }
+                        if (bagianG.solusi_utama && bagianG.solusi_utama !== '-') solusi = bagianG.solusi_utama;
                     } catch(e) {}
-                    
-                    // Jika tidak ditemukan, coba dari Bagian_F (format lama)
                     if (solusi === '-') {
                         try {
                             let bagianF = JSON.parse(row2.Bagian_F || '{}');
-                            if (bagianF.solusi_utama && bagianF.solusi_utama !== '-') {
-                                solusi = bagianF.solusi_utama;
-                            }
-                        } catch(e) {}
-                    }
-                    
-                    // Jika masih belum, coba dari Bagian_E
-                    if (solusi === '-') {
-                        try {
-                            let bagianE = JSON.parse(row2.Bagian_E || '{}');
-                            if (bagianE.solusi_utama && bagianE.solusi_utama !== '-') {
-                                solusi = bagianE.solusi_utama;
-                            }
+                            if (bagianF.solusi_utama && bagianF.solusi_utama !== '-') solusi = bagianF.solusi_utama;
                         } catch(e) {}
                     }
                 }
                 
-                // Ambil data dari Aktivitas 3
                 if (result3 && result3.success && result3.data && result3.data.length > 0) {
                     const row3 = result3.data[0];
-                    
-                    // Coba dari Bagian_D
                     try {
                         let bagianD = JSON.parse(row3.Bagian_D || '{}');
-                        if (bagianD.fungsi_produk && bagianD.fungsi_produk !== '-') {
-                            fungsi = bagianD.fungsi_produk;
-                        }
-                        if (bagianD.pengguna && bagianD.pengguna !== '-') {
-                            pengguna = bagianD.pengguna;
-                        }
+                        if (bagianD.fungsi_produk && bagianD.fungsi_produk !== '-') fungsi = bagianD.fungsi_produk;
+                        if (bagianD.pengguna && bagianD.pengguna !== '-') pengguna = bagianD.pengguna;
                     } catch(e) {}
-                    
-                    // Jika tidak ditemukan, coba dari Bagian_C
-                    if (fungsi === '-') {
-                        try {
-                            let bagianC = JSON.parse(row3.Bagian_C || '{}');
-                            if (bagianC.fungsi_produk && bagianC.fungsi_produk !== '-') {
-                                fungsi = bagianC.fungsi_produk;
-                            }
-                            if (bagianC.pengguna && bagianC.pengguna !== '-') {
-                                pengguna = bagianC.pengguna;
-                            }
-                        } catch(e) {}
-                    }
                 }
                 
-                // Tampilkan data yang berhasil diambil
                 if (tema !== '-' || masalah !== '-' || solusi !== '-') {
                     document.getElementById('tampilan_tema').innerHTML = `<strong>Tema:</strong> ${tema}`;
                     document.getElementById('tampilan_masalah').innerHTML = `<strong>Masalah:</strong> ${masalah}`;
@@ -629,7 +585,6 @@
                     document.getElementById('dataAktivitasBox').style.display = 'block';
                     document.getElementById('dataTidakDitemukan').style.display = 'none';
                     document.getElementById('kelompok').value = kelompok;
-                    
                     dataDitemukan = true;
                     setFormEnabled(true);
                     updateProgress();
@@ -878,6 +833,7 @@
         }
 
         // ==================== COLLECT ALL FORM DATA ====================
+        // PERUBAHAN UTAMA: Bagian_D diubah dari OBJECT menjadi ARRAY
         function collectAllFormData() {
             const anggotaKelompok = [
                 document.getElementById('anggota1')?.value || '',
@@ -906,8 +862,10 @@
                     fungsi: document.getElementById('tampilan_fungsi')?.innerText?.replace('Fungsi Produk:', '')?.trim() || '',
                     pengguna: document.getElementById('tampilan_pengguna')?.innerText?.replace('Target Pengguna:', '')?.trim() || ''
                 },
-                bagian_d: {
-                    minggu4: {
+                // ========== PERUBAHAN DI SINI: OBJECT → ARRAY ==========
+                bagian_d: [
+                    {
+                        minggu: "4",
                         tanggal: document.getElementById('minggu4_tanggal')?.value || '',
                         aktivitas: document.getElementById('minggu4_aktivitas')?.value || '',
                         hasil: document.getElementById('minggu4_hasil')?.value || '',
@@ -915,7 +873,8 @@
                         catatan: document.getElementById('minggu4_catatan')?.value || '',
                         progress: document.getElementById('minggu4_progress')?.value || ''
                     },
-                    minggu5: {
+                    {
+                        minggu: "5",
                         tanggal: document.getElementById('minggu5_tanggal')?.value || '',
                         aktivitas: document.getElementById('minggu5_aktivitas')?.value || '',
                         hasil: document.getElementById('minggu5_hasil')?.value || '',
@@ -923,7 +882,8 @@
                         catatan: document.getElementById('minggu5_catatan')?.value || '',
                         progress: document.getElementById('minggu5_progress')?.value || ''
                     },
-                    minggu6: {
+                    {
+                        minggu: "6",
                         tanggal: document.getElementById('minggu6_tanggal')?.value || '',
                         aktivitas: document.getElementById('minggu6_aktivitas')?.value || '',
                         hasil: document.getElementById('minggu6_hasil')?.value || '',
@@ -931,7 +891,8 @@
                         catatan: document.getElementById('minggu6_catatan')?.value || '',
                         progress: document.getElementById('minggu6_progress')?.value || ''
                     },
-                    minggu7: {
+                    {
+                        minggu: "7",
                         tanggal: document.getElementById('minggu7_tanggal')?.value || '',
                         aktivitas: document.getElementById('minggu7_aktivitas')?.value || '',
                         hasil: document.getElementById('minggu7_hasil')?.value || '',
@@ -939,7 +900,8 @@
                         catatan: document.getElementById('minggu7_catatan')?.value || '',
                         progress: document.getElementById('minggu7_progress')?.value || ''
                     }
-                },
+                ],
+                // ========================================================
                 bagian_e: {
                     presenter_utama: document.getElementById('presenter_utama')?.value || '',
                     anggota_kelompok: anggotaKelompok,

@@ -59,9 +59,8 @@
             border-radius: 2px;
         }
         
-        .ipas-content-card > p {
+        .ipas-content-card p {
             font-size: 1rem;
-            line-height: 1.6;
             color: #666;
             margin-top: 0.5rem;
         }
@@ -71,7 +70,6 @@
             border-radius: 20px;
             padding: 1.8rem;
             margin-bottom: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
             border: 1px solid rgba(46, 204, 113, 0.1);
         }
         
@@ -107,7 +105,6 @@
             flex-wrap: wrap;
             gap: 1rem;
             align-items: flex-end;
-            margin-bottom: 1rem;
         }
         
         .filter-group {
@@ -129,14 +126,8 @@
             border: 1px solid #ddd;
             border-radius: 12px;
             font-size: 0.9rem;
-            font-family: inherit;
             background: white;
             cursor: pointer;
-        }
-        
-        .filter-group select:disabled {
-            background: #f5f5f5;
-            cursor: not-allowed;
         }
         
         .btn-cek {
@@ -200,15 +191,26 @@
         .rekap-table th {
             background: var(--ipas-light);
             color: var(--ipas-dark);
-            padding: 0.8rem;
-            text-align: left;
+            padding: 12px 8px;
+            text-align: center;
             font-weight: 600;
-            border-bottom: 2px solid var(--ipas-primary);
+            border: 1px solid #ddd;
         }
         
         .rekap-table td {
-            padding: 0.7rem 0.8rem;
+            padding: 10px 8px;
             border-bottom: 1px solid #f0f0f0;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .rekap-table td:first-child {
+            font-weight: 600;
+            color: var(--ipas-dark);
+        }
+        
+        .rekap-table td:nth-child(2) {
+            text-align: left;
         }
         
         .rekap-table tr:hover {
@@ -221,11 +223,10 @@
             gap: 5px;
             background: #d5f4e6;
             color: #27ae60;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 30px;
             font-size: 0.7rem;
             font-weight: 600;
-            white-space: nowrap;
         }
         
         .status-belum {
@@ -234,11 +235,10 @@
             gap: 5px;
             background: #fadbd8;
             color: #e74c3c;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 30px;
             font-size: 0.7rem;
             font-weight: 600;
-            white-space: nowrap;
         }
         
         .loading-message, .error-message {
@@ -248,15 +248,8 @@
             display: none;
         }
         
-        .loading-message {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-        }
+        .loading-message { background: #fff3cd; color: #856404; }
+        .error-message { background: #f8d7da; color: #721c24; }
         
         .summary-stats {
             display: flex;
@@ -307,36 +300,53 @@
         .back-btn-simple:hover {
             background: var(--ipas-primary);
             color: white;
-            transform: translateX(-5px);
         }
         
-        .preview-link {
-            color: var(--ipas-primary);
-            text-decoration: none;
-            font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .preview-link:hover {
-            text-decoration: underline;
-        }
-        
-        .fixed-col {
-            background: white;
-            position: sticky;
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
             left: 0;
-            z-index: 1;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-card {
+            background: white;
+            padding: 2rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            min-width: 250px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--ipas-light);
+            border-top-color: var(--ipas-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+        
+        .loading-card p {
+            color: var(--ipas-dark);
+            font-weight: 600;
+        }
+        
+        .loading-card .loading-text {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.5rem;
         }
         
         @keyframes spin {
-            from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
-        }
-        
-        .fa-spinner {
-            animation: spin 1s linear infinite;
         }
         
         @media (max-width: 768px) {
@@ -344,7 +354,6 @@
             .filter-form { flex-direction: column; }
             .btn-cek { width: 100%; justify-content: center; }
             .rekap-table th, .rekap-table td { padding: 0.5rem; font-size: 0.75rem; }
-            .status-sudah, .status-belum { padding: 2px 6px; font-size: 0.65rem; }
         }
     </style>
 </head>
@@ -353,7 +362,7 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="logo">
-                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah" onerror="this.style.display='none'">
                     <h1>TEMBOK BELAJAR - PROJEK IPAS</h1>
                 </div>
                 <ul class="nav-menu" id="nav-menu">
@@ -386,17 +395,16 @@
             
             <div class="filter-form">
                 <div class="filter-group">
-                    <label><i class="fas fa-calendar-alt"></i> Semester</label>
-                    <select id="filterSemester">
-                        <option value="">-- Pilih Semester --</option>
-                        <option value="ganjil">Semester Ganjil</option>
-                        <option value="genap" selected>Semester Genap</option>
-                    </select>
-                </div>
-                <div class="filter-group">
                     <label><i class="fas fa-building"></i> Kelas</label>
-                    <select id="filterKelas" disabled>
-                        <option value="">-- Pilih Semester Dulu --</option>
+                    <select id="filterKelas">
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="X ATPH 1">X ATPH 1</option>
+                        <option value="X ATPH 2">X ATPH 2</option>
+                        <option value="X TKJ 1">X TKJ 1</option>
+                        <option value="X TKJ 2">X TKJ 2</option>
+                        <option value="X TSM 1">X TSM 1</option>
+                        <option value="X TSM 2">X TSM 2</option>
+                        <option value="X AKL">X AKL</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -408,41 +416,55 @@
             
             <div class="info-panel" id="infoPanel" style="display: none;">
                 <span><i class="fas fa-building"></i> Kelas: <strong id="infoKelas">-</strong></span>
-                <span><i class="fas fa-calendar"></i> Semester: <strong id="infoSemester">-</strong></span>
                 <span><i class="fas fa-users"></i> Total Siswa: <strong id="infoTotalSiswa">0</strong></span>
+                <span><i class="fas fa-percent"></i> Rata-rata: <strong id="infoRata">0%</strong></span>
             </div>
         </div>
 
-        <div class="simple-card">
+        <!-- LOADING OVERLAY -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-card">
+                <div class="loading-spinner"></div>
+                <p>Memuat data...</p>
+                <div class="loading-text" id="loadingText">Mengambil data rekap</div>
+            </div>
+        </div>
+
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span id="errorText">Gagal memuat data.</span>
+        </div>
+
+        <div class="simple-card" id="resultCard" style="display: none;">
             <div class="section-title">
                 <i class="fas fa-table-list"></i>
                 <h3>Rekap Pengumpulan Tugas</h3>
             </div>
             
-            <div id="loadingMessage" class="loading-message">
-                <i class="fas fa-spinner fa-spin"></i> Sedang memuat data...
-            </div>
-            
-            <div id="errorMessage" class="error-message">
-                <i class="fas fa-exclamation-triangle"></i> 
-                <span id="errorText">Gagal memuat data. Silakan coba lagi.</span>
-            </div>
-            
-            <div class="table-wrapper" id="tableWrapper" style="display: none;">
+            <div class="table-wrapper">
                 <table class="rekap-table">
-                    <thead id="tableHeader">
-                        <!-- Header akan di-generate oleh JS -->
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Siswa</th>
+                            <th>Aktivitas 1</th>
+                            <th>Aktivitas 2</th>
+                            <th>Aktivitas 3</th>
+                            <th>Aktivitas 4</th>
+                            <th>Aktivitas 5</th>
+                            <th>Aktivitas 6</th>
+                        </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <tr class="empty-row"><td colspan="10">Belum ada data. Silakan pilih filter dan klik Tampilkan Rekap.</td></tr>
+                        <tr><td colspan="8" style="text-align:center; padding:3rem;">Belum ada data</td></tr>
                     </tbody>
                 </table>
             </div>
             
-            <div id="summaryStats" class="summary-stats" style="display: none;">
+            <div class="summary-stats" id="summaryStats" style="display: none;">
                 <div class="stat-card"><div class="number" id="totalSiswa">0</div><div class="label">Total Siswa</div></div>
-                <div class="stat-card"><div class="number" id="totalAktivitas">0</div><div class="label">Total Aktivitas</div></div>
-                <div class="stat-card"><div class="number" id="rataPengumpulan">0%</div><div class="label">Rata-rata Pengumpulan</div></div>
+                <div class="stat-card"><div class="number" id="totalSudah">0</div><div class="label">Total Tugas Selesai</div></div>
+                <div class="stat-card"><div class="number" id="persentase">0%</div><div class="label">Rata-rata Pengumpulan</div></div>
             </div>
         </div>
 
@@ -455,225 +477,78 @@
 
     <script>
         // ==================== KONFIGURASI URL ====================
-        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_SEMESTER_GANJIL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
-        const URL_SEMESTER_GENAP = 'https://script.google.com/macros/s/AKfycbwgfBpxpIZfqm5R6ZS_GzDp70LoAEjS7gwaMGC0H7ks-4h18hip5gPVCjOYYDmC7giy/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyq2G4viOZ04k1b5nl27IYZ7HD9XUZdgBkhYj-46njXvLLVcjqNBqVElHU-BcpOVhOa/exec';
         
-        // ==================== DAFTAR AKTIVITAS (6 AKTIVITAS UTAMA) ====================
-        const DAFTAR_AKTIVITAS = [
-            { id: 1, nama: "Aktivitas 1: Menemukan Masalah Proyek", sheetName: "AKTIVITAS 1 - MENEMUKAN MASALAH PROYEK" },
-            { id: 2, nama: "Aktivitas 2: Mencari Solusi", sheetName: "AKTIVITAS 2 - MENCARI SOLUSI" },
-            { id: 3, nama: "Aktivitas 3: Perancangan Proyek", sheetName: "AKTIVITAS 3 - PERANCANGAN PROYEK" },
-            { id: 4, nama: "Aktivitas 4: Pengembangan Proyek", sheetName: "AKTIVITAS 4 - PENGEMBANGAN PROYEK" },
-            { id: 5, nama: "Aktivitas 5: Pengolahan Data & Laporan", sheetName: "AKTIVITAS 5 - PENGOLAHAN DATA LAPORAN" },
-            { id: 6, nama: "Aktivitas 6: Diseminasi Video", sheetName: "AKTIVITAS 6 - DISEMINASI VIDEO" }
-        ];
-        
-        let dataKelas = [];
-        let dataSiswa = {};
-        let daftarSheetAktual = { ganjil: [], genap: [] };
-        
-        // ==================== AMBIL DAFTAR SHEET DARI URL ====================
-        async function fetchSheetNames(url, semester) {
-            try {
-                const response = await fetch(`${url}?action=getSheets&_=${Date.now()}`);
-                const data = await response.json();
-                
-                if (data && data.success && data.sheets && data.sheets.length > 0) {
-                    const sheetList = data.sheets
-                        .filter(s => {
-                            const name = s.name.toUpperCase();
-                            return name.includes('AKTIVITAS') || name.includes('AKTIFITAS');
-                        })
-                        .map((sheet, index) => ({
-                            id: index + 1,
-                            nama: formatSheetName(sheet.name),
-                            sheetName: sheet.name
-                        }));
-                    
-                    if (sheetList.length > 0) {
-                        return sheetList;
-                    }
-                }
-            } catch (error) {
-                console.warn(`Gagal mengambil daftar sheet dari ${url}:`, error);
-            }
-            return DAFTAR_AKTIVITAS;
-        }
-        
-        async function loadAllActivities() {
-            const [ganjilSheets, genapSheets] = await Promise.all([
-                fetchSheetNames(URL_SEMESTER_GANJIL, 'ganjil'),
-                fetchSheetNames(URL_SEMESTER_GENAP, 'genap')
-            ]);
-            daftarSheetAktual.ganjil = ganjilSheets;
-            daftarSheetAktual.genap = genapSheets;
-        }
-        
-        function formatSheetName(sheetName) {
-            let name = sheetName.replace(/^AKTIVITAS\s*\d+\s*-\s*/i, '');
-            name = name.replace(/^AKTIVITAS\s*GANJIL\s*\d+\s*-\s*/i, '');
-            name = name.replace(/^AKTIVITAS\s*GENAP\s*\d+\s*-\s*/i, '');
-            const match = sheetName.match(/\d+/);
-            if (match && !name.match(/^Aktivitas/i)) {
-                name = `Aktivitas ${match[0]}: ${name}`;
-            }
-            return name;
-        }
-        
-        // ==================== CEK STATUS SATU SISWA UNTUK SATU AKTIVITAS ====================
-        async function cekStatusSiswa(semester, sheetName, kelas, nama) {
-            const urlPerekap = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
+        // ==================== AMBIL DATA ====================
+        async function getRekapData(kelas) {
+            const url = `${APPS_SCRIPT_URL}?action=getRekapByKelas&kelas=${encodeURIComponent(kelas)}&_=${Date.now()}`;
             
             try {
-                const url = `${urlPerekap}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&status=AKTIF&_=${Date.now()}`;
                 const response = await fetch(url);
-                const data = await response.json();
+                const result = await response.json();
                 
-                if (data && data.success && data.data && data.data.length > 0) {
-                    const firstData = data.data[0];
-                    let tanggal = firstData._timestamp || firstData.Timestamp || firstData.timestamp || null;
-                    if (!tanggal && firstData.length > 0) tanggal = firstData[0];
-                    return {
-                        status: 'sudah',
-                        tanggal: tanggal ? formatTanggal(tanggal) : '-'
-                    };
+                if (result && result.success) {
+                    return result;
+                } else {
+                    throw new Error(result.error || 'Gagal mengambil data');
                 }
             } catch (error) {
-                console.warn(`Gagal cek untuk ${nama} - ${sheetName}:`, error);
+                console.error('Error:', error);
+                throw error;
             }
-            
-            return { status: 'belum', tanggal: '-' };
-        }
-        
-        // ==================== CEK SEMUA SISWA UNTUK SEMUA AKTIVITAS ====================
-        async function cekRekapKelas(semester, kelas) {
-            const daftarNama = dataSiswa[kelas] || [];
-            if (daftarNama.length === 0) return { siswa: [], aktivitas: [], matrix: [] };
-            
-            // Ambil daftar aktivitas berdasarkan semester
-            const daftarAktivitas = semester === 'ganjil' ? daftarSheetAktual.ganjil : daftarSheetAktual.genap;
-            if (daftarAktivitas.length === 0) return { siswa: [], aktivitas: [], matrix: [] };
-            
-            const results = [];
-            let no = 1;
-            
-            // Untuk setiap siswa, cek semua aktivitas
-            for (const nama of daftarNama) {
-                const row = {
-                    no: no++,
-                    nama: nama,
-                    aktivitas: {}
-                };
-                
-                for (const aktivitas of daftarAktivitas) {
-                    const result = await cekStatusSiswa(semester, aktivitas.sheetName, kelas, nama);
-                    row.aktivitas[aktivitas.id] = {
-                        status: result.status,
-                        tanggal: result.tanggal,
-                        sheetName: aktivitas.sheetName,
-                        namaAktivitas: aktivitas.nama
-                    };
-                }
-                
-                results.push(row);
-            }
-            
-            return {
-                siswa: results,
-                aktivitas: daftarAktivitas,
-                totalSiswa: results.length
-            };
-        }
-        
-        function formatTanggal(timestamp) {
-            if (!timestamp) return '-';
-            try {
-                const date = new Date(timestamp);
-                if (!isNaN(date.getTime())) {
-                    return date.toLocaleDateString('id-ID', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    });
-                }
-            } catch(e) {}
-            if (typeof timestamp === 'string' && (timestamp.includes('/') || timestamp.includes('-'))) {
-                return timestamp.split(' ')[0];
-            }
-            return timestamp;
         }
         
         // ==================== RENDER TABEL ====================
-        function renderTable(data, semester, kelas) {
-            const { siswa, aktivitas, totalSiswa } = data;
+        function renderTable(data, kelas) {
             const tbody = document.getElementById('tableBody');
-            const thead = document.getElementById('tableHeader');
-            const tableWrapper = document.getElementById('tableWrapper');
+            const resultCard = document.getElementById('resultCard');
             const summaryStats = document.getElementById('summaryStats');
+            const infoPanel = document.getElementById('infoPanel');
             
-            if (!siswa || siswa.length === 0 || aktivitas.length === 0) {
-                tbody.innerHTML = '<tr class="empty-row"><td colspan="10">Tidak ada data siswa untuk kelas ini.</td></tr>';
-                tableWrapper.style.display = 'block';
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:3rem;">Tidak ada data siswa untuk kelas ini.运用</td>';
+                resultCard.style.display = 'block';
                 summaryStats.style.display = 'none';
+                infoPanel.style.display = 'none';
                 return;
             }
             
-            // Buat Header
-            let headerHtml = `<tr>
-                <th style="position: sticky; left: 0; background: var(--ipas-light); z-index: 2;">No</th>
-                <th style="position: sticky; left: 60px; background: var(--ipas-light); z-index: 2;">Nama Siswa</th>`;
-            
-            aktivitas.forEach(akt => {
-                headerHtml += `<th>${escapeHtml(akt.nama)}</th>`;
-            });
-            headerHtml += `</tr>`;
-            thead.innerHTML = headerHtml;
-            
-            // Buat Body
-            let totalPengumpulan = 0;
-            let totalKeseluruhan = siswa.length * aktivitas.length;
             let html = '';
+            let totalCentang = 0;
+            let totalCell = 0;
             
-            siswa.forEach(sis => {
-                html += `<tr>
-                    <td style="position: sticky; left: 0; background: white; z-index: 1;">${sis.no}</td>
-                    <td style="position: sticky; left: 60px; background: white; z-index: 1;"><strong>${escapeHtml(sis.nama)}</strong></td>`;
+            for (const siswa of data) {
+                const aktivitasList = [siswa.aktivitas_1, siswa.aktivitas_2, siswa.aktivitas_3, siswa.aktivitas_4, siswa.aktivitas_5, siswa.aktivitas_6];
+                aktivitasList.forEach(akt => {
+                    if (akt === '✅') totalCentang++;
+                    totalCell++;
+                });
                 
-                for (const aktivitasItem of aktivitas) {
-                    const dataAkt = sis.aktivitas[aktivitasItem.id];
-                    if (dataAkt && dataAkt.status === 'sudah') {
-                        totalPengumpulan++;
-                        // Tombol preview untuk melihat lembar jawaban
-                        const previewUrl = `preview-lembar-aktivitas.html?semester=${semester}&sheetName=${encodeURIComponent(dataAkt.sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(sis.nama)}`;
-                        html += `<td>
-                            <span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>
-                            <a href="${previewUrl}" class="preview-link" target="_blank" title="Lihat lembar jawaban"><i class="fas fa-eye"></i></a>
-                        </td>`;
-                    } else {
-                        html += `<td>
-                            <span class="status-belum"><i class="fas fa-clock"></i> Belum</span>
-                        </td>`;
-                    }
-                }
-                html += `</tr>`;
-            });
+                html += `<tr>
+                    <td style="font-weight:600; color:#229954;">${siswa.no}</td>
+                    <td>${escapeHtml(siswa.nama)}</td>
+                    <td>${siswa.aktivitas_1 === '✅' ? '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>' : '<span class="status-belum"><i class="fas fa-clock"></i> Belum</span>'}</td>
+                    <td>${siswa.aktivitas_2 === '✅' ? '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>' : '<span class="status-belum"><i class="fas fa-clock"></i> Belum</span>'}</td>
+                    <td>${siswa.aktivitas_3 === '✅' ? '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>' : '<span class="status-belum"><i class="fas fa-clock"></i> Belum</span>'}</td>
+                    <td>${siswa.aktivitas_4 === '✅' ? '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>' : '<span class="status-belum"><i class="fas fa-clock"></i> Belum</span>'}</td>
+                    <td>${siswa.aktivitas_5 === '✅' ? '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>' : '<span class="status-belum"><i class="fas fa-clock"></i> Belum</span>'}</td>
+                    <td>${siswa.aktivitas_6 === '✅' ? '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>' : '<span class="status-belum"><i class="fas fa-clock"></i> Belum</span>'}</td>
+                </tr>`;
+            }
             
             tbody.innerHTML = html;
-            tableWrapper.style.display = 'block';
+            resultCard.style.display = 'block';
             summaryStats.style.display = 'flex';
             
-            // Update summary stats
-            const persenRata = totalKeseluruhan > 0 ? Math.round((totalPengumpulan / totalKeseluruhan) * 100) : 0;
-            document.getElementById('totalSiswa').innerText = siswa.length;
-            document.getElementById('totalAktivitas').innerText = aktivitas.length;
-            document.getElementById('rataPengumpulan').innerText = persenRata + '%';
+            const persenRata = totalCell > 0 ? Math.round((totalCentang / totalCell) * 100) : 0;
+            document.getElementById('totalSiswa').innerText = data.length;
+            document.getElementById('totalSudah').innerText = totalCentang;
+            document.getElementById('persentase').innerText = persenRata + '%';
             
-            // Update info panel
             document.getElementById('infoKelas').innerText = kelas;
-            document.getElementById('infoSemester').innerText = semester === 'ganjil' ? 'Ganjil' : 'Genap';
-            document.getElementById('infoTotalSiswa').innerText = siswa.length;
-            document.getElementById('infoPanel').style.display = 'flex';
+            document.getElementById('infoTotalSiswa').innerText = data.length;
+            document.getElementById('infoRata').innerText = persenRata + '%';
+            infoPanel.style.display = 'flex';
         }
         
         function escapeHtml(text) {
@@ -683,78 +558,38 @@
             return div.innerHTML;
         }
         
-        // ==================== LOAD DATA SISWA ====================
-        function loadDataSiswa() {
-            return new Promise((resolve, reject) => {
-                const callbackName = 'jsonp_callback_' + Date.now();
-                window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    if (result && result.success) {
-                        dataKelas = result.kelasList || [];
-                        dataSiswa = result.siswaPerKelas || {};
-                        resolve();
-                    } else {
-                        reject(new Error('Gagal memuat data siswa'));
-                    }
-                };
-                
-                const script = document.createElement('script');
-                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = () => reject(new Error('Gagal terhubung ke server data siswa'));
-                document.head.appendChild(script);
-            });
-        }
-        
-        // ==================== UPDATE DROPDOWN ====================
-        function updateKelasDropdown() {
-            const kelasSelect = document.getElementById('filterKelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            dataKelas.forEach(kelas => {
-                if (kelas && kelas.trim()) {
-                    const option = document.createElement('option');
-                    option.value = kelas;
-                    option.textContent = kelas;
-                    kelasSelect.appendChild(option);
-                }
-            });
-            kelasSelect.disabled = false;
-        }
-        
-        // ==================== FUNGSI CEK UTAMA ====================
+        // ==================== CEK UTAMA ====================
         async function cekRekap() {
-            const semester = document.getElementById('filterSemester').value;
             const kelas = document.getElementById('filterKelas').value;
             
-            if (!semester) { alert('Pilih semester terlebih dahulu'); return; }
             if (!kelas) { alert('Pilih kelas terlebih dahulu'); return; }
             
-            // Tampilkan loading
-            const loadingMsg = document.getElementById('loadingMessage');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
             const errorMsg = document.getElementById('errorMessage');
-            const tableWrapper = document.getElementById('tableWrapper');
+            const resultCard = document.getElementById('resultCard');
             
-            loadingMsg.style.display = 'block';
+            loadingOverlay.style.display = 'flex';
+            loadingText.innerHTML = 'Mengambil data dari server...';
             errorMsg.style.display = 'none';
-            tableWrapper.style.display = 'none';
+            resultCard.style.display = 'none';
             document.getElementById('summaryStats').style.display = 'none';
             document.getElementById('infoPanel').style.display = 'none';
             
             const btnCek = document.getElementById('btnCek');
             btnCek.disabled = true;
-            btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data...';
+            btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
             
             try {
-                const results = await cekRekapKelas(semester, kelas);
-                renderTable(results, semester, kelas);
+                loadingText.innerHTML = 'Memproses data rekap...';
+                const result = await getRekapData(kelas);
+                renderTable(result.data, kelas);
             } catch (error) {
-                console.error('Error:', error);
+                console.error(error);
                 errorMsg.style.display = 'block';
-                document.getElementById('errorText').innerHTML = 'Gagal memuat data. Silakan coba lagi.';
+                document.getElementById('errorText').innerHTML = error.message || 'Gagal memuat data. Silakan coba lagi.';
             } finally {
-                loadingMsg.style.display = 'none';
+                loadingOverlay.style.display = 'none';
                 btnCek.disabled = false;
                 btnCek.innerHTML = '<i class="fas fa-search"></i> Tampilkan Rekap';
             }
@@ -762,40 +597,13 @@
         
         // ==================== INIT ====================
         async function init() {
-            // Mobile menu
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
             if (hamburger) {
                 hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
             }
             
-            const loadingMsg = document.getElementById('loadingMessage');
-            loadingMsg.style.display = 'block';
-            loadingMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data...';
-            
-            try {
-                await Promise.all([
-                    loadDataSiswa(),
-                    loadAllActivities()
-                ]);
-                
-                updateKelasDropdown();
-                
-                // Event listeners
-                document.getElementById('filterSemester').addEventListener('change', () => {
-                    updateKelasDropdown();
-                });
-                
-                document.getElementById('btnCek').addEventListener('click', cekRekap);
-                
-                loadingMsg.style.display = 'none';
-            } catch (error) {
-                console.error('Init error:', error);
-                loadingMsg.style.display = 'none';
-                const errorMsg = document.getElementById('errorMessage');
-                errorMsg.style.display = 'block';
-                document.getElementById('errorText').innerHTML = 'Gagal memuat data awal. Silakan refresh halaman.';
-            }
+            document.getElementById('btnCek').addEventListener('click', cekRekap);
         }
         
         document.addEventListener('DOMContentLoaded', init);

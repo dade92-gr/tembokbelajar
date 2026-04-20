@@ -3,98 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penilaian Rubrik IPAS - Kelas X</title>
-    <!-- CSS Header dari file eksternal -->
+    <title>Preview Lembar Aktivitas - IPAS Kelas X</title>
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- CSS Konten ditulis di dalam style -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* ==================== CSS KONTEN (RUBRIK, PREVIEW, FILTER) ==================== */
         :root {
             --ipas-primary: #2ecc71;
             --ipas-secondary: #27ae60;
             --ipas-light: #d5f4e6;
             --ipas-dark: #229954;
-            --ipas-accent: #3498db;
         }
         
-        .rubrik-container {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .preview-container {
             padding: 2rem;
             max-width: 1400px;
             margin: 0 auto;
         }
         
-        /* CARD STYLE */
         .ipas-content-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             border-radius: 20px;
             padding: 2rem;
             box-shadow: 0 10px 30px rgba(46, 204, 113, 0.1);
             border-left: 5px solid var(--ipas-primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
         
         .ipas-content-card h2 {
             color: var(--ipas-dark);
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
         }
         
-        .ipas-content-card p {
-            color: #666;
-            font-size: 0.9rem;
+        .ipas-content-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 2px;
         }
         
         .simple-card {
             background: white;
-            border-radius: 16px;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
+            border-radius: 20px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
             border: 1px solid rgba(46, 204, 113, 0.1);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
         
         .section-title {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
             border-bottom: 2px solid var(--ipas-light);
         }
         
         .section-title i {
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             background: var(--ipas-light);
             color: var(--ipas-primary);
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.2rem;
         }
         
         .section-title h3 {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: var(--ipas-dark);
+            font-weight: 600;
         }
         
-        /* FILTER FORM */
         .filter-form {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.8rem;
+            gap: 1rem;
             align-items: flex-end;
+            margin-bottom: 2rem;
         }
         
         .filter-group {
             flex: 1;
-            min-width: 140px;
+            min-width: 160px;
         }
         
         .filter-group label {
             display: block;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--ipas-dark);
             margin-bottom: 0.3rem;
@@ -102,9 +117,9 @@
         
         .filter-group select {
             width: 100%;
-            padding: 0.6rem 0.8rem;
+            padding: 0.7rem 1rem;
             border: 1px solid #ddd;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 0.85rem;
             background: white;
             cursor: pointer;
@@ -119,75 +134,92 @@
             background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
             color: white;
             border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 30px;
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: all 0.3s ease;
         }
         
         .btn-cek:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(46,204,113,0.3);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
         }
         
-        /* TWO COLUMN */
-        .two-column {
+        .action-buttons {
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
             flex-wrap: wrap;
         }
         
-        .column-left {
-            flex: 1.2;
-            min-width: 300px;
+        .btn-action {
+            background: white;
+            border: 1px solid var(--ipas-light);
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--ipas-dark);
         }
         
-        .column-right {
-            flex: 0.8;
-            min-width: 380px;
+        .btn-action:hover {
+            background: var(--ipas-primary);
+            color: white;
+            border-color: var(--ipas-primary);
         }
         
-        /* PREVIEW CONTENT - LEMBAR JAWABAN SISWA */
         .preview-content {
             background: white;
-            border-radius: 16px;
-            padding: 1rem;
-            max-height: 65vh;
-            overflow-y: auto;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 1rem;
         }
         
         .bagian-card {
             background: #f8f9fa;
-            border-radius: 12px;
-            padding: 0.8rem;
-            margin-bottom: 1rem;
-            border-left: 3px solid var(--ipas-primary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--ipas-primary);
         }
         
         .bagian-title {
-            font-size: 0.9rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--ipas-dark);
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+        }
+        
+        .bagian-title i {
+            color: var(--ipas-primary);
         }
         
         .field-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
         
         .field-item {
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
+            gap: 0.3rem;
         }
         
         .field-item.full-width {
@@ -195,270 +227,72 @@
         }
         
         .field-label {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--ipas-dark);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .field-value {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            color: #333;
             background: white;
-            padding: 0.5rem 0.6rem;
-            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
             border: 1px solid #eee;
             word-break: break-word;
             white-space: pre-wrap;
-            line-height: 1.4;
         }
         
-        /* TABLE STYLE */
         .data-table-wrapper {
             overflow-x: auto;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-            margin-top: 0.3rem;
+            margin-top: 0.5rem;
+            border-radius: 12px;
+            border: 1px solid #eee;
         }
         
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             background: white;
         }
         
         .data-table th {
             background: var(--ipas-light);
-            padding: 0.4rem 0.6rem;
-            border: 1px solid #ddd;
+            color: var(--ipas-dark);
+            padding: 0.6rem;
             text-align: left;
+            font-weight: 600;
+            border: 1px solid #ddd;
         }
         
         .data-table td {
-            padding: 0.3rem 0.5rem;
+            padding: 0.5rem 0.6rem;
             border: 1px solid #ddd;
+            vertical-align: top;
         }
         
         .info-panel {
             background: var(--ipas-light);
-            border-radius: 10px;
-            padding: 0.5rem 0.8rem;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
             margin-bottom: 1rem;
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
-            font-size: 0.7rem;
-        }
-        
-        /* RUBRIK STYLES */
-        .rubrik-card {
-            background: white;
-            border-radius: 16px;
-            padding: 1rem;
-            border: 1px solid rgba(46, 204, 113, 0.2);
-            max-height: 65vh;
-            overflow-y: auto;
-        }
-        
-        .rubrik-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--ipas-dark);
-            margin-bottom: 1rem;
-            border-bottom: 2px solid var(--ipas-light);
-            padding-bottom: 0.5rem;
-        }
-        
-        .tp-section {
-            margin-bottom: 1rem;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
-        .tp-header {
-            background: var(--ipas-light);
-            padding: 0.5rem 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .tp-header.collapsed + .tp-body {
-            display: none;
-        }
-        
-        .tp-body {
-            padding: 0.8rem;
-        }
-        
-        .kriteria-row {
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .kriteria-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-        
-        .skor-options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-            margin-top: 0.3rem;
-        }
-        
-        .skor-option {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            background: #f8f9fa;
-            padding: 0.4rem 0.8rem;
-            border-radius: 10px;
-            cursor: pointer;
-            border: 1px solid #e9ecef;
-        }
-        
-        .skor-option:hover {
-            background: var(--ipas-light);
-        }
-        
-        .skor-option.selected {
-            background: var(--ipas-primary);
-            color: white;
-        }
-        
-        .skor-option.selected .skor-desc {
-            color: white;
-        }
-        
-        .skor-option input {
-            margin-top: 2px;
-            cursor: pointer;
-        }
-        
-        .skor-option label {
-            font-size: 0.75rem;
-            cursor: pointer;
-            flex: 1;
-        }
-        
-        .skor-value {
-            font-weight: 700;
-            min-width: 25px;
-        }
-        
-        .skor-desc {
-            font-size: 0.7rem;
-            color: #555;
-            display: block;
-        }
-        
-        .tp-total {
-            margin-top: 0.5rem;
-            text-align: right;
             font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--ipas-dark);
-            border-top: 1px dashed #ddd;
-            padding-top: 0.3rem;
         }
         
-        .grand-total {
-            margin-top: 0.8rem;
-            padding-top: 0.5rem;
-            border-top: 2px solid var(--ipas-light);
-            text-align: right;
-            font-weight: 700;
-        }
-        
-        /* BUTTONS */
-        .btn-simpan {
-            background: linear-gradient(135deg, var(--ipas-accent), #2980b9);
-            color: white;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-simpan:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        /* STUDENT NAVIGATION */
-        .student-nav {
+        .info-panel span {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background: var(--ipas-light);
-            border-radius: 40px;
-            padding: 0.3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .nav-student-btn {
-            background: white;
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--ipas-dark);
-        }
-        
-        .nav-student-btn:hover {
-            background: var(--ipas-primary);
-            color: white;
-        }
-        
-        .nav-student-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-        
-        .student-info {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--ipas-dark);
-            background: white;
-            padding: 0.2rem 1rem;
-            border-radius: 30px;
-        }
-        
-        /* LOADING & ALERT */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        
-        .loading-spinner {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 20px;
-            text-align: center;
+            gap: 5px;
         }
         
         .loading-message, .error-message, .empty-message {
-            padding: 1.5rem;
+            padding: 2rem;
             text-align: center;
             border-radius: 16px;
             display: none;
@@ -468,20 +302,17 @@
         .error-message { background: #f8d7da; color: #721c24; }
         .empty-message { background: #e2e3e5; color: #383d41; }
         
-        .alert {
-            padding: 0.5rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            display: none;
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .preview-container { padding: 0; margin: 0; max-width: 100%; }
+            .filter-form, .action-buttons, .back-nav-simple, .simple-card:first-child, header, .btn-action, .btn-cek { display: none !important; }
+            .preview-content { padding: 0; margin: 0; box-shadow: none; }
+            .bagian-card { break-inside: avoid; page-break-inside: avoid; }
         }
-        
-        .alert-success { background: #d4edda; color: #155724; }
-        .alert-error { background: #f8d7da; color: #721c24; }
-        .alert-info { background: #d1ecf1; color: #0c5460; }
         
         .back-nav-simple {
             text-align: center;
-            margin-top: 1.5rem;
+            margin-top: 2rem;
         }
         
         .back-btn-simple {
@@ -490,19 +321,25 @@
             gap: 8px;
             background: white;
             color: var(--ipas-dark);
-            padding: 0.5rem 1.2rem;
-            border-radius: 30px;
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
             text-decoration: none;
             font-weight: 600;
             border: 1px solid var(--ipas-light);
+            transition: all 0.3s ease;
         }
         
-        @media (max-width: 900px) {
-            .rubrik-container { padding: 1rem; }
-            .two-column { flex-direction: column; }
+        .back-btn-simple:hover {
+            background: var(--ipas-primary);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .preview-container { padding: 1rem; }
             .filter-form { flex-direction: column; }
             .btn-cek { width: 100%; justify-content: center; }
-            .column-right { min-width: auto; }
+            .field-group { grid-template-columns: 1fr; }
+            .action-buttons { justify-content: center; }
         }
     </style>
 </head>
@@ -511,8 +348,8 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="logo">
-                    <img src="../../assets/images/logo.png" alt="Logo Sekolah" onerror="this.style.display='none'">
-                    <h1>TEMBOK BELAJAR - PENILAIAN RUBRIK IPAS</h1>
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <h1>TEMBOK BELAJAR - PROJEK IPAS</h1>
                 </div>
                 <ul class="nav-menu" id="nav-menu">
                     <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
@@ -530,10 +367,10 @@
         </nav>
     </header>
 
-    <div class="rubrik-container">
+    <section class="preview-container">
         <div class="ipas-content-card">
-            <h2><i class="fas fa-clipboard-list"></i> Penilaian Rubrik Proyek IPAS</h2>
-            <p>Pilih semester, aktivitas, kelas, dan nama siswa untuk menilai</p>
+            <h2><i class="fas fa-file-alt"></i> Preview Lembar Aktivitas</h2>
+            <p>Lihat dan cetak lembar jawaban aktivitas siswa</p>
         </div>
 
         <div class="simple-card">
@@ -541,6 +378,7 @@
                 <i class="fas fa-filter"></i>
                 <h3>Filter Pencarian</h3>
             </div>
+            
             <div class="filter-form">
                 <div class="filter-group">
                     <label><i class="fas fa-calendar"></i> Semester</label>
@@ -576,106 +414,34 @@
             </div>
         </div>
 
-        <!-- Loading Overlay -->
-        <div id="loadingOverlay" class="loading-overlay">
-            <div class="loading-spinner">
-                <i class="fas fa-spinner fa-spin fa-2x"></i>
-                <p>Menyimpan data...</p>
-            </div>
+        <div class="action-buttons" id="actionButtons" style="display: none;">
+            <button class="btn-action" id="btnPrint"><i class="fas fa-print"></i> Cetak / Print</button>
+            <button class="btn-action" id="btnDownloadPDF"><i class="fas fa-file-pdf"></i> Download PDF</button>
         </div>
 
-        <div id="alertContainer"></div>
-
-        <!-- Student Navigation (opsional) -->
-        <div id="studentNavContainer" style="display: none;">
-            <div class="student-nav">
-                <button class="nav-student-btn" id="prevStudentBtn">
-                    <i class="fas fa-chevron-left"></i> Sebelumnya
-                </button>
-                <span class="student-info" id="studentInfo">- / -</span>
-                <button class="nav-student-btn" id="nextStudentBtn">
-                    Selanjutnya <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="two-column">
-            <!-- KOLOM KIRI: Preview Lembar Aktivitas -->
-            <div class="column-left">
-                <div class="simple-card" style="padding: 0; overflow: hidden;">
-                    <div class="section-title" style="padding: 0.8rem 1rem; margin: 0; background: var(--ipas-light);">
-                        <i class="fas fa-file-alt"></i>
-                        <h3>Lembar Jawaban Siswa</h3>
-                    </div>
-                    <div id="previewArea" style="padding: 1rem;">
-                        <div id="loadingMessage" class="loading-message" style="display: none;">
-                            <i class="fas fa-spinner fa-spin"></i> Memuat data...
-                        </div>
-                        <div id="errorMessage" class="error-message" style="display: none;">
-                            <i class="fas fa-exclamation-triangle"></i> 
-                            <span id="errorText">Terjadi kesalahan</span>
-                        </div>
-                        <div id="emptyMessage" class="empty-message" style="display: block;">
-                            <i class="fas fa-info-circle"></i> 
-                            Silakan pilih semester, aktivitas, kelas, dan nama siswa
-                        </div>
-                        <div id="previewContent" class="preview-content" style="display: none;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- KOLOM KANAN: Rubrik Penilaian -->
-            <div class="column-right">
-                <div class="rubrik-card">
-                    <div class="rubrik-title">
-                        <i class="fas fa-star"></i> Rubrik Penilaian
-                    </div>
-                    <div id="rubrikContent">
-                        <div class="alert alert-info" style="display: block;">Pilih siswa terlebih dahulu</div>
-                    </div>
-                    <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
-                        <button class="btn-simpan" id="btnSimpan" style="display: none;">
-                            <i class="fas fa-save"></i> Simpan Nilai
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div id="previewArea">
+            <div id="loadingMessage" class="loading-message"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
+            <div id="errorMessage" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span id="errorText">Terjadi kesalahan</span></div>
+            <div id="emptyMessage" class="empty-message"><i class="fas fa-info-circle"></i> Silakan pilih semester, aktivitas, kelas, dan nama siswa</div>
+            <div id="previewContent" class="preview-content" style="display: none;"></div>
         </div>
 
         <div class="back-nav-simple">
-            <a href="index-penilaian-ipas.html" class="back-btn-simple">
-                <i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian
-            </a>
+            <a href="index-aktifitas-ipas.html" class="back-btn-simple"><i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian</a>
         </div>
-    </div>
+    </section>
 
     <script>
         // ==================== KONFIGURASI URL ====================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWXfW_4TwFH2cKSosED5GL1xBMl34ImT-7iN_0UqKXcw9dcCPI9H5vV0SZjmvpeSo7/exec';
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_SEMESTER_GANJIL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
-        const URL_SEMESTER_GENAP = 'https://script.google.com/macros/s/AKfycbwgfBpxpIZfqm5R6ZS_GzDp70LoAEjS7gwaMGC0H7ks-4h18hip5gPVCjOYYDmC7giy/exec';
+        const URL_SEMESTER_GENAP = 'https://script.google.com/macros/s/AKfycbyq2G4viOZ04k1b5nl27IYZ7HD9XUZdgBkhYj-46njXvLLVcjqNBqVElHU-BcpOVhOa/exec';
         
-        // ==================== DATA RUBRIK ====================
-        const RUBRIK_PER_AKTIVITAS = {
-            "1": { displayName: "Aktivitas 1: Menemukan Masalah Proyek", tpList: ["2.1", "3.5"], kriteria: { "2.1": [{ name: "Pemahaman materi identifikasi masalah", desc4: "Menjawab 3 pertanyaan dengan tepat, lengkap, kalimat sendiri", desc3: "Menjawab 3 pertanyaan tepat kurang lengkap", desc2: "Menjawab 2 pertanyaan tepat", desc1: "Menjawab ≤1 pertanyaan" }, { name: "Pemilihan masalah", desc4: "Masalah jelas, spesifik, relevan, layak diselesaikan", desc3: "Masalah jelas relevan kurang spesifik", desc2: "Masalah kurang jelas/kurang relevan", desc1: "Masalah tidak jelas/tidak ada" }, { name: "Analisis masalah (5W+1H, dampak)", desc4: "Analisis lengkap mendalam", desc3: "Analisis cukup lengkap, 1 komponen kurang", desc2: "Analisis kurang lengkap (2 komponen kurang)", desc1: "Analisis minim/tidak ada" }], "3.5": [{ name: "Refleksi individu", desc4: "Mengisi F1-F5 dengan jujur, mendalam, rencana perbaikan", desc3: "Mengisi semua, cukup mendalam", desc2: "Mengisi 3-4 pertanyaan", desc1: "Mengisi ≤2 pertanyaan" }] } },
-            "2": { displayName: "Aktivitas 2: Mencari Solusi", tpList: ["2.1", "3.5"], kriteria: { "2.1": [{ name: "Pemahaman materi", desc4: "Jawab 4 pertanyaan tepat, lengkap, mendalam", desc3: "Jawab 4 pertanyaan tepat", desc2: "Jawab 2-3 pertanyaan", desc1: "Jawab ≤1" }, { name: "Analisis penyebab", desc4: "5W+1H lengkap + 4 sisi diagram detail", desc3: "5W+1H + 3 sisi", desc2: "5W+1H + 2 sisi", desc1: "Tidak lengkap" }, { name: "Ide produk & pemilihan", desc4: "6 ide kreatif + alasan logis", desc3: "5-6 ide", desc2: "3-4 ide", desc1: "<3 ide" }, { name: "Hipotesis", desc4: "Logis, spesifik, format tepat, terukur", desc3: "Logis, format tepat kurang spesifik", desc2: "Kurang logis/format kurang tepat", desc1: "Tidak ada" }], "3.5": [{ name: "Refleksi kelompok", desc4: "Mendalam + rencana konkret", desc3: "Cukup mendalam", desc2: "Dangkal", desc1: "Tidak mengisi" }] } },
-            "3": { displayName: "Aktivitas 3: Perancangan Proyek", tpList: ["2.1"], kriteria: { "2.1": [{ name: "Pemahaman materi", desc4: "Jawab 4 tepat, lengkap, aplikatif", desc3: "Jawab 4 tepat", desc2: "Jawab 2-3", desc1: "Jawab ≤1" }, { name: "Spesifikasi produk", desc4: "Fungsi, target, bahan, biaya, cara kerja detail", desc3: "Cukup lengkap", desc2: "Kurang lengkap", desc1: "Tidak lengkap" }, { name: "Desain produk", desc4: "Sketsa detail + bagian lengkap", desc3: "Cukup detail", desc2: "Sederhana", desc1: "Tidak ada" }, { name: "Kriteria keberhasilan", desc4: "Minimal 3 kriteria terukur", desc3: "2 kriteria", desc2: "1 kriteria", desc1: "Tidak ada" }, { name: "Rencana produksi", desc4: "4 minggu detail, penanggung jawab", desc3: "4 minggu cukup jelas", desc2: "Kurang lengkap", desc1: "Tidak ada" }, { name: "Rencana pengujian", desc4: "Minimal 3 aspek terukur", desc3: "2 aspek", desc2: "1 aspek", desc1: "Tidak ada" }] } },
-            "4": { displayName: "Aktivitas 4: Pengembangan Proyek", tpList: ["2.2", "2.3", "3.1", "3.5"], kriteria: { "2.2": [{ name: "Pemahaman materi", desc4: "Jawab 4 tepat, lengkap, aplikatif", desc3: "Jawab 4 tepat", desc2: "Jawab 2-3", desc1: "Jawab ≤1" }, { name: "Kesesuaian pelaksanaan", desc4: "100% sesuai rancangan, tepat waktu", desc3: "80-99% sesuai", desc2: "50-79% sesuai", desc1: "<50%" }, { name: "Dokumentasi logbook", desc4: "4 minggu lengkap detail", desc3: "3-4 minggu terisi", desc2: "1-2 minggu", desc1: "Tidak ada" }], "2.3": [{ name: "Identifikasi kekurangan", desc4: "Minimal 3 dengan bukti", desc3: "2 dengan bukti", desc2: "1 tanpa bukti", desc1: "Tidak ada" }, { name: "Tindak lanjut", desc4: "Solusi semua + dilaksanakan", desc3: "Solusi sebagian", desc2: "Solusi tidak dilaksanakan", desc1: "Tidak ada" }], "3.1": [{ name: "Pengumpulan data", desc4: "3 sumber berbeda", desc3: "2 sumber", desc2: "1 sumber", desc1: "Tidak ada" }, { name: "Catatan observasi", desc4: "Kuantitatif+kualitatif detail", desc3: "Cukup detail", desc2: "Kurang detail", desc1: "Tidak ada" }], "3.5": [{ name: "Refleksi akhir", desc4: "Mendalam + saran spesifik", desc3: "Cukup mendalam", desc2: "Dangkal", desc1: "Tidak ada" }] } },
-            "5": { displayName: "Aktivitas 5: Pengolahan Data", tpList: ["3.1", "3.2", "3.4", "3.5"], kriteria: { "3.1": [{ name: "Pemahaman materi", desc4: "Jawab 4 tepat, lengkap, aplikatif", desc3: "Jawab 4 tepat", desc2: "Jawab 2-3", desc1: "Jawab ≤1" }, { name: "Penyajian data", desc4: "Tabel/grafik + interpretasi", desc3: "Tabel/grafik jelas", desc2: "Teks saja", desc1: "Tidak ada" }], "3.2": [{ name: "Analisis data", desc4: "Logis, ilmiah, terhubung bukti", desc3: "Cukup logis", desc2: "Kurang logis", desc1: "Tidak ada" }, { name: "Hubungan bukti & kesimpulan", desc4: "Sebab-akibat jelas", desc3: "Cukup jelas", desc2: "Kurang jelas", desc1: "Tidak ada" }], "3.4": [{ name: "Kelengkapan laporan", desc4: "Lengkap semua bab", desc3: "Lengkap cukup", desc2: "Kurang 1-2 bab", desc1: ">2 bab hilang" }, { name: "Struktur & bahasa", desc4: "Ilmiah, ejaan tepat", desc3: "Cukup ilmiah", desc2: "Kurang ilmiah", desc1: "Tidak ilmiah" }], "3.5": [{ name: "Refleksi proyek", desc4: "Individu+kelompok lengkap", desc3: "Cukup lengkap", desc2: "Dangkal", desc1: "Tidak ada" }] } },
-            "6": { displayName: "Aktivitas 6: Diseminasi Video", tpList: ["3.3", "3.4", "3.5"], kriteria: { "3.3": [{ name: "Pemahaman materi", desc4: "Jawab 4 tepat, lengkap, aplikatif", desc3: "Jawab 4 tepat", desc2: "Jawab 2-3", desc1: "Jawab ≤1" }, { name: "Kekuatan argumen", desc4: "Jelas, logis, bukti kuat", desc3: "Jelas dan logis", desc2: "Kurang logis", desc1: "Tidak ada" }, { name: "Penjelasan ilmiah", desc4: "Tepat, runtut, mudah dipahami", desc3: "Cukup baik", desc2: "Sulit dipahami", desc1: "Tidak ada" }], "3.4": [{ name: "Storyline & alur", desc4: "Runtut, durasi proporsional", desc3: "Cukup runtut", desc2: "Tidak runtut", desc1: "Tidak ada" }, { name: "Kualitas video", desc4: "2-5 menit, komunikatif", desc3: "Cukup jelas", desc2: "Kurang jelas", desc1: "Tidak selesai" }, { name: "Bahasa & visual", desc4: "Baku, visual mendukung", desc3: "Cukup baik", desc2: "Kurang baku", desc1: "Tidak ilmiah" }], "3.5": [{ name: "Refleksi akhir", desc4: "Lengkap sangat mendalam", desc3: "Cukup mendalam", desc2: "Sebagian", desc1: "Tidak ada" }] } }
-        };
-        
-        // ==================== VARIABEL ====================
         let dataKelas = [];
         let dataSiswa = {};
-        let daftarAktivitas = { ganjil: [], genap: [] };
-        let currentAktivitasNomor = null;
-        let currentSkor = {};
-        let currentStudentList = [];
-        let currentStudentIndex = -1;
+        let currentData = null;
         
-        // ==================== LOAD DATA ====================
+        // ==================== LOAD DATA SISWA (JSONP) ====================
         function loadDataSiswa() {
             return new Promise((resolve, reject) => {
                 const callbackName = 'jsonp_callback_' + Date.now();
@@ -683,409 +449,343 @@
                     const script = document.querySelector(`script[src*="${callbackName}"]`);
                     if (script) document.head.removeChild(script);
                     delete window[callbackName];
+                    
                     if (result && result.success) {
                         dataKelas = result.kelasList || [];
                         dataSiswa = result.siswaPerKelas || {};
                         resolve();
-                    } else reject(new Error('Gagal memuat data siswa'));
+                    } else {
+                        reject(new Error('Gagal memuat data siswa'));
+                    }
                 };
+                
                 const script = document.createElement('script');
                 script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = () => reject(new Error('Gagal terhubung'));
+                script.onerror = () => reject(new Error('Gagal terhubung ke server data siswa'));
                 document.head.appendChild(script);
             });
         }
         
-        async function fetchSheets(url) {
-            try {
-                const response = await fetch(`${url}?action=getSheets&_=${Date.now()}`);
-                const data = await response.json();
-                if (data && data.success && data.sheets) {
-                    return data.sheets.filter(s => s.name.toUpperCase().includes('AKTIVITAS')).map(s => ({ name: s.name, sheetName: s.name }));
-                }
-            } catch (error) { console.warn(error); }
-            return [];
-        }
-        
-        async function loadAllActivities() {
-            const [ganjilSheets, genapSheets] = await Promise.all([fetchSheets(URL_SEMESTER_GANJIL), fetchSheets(URL_SEMESTER_GENAP)]);
-            daftarAktivitas.ganjil = ganjilSheets;
-            daftarAktivitas.genap = genapSheets;
-        }
-        
-        function updateAktivitasDropdown() {
+        // ==================== AMBIL DAFTAR AKTIVITAS DARI SHEET DAFTAR_AKTIVITAS ====================
+        async function loadDaftarAktivitas() {
             const semester = document.getElementById('filterSemester').value;
+            if (!semester) return;
+            
+            const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
             const aktivitasSelect = document.getElementById('filterAktivitas');
-            if (!semester || !daftarAktivitas[semester]?.length) {
-                aktivitasSelect.innerHTML = '<option value="">-- Tidak ada aktivitas --</option>';
+            aktivitasSelect.innerHTML = '<option value="">-- Memuat... --</option>';
+            
+            try {
+                const response = await fetch(`${url}?action=getDaftarAktivitas&_=${Date.now()}`);
+                const result = await response.json();
+                
+                if (result && result.success && result.aktivitas && result.aktivitas.length > 0) {
+                    aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
+                    result.aktivitas.forEach(aktivitas => {
+                        if (aktivitas && aktivitas.trim()) {
+                            const option = document.createElement('option');
+                            option.value = aktivitas;
+                            option.textContent = aktivitas;
+                            aktivitasSelect.appendChild(option);
+                        }
+                    });
+                    aktivitasSelect.disabled = false;
+                } else {
+                    aktivitasSelect.innerHTML = '<option value="">-- Tidak ada aktivitas --</option>';
+                    aktivitasSelect.disabled = true;
+                }
+            } catch (error) {
+                console.error('Gagal load daftar aktivitas:', error);
+                aktivitasSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
                 aktivitasSelect.disabled = true;
-                return;
             }
-            aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
-            daftarAktivitas[semester].forEach(a => {
-                const option = document.createElement('option');
-                option.value = a.sheetName;
-                option.textContent = a.name;
-                aktivitasSelect.appendChild(option);
-            });
-            aktivitasSelect.disabled = false;
         }
         
+        // ==================== UPDATE DROPDOWN KELAS ====================
         function updateKelasDropdown() {
             const kelasSelect = document.getElementById('filterKelas');
             kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            dataKelas.forEach(k => { if (k?.trim()) { const opt = document.createElement('option'); opt.value = k; opt.textContent = k; kelasSelect.appendChild(opt); } });
+            dataKelas.forEach(kelas => {
+                if (kelas && kelas.trim()) {
+                    const option = document.createElement('option');
+                    option.value = kelas;
+                    option.textContent = kelas;
+                    kelasSelect.appendChild(option);
+                }
+            });
             kelasSelect.disabled = false;
         }
         
+        // ==================== UPDATE DROPDOWN NAMA ====================
         function updateNamaDropdown() {
             const kelas = document.getElementById('filterKelas').value;
             const namaSelect = document.getElementById('filterNama');
+            
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
                 namaSelect.disabled = true;
                 return;
             }
+            
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
             (dataSiswa[kelas] || []).sort().forEach(nama => {
-                const option = document.createElement('option');
-                option.value = nama;
-                option.textContent = nama;
-                namaSelect.appendChild(option);
+                if (nama && nama.trim()) {
+                    const option = document.createElement('option');
+                    option.value = nama;
+                    option.textContent = nama;
+                    namaSelect.appendChild(option);
+                }
             });
             namaSelect.disabled = false;
         }
         
-        // ==================== FETCH DATA ====================
+        // ==================== AMBIL DATA DARI SHEET ====================
         async function fetchDataFromSheet(semester, sheetName, kelas, nama) {
             const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
             const fetchUrl = `${url}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&status=AKTIF&_=${Date.now()}`;
+            
             try {
                 const response = await fetch(fetchUrl);
                 const data = await response.json();
-                return (data && data.success && data.data?.length > 0) ? data.data[0] : null;
-            } catch (error) { console.error(error); return null; }
-        }
-        
-        async function fetchSavedNilai(semester, aktivitasNomor, kelas, nama) {
-            const url = `${APPS_SCRIPT_URL}?action=getNilaiRubrik&semester=${encodeURIComponent(semester)}&aktivitas=${encodeURIComponent(`Aktivitas ${aktivitasNomor}`)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&_=${Date.now()}`;
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data?.success && data?.data?.nilai) {
-                    const skorPerTP = {};
-                    data.data.nilai.forEach(item => {
-                        if (!skorPerTP[item.tp]) skorPerTP[item.tp] = {};
-                        skorPerTP[item.tp][item.kriteria] = item.skor;
-                    });
-                    return { skor_per_tp: skorPerTP };
+                if (data && data.success && data.data && data.data.length > 0) {
+                    return data.data[0];
                 }
                 return null;
-            } catch (error) { return null; }
-        }
-        
-        // ==================== RENDER PREVIEW (MENGURAI JSON) ====================
-        function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
-        function formatValue(v) { if (v === null || v === undefined) return '-'; if (typeof v === 'boolean') return v ? 'Ya' : 'Tidak'; if (typeof v === 'object') return JSON.stringify(v, null, 2); return String(v); }
-        
-        function isTableData(arr) {
-            if (!Array.isArray(arr) || arr.length === 0) return false;
-            const allObjects = arr.every(item => typeof item === 'object' && item !== null && !Array.isArray(item));
-            if (!allObjects) return false;
-            const keys = new Set();
-            arr.forEach(item => Object.keys(item).forEach(k => keys.add(k)));
-            return keys.size > 1;
-        }
-        
-        function renderAsTable(arr, title) {
-            const allKeys = new Set();
-            arr.forEach(item => Object.keys(item).forEach(k => allKeys.add(k)));
-            const headers = Array.from(allKeys);
-            let html = `<div class="data-table-wrapper"><table class="data-table"><thead><tr>`;
-            headers.forEach(h => html += `<th>${escapeHtml(h.replace(/_/g, ' '))}</th>`);
-            html += `</tr></thead><tbody>`;
-            arr.forEach(item => {
-                html += `<tr>`;
-                headers.forEach(h => {
-                    let val = item[h];
-                    if (val === undefined || val === null) val = '-';
-                    if (typeof val === 'object') val = JSON.stringify(val);
-                    html += `<td>${escapeHtml(String(val))}</td>`;
-                });
-                html += `</tr>`;
-            });
-            html += `</tbody></table></div>`;
-            return html;
-        }
-        
-        function parseAndRenderBagian(bagianValue) {
-            if (!bagianValue) return '<div class="field-value">(Tidak ada data)</div>';
-            let parsed = bagianValue;
-            if (typeof bagianValue === 'string') {
-                try { parsed = JSON.parse(bagianValue); } catch(e) { return `<div class="field-value">${escapeHtml(formatValue(bagianValue))}</div>`; }
+            } catch (error) {
+                console.error('Error fetch data:', error);
+                return null;
             }
-            if (Array.isArray(parsed)) {
-                if (parsed.length === 0) return '<div class="field-value">(Kosong)</div>';
-                if (isTableData(parsed)) return renderAsTable(parsed, null);
-                let html = `<div class="data-list">`;
-                parsed.forEach((item, idx) => {
-                    if (typeof item === 'object' && item !== null) {
-                        html += `<div class="field-item full-width" style="margin-bottom:0.5rem"><div class="field-label">Item ${idx+1}</div><div class="field-value">`;
-                        for (const [k, v] of Object.entries(item)) html += `<strong>${escapeHtml(k)}:</strong> ${escapeHtml(formatValue(v))}<br>`;
-                        html += `</div></div>`;
-                    } else html += `<div class="field-item full-width"><div class="field-value">${idx+1}. ${escapeHtml(formatValue(item))}</div></div>`;
-                });
-                html += `</div>`;
-                return html;
-            }
-            if (typeof parsed === 'object' && parsed !== null) {
-                let html = `<div class="field-group">`;
-                for (const [k, v] of Object.entries(parsed)) {
-                    if (Array.isArray(v) && isTableData(v)) html += `<div class="field-item full-width">${renderAsTable(v, k.replace(/_/g, ' '))}</div>`;
-                    else if (Array.isArray(v)) {
-                        html += `<div class="field-item full-width"><div class="field-label">${escapeHtml(k.replace(/_/g, ' '))}</div><div class="field-value">`;
-                        v.forEach((val, idx) => { html += `<div>${idx+1}. ${escapeHtml(formatValue(val))}</div>`; });
-                        html += `</div></div>`;
-                    } else if (typeof v === 'object' && v !== null) {
-                        html += `<div class="field-item full-width"><div class="field-label">${escapeHtml(k.replace(/_/g, ' '))}</div><div class="field-value">`;
-                        for (const [sk, sv] of Object.entries(v)) html += `<strong>${escapeHtml(sk)}:</strong> ${escapeHtml(formatValue(sv))}<br>`;
-                        html += `</div></div>`;
-                    } else html += `<div class="field-item"><div class="field-label">${escapeHtml(k.replace(/_/g, ' '))}</div><div class="field-value">${escapeHtml(formatValue(v))}</div></div>`;
+        }
+        
+        // ==================== FORMAT FUNCTIONS ====================
+        function formatTanggal(timestamp) {
+            if (!timestamp) return '-';
+            try {
+                const date = new Date(timestamp);
+                if (!isNaN(date.getTime())) {
+                    return date.toLocaleDateString('id-ID', {
+                        day: '2-digit', month: '2-digit', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    });
                 }
-                html += `</div>`;
-                return html;
+            } catch(e) {}
+            return timestamp;
+        }
+        
+        function formatLabel(key) {
+            return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+        }
+        
+        function formatValue(value) {
+            if (value === null || value === undefined) return '-';
+            if (typeof value === 'object') return JSON.stringify(value, null, 2);
+            if (typeof value === 'boolean') return value ? 'Ya' : 'Tidak';
+            if (value === '') return '-';
+            return String(value);
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function renderTableFromArray(arr) {
+            if (!arr || arr.length === 0) return '<div class="field-value">(Kosong)</div>';
+            
+            const allKeys = new Set();
+            arr.forEach(item => {
+                if (typeof item === 'object' && item !== null) {
+                    Object.keys(item).forEach(key => allKeys.add(key));
+                }
+            });
+            
+            const headers = Array.from(allKeys);
+            if (headers.length === 0) return '<div class="field-value">(Data kosong)</div>';
+            
+            let tableHtml = `<div class="data-table-wrapper"><table class="data-table"><thead><tr>`;
+            headers.forEach(header => { tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`; });
+            tableHtml += `</tr></thead><tbody>`;
+            
+            arr.forEach(item => {
+                tableHtml += `<tr>`;
+                headers.forEach(header => {
+                    let cellValue = item[header];
+                    if (cellValue === undefined || cellValue === null) cellValue = '-';
+                    if (typeof cellValue === 'object') cellValue = JSON.stringify(cellValue);
+                    tableHtml += `<td>${escapeHtml(String(cellValue))}</td>`;
+                });
+                tableHtml += `</tr>`;
+            });
+            
+            tableHtml += `</tbody></table></div>`;
+            return tableHtml;
+        }
+        
+        function renderJsonValue(value) {
+            if (value === null || value === undefined) {
+                return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">-</div></div>`;
             }
-            return `<div class="field-value">${escapeHtml(formatValue(parsed))}</div>`;
+            
+            if (Array.isArray(value)) {
+                if (value.length === 0) return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
+                
+                if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null && !Array.isArray(value[0])) {
+                    return `<div class="field-item full-width"><div class="field-label">Data Tabel</div>${renderTableFromArray(value)}</div>`;
+                } else {
+                    let listHtml = `<div class="field-item"><div class="field-label">Daftar</div><div class="field-value">`;
+                    value.forEach((item, idx) => { listHtml += `<div>${idx + 1}. ${escapeHtml(formatValue(item))}</div>`; });
+                    listHtml += `</div></div>`;
+                    return listHtml;
+                }
+            }
+            
+            if (typeof value === 'object') {
+                if (Object.keys(value).length === 0) return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
+                
+                let objectHtml = `<div class="field-group">`;
+                for (const [objKey, objValue] of Object.entries(value)) {
+                    if (Array.isArray(objValue) && objValue.length > 0 && typeof objValue[0] === 'object') {
+                        objectHtml += `<div class="field-item full-width"><div class="field-label">${escapeHtml(formatLabel(objKey))}</div>${renderTableFromArray(objValue)}</div>`;
+                    } else {
+                        objectHtml += `<div class="field-item"><div class="field-label">${escapeHtml(formatLabel(objKey))}</div><div class="field-value">${escapeHtml(formatValue(objValue))}</div></div>`;
+                    }
+                }
+                objectHtml += `</div>`;
+                return objectHtml;
+            }
+            
+            return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">${escapeHtml(formatValue(value))}</div></div>`;
         }
         
         function renderPreview(data, sheetName) {
             if (!data) return null;
-            let html = `<div class="info-panel"><span><i class="fas fa-file-alt"></i> <strong>${escapeHtml(sheetName)}</strong></span><span><i class="fas fa-tag"></i> Status: AKTIF</span></div>`;
-            const bagianKeys = Object.keys(data).filter(k => k.startsWith('Bagian_') || k === 'Bagian_A' || k === 'Bagian_B' || k === 'Bagian_C' || k === 'Bagian_D' || k === 'Bagian_E' || k === 'Bagian_F' || k === 'Bagian_G' || k === 'Bagian_H' || k === 'Bagian_I' || k === 'Bagian_J').sort();
-            for (const bagianKey of bagianKeys) {
-                const bagianValue = data[bagianKey];
-                if (!bagianValue) continue;
-                html += `<div class="bagian-card"><div class="bagian-title"><i class="fas fa-folder-open"></i> ${escapeHtml(bagianKey.replace(/_/g, ' '))}</div>${parseAndRenderBagian(bagianValue)}</div>`;
-            }
-            return html;
-        }
-        
-        // ==================== RENDER RUBRIK ====================
-        function toggleTpSection(header) { const body = header.nextElementSibling; header.classList.toggle('collapsed'); if (body) body.style.display = header.classList.contains('collapsed') ? 'none' : 'block'; }
-        
-        function selectSkor(element, tp, kriteria, skor) {
-            const container = element.closest('.skor-options');
-            container.querySelectorAll('.skor-option').forEach(opt => { opt.classList.remove('selected'); const r = opt.querySelector('input'); if (r) r.checked = false; });
-            element.classList.add('selected');
-            const radio = element.querySelector('input'); if (radio) radio.checked = true;
-            if (!currentSkor[tp]) currentSkor[tp] = {};
-            currentSkor[tp][kriteria] = skor;
-            const rubrikData = RUBRIK_PER_AKTIVITAS[currentAktivitasNomor];
-            if (rubrikData?.kriteria[tp]) {
-                let tpTotal = 0;
-                rubrikData.kriteria[tp].forEach(k => { const val = currentSkor[tp]?.[k.name]; if (val) tpTotal += val; });
-                const avg = (tpTotal / rubrikData.kriteria[tp].length).toFixed(1);
-                const el = document.getElementById(`tp_total_${tp.replace('.', '_')}`);
-                if (el) el.textContent = avg;
-            }
-            let grandTotal = 0, totalKriteria = 0;
-            for (const tp of rubrikData.tpList) {
-                rubrikData.kriteria[tp]?.forEach(k => { const val = currentSkor[tp]?.[k.name]; if (val) grandTotal += val; totalKriteria++; });
-            }
-            const grandAvg = totalKriteria > 0 ? (grandTotal / totalKriteria).toFixed(1) : 0;
-            const grandEl = document.getElementById('grand_total'); if (grandEl) grandEl.textContent = grandAvg;
-        }
-        
-        function renderRubrik(aktivitasNomor, savedSkor = null) {
-            const rubrikData = RUBRIK_PER_AKTIVITAS[aktivitasNomor];
-            if (!rubrikData) return `<div class="alert alert-error">Rubrik tidak tersedia</div>`;
-            currentAktivitasNomor = aktivitasNomor;
-            currentSkor = savedSkor ? { ...savedSkor } : {};
-            let html = `<div style="margin-bottom:0.8rem"><strong><i class="fas fa-clipboard"></i> ${escapeHtml(rubrikData.displayName)}</strong></div>`;
-            for (const tp of rubrikData.tpList) {
-                const kriteriaList = rubrikData.kriteria[tp] || [];
-                let tpTotal = 0;
-                html += `<div class="tp-section"><div class="tp-header" onclick="toggleTpSection(this)"><span><i class="fas fa-tag"></i> TP ${tp}</span><i class="fas fa-chevron-down"></i></div><div class="tp-body">`;
-                kriteriaList.forEach((kriteria, idx) => {
-                    const saved = currentSkor[tp]?.[kriteria.name] || null;
-                    if (saved) tpTotal += saved;
-                    html += `<div class="kriteria-row"><div class="kriteria-name">${escapeHtml(kriteria.name)}</div><div class="skor-options">`;
-                    [{v:4,l:"Sangat Baik",d:kriteria.desc4},{v:3,l:"Baik",d:kriteria.desc3},{v:2,l:"Cukup",d:kriteria.desc2},{v:1,l:"Perlu Perbaikan",d:kriteria.desc1}].forEach(opt => {
-                        const isChecked = (saved === opt.v);
-                        html += `<div class="skor-option ${isChecked ? 'selected' : ''}" onclick="selectSkor(this, '${tp}', '${escapeHtml(kriteria.name)}', ${opt.v})"><input type="radio" name="skor_${tp}_${idx}" value="${opt.v}" ${isChecked ? 'checked' : ''}><span class="skor-value">${opt.v}</span><label><strong>${opt.l}</strong><br><span class="skor-desc">${escapeHtml(opt.d)}</span></label></div>`;
-                    });
-                    html += `</div></div>`;
-                });
-                const avg = kriteriaList.length > 0 ? (tpTotal / kriteriaList.length).toFixed(1) : 0;
-                html += `<div class="tp-total">Rata-rata TP ${tp}: <strong id="tp_total_${tp.replace('.', '_')}">${avg}</strong></div></div></div>`;
-            }
-            let grandTotal = 0, totalKriteria = 0;
-            for (const tp of rubrikData.tpList) { rubrikData.kriteria[tp]?.forEach(k => { const val = currentSkor[tp]?.[k.name]; if (val) grandTotal += val; totalKriteria++; }); }
-            html += `<div class="grand-total">Rata-rata Keseluruhan: <strong id="grand_total">${totalKriteria > 0 ? (grandTotal/totalKriteria).toFixed(1) : 0}</strong></div>`;
-            return html;
-        }
-        
-        // ==================== SIMPAN NILAI ====================
-        async function simpanNilai() {
-            const semester = document.getElementById('filterSemester').value;
-            const kelas = document.getElementById('filterKelas').value;
-            const nama = document.getElementById('filterNama').value;
-            if (!semester || !currentAktivitasNomor || !kelas || !nama) { showAlert('Lengkapi data!', 'error'); return; }
-            const rubrikData = RUBRIK_PER_AKTIVITAS[currentAktivitasNomor];
-            if (!rubrikData) { showAlert('Rubrik tidak ditemukan', 'error'); return; }
-            const dataNilai = [];
-            for (const tp of rubrikData.tpList) {
-                for (const kriteria of rubrikData.kriteria[tp] || []) {
-                    const skor = currentSkor[tp]?.[kriteria.name];
-                    if (skor !== null && skor !== undefined) dataNilai.push({ tp, kriteria: kriteria.name, skor });
+            
+            let html = `<div class="info-panel">
+                <span><i class="fas fa-file-alt"></i> <strong>${escapeHtml(sheetName)}</strong></span>
+                <span><i class="fas fa-tag"></i> Status: <strong>AKTIF</strong></span>
+                <span><i class="fas fa-calendar"></i> ${formatTanggal(data.Timestamp || data._timestamp || '')}</span>
+            </div>`;
+            
+            const bagianKeys = Object.keys(data).filter(key => key.startsWith('Bagian_')).sort();
+            
+            if (bagianKeys.length === 0) {
+                html += `<div class="bagian-card"><div class="bagian-title"><i class="fas fa-database"></i> Semua Data</div><div class="field-group">`;
+                for (const [key, value] of Object.entries(data)) {
+                    if (key === 'Timestamp' || key === 'Status' || key === '_timestamp' || key === '_status') continue;
+                    if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+                        try { html += renderJsonValue(JSON.parse(value)); } catch(e) { html += `<div class="field-item"><div class="field-label">${escapeHtml(formatLabel(key))}</div><div class="field-value">${escapeHtml(formatValue(value))}</div></div>`; }
+                    } else {
+                        html += `<div class="field-item"><div class="field-label">${escapeHtml(formatLabel(key))}</div><div class="field-value">${escapeHtml(formatValue(value))}</div></div>`;
+                    }
+                }
+                html += `</div></div>`;
+            } else {
+                for (const bagianKey of bagianKeys) {
+                    const bagianValue = data[bagianKey];
+                    if (!bagianValue) continue;
+                    const bagianTitle = bagianKey.replace('_', ' ');
+                    
+                    html += `<div class="bagian-card"><div class="bagian-title"><i class="fas fa-folder-open"></i> ${escapeHtml(bagianTitle)}</div>`;
+                    
+                    if (typeof bagianValue === 'string' && (bagianValue.startsWith('{') || bagianValue.startsWith('['))) {
+                        try { html += renderJsonValue(JSON.parse(bagianValue)); } catch(e) { html += `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">${escapeHtml(formatValue(bagianValue))}</div></div>`; }
+                    } else if (typeof bagianValue === 'object') {
+                        html += renderJsonValue(bagianValue);
+                    } else {
+                        html += `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">${escapeHtml(formatValue(bagianValue))}</div></div>`;
+                    }
+                    
+                    html += `</div>`;
                 }
             }
-            if (dataNilai.length === 0) { showAlert('Belum ada skor', 'error'); return; }
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const simpanBtn = document.getElementById('btnSimpan');
-            simpanBtn.disabled = true;
-            loadingOverlay.style.display = 'flex';
-            try {
-                const formData = new URLSearchParams();
-                formData.append('semester', semester);
-                formData.append('aktivitas', `Aktivitas ${currentAktivitasNomor}`);
-                formData.append('kelas', kelas);
-                formData.append('nama_siswa', nama);
-                formData.append('data_nilai', JSON.stringify(dataNilai));
-                await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formData.toString() });
-                showAlert('Nilai berhasil disimpan!', 'success');
-            } catch (error) { showAlert('Gagal menyimpan', 'error'); }
-            finally { loadingOverlay.style.display = 'none'; simpanBtn.disabled = false; }
-        }
-        
-        function showAlert(message, type) {
-            const container = document.getElementById('alertContainer');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
-            container.innerHTML = '';
-            container.appendChild(alertDiv);
-            alertDiv.style.display = 'block';
-            setTimeout(() => alertDiv.style.display = 'none', 3000);
-        }
-        
-        // ==================== LOAD SISWA ====================
-        async function loadStudentData() {
-            const semester = document.getElementById('filterSemester').value;
-            const sheetName = document.getElementById('filterAktivitas').value;
-            const kelas = document.getElementById('filterKelas').value;
-            const nama = document.getElementById('filterNama').value;
-            if (!semester || !sheetName || !kelas || !nama) return;
             
-            document.getElementById('loadingMessage').style.display = 'block';
-            document.getElementById('emptyMessage').style.display = 'none';
-            document.getElementById('previewContent').style.display = 'none';
-            document.getElementById('rubrikContent').innerHTML = '<div class="loading-message" style="display:block;"><i class="fas fa-spinner fa-spin"></i> Memuat rubrik...</div>';
-            document.getElementById('btnSimpan').style.display = 'none';
-            
-            try {
-                const data = await fetchDataFromSheet(semester, sheetName, kelas, nama);
-                if (data) {
-                    document.getElementById('previewContent').innerHTML = renderPreview(data, sheetName);
-                    document.getElementById('previewContent').style.display = 'block';
-                    const savedNilai = await fetchSavedNilai(semester, currentAktivitasNomor, kelas, nama);
-                    document.getElementById('rubrikContent').innerHTML = renderRubrik(currentAktivitasNomor, savedNilai?.skor_per_tp || null);
-                    document.getElementById('btnSimpan').style.display = 'inline-flex';
-                } else {
-                    document.getElementById('previewContent').innerHTML = '<div class="empty-message" style="display:block;">Data tidak ditemukan</div>';
-                    document.getElementById('previewContent').style.display = 'block';
-                    document.getElementById('rubrikContent').innerHTML = '<div class="alert alert-info">Belum ada data untuk siswa ini</div>';
-                }
-            } catch (error) {
-                document.getElementById('rubrikContent').innerHTML = '<div class="alert alert-error">Gagal memuat data</div>';
-            } finally {
-                document.getElementById('loadingMessage').style.display = 'none';
-            }
+            return html;
         }
         
         // ==================== CEK PREVIEW ====================
         async function cekPreview() {
             const semester = document.getElementById('filterSemester').value;
             const sheetName = document.getElementById('filterAktivitas').value;
-            const aktivitasText = document.getElementById('filterAktivitas').options[document.getElementById('filterAktivitas').selectedIndex]?.textContent || '';
             const kelas = document.getElementById('filterKelas').value;
             const nama = document.getElementById('filterNama').value;
             
-            if (!semester) { showAlert('Pilih semester', 'error'); return; }
-            if (!sheetName) { showAlert('Pilih aktivitas', 'error'); return; }
-            if (!kelas) { showAlert('Pilih kelas', 'error'); return; }
-            if (!nama) { showAlert('Pilih nama siswa', 'error'); return; }
+            if (!semester) { alert('Pilih semester terlebih dahulu'); return; }
+            if (!sheetName) { alert('Pilih aktivitas terlebih dahulu'); return; }
+            if (!kelas) { alert('Pilih kelas terlebih dahulu'); return; }
+            if (!nama) { alert('Pilih nama siswa terlebih dahulu'); return; }
             
-            let nomorAktivitas = aktivitasText.match(/(\d+)/)?.[1];
-            if (!nomorAktivitas) { showAlert('Tidak dapat mengenali aktivitas', 'error'); return; }
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('emptyMessage').style.display = 'none';
+            document.getElementById('previewContent').style.display = 'none';
+            document.getElementById('actionButtons').style.display = 'none';
             
-            currentAktivitasNomor = nomorAktivitas;
-            currentStudentList = (dataSiswa[kelas] || []).sort();
-            currentStudentIndex = currentStudentList.indexOf(nama);
-            
-            if (currentStudentList.length > 0) {
-                document.getElementById('studentNavContainer').style.display = 'flex';
-                document.getElementById('studentInfo').textContent = `${currentStudentIndex+1} / ${currentStudentList.length} - ${nama}`;
-            } else {
-                document.getElementById('studentNavContainer').style.display = 'none';
+            try {
+                const data = await fetchDataFromSheet(semester, sheetName, kelas, nama);
+                
+                if (data) {
+                    currentData = data;
+                    document.getElementById('previewContent').innerHTML = renderPreview(data, sheetName);
+                    document.getElementById('previewContent').style.display = 'block';
+                    document.getElementById('actionButtons').style.display = 'flex';
+                } else {
+                    document.getElementById('emptyMessage').style.display = 'block';
+                    document.getElementById('emptyMessage').innerHTML = '<i class="fas fa-info-circle"></i> Data tidak ditemukan. Pastikan siswa sudah mengirimkan tugas.';
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').innerHTML = error.message || 'Terjadi kesalahan';
+            } finally {
+                document.getElementById('loadingMessage').style.display = 'none';
             }
-            
-            await loadStudentData();
         }
         
-        function prevStudent() {
-            if (currentStudentIndex > 0) {
-                const newNama = currentStudentList[currentStudentIndex - 1];
-                document.getElementById('filterNama').value = newNama;
-                cekPreview();
-            }
-        }
+        function printPreview() { window.print(); }
         
-        function nextStudent() {
-            if (currentStudentIndex < currentStudentList.length - 1) {
-                const newNama = currentStudentList[currentStudentIndex + 1];
-                document.getElementById('filterNama').value = newNama;
-                cekPreview();
-            }
+        function downloadPDF() {
+            const element = document.getElementById('previewContent');
+            if (!element || !element.innerHTML.trim()) { alert('Tidak ada data'); return; }
+            const actionButtons = document.getElementById('actionButtons');
+            const originalDisplay = actionButtons.style.display;
+            actionButtons.style.display = 'none';
+            html2pdf().set({ margin: [0.5, 0.5, 0.5, 0.5], filename: `preview_${Date.now()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => { actionButtons.style.display = originalDisplay; }).catch(() => { actionButtons.style.display = originalDisplay; alert('Gagal generate PDF'); });
         }
         
         // ==================== INIT ====================
-        function initEventListeners() {
-            document.getElementById('filterSemester').addEventListener('change', () => {
-                updateAktivitasDropdown();
-                document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
-                document.getElementById('filterKelas').disabled = true;
-                document.getElementById('filterNama').innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
-                document.getElementById('filterNama').disabled = true;
-                document.getElementById('studentNavContainer').style.display = 'none';
-            });
-            document.getElementById('filterAktivitas').addEventListener('change', () => updateKelasDropdown());
-            document.getElementById('filterKelas').addEventListener('change', updateNamaDropdown);
-            document.getElementById('btnCek').addEventListener('click', cekPreview);
-            document.getElementById('btnSimpan').addEventListener('click', simpanNilai);
-            document.getElementById('prevStudentBtn').addEventListener('click', prevStudent);
-            document.getElementById('nextStudentBtn').addEventListener('click', nextStudent);
-        }
-        
         async function init() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            if (hamburger) { hamburger.addEventListener('click', () => navMenu.classList.toggle('active')); }
+            
             document.getElementById('loadingMessage').style.display = 'block';
+            
             try {
-                await Promise.all([loadDataSiswa(), loadAllActivities()]);
-                updateAktivitasDropdown();
-                initEventListeners();
+                await loadDataSiswa();
+                
+                document.getElementById('filterSemester').addEventListener('change', () => {
+                    loadDaftarAktivitas();
+                    document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
+                    document.getElementById('filterKelas').disabled = true;
+                    document.getElementById('filterNama').innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
+                    document.getElementById('filterNama').disabled = true;
+                });
+                
+                document.getElementById('filterAktivitas').addEventListener('change', () => { updateKelasDropdown(); });
+                document.getElementById('filterKelas').addEventListener('change', updateNamaDropdown);
+                document.getElementById('btnCek').addEventListener('click', cekPreview);
+                document.getElementById('btnPrint').addEventListener('click', printPreview);
+                document.getElementById('btnDownloadPDF').addEventListener('click', downloadPDF);
+                
                 document.getElementById('loadingMessage').style.display = 'none';
             } catch (error) {
                 document.getElementById('loadingMessage').style.display = 'none';
                 document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorText').innerHTML = 'Gagal memuat data awal';
+                document.getElementById('errorText').innerHTML = 'Gagal memuat data awal. Silakan refresh halaman.';
             }
         }
         
-        window.toggleTpSection = toggleTpSection;
-        window.selectSkor = selectSkor;
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
