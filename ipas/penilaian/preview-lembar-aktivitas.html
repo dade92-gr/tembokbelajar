@@ -6,16 +6,12 @@
     <title>Preview Lembar Aktivitas - IPAS Kelas X</title>
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf untuk konversi PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
-        /* style sama seperti sebelumnya - tidak diubah */
         :root {
             --ipas-primary: #2ecc71;
             --ipas-secondary: #27ae60;
             --ipas-light: #d5f4e6;
             --ipas-dark: #229954;
-            --ipas-accent: #3498db;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -62,18 +58,11 @@
             border-radius: 2px;
         }
         
-        .ipas-content-card > p {
-            font-size: 1rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
-        
         .simple-card {
             background: white;
             border-radius: 20px;
             padding: 1.8rem;
             margin-bottom: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
             border: 1px solid rgba(46, 204, 113, 0.1);
         }
         
@@ -131,7 +120,6 @@
             border: 1px solid #ddd;
             border-radius: 12px;
             font-size: 0.85rem;
-            font-family: inherit;
             background: white;
             cursor: pointer;
         }
@@ -159,41 +147,6 @@
         .btn-cek:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
-        }
-        
-        .btn-cek:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .btn-action {
-            background: white;
-            border: 1px solid var(--ipas-light);
-            padding: 0.6rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            color: var(--ipas-dark);
-        }
-        
-        .btn-action:hover {
-            background: var(--ipas-primary);
-            color: white;
-            border-color: var(--ipas-primary);
         }
         
         .preview-content {
@@ -263,11 +216,6 @@
             white-space: pre-wrap;
         }
         
-        .field-value.long-text {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
         .data-table-wrapper {
             overflow-x: auto;
             margin-top: 0.5rem;
@@ -326,31 +274,11 @@
         .empty-message { background: #e2e3e5; color: #383d41; }
         
         @media print {
-            body {
-                background: white;
-                padding: 0;
-                margin: 0;
-            }
-            .preview-container {
-                padding: 0;
-                margin: 0;
-                max-width: 100%;
-            }
-            .filter-form, .action-buttons, .back-nav-simple, .simple-card:first-child, header, .btn-action, .btn-cek {
-                display: none !important;
-            }
-            .preview-content {
-                padding: 0;
-                margin: 0;
-                box-shadow: none;
-            }
-            .bagian-card {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-            .data-table {
-                font-size: 0.7rem;
-            }
+            body { background: white; padding: 0; margin: 0; }
+            .preview-container { padding: 0; margin: 0; max-width: 100%; }
+            .filter-form, .back-nav-simple, .simple-card:first-child, header, .btn-cek { display: none !important; }
+            .preview-content { padding: 0; margin: 0; box-shadow: none; }
+            .bagian-card { break-inside: avoid; page-break-inside: avoid; }
         }
         
         .back-nav-simple {
@@ -382,7 +310,6 @@
             .filter-form { flex-direction: column; }
             .btn-cek { width: 100%; justify-content: center; }
             .field-group { grid-template-columns: 1fr; }
-            .action-buttons { justify-content: center; }
         }
     </style>
 </head>
@@ -413,7 +340,7 @@
     <section class="preview-container">
         <div class="ipas-content-card">
             <h2><i class="fas fa-file-alt"></i> Preview Lembar Aktivitas</h2>
-            <p>Lihat dan cetak lembar jawaban aktivitas siswa</p>
+            <p>Lihat lembar jawaban aktivitas siswa</p>
         </div>
 
         <div class="simple-card">
@@ -457,38 +384,18 @@
             </div>
         </div>
 
-        <div class="action-buttons" id="actionButtons" style="display: none;">
-            <button class="btn-action" id="btnPrint">
-                <i class="fas fa-print"></i> Cetak / Print
-            </button>
-            <button class="btn-action" id="btnDownloadPDF">
-                <i class="fas fa-file-pdf"></i> Download PDF
-            </button>
-        </div>
-
         <div id="previewArea">
-            <div id="loadingMessage" class="loading-message">
-                <i class="fas fa-spinner fa-spin"></i> Memuat data...
-            </div>
-            <div id="errorMessage" class="error-message">
-                <i class="fas fa-exclamation-triangle"></i> 
-                <span id="errorText">Terjadi kesalahan</span>
-            </div>
-            <div id="emptyMessage" class="empty-message">
-                <i class="fas fa-info-circle"></i> 
-                Silakan pilih semester, aktivitas, kelas, dan nama siswa untuk menampilkan preview
-            </div>
+            <div id="loadingMessage" class="loading-message"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
+            <div id="errorMessage" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span id="errorText">Terjadi kesalahan</span></div>
+            <div id="emptyMessage" class="empty-message"><i class="fas fa-info-circle"></i> Silakan pilih semester, aktivitas, kelas, dan nama siswa</div>
             <div id="previewContent" class="preview-content" style="display: none;"></div>
         </div>
 
         <div class="back-nav-simple">
-            <a href="index-aktifitas-ipas.html" class="back-btn-simple">
-                <i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian
-            </a>
+            <a href="index-aktifitas-ipas.html" class="back-btn-simple"><i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian</a>
         </div>
     </section>
 
-    <script src="../../script.js"></script>
     <script>
         // ==================== KONFIGURASI URL ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
@@ -497,9 +404,9 @@
         
         let dataKelas = [];
         let dataSiswa = {};
-        let daftarAktivitas = { ganjil: [], genap: [] };
         let currentData = null;
         
+        // ==================== LOAD DATA SISWA (JSONP) ====================
         function loadDataSiswa() {
             return new Promise((resolve, reject) => {
                 const callbackName = 'jsonp_callback_' + Date.now();
@@ -524,51 +431,42 @@
             });
         }
         
-        async function fetchSheets(url) {
+        // ==================== AMBIL DAFTAR AKTIVITAS DARI SHEET DAFTAR_AKTIVITAS ====================
+        async function loadDaftarAktivitas() {
+            const semester = document.getElementById('filterSemester').value;
+            if (!semester) return;
+            
+            const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
+            const aktivitasSelect = document.getElementById('filterAktivitas');
+            aktivitasSelect.innerHTML = '<option value="">-- Memuat... --</option>';
+            
             try {
-                const response = await fetch(`${url}?action=getSheets&_=${Date.now()}`);
-                const data = await response.json();
-                if (data && data.success && data.sheets) {
-                    return data.sheets.filter(s => {
-                        const name = s.name.toUpperCase();
-                        return name.includes('AKTIVITAS') || name.includes('AKTIFITAS');
-                    }).map(s => ({ name: s.name, sheetName: s.name }));
+                const response = await fetch(`${url}?action=getDaftarAktivitas&_=${Date.now()}`);
+                const result = await response.json();
+                
+                if (result && result.success && result.aktivitas && result.aktivitas.length > 0) {
+                    aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
+                    result.aktivitas.forEach(aktivitas => {
+                        if (aktivitas && aktivitas.trim()) {
+                            const option = document.createElement('option');
+                            option.value = aktivitas;
+                            option.textContent = aktivitas;
+                            aktivitasSelect.appendChild(option);
+                        }
+                    });
+                    aktivitasSelect.disabled = false;
+                } else {
+                    aktivitasSelect.innerHTML = '<option value="">-- Tidak ada aktivitas --</option>';
+                    aktivitasSelect.disabled = true;
                 }
             } catch (error) {
-                console.warn('Gagal fetch sheets:', error);
-            }
-            return [];
-        }
-        
-        async function loadAllActivities() {
-            const [ganjilSheets, genapSheets] = await Promise.all([
-                fetchSheets(URL_SEMESTER_GANJIL),
-                fetchSheets(URL_SEMESTER_GENAP)
-            ]);
-            daftarAktivitas.ganjil = ganjilSheets;
-            daftarAktivitas.genap = genapSheets;
-        }
-        
-        function updateAktivitasDropdown() {
-            const semester = document.getElementById('filterSemester').value;
-            const aktivitasSelect = document.getElementById('filterAktivitas');
-            
-            if (!semester || !daftarAktivitas[semester] || daftarAktivitas[semester].length === 0) {
-                aktivitasSelect.innerHTML = '<option value="">-- Tidak ada aktivitas --</option>';
+                console.error('Gagal load daftar aktivitas:', error);
+                aktivitasSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
                 aktivitasSelect.disabled = true;
-                return;
             }
-            
-            aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
-            daftarAktivitas[semester].forEach(aktivitas => {
-                const option = document.createElement('option');
-                option.value = aktivitas.sheetName;
-                option.textContent = aktivitas.name;
-                aktivitasSelect.appendChild(option);
-            });
-            aktivitasSelect.disabled = false;
         }
         
+        // ==================== UPDATE DROPDOWN KELAS ====================
         function updateKelasDropdown() {
             const kelasSelect = document.getElementById('filterKelas');
             kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
@@ -583,6 +481,7 @@
             kelasSelect.disabled = false;
         }
         
+        // ==================== UPDATE DROPDOWN NAMA ====================
         function updateNamaDropdown() {
             const kelas = document.getElementById('filterKelas').value;
             const namaSelect = document.getElementById('filterNama');
@@ -605,6 +504,7 @@
             namaSelect.disabled = false;
         }
         
+        // ==================== AMBIL DATA DARI SHEET ====================
         async function fetchDataFromSheet(semester, sheetName, kelas, nama) {
             const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
             const fetchUrl = `${url}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&status=AKTIF&_=${Date.now()}`;
@@ -622,17 +522,15 @@
             }
         }
         
+        // ==================== FORMAT FUNCTIONS ====================
         function formatTanggal(timestamp) {
             if (!timestamp) return '-';
             try {
                 const date = new Date(timestamp);
                 if (!isNaN(date.getTime())) {
                     return date.toLocaleDateString('id-ID', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                        day: '2-digit', month: '2-digit', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
                     });
                 }
             } catch(e) {}
@@ -640,11 +538,7 @@
         }
         
         function formatLabel(key) {
-            return key
-                .replace(/_/g, ' ')
-                .replace(/([A-Z])/g, ' $1')
-                .replace(/^./, str => str.toUpperCase())
-                .trim();
+            return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
         }
         
         function formatValue(value) {
@@ -676,9 +570,7 @@
             if (headers.length === 0) return '<div class="field-value">(Data kosong)</div>';
             
             let tableHtml = `<div class="data-table-wrapper"><table class="data-table"><thead><tr>`;
-            headers.forEach(header => {
-                tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`;
-            });
+            headers.forEach(header => { tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`; });
             tableHtml += `</tr></thead><tbody>`;
             
             arr.forEach(item => {
@@ -702,95 +594,55 @@
             }
             
             if (Array.isArray(value)) {
-                if (value.length === 0) {
-                    return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
-                }
+                if (value.length === 0) return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
                 
                 if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null && !Array.isArray(value[0])) {
-                    return `<div class="field-item full-width">
-                        <div class="field-label">Data Tabel</div>
-                        ${renderTableFromArray(value)}
-                    </div>`;
+                    return `<div class="field-item full-width"><div class="field-label">Data Tabel</div>${renderTableFromArray(value)}</div>`;
                 } else {
                     let listHtml = `<div class="field-item"><div class="field-label">Daftar</div><div class="field-value">`;
-                    value.forEach((item, idx) => {
-                        listHtml += `<div>${idx + 1}. ${escapeHtml(formatValue(item))}</div>`;
-                    });
+                    value.forEach((item, idx) => { listHtml += `<div>${idx + 1}. ${escapeHtml(formatValue(item))}</div>`; });
                     listHtml += `</div></div>`;
                     return listHtml;
                 }
             }
             
             if (typeof value === 'object') {
-                if (Object.keys(value).length === 0) {
-                    return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
-                }
+                if (Object.keys(value).length === 0) return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">(Kosong)</div></div>`;
                 
                 let objectHtml = `<div class="field-group">`;
                 for (const [objKey, objValue] of Object.entries(value)) {
                     if (Array.isArray(objValue) && objValue.length > 0 && typeof objValue[0] === 'object') {
-                        objectHtml += `<div class="field-item full-width">
-                            <div class="field-label">${escapeHtml(formatLabel(objKey))}</div>
-                            ${renderTableFromArray(objValue)}
-                        </div>`;
+                        objectHtml += `<div class="field-item full-width"><div class="field-label">${escapeHtml(formatLabel(objKey))}</div>${renderTableFromArray(objValue)}</div>`;
                     } else {
-                        objectHtml += `
-                            <div class="field-item">
-                                <div class="field-label">${escapeHtml(formatLabel(objKey))}</div>
-                                <div class="field-value">${escapeHtml(formatValue(objValue))}</div>
-                            </div>
-                        `;
+                        objectHtml += `<div class="field-item"><div class="field-label">${escapeHtml(formatLabel(objKey))}</div><div class="field-value">${escapeHtml(formatValue(objValue))}</div></div>`;
                     }
                 }
                 objectHtml += `</div>`;
                 return objectHtml;
             }
             
-            return `<div class="field-item">
-                <div class="field-label">Isi</div>
-                <div class="field-value ${String(value).length > 100 ? 'long-text' : ''}">${escapeHtml(formatValue(value))}</div>
-            </div>`;
+            return `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">${escapeHtml(formatValue(value))}</div></div>`;
         }
         
         function renderPreview(data, sheetName) {
             if (!data) return null;
             
-            let html = `
-                <div class="info-panel">
-                    <span><i class="fas fa-file-alt"></i> <strong>${escapeHtml(sheetName)}</strong></span>
-                    <span><i class="fas fa-tag"></i> Status: <strong>AKTIF</strong></span>
-                    <span><i class="fas fa-calendar"></i> ${formatTanggal(data.Timestamp || data._timestamp || '')}</span>
-                </div>
-            `;
+            let html = `<div class="info-panel">
+                <span><i class="fas fa-file-alt"></i> <strong>${escapeHtml(sheetName)}</strong></span>
+                <span><i class="fas fa-tag"></i> Status: <strong>AKTIF</strong></span>
+                <span><i class="fas fa-calendar"></i> ${formatTanggal(data.Timestamp || data._timestamp || '')}</span>
+            </div>`;
             
-            const bagianKeys = Object.keys(data).filter(key => 
-                key.startsWith('Bagian_') || key === 'Bagian_A' || key === 'Bagian_B' || 
-                key === 'Bagian_C' || key === 'Bagian_D' || key === 'Bagian_E' || key === 'Bagian_F' ||
-                key === 'Bagian_G' || key === 'Bagian_H' || key === 'Bagian_I' || key === 'Bagian_J'
-            ).sort();
+            const bagianKeys = Object.keys(data).filter(key => key.startsWith('Bagian_')).sort();
             
             if (bagianKeys.length === 0) {
-                html += `<div class="bagian-card">
-                    <div class="bagian-title"><i class="fas fa-database"></i> Semua Data</div>
-                    <div class="field-group">
-                `;
+                html += `<div class="bagian-card"><div class="bagian-title"><i class="fas fa-database"></i> Semua Data</div><div class="field-group">`;
                 for (const [key, value] of Object.entries(data)) {
                     if (key === 'Timestamp' || key === 'Status' || key === '_timestamp' || key === '_status') continue;
                     if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
-                        try {
-                            const parsed = JSON.parse(value);
-                            html += renderJsonValue(parsed);
-                        } catch(e) {
-                            html += `<div class="field-item">
-                                <div class="field-label">${escapeHtml(formatLabel(key))}</div>
-                                <div class="field-value">${escapeHtml(formatValue(value))}</div>
-                            </div>`;
-                        }
+                        try { html += renderJsonValue(JSON.parse(value)); } catch(e) { html += `<div class="field-item"><div class="field-label">${escapeHtml(formatLabel(key))}</div><div class="field-value">${escapeHtml(formatValue(value))}</div></div>`; }
                     } else {
-                        html += `<div class="field-item">
-                            <div class="field-label">${escapeHtml(formatLabel(key))}</div>
-                            <div class="field-value">${escapeHtml(formatValue(value))}</div>
-                        </div>`;
+                        html += `<div class="field-item"><div class="field-label">${escapeHtml(formatLabel(key))}</div><div class="field-value">${escapeHtml(formatValue(value))}</div></div>`;
                     }
                 }
                 html += `</div></div>`;
@@ -798,28 +650,16 @@
                 for (const bagianKey of bagianKeys) {
                     const bagianValue = data[bagianKey];
                     if (!bagianValue) continue;
-                    
                     const bagianTitle = bagianKey.replace('_', ' ');
                     
-                    html += `<div class="bagian-card">
-                        <div class="bagian-title"><i class="fas fa-folder-open"></i> ${escapeHtml(bagianTitle)}</div>
-                    `;
+                    html += `<div class="bagian-card"><div class="bagian-title"><i class="fas fa-folder-open"></i> ${escapeHtml(bagianTitle)}</div>`;
                     
                     if (typeof bagianValue === 'string' && (bagianValue.startsWith('{') || bagianValue.startsWith('['))) {
-                        try {
-                            const parsed = JSON.parse(bagianValue);
-                            html += renderJsonValue(parsed);
-                        } catch(e) {
-                            html += `<div class="field-item">
-                                <div class="field-label">Isi</div>
-                                <div class="field-value ${String(bagianValue).length > 100 ? 'long-text' : ''}">${escapeHtml(formatValue(bagianValue))}</div>
-                            </div>`;
-                        }
+                        try { html += renderJsonValue(JSON.parse(bagianValue)); } catch(e) { html += `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">${escapeHtml(formatValue(bagianValue))}</div></div>`; }
+                    } else if (typeof bagianValue === 'object') {
+                        html += renderJsonValue(bagianValue);
                     } else {
-                        html += `<div class="field-item">
-                            <div class="field-label">Isi</div>
-                            <div class="field-value ${String(bagianValue).length > 100 ? 'long-text' : ''}">${escapeHtml(formatValue(bagianValue))}</div>
-                        </div>`;
+                        html += `<div class="field-item"><div class="field-label">Isi</div><div class="field-value">${escapeHtml(formatValue(bagianValue))}</div></div>`;
                     }
                     
                     html += `</div>`;
@@ -829,6 +669,7 @@
             return html;
         }
         
+        // ==================== CEK PREVIEW ====================
         async function cekPreview() {
             const semester = document.getElementById('filterSemester').value;
             const sheetName = document.getElementById('filterAktivitas').value;
@@ -844,175 +685,51 @@
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('emptyMessage').style.display = 'none';
             document.getElementById('previewContent').style.display = 'none';
-            document.getElementById('actionButtons').style.display = 'none';
             
             try {
                 const data = await fetchDataFromSheet(semester, sheetName, kelas, nama);
                 
                 if (data) {
                     currentData = data;
-                    const previewHtml = renderPreview(data, sheetName);
-                    document.getElementById('previewContent').innerHTML = previewHtml;
+                    document.getElementById('previewContent').innerHTML = renderPreview(data, sheetName);
                     document.getElementById('previewContent').style.display = 'block';
-                    document.getElementById('actionButtons').style.display = 'flex';
-                    document.getElementById('emptyMessage').style.display = 'none';
                 } else {
                     document.getElementById('emptyMessage').style.display = 'block';
-                    document.getElementById('emptyMessage').innerHTML = '<i class="fas fa-info-circle"></i> Data tidak ditemukan untuk filter yang dipilih. Pastikan siswa sudah mengirimkan tugas.';
-                    document.getElementById('previewContent').style.display = 'none';
-                    document.getElementById('actionButtons').style.display = 'none';
+                    document.getElementById('emptyMessage').innerHTML = '<i class="fas fa-info-circle"></i> Data tidak ditemukan. Pastikan siswa sudah mengirimkan tugas.';
                 }
             } catch (error) {
                 document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorText').innerHTML = error.message || 'Terjadi kesalahan saat memuat data';
+                document.getElementById('errorText').innerHTML = error.message || 'Terjadi kesalahan';
             } finally {
                 document.getElementById('loadingMessage').style.display = 'none';
             }
         }
         
-        function printPreview() {
-            window.print();
-        }
-        
-        function downloadPDF() {
-            const element = document.getElementById('previewContent');
-            if (!element || !element.innerHTML.trim()) {
-                alert('Tidak ada data untuk di-download');
-                return;
-            }
-            
-            const actionButtons = document.getElementById('actionButtons');
-            const originalDisplay = actionButtons.style.display;
-            actionButtons.style.display = 'none';
-            
-            const opt = {
-                margin: [0.5, 0.5, 0.5, 0.5],
-                filename: `preview_aktivitas_${Date.now()}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, letterRendering: true },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            
-            html2pdf().set(opt).from(element).save().then(() => {
-                actionButtons.style.display = originalDisplay;
-            }).catch(() => {
-                actionButtons.style.display = originalDisplay;
-                alert('Gagal generate PDF');
-            });
-        }
-        
-        // ==================== BACA PARAMETER URL ====================
-        function getUrlParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                semester: params.get('semester'),
-                sheetName: params.get('sheetName'),
-                kelas: params.get('kelas'),
-                nama: params.get('nama')
-            };
-        }
-        
-        async function setParamsFromUrl() {
-            const params = getUrlParams();
-            
-            if (!params.semester || !params.sheetName || !params.kelas || !params.nama) {
-                return false;
-            }
-            
-            console.log('Parameter URL ditemukan:', params);
-            
-            // Set semester
-            const semesterSelect = document.getElementById('filterSemester');
-            semesterSelect.value = params.semester;
-            semesterSelect.dispatchEvent(new Event('change'));
-            
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Set aktivitas
-            const aktivitasSelect = document.getElementById('filterAktivitas');
-            const sheetNameDecoded = decodeURIComponent(params.sheetName);
-            for (let i = 0; i < aktivitasSelect.options.length; i++) {
-                if (aktivitasSelect.options[i].value === sheetNameDecoded) {
-                    aktivitasSelect.selectedIndex = i;
-                    break;
-                }
-            }
-            aktivitasSelect.dispatchEvent(new Event('change'));
-            
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Set kelas
-            const kelasSelect = document.getElementById('filterKelas');
-            const kelasDecoded = decodeURIComponent(params.kelas);
-            for (let i = 0; i < kelasSelect.options.length; i++) {
-                if (kelasSelect.options[i].value === kelasDecoded) {
-                    kelasSelect.selectedIndex = i;
-                    break;
-                }
-            }
-            kelasSelect.dispatchEvent(new Event('change'));
-            
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Set nama
-            const namaSelect = document.getElementById('filterNama');
-            const namaDecoded = decodeURIComponent(params.nama);
-            for (let i = 0; i < namaSelect.options.length; i++) {
-                if (namaSelect.options[i].value === namaDecoded) {
-                    namaSelect.selectedIndex = i;
-                    break;
-                }
-            }
-            
-            return true;
-        }
-        
-        function initEventListeners() {
-            document.getElementById('filterSemester').addEventListener('change', () => {
-                updateAktivitasDropdown();
-                document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
-                document.getElementById('filterKelas').disabled = true;
-                document.getElementById('filterNama').innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
-                document.getElementById('filterNama').disabled = true;
-            });
-            
-            document.getElementById('filterAktivitas').addEventListener('change', () => {
-                updateKelasDropdown();
-            });
-            
-            document.getElementById('filterKelas').addEventListener('change', updateNamaDropdown);
-            document.getElementById('btnCek').addEventListener('click', cekPreview);
-            document.getElementById('btnPrint').addEventListener('click', printPreview);
-            document.getElementById('btnDownloadPDF').addEventListener('click', downloadPDF);
-        }
-        
+        // ==================== INIT ====================
         async function init() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            if (hamburger) {
-                hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
-            }
+            if (hamburger) { hamburger.addEventListener('click', () => navMenu.classList.toggle('active')); }
             
             document.getElementById('loadingMessage').style.display = 'block';
-            document.getElementById('loadingMessage').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data...';
             
             try {
-                await Promise.all([
-                    loadDataSiswa(),
-                    loadAllActivities()
-                ]);
+                await loadDataSiswa();
                 
-                updateAktivitasDropdown();
-                initEventListeners();
+                document.getElementById('filterSemester').addEventListener('change', () => {
+                    loadDaftarAktivitas();
+                    document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
+                    document.getElementById('filterKelas').disabled = true;
+                    document.getElementById('filterNama').innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
+                    document.getElementById('filterNama').disabled = true;
+                });
                 
-                const hasParams = await setParamsFromUrl();
-                if (hasParams) {
-                    document.getElementById('btnCek').click();
-                }
+                document.getElementById('filterAktivitas').addEventListener('change', () => { updateKelasDropdown(); });
+                document.getElementById('filterKelas').addEventListener('change', updateNamaDropdown);
+                document.getElementById('btnCek').addEventListener('click', cekPreview);
                 
                 document.getElementById('loadingMessage').style.display = 'none';
             } catch (error) {
-                console.error('Init error:', error);
                 document.getElementById('loadingMessage').style.display = 'none';
                 document.getElementById('errorMessage').style.display = 'block';
                 document.getElementById('errorText').innerHTML = 'Gagal memuat data awal. Silakan refresh halaman.';

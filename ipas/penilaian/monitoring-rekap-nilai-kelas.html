@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Aktivitas - IPAS Kelas X</title>
+    <title>Rekap Nilai Siswa - IPAS Guru</title>
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -13,8 +13,6 @@
             --ipas-light: #d5f4e6;
             --ipas-dark: #229954;
             --ipas-accent: #3498db;
-            --ipas-semester1: #3498db;
-            --ipas-semester2: #e74c3c;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,9 +24,9 @@
             line-height: 1.6;
         }
         
-        .activities-container {
+        .rekap-container {
             padding: 2rem;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
@@ -61,9 +59,8 @@
             border-radius: 2px;
         }
         
-        .ipas-content-card > p {
+        .ipas-content-card p {
             font-size: 1rem;
-            line-height: 1.6;
             color: #666;
             margin-top: 0.5rem;
         }
@@ -73,7 +70,6 @@
             border-radius: 20px;
             padding: 1.8rem;
             margin-bottom: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
             border: 1px solid rgba(46, 204, 113, 0.1);
         }
         
@@ -109,12 +105,11 @@
             flex-wrap: wrap;
             gap: 1rem;
             align-items: flex-end;
-            margin-bottom: 2rem;
         }
         
         .filter-group {
             flex: 1;
-            min-width: 180px;
+            min-width: 200px;
         }
         
         .filter-group label {
@@ -131,14 +126,8 @@
             border: 1px solid #ddd;
             border-radius: 12px;
             font-size: 0.9rem;
-            font-family: inherit;
             background: white;
             cursor: pointer;
-        }
-        
-        .filter-group select:focus {
-            outline: none;
-            border-color: var(--ipas-primary);
         }
         
         .btn-cek {
@@ -164,14 +153,13 @@
         .btn-cek:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
         
         .info-panel {
             background: var(--ipas-light);
             border-radius: 16px;
             padding: 0.8rem 1.2rem;
-            margin-bottom: 1.5rem;
+            margin-top: 1rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -193,68 +181,124 @@
             border: 1px solid #eee;
         }
         
-        .monitoring-table {
+        .rekap-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            min-width: 800px;
         }
         
-        .monitoring-table th {
+        .rekap-table th {
             background: var(--ipas-light);
             color: var(--ipas-dark);
-            padding: 1rem;
-            text-align: left;
+            padding: 12px 8px;
+            text-align: center;
             font-weight: 600;
+            border: 1px solid #ddd;
         }
         
-        .monitoring-table td {
-            padding: 0.8rem 1rem;
+        .rekap-table td {
+            padding: 10px 8px;
             border-bottom: 1px solid #f0f0f0;
+            text-align: center;
+            vertical-align: middle;
         }
         
-        .monitoring-table tr:hover {
+        .rekap-table td:first-child {
+            font-weight: 600;
+            color: var(--ipas-dark);
+        }
+        
+        .rekap-table td:nth-child(2) {
+            text-align: left;
+        }
+        
+        .rekap-table td:nth-child(3) {
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .rekap-table tr:hover {
             background: #f8f9fa;
         }
         
-        .status-sudah {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #d5f4e6;
+        .nilai-baik {
             color: #27ae60;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 0.75rem;
             font-weight: 600;
         }
         
-        .status-belum {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #fadbd8;
+        .nilai-cukup {
+            color: #f39c12;
+            font-weight: 600;
+        }
+        
+        .nilai-kurang {
             color: #e74c3c;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 0.75rem;
             font-weight: 600;
         }
         
-        .loading-message, .error-message {
-            padding: 2rem;
-            text-align: center;
-            border-radius: 16px;
-            display: none;
+        .nilai-akhir {
+            background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
+            color: white;
+            font-weight: 700;
+            border-radius: 20px;
+            padding: 4px 12px;
+            display: inline-block;
         }
         
-        .loading-message {
-            background: #fff3cd;
-            color: #856404;
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            min-width: 250px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--ipas-light);
+            border-top-color: var(--ipas-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+        
+        .loading-card p {
+            color: var(--ipas-dark);
+            font-weight: 600;
+        }
+        
+        .loading-card .loading-text {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         .error-message {
             background: #f8d7da;
             color: #721c24;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 12px;
+            display: none;
         }
         
         .summary-stats {
@@ -306,30 +350,13 @@
         .back-btn-simple:hover {
             background: var(--ipas-primary);
             color: white;
-            transform: translateX(-5px);
-        }
-        
-        .empty-row td {
-            text-align: center;
-            padding: 3rem;
-            color: #999;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .fa-spinner {
-            animation: spin 1s linear infinite;
         }
         
         @media (max-width: 768px) {
-            .activities-container { padding: 1rem; }
+            .rekap-container { padding: 1rem; }
             .filter-form { flex-direction: column; }
             .btn-cek { width: 100%; justify-content: center; }
-            .monitoring-table th, .monitoring-table td { padding: 0.6rem; font-size: 0.8rem; }
-            .summary-stats { flex-direction: column; }
+            .rekap-table th, .rekap-table td { padding: 0.5rem; font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -338,7 +365,7 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="logo">
-                    <img src="../../assets/images/logo.png" alt="Logo Sekolah">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah" onerror="this.style.display='none'">
                     <h1>TEMBOK BELAJAR - PROJEK IPAS</h1>
                 </div>
                 <ul class="nav-menu" id="nav-menu">
@@ -357,10 +384,10 @@
         </nav>
     </header>
 
-    <section class="activities-container">
+    <div class="rekap-container">
         <div class="ipas-content-card">
-            <h2><i class="fas fa-chart-simple"></i> Monitoring Aktivitas IPAS</h2>
-            <p>Pantau status pengumpulan tugas dan aktivitas pembelajaran IPAS Kelas X</p>
+            <h2><i class="fas fa-chart-line"></i> Rekap Nilai Siswa</h2>
+            <p>Lihat nilai seluruh siswa per TP (Tujuan Pembelajaran) dan Nilai Akhir</p>
         </div>
 
         <div class="simple-card">
@@ -368,392 +395,213 @@
                 <i class="fas fa-filter"></i>
                 <h3>Filter Pencarian</h3>
             </div>
-            
             <div class="filter-form">
                 <div class="filter-group">
                     <label><i class="fas fa-building"></i> Kelas</label>
                     <select id="filterKelas">
                         <option value="">-- Pilih Kelas --</option>
+                        <option value="X ATPH 1">X ATPH 1</option>
+                        <option value="X ATPH 2">X ATPH 2</option>
+                        <option value="X TKJ 1">X TKJ 1</option>
+                        <option value="X TKJ 2">X TKJ 2</option>
+                        <option value="X TSM 1">X TSM 1</option>
+                        <option value="X TSM 2">X TSM 2</option>
+                        <option value="X AKL">X AKL</option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label><i class="fas fa-user"></i> Nama Siswa</label>
-                    <select id="filterNama">
-                        <option value="">-- Pilih Nama --</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label><i class="fas fa-calendar-alt"></i> Semester</label>
-                    <select id="filterSemester">
-                        <option value="ganjil">Semester Ganjil</option>
-                        <option value="genap" selected>Semester Genap</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <button class="btn-cek" id="btnCek">
-                        <i class="fas fa-search"></i> Cek Aktivitas
-                    </button>
+                    <button class="btn-cek" id="btnCek"><i class="fas fa-search"></i> Tampilkan Rekap</button>
                 </div>
             </div>
-            
             <div class="info-panel" id="infoPanel" style="display: none;">
-                <span><i class="fas fa-user-graduate"></i> <span id="infoNama">-</span></span>
-                <span><i class="fas fa-building"></i> <span id="infoKelas">-</span></span>
-                <span><i class="fas fa-calendar"></i> <span id="infoSemester">-</span></span>
+                <span><i class="fas fa-building"></i> Kelas: <strong id="infoKelas">-</strong></span>
+                <span><i class="fas fa-users"></i> Total Siswa: <strong id="infoTotalSiswa">0</strong></span>
+                <span><i class="fas fa-chart-line"></i> Rata-rata Kelas: <strong id="infoRata">0</strong></span>
             </div>
         </div>
 
-        <div class="simple-card">
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-card">
+                <div class="loading-spinner"></div>
+                <p>Memuat data...</p>
+                <div class="loading-text" id="loadingText">Mengambil data dari server</div>
+            </div>
+        </div>
+
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span id="errorText">Gagal memuat data.</span>
+        </div>
+
+        <div class="simple-card" id="resultCard" style="display: none;">
             <div class="section-title">
                 <i class="fas fa-table-list"></i>
-                <h3>Hasil Monitoring Aktivitas</h3>
+                <h3>Rekap Nilai Siswa</h3>
             </div>
-            
-            <div id="loadingMessage" class="loading-message">
-                <i class="fas fa-spinner fa-spin"></i> Sedang memuat data...
-            </div>
-            
-            <div id="errorMessage" class="error-message">
-                <i class="fas fa-exclamation-triangle"></i> 
-                <span id="errorText">Gagal memuat data. Silakan coba lagi.</span>
-            </div>
-            
-            <div class="table-wrapper" id="tableWrapper" style="display: none;">
-                <table class="monitoring-table">
-                    <thead>
-                        <tr><th>No</th><th>Nama Aktivitas</th><th>Status</th><th>Tanggal Pengumpulan</th></tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <tr class="empty-row"><td colspan="4">Belum ada data. Silakan pilih filter dan klik Cek.</td></tr>
-                    </tbody>
+            <div class="table-wrapper">
+                <table class="rekap-table" id="rekapTable">
+                    <thead id="tableHeader"></thead>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
-            
-            <div id="summaryStats" class="summary-stats" style="display: none;">
-                <div class="stat-card"><div class="number" id="totalAktivitas">0</div><div class="label">Total Aktivitas</div></div>
-                <div class="stat-card"><div class="number" id="sudahDikumpulkan">0</div><div class="label">Sudah Dikumpulkan</div></div>
-                <div class="stat-card"><div class="number" id="belumDikumpulkan">0</div><div class="label">Belum Dikumpulkan</div></div>
+            <div class="summary-stats" id="summaryStats" style="display: none;">
+                <div class="stat-card"><div class="number" id="totalSiswa">0</div><div class="label">Total Siswa</div></div>
+                <div class="stat-card"><div class="number" id="totalNilai">0</div><div class="label">Rata-rata Kelas</div></div>
             </div>
         </div>
 
         <div class="back-nav-simple">
-            <a href="index-aktifitas-ipas.html" class="back-btn-simple">
-                <i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian
-            </a>
+            <a href="index-penilaian-ipas.html" class="back-btn-simple"><i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian</a>
         </div>
-    </section>
+    </div>
 
-    <script src="../../script.js"></script>
     <script>
-        // ==================== KONFIGURASI URL APPS SCRIPT ====================
-        // GANTI URL INI DENGAN URL DEPLOYMENT ANDA YANG SUDAH ADA
-        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_SEMESTER_GANJIL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
-        const URL_SEMESTER_GENAP = 'https://script.google.com/macros/s/AKfycbyq2G4viOZ04k1b5nl27IYZ7HD9XUZdgBkhYj-46njXvLLVcjqNBqVElHU-BcpOVhOa/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyq2G4viOZ04k1b5nl27IYZ7HD9XUZdgBkhYj-46njXvLLVcjqNBqVElHU-BcpOVhOa/exec';
         
-        // ==================== DAFTAR AKTIVITAS (FALLBACK) ====================
-        // Akan diupdate otomatis dari getSheets jika berhasil
-        let aktivitasGenap = [
-            { id: 1, nama: "Aktivitas 1: Menemukan Masalah Proyek", sheetName: "AKTIVITAS 1 - MENEMUKAN MASALAH PROYEK" },
-            { id: 2, nama: "Aktivitas 2: Mencari Solusi", sheetName: "AKTIVITAS 2 - MENCARI SOLUSI" },
-            { id: 3, nama: "Aktivitas 3: Perancangan Proyek", sheetName: "AKTIVITAS 3 - PERANCANGAN PROYEK" },
-            { id: 4, nama: "Aktivitas 4: Pengembangan Proyek", sheetName: "AKTIVITAS 4 - PENGEMBANGAN PROYEK" },
-            { id: 5, nama: "Aktivitas 5: Pengolahan Data & Laporan", sheetName: "AKTIVITAS 5 - PENGOLAHAN DATA LAPORAN" },
-            { id: 6, nama: "Aktivitas 6: Diseminasi Video", sheetName: "AKTIVITAS 6 - DISEMINASI VIDEO" }
+        // Header TP yang akan ditampilkan (NO, Kelas, Nama, TP 2.1, TP 2.2, TP 2.3, TP 3.1, TP 3.2, TP 3.3, TP 3.4, TP 3.5, Nilai Akhir)
+        const TP_HEADERS = [
+            "TP 2.1", "TP 2.2", "TP 2.3", "TP 3.1", "TP 3.2", "TP 3.3", "TP 3.4", "TP 3.5"
         ];
         
-        let aktivitasGanjil = [
-            { id: 1, nama: "Perkenalan IPAS", sheetName: "AKTIVITAS GANJIL 1 - PERKENALAN" },
-            { id: 2, nama: "Makhluk Hidup & Lingkungan", sheetName: "AKTIVITAS GANJIL 2 - MAKHLUK HIDUP" },
-            { id: 3, nama: "Zat & Perubahannya", sheetName: "AKTIVITAS GANJIL 3 - ZAT" },
-            { id: 4, nama: "Energi & Perubahannya", sheetName: "AKTIVITAS GANJIL 4 - ENERGI" },
-            { id: 5, nama: "Keruangan & Konektivitas", sheetName: "AKTIVITAS GANJIL 5 - KERUANGAN" },
-            { id: 6, nama: "Interaksi & Dinamika Sosial", sheetName: "AKTIVITAS GANJIL 6 - INTERAKSI" },
-            { id: 7, nama: "Perilaku Ekonomi", sheetName: "AKTIVITAS GANJIL 7 - EKONOMI" },
-            { id: 8, nama: "Review & Evaluasi", sheetName: "AKTIVITAS GANJIL 8 - REVIEW" }
-        ];
-        
-        let dataKelas = [];
-        let dataSiswa = {};
-        
-        // ==================== AMBIL DAFTAR SHEET DARI URL ====================
-        async function fetchSheetNames(url, semester) {
-            try {
-                const response = await fetch(`${url}?action=getSheets&_=${Date.now()}`);
-                const data = await response.json();
-                
-                if (data && data.success && data.sheets && data.sheets.length > 0) {
-                    const sheetList = data.sheets
-                        .filter(s => {
-                            const name = s.name.toUpperCase();
-                            return name.includes('AKTIVITAS') || name.includes('AKTIFITAS');
-                        })
-                        .map((sheet, index) => ({
-                            id: index + 1,
-                            nama: formatSheetName(sheet.name),
-                            sheetName: sheet.name
-                        }));
-                    
-                    if (sheetList.length > 0) {
-                        return sheetList;
-                    }
-                }
-            } catch (error) {
-                console.warn(`Gagal mengambil daftar sheet dari ${url}:`, error);
-            }
-            return semester === 'ganjil' ? aktivitasGanjil : aktivitasGenap;
+        async function getRekapNilai(kelas) {
+            const url = `${APPS_SCRIPT_URL}?action=getRekapNilai&kelas=${encodeURIComponent(kelas)}&_=${Date.now()}`;
+            const response = await fetch(url);
+            return await response.json();
         }
         
-        function formatSheetName(sheetName) {
-            let name = sheetName.replace(/^AKTIVITAS\s*\d+\s*-\s*/i, '');
-            name = name.replace(/^AKTIVITAS\s*GANJIL\s*\d+\s*-\s*/i, '');
-            name = name.replace(/^AKTIVITAS\s*GENAP\s*\d+\s*-\s*/i, '');
-            const match = sheetName.match(/\d+/);
-            if (match && !name.match(/^Aktivitas/i)) {
-                name = `Aktivitas ${match[0]}: ${name}`;
+        function renderHeader() {
+            let html = '<tr>';
+            html += '<th>NO</th><th>Kelas</th><th>Nama Siswa</th>';
+            for (let i = 0; i < TP_HEADERS.length; i++) {
+                html += `<th>${TP_HEADERS[i]}</th>`;
             }
-            return name;
+            html += '<th>NILAI AKHIR</th>';
+            html += '</tr>';
+            return html;
         }
         
-        // ==================== CEK STATUS PENGUMPULAN ====================
-        async function cekStatusPengumpulan(kelas, nama, semester) {
-            const urlPerekap = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
-            const aktivitasList = await fetchSheetNames(urlPerekap, semester);
-            const results = [];
-            
-            for (let i = 0; i < aktivitasList.length; i++) {
-                const aktivitas = aktivitasList[i];
-                let status = 'belum';
-                let tanggal = null;
-                
-                try {
-                    const url = `${urlPerekap}?action=getData&sheetName=${encodeURIComponent(aktivitas.sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&status=AKTIF&_=${Date.now()}`;
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    
-                    if (data && data.success && data.data && data.data.length > 0) {
-                        status = 'sudah';
-                        const firstData = data.data[0];
-                        tanggal = firstData._timestamp || firstData.Timestamp || firstData.timestamp || null;
-                        if (!tanggal && firstData.length > 0) tanggal = firstData[0];
-                    }
-                } catch (error) {
-                    console.warn(`Gagal cek sheet ${aktivitas.sheetName}:`, error);
-                }
-                
-                results.push({
-                    no: i + 1,
-                    nama: aktivitas.nama,
-                    status: status,
-                    tanggal: tanggal ? formatTanggal(tanggal) : '-'
-                });
-            }
-            
-            return results;
+        function getNilaiClass(nilai) {
+            if (!nilai || nilai === '-' || nilai === '') return '';
+            const num = parseFloat(nilai);
+            if (isNaN(num)) return '';
+            if (num >= 85) return 'nilai-baik';
+            if (num >= 70) return 'nilai-cukup';
+            return 'nilai-kurang';
         }
         
-        function formatTanggal(timestamp) {
-            if (!timestamp) return '-';
-            try {
-                const date = new Date(timestamp);
-                if (!isNaN(date.getTime())) {
-                    return date.toLocaleDateString('id-ID', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    });
-                }
-            } catch(e) {}
-            if (typeof timestamp === 'string' && timestamp.includes('/')) {
-                return timestamp.split(' ')[0];
-            }
-            if (typeof timestamp === 'string' && timestamp.includes('-')) {
-                return timestamp.split(' ')[0];
-            }
-            return timestamp;
-        }
-        
-        // ==================== RENDER TABEL ====================
-        function renderTable(results) {
+        function renderData(data, kelas) {
             const tbody = document.getElementById('tableBody');
-            const tableWrapper = document.getElementById('tableWrapper');
+            const resultCard = document.getElementById('resultCard');
+            const infoPanel = document.getElementById('infoPanel');
             const summaryStats = document.getElementById('summaryStats');
             
-            if (!results || results.length === 0) {
-                tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Tidak ada data aktivitas</td></tr>';
-                tableWrapper.style.display = 'block';
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:3rem;">Tidak ada data siswa.运用</tr>';
+                resultCard.style.display = 'block';
+                infoPanel.style.display = 'none';
                 summaryStats.style.display = 'none';
                 return;
             }
             
-            let sudahCount = 0;
             let html = '';
+            let totalSemuaNilai = 0;
+            let jumlahNilai = 0;
             
-            results.forEach(item => {
-                if (item.status === 'sudah') sudahCount++;
-                const statusHtml = item.status === 'sudah' 
-                    ? '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah Dikumpulkan</span>'
-                    : '<span class="status-belum"><i class="fas fa-clock"></i> Belum Dikumpulkan</span>';
+            for (let i = 0; i < data.length; i++) {
+                const siswa = data[i];
+                html += '<tr>';
+                html += `<td style="font-weight:600;">${i + 1}</td>`;
+                html += `<td>${escapeHtml(siswa.Kelas || kelas)}</td>`;
+                html += `<td style="text-align:left;">${escapeHtml(siswa.Nama_Siswa || '-')}</td>`;
                 
-                html += `
-                    <tr>
-                        <td>${item.no}</td>
-                        <td>${escapeHtml(item.nama)}</td>
-                        <td>${statusHtml}</td>
-                        <td>${escapeHtml(item.tanggal)}</td>
-                    </tr>
-                `;
-            });
+                // Ambil nilai untuk setiap TP
+                for (let j = 0; j < TP_HEADERS.length; j++) {
+                    const tpName = TP_HEADERS[j];
+                    let nilai = siswa[tpName];
+                    
+                    if (nilai && nilai !== '-' && nilai !== '' && !isNaN(parseFloat(nilai))) {
+                        const numNilai = parseFloat(nilai);
+                        totalSemuaNilai += numNilai;
+                        jumlahNilai++;
+                        const nilaiClass = getNilaiClass(numNilai);
+                        html += `<td class="${nilaiClass}">${numNilai}</td>`;
+                    } else {
+                        html += `<td style="color:#95a5a6;">-</td>`;
+                    }
+                }
+                
+                // Nilai Akhir
+                let nilaiAkhir = siswa['NILAI AKHIR'] || siswa['AKHIR'] || '-';
+                if (nilaiAkhir === 0 || nilaiAkhir === '0') nilaiAkhir = '-';
+                const akhirClass = getNilaiClass(nilaiAkhir);
+                html += `<td><span class="nilai-akhir ${akhirClass}">${escapeHtml(String(nilaiAkhir))}</span></td>`;
+                html += '</tr>';
+            }
             
             tbody.innerHTML = html;
-            tableWrapper.style.display = 'block';
+            resultCard.style.display = 'block';
             summaryStats.style.display = 'flex';
             
-            document.getElementById('totalAktivitas').innerText = results.length;
-            document.getElementById('sudahDikumpulkan').innerText = sudahCount;
-            document.getElementById('belumDikumpulkan').innerText = results.length - sudahCount;
+            const rataKelas = jumlahNilai > 0 ? (totalSemuaNilai / jumlahNilai).toFixed(2) : 0;
+            document.getElementById('totalSiswa').innerText = data.length;
+            document.getElementById('totalNilai').innerText = rataKelas;
+            
+            document.getElementById('infoKelas').innerText = kelas;
+            document.getElementById('infoTotalSiswa').innerText = data.length;
+            document.getElementById('infoRata').innerText = rataKelas;
+            infoPanel.style.display = 'flex';
         }
         
         function escapeHtml(text) {
-            if (!text) return '';
+            if (!text && text !== 0) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
         
-        // ==================== LOAD DATA SISWA ====================
-        function loadDataSiswa() {
-            return new Promise((resolve, reject) => {
-                const callbackName = 'jsonp_callback_' + Date.now();
-                window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    if (result && result.success) {
-                        dataKelas = result.kelasList || [];
-                        dataSiswa = result.siswaPerKelas || {};
-                        resolve();
-                    } else {
-                        reject(new Error('Gagal memuat data siswa'));
-                    }
-                };
-                
-                const script = document.createElement('script');
-                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = () => reject(new Error('Gagal terhubung ke server data siswa'));
-                document.head.appendChild(script);
-            });
-        }
-        
-        function updateKelasDropdown() {
-            const kelasSelect = document.getElementById('filterKelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            dataKelas.forEach(kelas => {
-                if (kelas && kelas.trim()) {
-                    const option = document.createElement('option');
-                    option.value = kelas;
-                    option.textContent = kelas;
-                    kelasSelect.appendChild(option);
-                }
-            });
-        }
-        
-        function updateNamaDropdown() {
+        async function cekRekap() {
             const kelas = document.getElementById('filterKelas').value;
-            const namaSelect = document.getElementById('filterNama');
+            if (!kelas) { alert('Pilih kelas terlebih dahulu'); return; }
             
-            if (!kelas || !dataSiswa[kelas]) {
-                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-                return;
-            }
-            
-            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            (dataSiswa[kelas] || []).sort().forEach(nama => {
-                if (nama && nama.trim()) {
-                    const option = document.createElement('option');
-                    option.value = nama;
-                    option.textContent = nama;
-                    namaSelect.appendChild(option);
-                }
-            });
-        }
-        
-        // ==================== FUNGSI CEK UTAMA ====================
-        async function cekAktivitas() {
-            const kelas = document.getElementById('filterKelas').value;
-            const nama = document.getElementById('filterNama').value;
-            const semester = document.getElementById('filterSemester').value;
-            
-            if (!kelas) {
-                alert('Silakan pilih kelas terlebih dahulu');
-                return;
-            }
-            if (!nama) {
-                alert('Silakan pilih nama siswa terlebih dahulu');
-                return;
-            }
-            
-            document.getElementById('infoPanel').style.display = 'flex';
-            document.getElementById('infoNama').innerText = nama;
-            document.getElementById('infoKelas').innerText = kelas;
-            document.getElementById('infoSemester').innerText = semester === 'ganjil' ? 'Ganjil' : 'Genap';
-            
-            const loadingMsg = document.getElementById('loadingMessage');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
             const errorMsg = document.getElementById('errorMessage');
-            const tableWrapper = document.getElementById('tableWrapper');
+            const btnCek = document.getElementById('btnCek');
             
-            loadingMsg.style.display = 'block';
+            loadingOverlay.style.display = 'flex';
+            loadingText.innerHTML = 'Mengambil data dari server...';
             errorMsg.style.display = 'none';
-            tableWrapper.style.display = 'none';
+            document.getElementById('resultCard').style.display = 'none';
+            document.getElementById('infoPanel').style.display = 'none';
             document.getElementById('summaryStats').style.display = 'none';
             
-            const btnCek = document.getElementById('btnCek');
             btnCek.disabled = true;
-            btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengecek...';
+            btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
             
             try {
-                const results = await cekStatusPengumpulan(kelas, nama, semester);
-                renderTable(results);
+                document.getElementById('tableHeader').innerHTML = renderHeader();
+                const result = await getRekapNilai(kelas);
+                
+                if (result && result.success && result.data) {
+                    renderData(result.data, kelas);
+                } else {
+                    throw new Error(result.error || 'Gagal mengambil data');
+                }
             } catch (error) {
-                console.error('Error:', error);
                 errorMsg.style.display = 'block';
-                document.getElementById('errorText').innerHTML = 'Gagal memuat data. Silakan coba lagi.';
+                document.getElementById('errorText').innerHTML = error.message;
             } finally {
-                loadingMsg.style.display = 'none';
+                loadingOverlay.style.display = 'none';
                 btnCek.disabled = false;
-                btnCek.innerHTML = '<i class="fas fa-search"></i> Cek Aktivitas';
+                btnCek.innerHTML = '<i class="fas fa-search"></i> Tampilkan Rekap';
             }
         }
         
-        // ==================== INIT ====================
-        async function init() {
-            const hamburger = document.getElementById('hamburger');
-            const navMenu = document.getElementById('nav-menu');
-            if (hamburger) {
-                hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
-            }
-            
-            const loadingMsg = document.getElementById('loadingMessage');
-            loadingMsg.style.display = 'block';
-            loadingMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data siswa...';
-            
-            try {
-                await loadDataSiswa();
-                updateKelasDropdown();
-                document.getElementById('filterKelas').addEventListener('change', updateNamaDropdown);
-                document.getElementById('btnCek').addEventListener('click', cekAktivitas);
-                loadingMsg.style.display = 'none';
-            } catch (error) {
-                console.error('Init error:', error);
-                loadingMsg.style.display = 'none';
-                const errorMsg = document.getElementById('errorMessage');
-                errorMsg.style.display = 'block';
-                document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', init);
+        // Event Listeners
+        document.getElementById('hamburger')?.addEventListener('click', () => {
+            document.getElementById('nav-menu')?.classList.toggle('active');
+        });
+        document.getElementById('btnCek').addEventListener('click', cekRekap);
     </script>
 </body>
 </html>
