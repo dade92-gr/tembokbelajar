@@ -126,7 +126,6 @@
             padding-left: 15px;
         }
         
-        /* Progress Bar Styles */
         .progress-container {
             margin: 20px 0 30px 0;
             background: #f0f0f0;
@@ -262,14 +261,6 @@
             align-items: center;
             gap: 5px;
             cursor: pointer;
-        }
-        
-        .prediksi-box {
-            background: #e8f4fd;
-            border-left: 5px solid var(--ipas-accent);
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin: 1rem 0;
         }
         
         .submit-button {
@@ -452,6 +443,99 @@
             pointer-events: none;
         }
         
+        /* Modal Konfirmasi */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-content i {
+            font-size: 4rem;
+            color: var(--ipas-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 1rem;
+            color: var(--ipas-dark);
+        }
+        
+        .modal-content p {
+            margin-bottom: 1.5rem;
+            color: #666;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .modal-btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-btn.yes {
+            background: var(--ipas-primary);
+            color: white;
+        }
+        
+        .modal-btn.yes:hover {
+            background: var(--ipas-secondary);
+            transform: translateY(-2px);
+        }
+        
+        .modal-btn.no {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .modal-btn.no:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
         @media (max-width: 768px) {
             .activity-detail-container {
                 padding: 1rem;
@@ -554,35 +638,34 @@
                 <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
             </div>
             
-            <!-- IDENTITAS KELOMPOK -->
-            <h3 class="worksheet-subtitle"><i class="fas fa-users" style="margin-right: 10px;"></i> IDENTITAS KELOMPOK</h3>
-            
-            <div class="identitas-box">
-                <div class="identitas-item">
-                    <label><i class="fas fa-users"></i> Kelas</label>
-                    <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage(); updateProgress();" disabled>
-                        <option value="">-- Pilih Kelas --</option>
-                    </select>
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-user"></i> Nama</label>
-                    <select id="nama" onchange="saveToLocalStorage(); updateProgress();" disabled>
-                        <option value="">-- Pilih Nama --</option>
-                    </select>
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-users"></i> Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage(); updateProgress();" disabled>
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
-                    <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage(); updateProgress();" disabled>
-                </div>
-            </div>
-
-            <!-- A. PETUNJUK PENGGUNAAN -->
+            <!-- A. PETUNJUK PENGGUNAAN & IDENTITAS -->
             <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem;">
-                <h3 class="worksheet-subtitle"><i class="fas fa-info-circle" style="color: var(--ipas-primary); margin-right: 10px;"></i> A. PETUNJUK PENGGUNAAN LEMBAR AKTIVITAS</h3>
+                <h3 class="worksheet-subtitle"><i class="fas fa-info-circle" style="color: var(--ipas-primary); margin-right: 10px;"></i> A. PETUNJUK PENGGUNAAN & IDENTITAS</h3>
+                
+                <!-- Identitas Kelompok -->
+                <div class="identitas-box">
+                    <div class="identitas-item">
+                        <label><i class="fas fa-users"></i> Kelas</label>
+                        <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage(); updateProgress();" disabled>
+                            <option value="">-- Pilih Kelas --</option>
+                        </select>
+                    </div>
+                    <div class="identitas-item">
+                        <label><i class="fas fa-user"></i> Nama</label>
+                        <select id="nama" onchange="saveToLocalStorage(); updateProgress();" disabled>
+                            <option value="">-- Pilih Nama --</option>
+                        </select>
+                    </div>
+                    <div class="identitas-item">
+                        <label><i class="fas fa-users"></i> Kelompok</label>
+                        <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage(); updateProgress();" disabled>
+                    </div>
+                    <div class="identitas-item">
+                        <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
+                        <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage(); updateProgress();" disabled>
+                    </div>
+                </div>
+
                 <ol style="margin-left: 2rem; color: #555;">
                     <li>Baca dan pelajari materi <strong>Bab 4: Energi dan Perubahannya</strong> yang tersedia di menu <strong>Daftar Materi</strong>.</li>
                     <li>Lembar aktivitas ini akan memandu kalian untuk memahami materi dan mencapai 4 Tujuan Pembelajaran (TP).</li>
@@ -592,283 +675,164 @@
                 </ol>
             </div>
 
-            <!-- LITERASI -->
-            <h3 class="worksheet-subtitle"><i class="fas fa-book-open" style="margin-right: 10px;"></i> 📚 LITERASI: BEKAL PENGETAHUAN AWAL</h3>
+            <!-- B. LITERASI -->
+            <h3 class="worksheet-subtitle"><i class="fas fa-book-open" style="margin-right: 10px;"></i> B. LITERASI: BEKAL PENGETAHUAN AWAL</h3>
             <div class="info-note">
                 <i class="fas fa-info-circle"></i> Sebelum memulai aktivitas, bacalah terlebih dahulu materi <strong>"Energi dan Perubahannya"</strong> yang tersedia di menu Daftar Materi.
             </div>
             
-            <table class="question-grid">
-                <thead>
-                    <tr>
-                        <th style="width:5%">No</th>
-                        <th style="width:30%">Pertanyaan</th>
-                        <th style="width:65%">Jawaban</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Apa yang dimaksud dengan energi? Tulis dengan bahasamu sendiri!</td>
-                        <td><textarea id="literasi1" rows="3" placeholder="Jawaban..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Sebutkan 5 bentuk energi yang kamu temukan dalam materi! Berikan contoh masing-masing!</td>
-                        <td>
-                            <table style="width:100%; border:none;">
-                                <tr>
-                                    <td><strong>No</strong></td>
-                                    <td><strong>Bentuk Energi</strong></td>
-                                    <td><strong>Contoh</strong></td>
-                                </tr>
-                                <tr><td>a.</td><td><input type="text" id="energi_a" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_a" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                                <tr><td>b.</td><td><input type="text" id="energi_b" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_b" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                                <tr><td>c.</td><td><input type="text" id="energi_c" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_c" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                                <tr><td>d.</td><td><input type="text" id="energi_d" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_d" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                                <tr><td>e.</td><td><input type="text" id="energi_e" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_e" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Jelaskan Hukum Kekekalan Energi dengan kata-katamu sendiri!</td>
-                        <td><textarea id="literasi3" rows="3" placeholder="Jawaban..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Apa perbedaan energi terbarukan dan energi tak terbarukan? Berikan masing-masing 2 contoh!</td>
-                        <td>
-                            <table style="width:100%; border:none;">
-                                <tr>
-                                    <th style="background:transparent; color:black;">Jenis Energi</th>
-                                    <th style="background:transparent; color:black;">Pengertian</th>
-                                    <th style="background:transparent; color:black;">Contoh</th>
-                                </tr>
-                                <tr>
-                                    <td>Energi Terbarukan</td>
-                                    <td><input type="text" id="terbarukan_pengertian" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                                    <td>1. <input type="text" id="terbarukan_contoh1" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"> 2. <input type="text" id="terbarukan_contoh2" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                                </tr>
-                                <tr>
-                                    <td>Energi Tak Terbarukan</td>
-                                    <td><input type="text" id="tak_terbarukan_pengertian" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                                    <td>1. <input type="text" id="tak_terbarukan_contoh1" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"> 2. <input type="text" id="tak_terbarukan_contoh2" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:5%">No</th>
+                            <th style="width:30%">Pertanyaan</th>
+                            <th style="width:65%">Jawaban</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Apa yang dimaksud dengan energi? Tulis dengan bahasamu sendiri!</td>
+                            <td><textarea id="literasi1" rows="3" placeholder="Jawaban..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Sebutkan 5 bentuk energi yang kamu temukan dalam materi! Berikan contoh masing-masing!</td>
+                            <td>
+                                <table style="width:100%; border:none;">
+                                    <tr><td><strong>No</strong></td><td><strong>Bentuk Energi</strong></td><td><strong>Contoh</strong></td></tr>
+                                    <tr><td>a.</td><td><input type="text" id="energi_a" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_a" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                                    <tr><td>b.</td><td><input type="text" id="energi_b" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_b" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                                    <tr><td>c.</td><td><input type="text" id="energi_c" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_c" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                                    <tr><td>d.</td><td><input type="text" id="energi_d" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_d" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                                    <tr><td>e.</td><td><input type="text" id="energi_e" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="contoh_e" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Jelaskan Hukum Kekekalan Energi dengan kata-katamu sendiri!</td>
+                            <td><textarea id="literasi3" rows="3" placeholder="Jawaban..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Apa perbedaan energi terbarukan dan energi tak terbarukan? Berikan masing-masing 2 contoh!</td>
+                            <td>
+                                <table style="width:100%; border:none;">
+                                    <tr>
+                                        <th style="background:transparent; color:black;">Jenis Energi</th>
+                                        <th style="background:transparent; color:black;">Pengertian</th>
+                                        <th style="background:transparent; color:black;">Contoh</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Energi Terbarukan</td>
+                                        <td><input type="text" id="terbarukan_pengertian" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
+                                        <td>1. <input type="text" id="terbarukan_contoh1" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"> 2. <input type="text" id="terbarukan_contoh2" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Energi Tak Terbarukan</td>
+                                        <td><input type="text" id="tak_terbarukan_pengertian" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
+                                        <td>1. <input type="text" id="tak_terbarukan_contoh1" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"> 2. <input type="text" id="tak_terbarukan_contoh2" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             
             <hr>
             
-            <!-- PERTEMUAN 1 -->
-            <h3 class="worksheet-subtitle" style="color: var(--ipas-orange);"><i class="fas fa-sun" style="margin-right: 10px;"></i> 🏫 PERTEMUAN 1 (6 JP): MENGAMATI & MERAMALKAN</h3>
+            <!-- C. PERTEMUAN 1 -->
+            <h3 class="worksheet-subtitle" style="color: var(--ipas-orange);"><i class="fas fa-sun" style="margin-right: 10px;"></i> C. PERTEMUAN 1 (6 JP): MENGAMATI & MERAMALKAN</h3>
             
-            <!-- TP 1.1 -->
+            <!-- C1. TP 1.1 -->
             <h4 style="color: var(--ipas-dark); margin: 1.5rem 0 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--ipas-primary);"></i> TP 1.1: Menjelaskan Pengetahuan Ilmiah</h4>
             
-            <table class="question-grid">
-                <thead>
-                    <tr>
-                        <th colspan="6">A. JELAJAH LINGKUNGAN SEKOLAH (90 Menit)</th>
-                    </tr>
-                    <tr>
-                        <th>No</th>
-                        <th>Peristiwa yang Diamati</th>
-                        <th>Bentuk Energi Awal</th>
-                        <th>Bentuk Energi Akhir</th>
-                        <th>Sumber Energi</th>
-                        <th>Manfaat</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td><input type="text" id="peristiwa1_nama" placeholder="Contoh: Lampu menyala" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa1_awal" placeholder="Contoh: Listrik" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa1_akhir" placeholder="Contoh: Cahaya + Panas" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa1_sumber" placeholder="Contoh: PLN" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa1_manfaat" placeholder="Contoh: Penerangan" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td><input type="text" id="peristiwa2_nama" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa2_awal" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa2_akhir" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa2_sumber" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa2_manfaat" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td><input type="text" id="peristiwa3_nama" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa3_awal" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa3_akhir" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa3_sumber" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa3_manfaat" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td><input type="text" id="peristiwa4_nama" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa4_awal" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa4_akhir" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa4_sumber" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa4_manfaat" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td><input type="text" id="peristiwa5_nama" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa5_awal" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa5_akhir" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa5_sumber" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="peristiwa5_manfaat" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="6">C1. JELAJAH LINGKUNGAN SEKOLAH (90 Menit)</th>
+                        </tr>
+                        <tr>
+                            <th>No</th>
+                            <th>Peristiwa yang Diamati</th>
+                            <th>Bentuk Energi Awal</th>
+                            <th>Bentuk Energi Akhir</th>
+                            <th>Sumber Energi</th>
+                            <th>Manfaat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td><input type="text" id="peristiwa1_nama" placeholder="Contoh: Lampu menyala" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa1_awal" placeholder="Contoh: Listrik" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa1_akhir" placeholder="Contoh: Cahaya + Panas" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa1_sumber" placeholder="Contoh: PLN" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa1_manfaat" placeholder="Contoh: Penerangan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>2</td><td><input type="text" id="peristiwa2_nama" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa2_awal" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa2_akhir" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa2_sumber" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa2_manfaat" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>3</td><td><input type="text" id="peristiwa3_nama" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa3_awal" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa3_akhir" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa3_sumber" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa3_manfaat" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>4</td><td><input type="text" id="peristiwa4_nama" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa4_awal" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa4_akhir" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa4_sumber" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa4_manfaat" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>5</td><td><input type="text" id="peristiwa5_nama" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa5_awal" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa5_akhir" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa5_sumber" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="peristiwa5_manfaat" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th colspan="2">B. PILIH DAN JELASKAN! (45 Menit)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="width:30%">Peristiwa pilihan saya</td>
-                        <td><input type="text" id="pilihan_peristiwa" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Bentuk energi yang terlibat</td>
-                        <td>
-                            Energi awal: <input type="text" id="pilihan_energi_awal" style="width:40%" oninput="saveToLocalStorage(); updateProgress();"> → 
-                            Energi akhir: <input type="text" id="pilihan_energi_akhir" style="width:40%" oninput="saveToLocalStorage(); updateProgress();"><br><br>
-                            Energi lain yang muncul: <input type="text" id="pilihan_energi_lain" style="width:80%" oninput="saveToLocalStorage(); updateProgress();">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Penjelasan ilmiah</td>
-                        <td><textarea id="penjelasan_ilmiah" rows="4" placeholder="Jelaskan bagaimana energi berubah dan apa manfaatnya..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Istilah ilmiah yang digunakan</td>
-                        <td>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" id="istilah_kinetik" value="Energi kinetik" onchange="saveToLocalStorage(); updateProgress();"> Energi kinetik</label>
-                                <label><input type="checkbox" id="istilah_potensial" value="Energi potensial" onchange="saveToLocalStorage(); updateProgress();"> Energi potensial</label>
-                                <label><input type="checkbox" id="istilah_panas" value="Energi panas" onchange="saveToLocalStorage(); updateProgress();"> Energi panas</label>
-                                <label><input type="checkbox" id="istilah_listrik" value="Energi listrik" onchange="saveToLocalStorage(); updateProgress();"> Energi listrik</label>
-                                <label><input type="checkbox" id="istilah_kimia" value="Energi kimia" onchange="saveToLocalStorage(); updateProgress();"> Energi kimia</label>
-                                <label><input type="checkbox" id="istilah_cahaya" value="Energi cahaya" onchange="saveToLocalStorage(); updateProgress();"> Energi cahaya</label>
-                                <label><input type="checkbox" id="istilah_bunyi" value="Energi bunyi" onchange="saveToLocalStorage(); updateProgress();"> Energi bunyi</label>
-                                <label><input type="checkbox" id="istilah_kekekalan" value="Hukum kekekalan energi" onchange="saveToLocalStorage(); updateProgress();"> Hukum kekekalan energi</label>
-                                <label><input type="checkbox" id="istilah_perubahan" value="Perubahan energi" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi</label>
-                                <label>Lainnya: <input type="text" id="istilah_lainnya" style="width:150px;" oninput="saveToLocalStorage(); updateProgress();"></label>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th colspan="2">C2. PILIH DAN JELASKAN! (45 Menit)</th></tr></thead>
+                    <tbody>
+                        <tr><td style="width:30%">Peristiwa pilihan saya</td><td><input type="text" id="pilihan_peristiwa" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Bentuk energi yang terlibat</td><td>Energi awal: <input type="text" id="pilihan_energi_awal" style="width:40%" oninput="saveToLocalStorage(); updateProgress();"> → Energi akhir: <input type="text" id="pilihan_energi_akhir" style="width:40%" oninput="saveToLocalStorage(); updateProgress();"><br><br>Energi lain yang muncul: <input type="text" id="pilihan_energi_lain" style="width:80%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Penjelasan ilmiah</td><td><textarea id="penjelasan_ilmiah" rows="4" placeholder="Jelaskan bagaimana energi berubah dan apa manfaatnya..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Istilah ilmiah yang digunakan</td><td><div class="checkbox-group"><label><input type="checkbox" id="istilah_kinetik" onchange="saveToLocalStorage(); updateProgress();"> Energi kinetik</label><label><input type="checkbox" id="istilah_potensial" onchange="saveToLocalStorage(); updateProgress();"> Energi potensial</label><label><input type="checkbox" id="istilah_panas" onchange="saveToLocalStorage(); updateProgress();"> Energi panas</label><label><input type="checkbox" id="istilah_listrik" onchange="saveToLocalStorage(); updateProgress();"> Energi listrik</label><label><input type="checkbox" id="istilah_kimia" onchange="saveToLocalStorage(); updateProgress();"> Energi kimia</label><label><input type="checkbox" id="istilah_cahaya" onchange="saveToLocalStorage(); updateProgress();"> Energi cahaya</label><label><input type="checkbox" id="istilah_bunyi" onchange="saveToLocalStorage(); updateProgress();"> Energi bunyi</label><label><input type="checkbox" id="istilah_kekekalan" onchange="saveToLocalStorage(); updateProgress();"> Hukum kekekalan energi</label><label><input type="checkbox" id="istilah_perubahan" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi</label><label>Lainnya: <input type="text" id="istilah_lainnya" style="width:150px;" oninput="saveToLocalStorage(); updateProgress();"></label></div></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <!-- TP 1.2 -->
+            <!-- C3. TP 1.2 -->
             <h4 style="color: var(--ipas-dark); margin: 2rem 0 0.5rem 0;"><i class="fas fa-chart-line" style="color: var(--ipas-primary);"></i> TP 1.2: Membuat Prediksi Sederhana</h4>
             
-            <table class="question-grid">
-                <thead>
-                    <tr>
-                        <th colspan="3">C. OBSERVASI DETAIL (60 Menit)</th>
-                    </tr>
-                    <tr>
-                        <th colspan="3">Peristiwa yang diamati: <input type="text" id="observasi_peristiwa" style="width:70%;" oninput="saveToLocalStorage(); updateProgress();"></th>
-                    </tr>
-                    <tr>
-                        <th colspan="3">Bentuk energi yang terlibat: <input type="text" id="observasi_energi" style="width:70%;" oninput="saveToLocalStorage(); updateProgress();"></th>
-                    </tr>
-                    <tr>
-                        <th>Waktu (menit ke-)</th>
-                        <th>Apa yang Terjadi?</th>
-                        <th>Perubahan yang Tampak & Kondisi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>0</td><td><input type="text" id="obs_waktu0" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi0" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                    <tr><td>5</td><td><input type="text" id="obs_waktu5" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi5" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                    <tr><td>10</td><td><input type="text" id="obs_waktu10" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi10" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                    <tr><td>15</td><td><input type="text" id="obs_waktu15" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi15" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                    <tr><td>20</td><td><input type="text" id="obs_waktu20" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi20" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                    <tr><td>25</td><td><input type="text" id="obs_waktu25" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi25" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                    <tr><td>30</td><td><input type="text" id="obs_waktu30" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi30" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th colspan="3">C3. OBSERVASI DETAIL (60 Menit)</th></tr>
+                    <tr><th colspan="3">Peristiwa yang diamati: <input type="text" id="observasi_peristiwa" style="width:70%;" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
+                    <tr><th colspan="3">Bentuk energi yang terlibat: <input type="text" id="observasi_energi" style="width:70%;" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
+                    <tr><th>Waktu (menit ke-)</th><th>Apa yang Terjadi?</th><th>Perubahan yang Tampak & Kondisi</th></tr></thead>
+                    <tbody>
+                        <tr><td>0</td><td><input type="text" id="obs_waktu0" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi0" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>5</td><td><input type="text" id="obs_waktu5" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi5" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>10</td><td><input type="text" id="obs_waktu10" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi10" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>15</td><td><input type="text" id="obs_waktu15" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi15" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>20</td><td><input type="text" id="obs_waktu20" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi20" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>25</td><td><input type="text" id="obs_waktu25" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi25" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>30</td><td><input type="text" id="obs_waktu30" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="obs_kondisi30" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th>D. CARI POLA! (20 Menit)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <p>Pola yang saya temukan:</p>
-                            <textarea id="pola" rows="3" placeholder="Apakah perubahan terjadi secara teratur?" oninput="saveToLocalStorage(); updateProgress();"></textarea>
-                            <p style="margin-top:10px;">Faktor yang mempengaruhi perubahan tersebut:</p>
-                            <textarea id="pola_faktor" rows="3" placeholder="Misal: suhu, waktu, kondisi lingkungan..." oninput="saveToLocalStorage(); updateProgress();"></textarea>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th>C4. CARI POLA! (20 Menit)</th></tr></thead>
+                    <tbody>
+                        <tr><td><p>Pola yang saya temukan:</p><textarea id="pola" rows="3" placeholder="Apakah perubahan terjadi secara teratur?" oninput="saveToLocalStorage(); updateProgress();"></textarea><p style="margin-top:10px;">Faktor yang mempengaruhi perubahan tersebut:</p><textarea id="pola_faktor" rows="3" placeholder="Misal: suhu, waktu, kondisi lingkungan..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th colspan="2">E. BUAT 2 PREDIKSI! (25 Menit)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2" style="background:#e8f4fd; font-weight:bold;">PREDIKSI 1 (Jangka Pendek - 1 jam ke depan)</td>
-                    </tr>
-                    <tr>
-                        <td style="width:30%">Jika pengamatan dilanjutkan selama 1 jam, apa yang akan terjadi?</td>
-                        <td>
-                            <div class="radio-group">
-                                <label><input type="radio" name="prediksi1_opsi" value="tetap" onchange="saveToLocalStorage(); updateProgress();"> Sama seperti yang sudah terjadi (tetap)</label><br>
-                                <label><input type="radio" name="prediksi1_opsi" value="cepat_lambat" onchange="saveToLocalStorage(); updateProgress();"> Akan berubah lebih cepat/lambat</label><br>
-                                <label><input type="radio" name="prediksi1_opsi" value="akhir" onchange="saveToLocalStorage(); updateProgress();"> Akan mencapai titik akhir</label><br>
-                                <label><input type="radio" name="prediksi1_opsi" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya: <input type="text" id="prediksi1_lain" style="width:200px;" oninput="saveToLocalStorage(); updateProgress();"></label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Alasan saya memprediksi demikian</td>
-                        <td><textarea id="prediksi1_alasan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="background:#fff3cd; font-weight:bold;">PREDIKSI 2 (Jika Ada Perubahan Sumber Energi atau Kondisi)</td>
-                    </tr>
-                    <tr>
-                        <td>Skenario perubahan yang mungkin terjadi</td>
-                        <td>
-                            <div class="radio-group">
-                                <label><input type="radio" name="prediksi2_skenario" value="dimatikan" onchange="saveToLocalStorage(); updateProgress();"> Sumber energi dimatikan/dihilangkan</label><br>
-                                <label><input type="radio" name="prediksi2_skenario" value="diperbesar" onchange="saveToLocalStorage(); updateProgress();"> Sumber energi diperbesar/ditambah dayanya</label><br>
-                                <label><input type="radio" name="prediksi2_skenario" value="diganti" onchange="saveToLocalStorage(); updateProgress();"> Sumber energi diganti dengan yang lain</label><br>
-                                <label><input type="radio" name="prediksi2_skenario" value="kondisi" onchange="saveToLocalStorage(); updateProgress();"> Kondisi lingkungan diubah (didinginkan/dipanaskan/ditiup angin)</label><br>
-                                <label><input type="radio" name="prediksi2_skenario" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya: <input type="text" id="prediksi2_lain" style="width:200px;" oninput="saveToLocalStorage(); updateProgress();"></label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Prediksi saya</td>
-                        <td><textarea id="prediksi2_hasil" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Alasan saya memprediksi demikian</td>
-                        <td><textarea id="prediksi2_alasan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th colspan="2">C5. BUAT 2 PREDIKSI! (25 Menit)</th></tr></thead>
+                    <tbody>
+                        <tr><td colspan="2" style="background:#e8f4fd; font-weight:bold;">PREDIKSI 1 (Jangka Pendek - 1 jam ke depan)</td></tr>
+                        <tr><td style="width:40%">Jika pengamatan dilanjutkan selama 1 jam, apa yang akan terjadi?</td>
+                        <td><div class="radio-group"><label><input type="radio" name="prediksi1_opsi" value="tetap" onchange="saveToLocalStorage(); updateProgress();"> Sama seperti yang sudah terjadi (tetap)</label><br><label><input type="radio" name="prediksi1_opsi" value="cepat_lambat" onchange="saveToLocalStorage(); updateProgress();"> Akan berubah lebih cepat/lambat</label><br><label><input type="radio" name="prediksi1_opsi" value="akhir" onchange="saveToLocalStorage(); updateProgress();"> Akan mencapai titik akhir</label><br><label><input type="radio" name="prediksi1_opsi" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya: <input type="text" id="prediksi1_lain" style="width:200px;" oninput="saveToLocalStorage(); updateProgress();"></label></div></td></tr>
+                        <tr><td>Alasan saya memprediksi demikian</td><td><textarea id="prediksi1_alasan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td colspan="2" style="background:#fff3cd; font-weight:bold;">PREDIKSI 2 (Jika Ada Perubahan Sumber Energi atau Kondisi)</td></tr>
+                        <tr><td>Skenario perubahan yang mungkin terjadi</td>
+                        <td><div class="radio-group"><label><input type="radio" name="prediksi2_skenario" value="dimatikan" onchange="saveToLocalStorage(); updateProgress();"> Sumber energi dimatikan/dihilangkan</label><br><label><input type="radio" name="prediksi2_skenario" value="diperbesar" onchange="saveToLocalStorage(); updateProgress();"> Sumber energi diperbesar/ditambah dayanya</label><br><label><input type="radio" name="prediksi2_skenario" value="diganti" onchange="saveToLocalStorage(); updateProgress();"> Sumber energi diganti dengan yang lain</label><br><label><input type="radio" name="prediksi2_skenario" value="kondisi" onchange="saveToLocalStorage(); updateProgress();"> Kondisi lingkungan diubah (didinginkan/dipanaskan/ditiup angin)</label><br><label><input type="radio" name="prediksi2_skenario" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya: <input type="text" id="prediksi2_lain" style="width:200px;" oninput="saveToLocalStorage(); updateProgress();"></label></div></td></tr>
+                        <tr><td>Prediksi saya</td><td><textarea id="prediksi2_hasil" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Alasan saya memprediksi demikian</td><td><textarea id="prediksi2_alasan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
             <div class="info-note">
                 <i class="fas fa-coffee"></i> ⏸️ ISTIRAHAT 15 MENIT
@@ -876,587 +840,219 @@
             
             <hr>
             
-            <!-- PERTEMUAN 2 -->
-            <h3 class="worksheet-subtitle" style="color: var(--ipas-purple);"><i class="fas fa-flask" style="margin-right: 10px;"></i> 🧪 PERTEMUAN 2 (6 JP): MEMBUKTIKAN & MENGKAITKAN</h3>
+            <!-- D. PERTEMUAN 2 -->
+            <h3 class="worksheet-subtitle" style="color: var(--ipas-purple);"><i class="fas fa-flask" style="margin-right: 10px;"></i> D. PERTEMUAN 2 (6 JP): MEMBUKTIKAN & MENGKAITKAN</h3>
             
-            <!-- TP 1.3 -->
+            <!-- D1. TP 1.3 -->
             <h4 style="color: var(--ipas-dark); margin: 1.5rem 0 0.5rem 0;"><i class="fas fa-flask" style="color: var(--ipas-primary);"></i> TP 1.3: Pembuktian Sederhana</h4>
             
-            <table class="question-grid">
-                <thead>
-                    <tr>
-                        <th colspan="2">F. KENALI FENOMENA KELOMPOKMU (15 Menit)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="width:30%">Fenomena kelompok kami termasuk tipe</td>
-                        <td>
-                            <div class="radio-group">
-                                <label><input type="radio" name="tipe_fenomena" value="listrik" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi listrik (lampu, kipas, HP)</label><br>
-                                <label><input type="radio" name="tipe_fenomena" value="panas" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi panas (memasak, menjemur, es mencair)</label><br>
-                                <label><input type="radio" name="tipe_fenomena" value="gerak" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi gerak (benda bergerak, jatuh)</label><br>
-                                <label><input type="radio" name="tipe_fenomena" value="kimia" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi kimia (lilin, baterai, makanan)</label><br>
-                                <label><input type="radio" name="tipe_fenomena" value="cahaya" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi cahaya (senter, lampu, pantulan)</label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Peristiwa yang diamati</td>
-                        <td><input type="text" id="komponen_peristiwa" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Bentuk energi awal → akhir</td>
-                        <td><input type="text" id="komponen_energi_awal" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"> → <input type="text" id="komponen_energi_akhir" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Sumber energi</td>
-                        <td><input type="text" id="komponen_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Manfaat yang diperoleh</td>
-                        <td><input type="text" id="komponen_manfaat" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th colspan="2">D1. KENALI FENOMENA KELOMPOKMU (15 Menit)</th></tr></thead>
+                    <tbody>
+                        <tr><td style="width:40%">Fenomena kelompok kami termasuk tipe</td>
+                        <td><div class="radio-group"><label><input type="radio" name="tipe_fenomena" value="listrik" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi listrik (lampu, kipas, HP)</label><br><label><input type="radio" name="tipe_fenomena" value="panas" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi panas (memasak, menjemur, es mencair)</label><br><label><input type="radio" name="tipe_fenomena" value="gerak" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi gerak (benda bergerak, jatuh)</label><br><label><input type="radio" name="tipe_fenomena" value="kimia" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi kimia (lilin, baterai, makanan)</label><br><label><input type="radio" name="tipe_fenomena" value="cahaya" onchange="saveToLocalStorage(); updateProgress();"> Perubahan energi cahaya (senter, lampu, pantulan)</label></div></td></tr>
+                        <tr><td>Peristiwa yang diamati</td><td><input type="text" id="komponen_peristiwa" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Bentuk energi awal → akhir</td><td><input type="text" id="komponen_energi_awal" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"> → <input type="text" id="komponen_energi_akhir" style="width:45%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Sumber energi</td><td><input type="text" id="komponen_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Manfaat yang diperoleh</td><td><input type="text" id="komponen_manfaat" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th colspan="2">G. PILIH PREDIKSI YANG AKAN DIBUKTIKAN (15 Menit)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="width:30%">Prediksi yang akan dibuktikan</td>
-                        <td>
-                            <div class="radio-group">
-                                <label><input type="radio" name="pilihan_prediksi" value="prediksi1" onchange="saveToLocalStorage(); updateProgress();"> Prediksi 1 (Jangka pendek - 1 jam ke depan)</label><br>
-                                <label><input type="radio" name="pilihan_prediksi" value="prediksi2" onchange="saveToLocalStorage(); updateProgress();"> Prediksi 2 (Jika sumber energi/kondisi berubah)</label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Tuliskan ulang prediksi tersebut</td>
-                        <td><textarea id="prediksi_terpilih" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th colspan="2">D2. PILIH PREDIKSI YANG AKAN DIBUKTIKAN (15 Menit)</th></tr></thead>
+                    <tbody>
+                        <tr><td style="width:40%">Prediksi yang akan dibuktikan</td>
+                        <td><div class="radio-group"><label><input type="radio" name="pilihan_prediksi" value="prediksi1" onchange="saveToLocalStorage(); updateProgress();"> Prediksi 1 (Jangka pendek - 1 jam ke depan)</label><br><label><input type="radio" name="pilihan_prediksi" value="prediksi2" onchange="saveToLocalStorage(); updateProgress();"> Prediksi 2 (Jika sumber energi/kondisi berubah)</label></div></td></tr>
+                        <tr><td>Tuliskan ulang prediksi tersebut</td><td><textarea id="prediksi_terpilih" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th colspan="2">H. RANCANG CARA PEMBUKTIAN SEDERHANA (30 Menit)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2" style="background:#e8f4fd; font-weight:bold;">CARA 1: OBSERVASI ULANG DENGAN VARIASI</td>
-                    </tr>
-                    <tr>
-                        <td style="width:30%">Saya akan mengamati lagi dengan mengubah</td>
-                        <td>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" id="cara1_waktu" onchange="saveToLocalStorage(); updateProgress();"> Waktu pengamatan - lebih lama/lebih singkat</label><br>
-                                <label><input type="checkbox" id="cara1_kondisi" onchange="saveToLocalStorage(); updateProgress();"> Kondisi lingkungan - teduh/panas, siang/malam, tertutup/terbuka</label><br>
-                                <label><input type="checkbox" id="cara1_objek" onchange="saveToLocalStorage(); updateProgress();"> Objek yang diamati - benda sejenis dengan ukuran berbeda</label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Hal yang akan saya bandingkan</td>
-                        <td><textarea id="cara1_bandingkan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Langkah-langkah</td>
-                        <td>
-                            1. <input type="text" id="cara1_langkah1" style="width:100%; margin-bottom:5px;" oninput="saveToLocalStorage(); updateProgress();"><br>
-                            2. <input type="text" id="cara1_langkah2" style="width:100%; margin-bottom:5px;" oninput="saveToLocalStorage(); updateProgress();"><br>
-                            3. <input type="text" id="cara1_langkah3" style="width:100%;" oninput="saveToLocalStorage(); updateProgress();">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="background:#e8f4fd; font-weight:bold;">CARA 2: EKSPERIMEN SEDERHANA (Dengan Perlakuan)</td>
-                    </tr>
-                    <tr>
-                        <td>Saya akan mencoba mengubah satu faktor berikut</td>
-                        <td>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" id="cara2_sumber" onchange="saveToLocalStorage(); updateProgress();"> Sumber energi - dimatikan/dinyalakan/diperbesar</label><br>
-                                <label><input type="checkbox" id="cara2_suhu" onchange="saveToLocalStorage(); updateProgress();"> Suhu - dipanaskan/didinginkan</label><br>
-                                <label><input type="checkbox" id="cara2_tinggi" onchange="saveToLocalStorage(); updateProgress();"> Ketinggian - dijatuhkan dari tempat berbeda</label><br>
-                                <label><input type="checkbox" id="cara2_jarak" onchange="saveToLocalStorage(); updateProgress();"> Jarak - didekatkan/dijauhkan dari sumber energi</label><br>
-                                <label><input type="checkbox" id="cara2_lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya: <input type="text" id="cara2_lain_isi" style="width:200px;" oninput="saveToLocalStorage(); updateProgress();"></label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Perlakuan yang saya lakukan</td>
-                        <td><textarea id="cara2_perlakuan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Sebagai pembanding (kontrol), saya juga akan mengamati</td>
-                        <td><input type="text" id="cara2_kontrol" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Langkah-langkah pembuktian</td>
-                        <td>
-                            1. <input type="text" id="cara2_langkah1" style="width:100%; margin-bottom:5px;" oninput="saveToLocalStorage(); updateProgress();"><br>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th colspan="2">D3. RANCANG CARA PEMBUKTIAN SEDERHANA (30 Menit)</th></tr></thead>
+                    <tbody>
+                        <tr><td colspan="2" style="background:#e8f4fd; font-weight:bold;">CARA 1: OBSERVASI ULANG DENGAN VARIASI</td></tr>
+                        <tr><td style="width:40%">Saya akan mengamati lagi dengan mengubah</td>
+                        <td><div class="checkbox-group"><label><input type="checkbox" id="cara1_waktu" onchange="saveToLocalStorage(); updateProgress();"> Waktu pengamatan - lebih lama/lebih singkat</label><br><label><input type="checkbox" id="cara1_kondisi" onchange="saveToLocalStorage(); updateProgress();"> Kondisi lingkungan - teduh/panas, siang/malam, tertutup/terbuka</label><br><label><input type="checkbox" id="cara1_objek" onchange="saveToLocalStorage(); updateProgress();"> Objek yang diamati - benda sejenis dengan ukuran berbeda</label></div></td></tr>
+                        <tr><td>Hal yang akan saya bandingkan</td><td><textarea id="cara1_bandingkan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Langkah-langkah</td><td>1. <input type="text" id="cara1_langkah1" style="width:100%; margin-bottom:5px;" oninput="saveToLocalStorage(); updateProgress();"><br>2. <input type="text" id="cara1_langkah2" style="width:100%; margin-bottom:5px;" oninput="saveToLocalStorage(); updateProgress();"><br>3. <input type="text" id="cara1_langkah3" style="width:100%;" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td colspan="2" style="background:#e8f4fd; font-weight:bold;">CARA 2: EKSPERIMEN SEDERHANA (Dengan Perlakuan)</td></tr>
+                        <tr><td>Saya akan mencoba mengubah satu faktor berikut</td>
+                        <td><div class="checkbox-group"><label><input type="checkbox" id="cara2_sumber" onchange="saveToLocalStorage(); updateProgress();"> Sumber energi - dimatikan/dinyalakan/diperbesar</label><br><label><input type="checkbox" id="cara2_suhu" onchange="saveToLocalStorage(); updateProgress();"> Suhu - dipanaskan/didinginkan</label><br><label><input type="checkbox" id="cara2_tinggi" onchange="saveToLocalStorage(); updateProgress();"> Ketinggian - dijatuhkan dari tempat berbeda</label><br><label><input type="checkbox" id="cara2_jarak" onchange="saveToLocalStorage(); updateProgress();"> Jarak - didekatkan/dijauhkan dari sumber energi</label><br><label><input type="checkbox" id="cara2_lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya: <input type="text" id="cara2_lain_isi" style="width:200px;" oninput="saveToLocalStorage(); updateProgress();"></label></div></td></tr>
+                        <tr><td>Perlakuan yang saya lakukan</td><td><textarea id="cara2_perlakuan" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Sebagai pembanding (kontrol), saya juga akan mengamati</td><td><input type="text" id="cara2_kontrol" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Langkah-langkah pembuktian</td>
+                        <td>1. <input type="text" id="cara2_langkah1" style="width:100%; margin-bottom:5px;" oninput="saveToLocalStorage(); updateProgress();"><br>
                             2. <input type="text" id="cara2_langkah2" style="width:100%; margin-bottom:5px;" oninput="saveToLocalStorage(); updateProgress();"><br>
                             3. <input type="text" id="cara2_langkah3" style="width:100%; margin-bottom:5px;" oninput="saveToLocalStorage(); updateProgress();"><br>
                             4. <input type="text" id="cara2_langkah4" style="width:100%; margin-bottom:5px;" oninput="saveToLocalStorage(); updateProgress();"><br>
-                            5. <input type="text" id="cara2_langkah5" style="width:100%;" oninput="saveToLocalStorage(); updateProgress();">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            5. <input type="text" id="cara2_langkah5" style="width:100%;" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th colspan="4">ALAT DAN BAHAN YANG DIBUTUHKAN</th>
-                    </tr>
-                    <tr>
-                        <th>No</th>
-                        <th>Alat/Bahan</th>
-                        <th>Kegunaan</th>
-                        <th>Ketersediaan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td><input type="text" id="alat1_nama" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="alat1_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td>
-                            <select id="alat1_tersedia" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">Pilih</option>
-                                <option value="Ada di sekolah">Ada di sekolah</option>
-                                <option value="Bawa dari rumah">Bawa dari rumah</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td><input type="text" id="alat2_nama" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="alat2_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td>
-                            <select id="alat2_tersedia" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">Pilih</option>
-                                <option value="Ada di sekolah">Ada di sekolah</option>
-                                <option value="Bawa dari rumah">Bawa dari rumah</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td><input type="text" id="alat3_nama" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="alat3_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td>
-                            <select id="alat3_tersedia" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">Pilih</option>
-                                <option value="Ada di sekolah">Ada di sekolah</option>
-                                <option value="Bawa dari rumah">Bawa dari rumah</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td><input type="text" id="alat4_nama" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="alat4_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td>
-                            <select id="alat4_tersedia" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">Pilih</option>
-                                <option value="Ada di sekolah">Ada di sekolah</option>
-                                <option value="Bawa dari rumah">Bawa dari rumah</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th colspan="4">D4. ALAT DAN BAHAN YANG DIBUTUHKAN</th></tr>
+                    <tr><th>No</th><th>Alat/Bahan</th><th>Kegunaan</th><th>Ketersediaan</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td><input type="text" id="alat1_nama" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="alat1_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><select id="alat1_tersedia" onchange="saveToLocalStorage(); updateProgress();"><option value="">Pilih</option><option value="Ada di sekolah">Ada di sekolah</option><option value="Bawa dari rumah">Bawa dari rumah</option></select></td></tr>
+                        <tr><td>2</td><td><input type="text" id="alat2_nama" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="alat2_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><select id="alat2_tersedia" onchange="saveToLocalStorage(); updateProgress();"><option value="">Pilih</option><option value="Ada di sekolah">Ada di sekolah</option><option value="Bawa dari rumah">Bawa dari rumah</option></select></td></tr>
+                        <tr><td>3</td><td><input type="text" id="alat3_nama" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="alat3_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><select id="alat3_tersedia" onchange="saveToLocalStorage(); updateProgress();"><option value="">Pilih</option><option value="Ada di sekolah">Ada di sekolah</option><option value="Bawa dari rumah">Bawa dari rumah</option></select></td></tr>
+                        <tr><td>4</td><td><input type="text" id="alat4_nama" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="alat4_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><select id="alat4_tersedia" onchange="saveToLocalStorage(); updateProgress();"><option value="">Pilih</option><option value="Ada di sekolah">Ada di sekolah</option><option value="Bawa dari rumah">Bawa dari rumah</option></select></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th>ALAT UKUR YANG DIGUNAKAN</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" id="alat_ukur_stopwatch" onchange="saveToLocalStorage(); updateProgress();"> Stopwatch (HP)</label>
-                                <label><input type="checkbox" id="alat_ukur_thermometer" onchange="saveToLocalStorage(); updateProgress();"> Thermometer</label>
-                                <label><input type="checkbox" id="alat_ukur_penggaris" onchange="saveToLocalStorage(); updateProgress();"> Penggaris</label>
-                                <label><input type="checkbox" id="alat_ukur_meteran" onchange="saveToLocalStorage(); updateProgress();"> Meteran</label>
-                                <label>Lainnya: <input type="text" id="alat_ukur_lain" style="width:150px;" oninput="saveToLocalStorage(); updateProgress();"></label>
-                            </div>
-                            <label><input type="checkbox" id="alat_tidak" onchange="saveToLocalStorage(); updateProgress();"> ☐ Tidak perlu alat khusus - cukup observasi dengan mata dan catatan</label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th>D5. ALAT UKUR YANG DIGUNAKAN</th></tr></thead>
+                    <tbody><tr><td><div class="checkbox-group"><label><input type="checkbox" id="alat_ukur_stopwatch" onchange="saveToLocalStorage(); updateProgress();"> Stopwatch (HP)</label><label><input type="checkbox" id="alat_ukur_thermometer" onchange="saveToLocalStorage(); updateProgress();"> Thermometer</label><label><input type="checkbox" id="alat_ukur_penggaris" onchange="saveToLocalStorage(); updateProgress();"> Penggaris</label><label><input type="checkbox" id="alat_ukur_meteran" onchange="saveToLocalStorage(); updateProgress();"> Meteran</label><label>Lainnya: <input type="text" id="alat_ukur_lain" style="width:150px;" oninput="saveToLocalStorage(); updateProgress();"></label></div><label><input type="checkbox" id="alat_tidak" onchange="saveToLocalStorage(); updateProgress();"> ☐ Tidak perlu alat khusus - cukup observasi dengan mata dan catatan</label></td></tr></tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th>ETIKA DAN KESELAMATAN KERJA</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" id="etik_listrik" onchange="saveToLocalStorage(); updateProgress();"> Untuk percobaan listrik: Jangan menyentuh kabel terbuka, gunakan tegangan rendah</label><br>
-                                <label><input type="checkbox" id="etik_panas" onchange="saveToLocalStorage(); updateProgress();"> Untuk percobaan panas: Hati-hati dengan api/air panas - minta bantuan guru</label><br>
-                                <label><input type="checkbox" id="etik_jatuh" onchange="saveToLocalStorage(); updateProgress();"> Untuk percobaan benda jatuh: Pastikan tidak membahayakan orang di sekitar</label><br>
-                                <label><input type="checkbox" id="etik_kerja" onchange="saveToLocalStorage(); updateProgress();"> Bekerja sama dengan kelompok</label><br>
-                                <label><input type="checkbox" id="etik_sampah" onchange="saveToLocalStorage(); updateProgress();"> Tidak membuang sampah sembarangan</label><br>
-                                <label><input type="checkbox" id="etik_bersih" onchange="saveToLocalStorage(); updateProgress();"> Membersihkan kembali alat dan tempat setelah selesai</label><br>
-                                <label><input type="checkbox" id="etik_kembali" onchange="saveToLocalStorage(); updateProgress();"> Mengembalikan keadaan seperti semula</label>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th>D6. ETIKA DAN KESELAMATAN KERJA</th></tr></thead>
+                    <tbody><tr><td><div class="checkbox-group"><label><input type="checkbox" id="etik_listrik" onchange="saveToLocalStorage(); updateProgress();"> Untuk percobaan listrik: Jangan menyentuh kabel terbuka, gunakan tegangan rendah</label><br><label><input type="checkbox" id="etik_panas" onchange="saveToLocalStorage(); updateProgress();"> Untuk percobaan panas: Hati-hati dengan api/air panas - minta bantuan guru</label><br><label><input type="checkbox" id="etik_jatuh" onchange="saveToLocalStorage(); updateProgress();"> Untuk percobaan benda jatuh: Pastikan tidak membahayakan orang di sekitar</label><br><label><input type="checkbox" id="etik_kerja" onchange="saveToLocalStorage(); updateProgress();"> Bekerja sama dengan kelompok</label><br><label><input type="checkbox" id="etik_sampah" onchange="saveToLocalStorage(); updateProgress();"> Tidak membuang sampah sembarangan</label><br><label><input type="checkbox" id="etik_bersih" onchange="saveToLocalStorage(); updateProgress();"> Membersihkan kembali alat dan tempat setelah selesai</label><br><label><input type="checkbox" id="etik_kembali" onchange="saveToLocalStorage(); updateProgress();"> Mengembalikan keadaan seperti semula</label></div></td></tr></tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th colspan="2">I. LAKUKAN PEMBUKTIAN! (60 Menit)</th>
-                    </tr>
-                    <tr>
-                        <th>Waktu Pengamatan</th>
-                        <th>Hasil yang Diamati</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Menit ke- <input type="text" id="hasil_waktu1" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi1" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
-                    <tr><td>Menit ke- <input type="text" id="hasil_waktu2" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi2" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
-                    <tr><td>Menit ke- <input type="text" id="hasil_waktu3" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi3" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
-                    <tr><td>Menit ke- <input type="text" id="hasil_waktu4" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi4" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
-                    <tr><td>Menit ke- <input type="text" id="hasil_waktu5" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi5" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
-                    <tr><td>Menit ke- <input type="text" id="hasil_waktu6" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi6" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th colspan="2">D7. LAKUKAN PEMBUKTIAN! (60 Menit)</th></tr>
+                    <tr><th>Waktu Pengamatan</th><th>Hasil yang Diamati</th></tr></thead>
+                    <tbody>
+                        <tr><td>Menit ke- <input type="text" id="hasil_waktu1" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi1" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Menit ke- <input type="text" id="hasil_waktu2" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi2" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Menit ke- <input type="text" id="hasil_waktu3" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi3" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Menit ke- <input type="text" id="hasil_waktu4" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi4" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Menit ke- <input type="text" id="hasil_waktu5" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi5" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Menit ke- <input type="text" id="hasil_waktu6" style="width:60px;" oninput="saveToLocalStorage(); updateProgress();"></td><td><textarea id="hasil_isi6" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th colspan="2">J. ANALISIS HASIL (30 Menit)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="width:30%">1. Apakah hasilnya sesuai dengan prediksi?</td>
-                        <td>
-                            <div class="radio-group">
-                                <label><input type="radio" name="kesesuaian" value="sesuai" onchange="saveToLocalStorage(); updateProgress();"> Sesuai</label>
-                                <label><input type="radio" name="kesesuaian" value="tidak" onchange="saveToLocalStorage(); updateProgress();"> Tidak sesuai</label>
-                                <label><input type="radio" name="kesesuaian" value="sebagian" onchange="saveToLocalStorage(); updateProgress();"> Sebagian sesuai</label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2. Data yang saya peroleh</td>
-                        <td><textarea id="analisis_data" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>3. Mengapa bisa demikian? Jelaskan secara ilmiah</td>
-                        <td><textarea id="analisis_penjelasan" rows="3" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>4. Energi apa saja yang muncul?</td>
-                        <td>
-                            <table style="width:100%">
-                                <tr><th>Bentuk Energi</th><th>Sumber</th><th>Ke mana energinya?</th></tr>
-                                <tr><td><input type="text" id="energi1" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="sumber1" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tujuan1" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                                <tr><td><input type="text" id="energi2" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="sumber2" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tujuan2" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                                <tr><td><input type="text" id="energi3" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="sumber3" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tujuan3" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>5. Apakah ada energi yang "hilang"?</td>
-                        <td><textarea id="analisis_hilang" rows="2" placeholder="Misal: panas yang terbuang, suara bising..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>6. Kesimpulan yang saya dapatkan</td>
-                        <td><textarea id="kesimpulan" rows="3" placeholder="Dari pembuktian ini, saya belajar bahwa..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th colspan="2">D8. ANALISIS HASIL (30 Menit)</th></tr></thead>
+                    <tbody>
+                        <tr><td style="width:40%">1. Apakah hasilnya sesuai dengan prediksi?</td>
+                        <td><div class="radio-group"><label><input type="radio" name="kesesuaian" value="sesuai" onchange="saveToLocalStorage(); updateProgress();"> Sesuai</label><label><input type="radio" name="kesesuaian" value="tidak" onchange="saveToLocalStorage(); updateProgress();"> Tidak sesuai</label><label><input type="radio" name="kesesuaian" value="sebagian" onchange="saveToLocalStorage(); updateProgress();"> Sebagian sesuai</label></div></td></tr>
+                        <tr><td>2. Data yang saya peroleh</td><td><textarea id="analisis_data" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>3. Mengapa bisa demikian? Jelaskan secara ilmiah</td><td><textarea id="analisis_penjelasan" rows="3" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>4. Energi apa saja yang muncul?</td>
+                        <td><table style="width:100%"><tr><th>Bentuk Energi</th><th>Sumber</th><th>Ke mana energinya?</th></tr>
+                            <tr><td><input type="text" id="energi1" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="sumber1" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tujuan1" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                            <tr><td><input type="text" id="energi2" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="sumber2" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tujuan2" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                            <tr><td><input type="text" id="energi3" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="sumber3" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="tujuan3" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        </table></td></tr>
+                        <tr><td>5. Apakah ada energi yang "hilang"?</td><td><textarea id="analisis_hilang" rows="2" placeholder="Misal: panas yang terbuang, suara bising..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>6. Kesimpulan yang saya dapatkan</td><td><textarea id="kesimpulan" rows="3" placeholder="Dari pembuktian ini, saya belajar bahwa..." oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <!-- TP 1.4 -->
+            <!-- D9. TP 1.4 -->
             <h4 style="color: var(--ipas-dark); margin: 2rem 0 0.5rem 0;"><i class="fas fa-briefcase" style="color: var(--ipas-primary);"></i> TP 1.4: Koneksi dengan Bidang Keahlian</h4>
             
-            <table class="question-grid">
-                <thead>
-                    <tr>
-                        <th colspan="2">K. HUBUNGKAN DENGAN PROGRAM KEAHLIANMU! (45 Menit)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="width:30%">Program Keahlian Kami</td>
-                        <td>
-                            <div class="radio-group">
-                                <label><input type="radio" name="jurusan" value="ATPH" onchange="saveToLocalStorage(); updateProgress();"> ATPH</label>
-                                <label><input type="radio" name="jurusan" value="TSM" onchange="saveToLocalStorage(); updateProgress();"> TSM</label>
-                                <label><input type="radio" name="jurusan" value="AKL" onchange="saveToLocalStorage(); updateProgress();"> AKL</label>
-                                <label><input type="radio" name="jurusan" value="TKJ" onchange="saveToLocalStorage(); updateProgress();"> TKJ</label>
-                                <label><input type="radio" name="jurusan" value="TATA BOGA" onchange="saveToLocalStorage(); updateProgress();"> TATA BOGA</label>
-                                <label><input type="radio" name="jurusan" value="TATA BUSANA" onchange="saveToLocalStorage(); updateProgress();"> TATA BUSANA</label>
-                                <label><input type="radio" name="jurusan" value="DKV" onchange="saveToLocalStorage(); updateProgress();"> DKV</label>
-                                <label><input type="radio" name="jurusan" value="TEI" onchange="saveToLocalStorage(); updateProgress();"> TEI</label>
-                                <label><input type="radio" name="jurusan" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya: <input type="text" id="jurusan_lain" style="width:150px;" oninput="saveToLocalStorage(); updateProgress();"></label>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <tr>
+                    <thead><tr><th colspan="2">D9. HUBUNGKAN DENGAN PROGRAM KEAHLIANMU! (45 Menit)</th></tr></thead>
+                    <tbody>
+                        <tr><td style="width:40%">Program Keahlian Kami</td>
+                        <td><div class="radio-group"><label><input type="radio" name="jurusan" value="ATPH" onchange="saveToLocalStorage(); updateProgress();"> ATPH</label><label><input type="radio" name="jurusan" value="TSM" onchange="saveToLocalStorage(); updateProgress();"> TSM</label><label><input type="radio" name="jurusan" value="AKL" onchange="saveToLocalStorage(); updateProgress();"> AKL</label><label><input type="radio" name="jurusan" value="TKJ" onchange="saveToLocalStorage(); updateProgress();"> TKJ</label><label><input type="radio" name="jurusan" value="TATA BOGA" onchange="saveToLocalStorage(); updateProgress();"> TATA BOGA</label><label><input type="radio" name="jurusan" value="TATA BUSANA" onchange="saveToLocalStorage(); updateProgress();"> TATA BUSANA</label><label><input type="radio" name="jurusan" value="DKV" onchange="saveToLocalStorage(); updateProgress();"> DKV</label><label><input type="radio" name="jurusan" value="TEI" onchange="saveToLocalStorage(); updateProgress();"> TEI</label><label><input type="radio" name="jurusan" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya: <input type="text" id="jurusan_lain" style="width:150px;" oninput="saveToLocalStorage(); updateProgress();"></label></div></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th>Aspek</th>
-                        <th>Contoh Penggunaan Energi di Bidang Keahlian Kami</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Sumber energi yang digunakan</td>
-                        <td><textarea id="aspek_sumber" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Peralatan yang membutuhkan energi</td>
-                        <td><textarea id="aspek_alat" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Proses produksi yang memerlukan energi</td>
-                        <td><textarea id="aspek_proses" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Produk/jasa yang dihasilkan</td>
-                        <td><textarea id="aspek_produk" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Limbah energi (energi yang terbuang)</td>
-                        <td><textarea id="aspek_limbah" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th>Aspek</th><th>Contoh Penggunaan Energi di Bidang Keahlian Kami</th></tr></thead>
+                    <tbody>
+                        <tr><td>Sumber energi yang digunakan</td><td><textarea id="aspek_sumber" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Peralatan yang membutuhkan energi</td><td><textarea id="aspek_alat" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Proses produksi yang memerlukan energi</td><td><textarea id="aspek_proses" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Produk/jasa yang dihasilkan</td><td><textarea id="aspek_produk" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Limbah energi (energi yang terbuang)</td><td><textarea id="aspek_limbah" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th colspan="2">L. AMATI DAN BERI SOLUSI! (15 Menit)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2" style="background:#e8f4fd; font-weight:bold;">A. PEMBOROSAN ENERGI</td>
-                    </tr>
-                    <tr>
-                        <td style="width:30%">Masalah pemborosan energi</td>
-                        <td><textarea id="solusi_masalah" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Lokasi</td>
-                        <td><input type="text" id="solusi_lokasi" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Penyebabnya</td>
-                        <td><input type="text" id="solusi_penyebab" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Ide hemat energi sederhana</td>
-                        <td><textarea id="solusi_ide" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Cara menerapkannya</td>
-                        <td><textarea id="solusi_cara" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="background:#fff3cd; font-weight:bold;">B. POTENSI ENERGI TERBARUKAN</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th colspan="2">D10. AMATI DAN BERI SOLUSI! (15 Menit)</th></tr></thead>
+                    <tbody>
+                        <tr><td colspan="2" style="background:#e8f4fd; font-weight:bold;">A. PEMBOROSAN ENERGI</td></tr>
+                        <tr><td style="width:40%">Masalah pemborosan energi</td><td><textarea id="solusi_masalah" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Lokasi</td><td><input type="text" id="solusi_lokasi" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Penyebabnya</td><td><input type="text" id="solusi_penyebab" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Ide hemat energi sederhana</td><td><textarea id="solusi_ide" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>Cara menerapkannya</td><td><textarea id="solusi_cara" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td colspan="2" style="background:#fff3cd; font-weight:bold;">B. POTENSI ENERGI TERBARUKAN</td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th>Potensi Energi</th>
-                        <th>Sumbernya di mana?</th>
-                        <th>Bisa dimanfaatkan untuk apa?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Matahari</td>
-                        <td><input type="text" id="potensi_matahari_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="potensi_matahari_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Angin</td>
-                        <td><input type="text" id="potensi_angin_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="potensi_angin_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Air</td>
-                        <td><input type="text" id="potensi_air_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="potensi_air_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Biomassa (limbah organik)</td>
-                        <td><input type="text" id="potensi_biomassa_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="potensi_biomassa_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Lainnya</td>
-                        <td><input type="text" id="potensi_lain_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                        <td><input type="text" id="potensi_lain_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <thead><tr><th>Potensi Energi</th><th>Sumbernya di mana?</th><th>Bisa dimanfaatkan untuk apa?</th></tr></thead>
+                    <tbody>
+                        <tr><td>Matahari</td><td><input type="text" id="potensi_matahari_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="potensi_matahari_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Angin</td><td><input type="text" id="potensi_angin_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="potensi_angin_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Air</td><td><input type="text" id="potensi_air_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="potensi_air_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Biomassa (limbah organik)</td><td><input type="text" id="potensi_biomassa_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="potensi_biomassa_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Lainnya</td><td><input type="text" id="potensi_lain_sumber" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td><td><input type="text" id="potensi_lain_guna" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <table class="question-grid" style="margin-top:20px;">
-                <tbody>
-                    <tr>
-                        <td style="width:30%">Potensi paling mungkin dimanfaatkan di sekolah</td>
-                        <td><input type="text" id="potensi_terpilih" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td>
-                    </tr>
-                    <tr>
-                        <td>Ide sederhana untuk memanfaatkannya</td>
-                        <td><textarea id="potensi_ide" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table style="margin-top:20px;">
+                    <tbody>
+                        <tr><td style="width:40%">Potensi paling mungkin dimanfaatkan di sekolah</td><td><input type="text" id="potensi_terpilih" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td>Ide sederhana untuk memanfaatkannya</td><td><textarea id="potensi_ide" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
             <hr>
             
-            <!-- REFLEKSI -->
-            <h3 class="worksheet-subtitle"><i class="fas fa-smile" style="margin-right: 10px;"></i> M. REFLEKSI PEMBELAJARAN (15 Menit)</h3>
+            <!-- E. REFLEKSI -->
+            <h3 class="worksheet-subtitle"><i class="fas fa-smile" style="margin-right: 10px;"></i> E. REFLEKSI PEMBELAJARAN (15 Menit)</h3>
             
-            <table class="question-grid">
-                <thead>
-                    <tr>
-                        <th>Pertanyaan</th>
-                        <th>Jawaban</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1 hal paling menarik tentang energi</td>
-                        <td><textarea id="refleksi1" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>1 hal baru yang saya pahami tentang energi</td>
-                        <td><textarea id="refleksi2" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>1 kebiasaan boros energi yang saya sadari</td>
-                        <td><textarea id="refleksi3" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>1 rencana hemat energi yang akan saya mulai</td>
-                        <td><textarea id="refleksi4" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Pertanyaan</th><th>Jawaban</th></tr></thead>
+                    <tbody>
+                        <tr><td>1 hal paling menarik tentang energi</td><td><textarea id="refleksi1" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>1 hal baru yang saya pahami tentang energi</td><td><textarea id="refleksi2" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>1 kebiasaan boros energi yang saya sadari</td><td><textarea id="refleksi3" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                        <tr><td>1 rencana hemat energi yang akan saya mulai</td><td><textarea id="refleksi4" rows="2" oninput="saveToLocalStorage(); updateProgress();"></textarea></td></tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <!-- PENILAIAN DIRI -->
-            <h3 class="worksheet-subtitle"><i class="fas fa-star" style="margin-right: 10px;"></i> N. PENILAIAN DIRI KELOMPOK</h3>
+            <!-- F. PENILAIAN DIRI -->
+            <h3 class="worksheet-subtitle"><i class="fas fa-star" style="margin-right: 10px;"></i> F. PENILAIAN DIRI KELOMPOK</h3>
             
-            <table class="self-assessment">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Aspek yang Dinilai</th>
-                        <th>Nilai (1-4)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Semua anggota ikut observasi</td>
-                        <td>
-                            <select id="nilai1" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">-- Pilih --</option>
-                                <option value="1">1 - Kurang</option>
-                                <option value="2">2 - Cukup</option>
-                                <option value="3" selected>3 - Baik</option>
-                                <option value="4">4 - Sangat Baik</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Semua anggota ikut diskusi</td>
-                        <td>
-                            <select id="nilai2" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">-- Pilih --</option>
-                                <option value="1">1 - Kurang</option>
-                                <option value="2">2 - Cukup</option>
-                                <option value="3" selected>3 - Baik</option>
-                                <option value="4">4 - Sangat Baik</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Selesai tepat waktu</td>
-                        <td>
-                            <select id="nilai3" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">-- Pilih --</option>
-                                <option value="1">1 - Kurang</option>
-                                <option value="2">2 - Cukup</option>
-                                <option value="3" selected>3 - Baik</option>
-                                <option value="4">4 - Sangat Baik</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Bekerja sama dengan baik</td>
-                        <td>
-                            <select id="nilai4" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">-- Pilih --</option>
-                                <option value="1">1 - Kurang</option>
-                                <option value="2">2 - Cukup</option>
-                                <option value="3" selected>3 - Baik</option>
-                                <option value="4">4 - Sangat Baik</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Menjaga keselamatan dan kebersihan</td>
-                        <td>
-                            <select id="nilai5" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">-- Pilih --</option>
-                                <option value="1">1 - Kurang</option>
-                                <option value="2">2 - Cukup</option>
-                                <option value="3" selected>3 - Baik</option>
-                                <option value="4">4 - Sangat Baik</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td>Kreatif dalam merancang pembuktian</td>
-                        <td>
-                            <select id="nilai6" onchange="saveToLocalStorage(); updateProgress();">
-                                <option value="">-- Pilih --</option>
-                                <option value="1">1 - Kurang</option>
-                                <option value="2">2 - Cukup</option>
-                                <option value="3" selected>3 - Baik</option>
-                                <option value="4">4 - Sangat Baik</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="self-assessment">
+                    <thead><tr><th>No</th><th>Aspek yang Dinilai</th><th>Nilai (1-4)</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Semua anggota ikut observasi</td><td><select id="nilai1" onchange="saveToLocalStorage(); updateProgress();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td>2</td><td>Semua anggota ikut diskusi</td><td><select id="nilai2" onchange="saveToLocalStorage(); updateProgress();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td>3</td><td>Selesai tepat waktu</td><td><select id="nilai3" onchange="saveToLocalStorage(); updateProgress();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td>4</td><td>Bekerja sama dengan baik</td><td><select id="nilai4" onchange="saveToLocalStorage(); updateProgress();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td>5</td><td>Menjaga keselamatan dan kebersihan</td><td><select id="nilai5" onchange="saveToLocalStorage(); updateProgress();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td>6</td><td>Kreatif dalam merancang pembuktian</td><td><select id="nilai6" onchange="saveToLocalStorage(); updateProgress();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                    </tbody>
+                </table>
+            </div>
 
             <!-- Tombol Kirim -->
             <button class="submit-button" id="submitBtn" onclick="submitData()" disabled>
@@ -1478,40 +1074,35 @@
         </div>
     </section>
 
+    <!-- Modal Konfirmasi Reset -->
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-paper-plane"></i>
+            <h3>Data Berhasil Dikirim!</h3>
+            <p>Apakah Anda ingin mereset semua kolom isian?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn yes" onclick="confirmReset()">Ya, Reset</button>
+                <button class="modal-btn no" onclick="closeModal()">Tidak</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==================== KONFIGURASI URL ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
 
-        // ==================== KONFIGURASI FORM DENGAN HEADER PER BAGIAN ====================
+        // ==================== KONFIGURASI FORM ====================
         const FORM_CONFIG = {
             sheetName: "AKTIVITAS 4 - EKSPLORASI ENERGI",
             headers: [
                 "Timestamp",
-                "Kelas",
-                "Nama",
-                "Kelompok",
-                "Tugas_Peran",
-                "data_literasi",                    // JSON string untuk literasi
-                "data_peristiwa",                     // JSON string untuk 5 peristiwa
-                "data_penjelasan_ilmiah",              // JSON string untuk pilihan & istilah
-                "data_observasi_detail",                // JSON string untuk observasi detail
-                "data_pola",                             // JSON string untuk pola
-                "data_prediksi1",                         // JSON string untuk prediksi 1
-                "data_prediksi2",                         // JSON string untuk prediksi 2
-                "data_fenomena",                          // JSON string untuk fenomena
-                "data_pilihan_prediksi",                   // JSON string untuk pilihan prediksi
-                "data_cara_pembuktian",                    // JSON string untuk cara pembuktian
-                "data_alat",                                // JSON string untuk alat
-                "data_etika",                               // JSON string untuk etika
-                "data_hasil_pembuktian",                    // JSON string untuk hasil pembuktian
-                "data_analisis",                             // JSON string untuk analisis
-                "data_jurusan",                              // JSON string untuk jurusan
-                "data_aspek_jurusan",                         // JSON string untuk aspek jurusan
-                "data_solusi",                                // JSON string untuk solusi
-                "data_potensi",                               // JSON string untuk potensi energi
-                "data_refleksi",                               // JSON string untuk refleksi
-                "data_penilaian_diri"                          // JSON string untuk penilaian diri
+                "Bagian_A",
+                "Bagian_B",
+                "Bagian_C",
+                "Bagian_D",
+                "Bagian_E",
+                "Bagian_F"
             ]
         };
 
@@ -1522,7 +1113,7 @@
         let isOnline = true;
         let autoSaveTimeout;
 
-        // ==================== CEK KONEKSI INTERNET ====================
+        // ==================== CEK KONEKSI ====================
         function checkConnection() {
             const statusIndicator = document.getElementById('statusIndicator');
             const connectionStatus = document.getElementById('connectionStatus');
@@ -1594,7 +1185,6 @@
                     
                     enableForm();
                 } else {
-                    // TIDAK ADA FALLBACK - Tampilkan error
                     document.getElementById('errorMessage').style.display = 'block';
                     document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
                     disableAllInputs(true);
@@ -1611,7 +1201,6 @@
                 if (script) document.head.removeChild(script);
                 delete window[callbackName];
                 
-                // TIDAK ADA FALLBACK - Tampilkan error
                 document.getElementById('errorMessage').style.display = 'block';
                 document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman dan periksa koneksi internet Anda.';
                 disableAllInputs(true);
@@ -1630,7 +1219,6 @@
                 document.getElementById('tugas').disabled = false;
                 document.getElementById('submitBtn').disabled = false;
                 
-                // Load data dari localStorage setelah form di-enable
                 loadFromLocalStorage();
             }
         }
@@ -1639,9 +1227,7 @@
         function saveToLocalStorage() {
             if (!isOnline) return;
             
-            if (autoSaveTimeout) {
-                clearTimeout(autoSaveTimeout);
-            }
+            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
             
             autoSaveTimeout = setTimeout(() => {
                 const formData = collectAllFormData();
@@ -1677,55 +1263,66 @@
             const textInputs = document.querySelectorAll('input[type="text"]');
             const radioGroups = ['prediksi1_opsi', 'prediksi2_skenario', 'tipe_fenomena', 'pilihan_prediksi', 'kesesuaian', 'jurusan'];
 
-            checkboxes.forEach(checkbox => {
-                totalFields++;
-                if (checkbox.checked) filledFields++;
-            });
-
-            textareas.forEach(textarea => {
-                totalFields++;
-                if (textarea.value && textarea.value.trim() !== '') filledFields++;
-            });
-
-            selects.forEach(select => {
-                totalFields++;
-                if (select.value && select.value !== '') filledFields++;
-            });
-
-            textInputs.forEach(input => {
-                if (input.id !== 'prediksi1_lain' && input.id !== 'prediksi2_lain' && input.id !== 'cara2_lain_isi' && 
-                    input.id !== 'jurusan_lain' && input.id !== 'istilah_lainnya' && input.id !== 'alat_ukur_lain') {
-                    totalFields++;
-                    if (input.value && input.value.trim() !== '') filledFields++;
-                }
-            });
-
-            radioGroups.forEach(group => {
-                totalFields++;
-                const selected = document.querySelector(`input[name="${group}"]:checked`);
-                if (selected) filledFields++;
-            });
+            checkboxes.forEach(checkbox => { totalFields++; if (checkbox.checked) filledFields++; });
+            textareas.forEach(textarea => { totalFields++; if (textarea.value && textarea.value.trim() !== '') filledFields++; });
+            selects.forEach(select => { totalFields++; if (select.value && select.value !== '') filledFields++; });
+            textInputs.forEach(input => { totalFields++; if (input.value && input.value.trim() !== '') filledFields++; });
+            radioGroups.forEach(group => { totalFields++; if (document.querySelector(`input[name="${group}"]:checked`)) filledFields++; });
 
             const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
-            
             const progressBar = document.getElementById('progressBar');
             progressBar.style.width = percentage + '%';
             progressBar.innerHTML = percentage + '%';
         }
 
-        // ==================== COLLECT FORM DATA PER BAGIAN ====================
+        // ==================== COLLECT FORM DATA ====================
         function collectAllFormData() {
             return {
-                identitas: {
-                    kelas: document.getElementById('kelas')?.value || '',
-                    nama: document.getElementById('nama')?.value || '',
-                    kelompok: document.getElementById('kelompok')?.value || '',
-                    tugas: document.getElementById('tugas')?.value || ''
+                bagian_a: {
+                    identitas: {
+                        kelas: document.getElementById('kelas')?.value || '',
+                        nama: document.getElementById('nama')?.value || '',
+                        kelompok: document.getElementById('kelompok')?.value || '',
+                        tugas: document.getElementById('tugas')?.value || ''
+                    }
                 },
-                literasi: collectLiterasiData(),
+                bagian_b: collectLiterasiData(),
+                bagian_c: collectPertemuan1Data(),
+                bagian_d: collectPertemuan2Data(),
+                bagian_e: collectRefleksiData(),
+                bagian_f: collectPenilaianData()
+            };
+        }
+
+        function collectLiterasiData() {
+            return {
+                literasi1: document.getElementById('literasi1')?.value || '',
+                literasi3: document.getElementById('literasi3')?.value || '',
+                terbarukan: {
+                    pengertian: document.getElementById('terbarukan_pengertian')?.value || '',
+                    contoh1: document.getElementById('terbarukan_contoh1')?.value || '',
+                    contoh2: document.getElementById('terbarukan_contoh2')?.value || ''
+                },
+                tak_terbarukan: {
+                    pengertian: document.getElementById('tak_terbarukan_pengertian')?.value || '',
+                    contoh1: document.getElementById('tak_terbarukan_contoh1')?.value || '',
+                    contoh2: document.getElementById('tak_terbarukan_contoh2')?.value || ''
+                },
+                bentuk_energi: {
+                    a: { bentuk: document.getElementById('energi_a')?.value || '', contoh: document.getElementById('contoh_a')?.value || '' },
+                    b: { bentuk: document.getElementById('energi_b')?.value || '', contoh: document.getElementById('contoh_b')?.value || '' },
+                    c: { bentuk: document.getElementById('energi_c')?.value || '', contoh: document.getElementById('contoh_c')?.value || '' },
+                    d: { bentuk: document.getElementById('energi_d')?.value || '', contoh: document.getElementById('contoh_d')?.value || '' },
+                    e: { bentuk: document.getElementById('energi_e')?.value || '', contoh: document.getElementById('contoh_e')?.value || '' }
+                }
+            };
+        }
+
+        function collectPertemuan1Data() {
+            return {
                 peristiwa: collectPeristiwaData(),
-                penjelasan_ilmiah: {
-                    pilihan: document.getElementById('pilihan_peristiwa')?.value || '',
+                pilihan: {
+                    peristiwa: document.getElementById('pilihan_peristiwa')?.value || '',
                     energi_awal: document.getElementById('pilihan_energi_awal')?.value || '',
                     energi_akhir: document.getElementById('pilihan_energi_akhir')?.value || '',
                     energi_lain: document.getElementById('pilihan_energi_lain')?.value || '',
@@ -1743,7 +1340,11 @@
                         lainnya: document.getElementById('istilah_lainnya')?.value || ''
                     }
                 },
-                observasi_detail: collectObservasiData(),
+                observasi_detail: {
+                    peristiwa: document.getElementById('observasi_peristiwa')?.value || '',
+                    energi: document.getElementById('observasi_energi')?.value || '',
+                    waktu: collectObservasiWaktu()
+                },
                 pola: {
                     pola: document.getElementById('pola')?.value || '',
                     faktor: document.getElementById('pola_faktor')?.value || ''
@@ -1758,7 +1359,38 @@
                     lain: document.getElementById('prediksi2_lain')?.value || '',
                     hasil: document.getElementById('prediksi2_hasil')?.value || '',
                     alasan: document.getElementById('prediksi2_alasan')?.value || ''
-                },
+                }
+            };
+        }
+
+        function collectPeristiwaData() {
+            const data = {};
+            for (let i = 1; i <= 5; i++) {
+                data[`peristiwa${i}`] = {
+                    nama: document.getElementById(`peristiwa${i}_nama`)?.value || '',
+                    awal: document.getElementById(`peristiwa${i}_awal`)?.value || '',
+                    akhir: document.getElementById(`peristiwa${i}_akhir`)?.value || '',
+                    sumber: document.getElementById(`peristiwa${i}_sumber`)?.value || '',
+                    manfaat: document.getElementById(`peristiwa${i}_manfaat`)?.value || ''
+                };
+            }
+            return data;
+        }
+
+        function collectObservasiWaktu() {
+            const data = {};
+            const waktuIndices = [0,5,10,15,20,25,30];
+            waktuIndices.forEach(waktu => {
+                data[`waktu${waktu}`] = {
+                    kejadian: document.getElementById(`obs_waktu${waktu}`)?.value || '',
+                    kondisi: document.getElementById(`obs_kondisi${waktu}`)?.value || ''
+                };
+            });
+            return data;
+        }
+
+        function collectPertemuan2Data() {
+            return {
                 fenomena: {
                     tipe: document.querySelector('input[name="tipe_fenomena"]:checked')?.value || '',
                     peristiwa: document.getElementById('komponen_peristiwa')?.value || '',
@@ -1834,80 +1466,31 @@
                     ide: document.getElementById('solusi_ide')?.value || '',
                     cara: document.getElementById('solusi_cara')?.value || ''
                 },
-                potensi: collectPotensiData(),
-                refleksi: {
-                    q1: document.getElementById('refleksi1')?.value || '',
-                    q2: document.getElementById('refleksi2')?.value || '',
-                    q3: document.getElementById('refleksi3')?.value || '',
-                    q4: document.getElementById('refleksi4')?.value || ''
-                },
-                penilaian_diri: {
-                    nilai1: document.getElementById('nilai1')?.value || '3',
-                    nilai2: document.getElementById('nilai2')?.value || '3',
-                    nilai3: document.getElementById('nilai3')?.value || '3',
-                    nilai4: document.getElementById('nilai4')?.value || '3',
-                    nilai5: document.getElementById('nilai5')?.value || '3',
-                    nilai6: document.getElementById('nilai6')?.value || '3'
+                potensi: {
+                    matahari: {
+                        sumber: document.getElementById('potensi_matahari_sumber')?.value || '',
+                        guna: document.getElementById('potensi_matahari_guna')?.value || ''
+                    },
+                    angin: {
+                        sumber: document.getElementById('potensi_angin_sumber')?.value || '',
+                        guna: document.getElementById('potensi_angin_guna')?.value || ''
+                    },
+                    air: {
+                        sumber: document.getElementById('potensi_air_sumber')?.value || '',
+                        guna: document.getElementById('potensi_air_guna')?.value || ''
+                    },
+                    biomassa: {
+                        sumber: document.getElementById('potensi_biomassa_sumber')?.value || '',
+                        guna: document.getElementById('potensi_biomassa_guna')?.value || ''
+                    },
+                    lain: {
+                        sumber: document.getElementById('potensi_lain_sumber')?.value || '',
+                        guna: document.getElementById('potensi_lain_guna')?.value || ''
+                    },
+                    terpilih: document.getElementById('potensi_terpilih')?.value || '',
+                    ide: document.getElementById('potensi_ide')?.value || ''
                 }
             };
-        }
-
-        function collectLiterasiData() {
-            const data = {
-                literasi1: document.getElementById('literasi1')?.value || '',
-                literasi3: document.getElementById('literasi3')?.value || '',
-                terbarukan: {
-                    pengertian: document.getElementById('terbarukan_pengertian')?.value || '',
-                    contoh1: document.getElementById('terbarukan_contoh1')?.value || '',
-                    contoh2: document.getElementById('terbarukan_contoh2')?.value || ''
-                },
-                tak_terbarukan: {
-                    pengertian: document.getElementById('tak_terbarukan_pengertian')?.value || '',
-                    contoh1: document.getElementById('tak_terbarukan_contoh1')?.value || '',
-                    contoh2: document.getElementById('tak_terbarukan_contoh2')?.value || ''
-                },
-                bentuk_energi: {}
-            };
-            
-            const huruf = ['a', 'b', 'c', 'd', 'e'];
-            huruf.forEach(h => {
-                data.bentuk_energi[`${h}`] = {
-                    bentuk: document.getElementById(`energi_${h}`)?.value || '',
-                    contoh: document.getElementById(`contoh_${h}`)?.value || ''
-                };
-            });
-            
-            return data;
-        }
-
-        function collectPeristiwaData() {
-            const data = {};
-            for (let i = 1; i <= 5; i++) {
-                data[`peristiwa${i}`] = {
-                    nama: document.getElementById(`peristiwa${i}_nama`)?.value || '',
-                    awal: document.getElementById(`peristiwa${i}_awal`)?.value || '',
-                    akhir: document.getElementById(`peristiwa${i}_akhir`)?.value || '',
-                    sumber: document.getElementById(`peristiwa${i}_sumber`)?.value || '',
-                    manfaat: document.getElementById(`peristiwa${i}_manfaat`)?.value || ''
-                };
-            }
-            return data;
-        }
-
-        function collectObservasiData() {
-            const data = {
-                peristiwa: document.getElementById('observasi_peristiwa')?.value || '',
-                energi: document.getElementById('observasi_energi')?.value || '',
-                waktu: {}
-            };
-            const waktuIndices = [0,5,10,15,20,25,30];
-            waktuIndices.forEach(waktu => {
-                data.waktu[`waktu${waktu}`] = {
-                    kejadian: document.getElementById(`obs_waktu${waktu}`)?.value || '',
-                    kondisi: document.getElementById(`obs_kondisi${waktu}`)?.value || ''
-                };
-            });
-            return data;
         }
 
         function collectAlatData() {
@@ -1956,309 +1539,307 @@
             return data;
         }
 
-        function collectPotensiData() {
+        function collectRefleksiData() {
             return {
-                matahari: {
-                    sumber: document.getElementById('potensi_matahari_sumber')?.value || '',
-                    guna: document.getElementById('potensi_matahari_guna')?.value || ''
-                },
-                angin: {
-                    sumber: document.getElementById('potensi_angin_sumber')?.value || '',
-                    guna: document.getElementById('potensi_angin_guna')?.value || ''
-                },
-                air: {
-                    sumber: document.getElementById('potensi_air_sumber')?.value || '',
-                    guna: document.getElementById('potensi_air_guna')?.value || ''
-                },
-                biomassa: {
-                    sumber: document.getElementById('potensi_biomassa_sumber')?.value || '',
-                    guna: document.getElementById('potensi_biomassa_guna')?.value || ''
-                },
-                lain: {
-                    sumber: document.getElementById('potensi_lain_sumber')?.value || '',
-                    guna: document.getElementById('potensi_lain_guna')?.value || ''
-                },
-                terpilih: document.getElementById('potensi_terpilih')?.value || '',
-                ide: document.getElementById('potensi_ide')?.value || ''
+                q1: document.getElementById('refleksi1')?.value || '',
+                q2: document.getElementById('refleksi2')?.value || '',
+                q3: document.getElementById('refleksi3')?.value || '',
+                q4: document.getElementById('refleksi4')?.value || ''
+            };
+        }
+
+        function collectPenilaianData() {
+            return {
+                nilai1: document.getElementById('nilai1')?.value || '3',
+                nilai2: document.getElementById('nilai2')?.value || '3',
+                nilai3: document.getElementById('nilai3')?.value || '3',
+                nilai4: document.getElementById('nilai4')?.value || '3',
+                nilai5: document.getElementById('nilai5')?.value || '3',
+                nilai6: document.getElementById('nilai6')?.value || '3'
             };
         }
 
         function populateFormData(savedData) {
-            if (savedData.identitas) {
-                if (savedData.identitas.kelas) {
-                    document.getElementById('kelas').value = savedData.identitas.kelas;
-                    updateNamaDropdown();
-                }
-                setTimeout(() => {
-                    if (savedData.identitas.nama) document.getElementById('nama').value = savedData.identitas.nama;
-                }, 500);
-                document.getElementById('kelompok').value = savedData.identitas.kelompok || '';
-                document.getElementById('tugas').value = savedData.identitas.tugas || '';
+            if (savedData.bagian_a?.identitas) {
+                const id = savedData.bagian_a.identitas;
+                if (id.kelas) { document.getElementById('kelas').value = id.kelas; updateNamaDropdown(); }
+                setTimeout(() => { if (id.nama) document.getElementById('nama').value = id.nama; }, 500);
+                document.getElementById('kelompok').value = id.kelompok || '';
+                document.getElementById('tugas').value = id.tugas || '';
             }
 
-            if (savedData.literasi) {
-                const l = savedData.literasi;
-                document.getElementById('literasi1').value = l.literasi1 || '';
-                document.getElementById('literasi3').value = l.literasi3 || '';
+            if (savedData.bagian_b) {
+                const b = savedData.bagian_b;
+                document.getElementById('literasi1').value = b.literasi1 || '';
+                document.getElementById('literasi3').value = b.literasi3 || '';
                 
-                if (l.terbarukan) {
-                    document.getElementById('terbarukan_pengertian').value = l.terbarukan.pengertian || '';
-                    document.getElementById('terbarukan_contoh1').value = l.terbarukan.contoh1 || '';
-                    document.getElementById('terbarukan_contoh2').value = l.terbarukan.contoh2 || '';
+                if (b.terbarukan) {
+                    document.getElementById('terbarukan_pengertian').value = b.terbarukan.pengertian || '';
+                    document.getElementById('terbarukan_contoh1').value = b.terbarukan.contoh1 || '';
+                    document.getElementById('terbarukan_contoh2').value = b.terbarukan.contoh2 || '';
                 }
                 
-                if (l.tak_terbarukan) {
-                    document.getElementById('tak_terbarukan_pengertian').value = l.tak_terbarukan.pengertian || '';
-                    document.getElementById('tak_terbarukan_contoh1').value = l.tak_terbarukan.contoh1 || '';
-                    document.getElementById('tak_terbarukan_contoh2').value = l.tak_terbarukan.contoh2 || '';
+                if (b.tak_terbarukan) {
+                    document.getElementById('tak_terbarukan_pengertian').value = b.tak_terbarukan.pengertian || '';
+                    document.getElementById('tak_terbarukan_contoh1').value = b.tak_terbarukan.contoh1 || '';
+                    document.getElementById('tak_terbarukan_contoh2').value = b.tak_terbarukan.contoh2 || '';
                 }
                 
-                if (l.bentuk_energi) {
+                if (b.bentuk_energi) {
                     const huruf = ['a', 'b', 'c', 'd', 'e'];
                     huruf.forEach(h => {
-                        if (l.bentuk_energi[h]) {
-                            document.getElementById(`energi_${h}`).value = l.bentuk_energi[h].bentuk || '';
-                            document.getElementById(`contoh_${h}`).value = l.bentuk_energi[h].contoh || '';
+                        if (b.bentuk_energi[h]) {
+                            document.getElementById(`energi_${h}`).value = b.bentuk_energi[h].bentuk || '';
+                            document.getElementById(`contoh_${h}`).value = b.bentuk_energi[h].contoh || '';
                         }
                     });
                 }
             }
 
-            if (savedData.peristiwa) {
-                for (let i = 1; i <= 5; i++) {
-                    const p = savedData.peristiwa[`peristiwa${i}`];
-                    if (p) {
-                        document.getElementById(`peristiwa${i}_nama`).value = p.nama || '';
-                        document.getElementById(`peristiwa${i}_awal`).value = p.awal || '';
-                        document.getElementById(`peristiwa${i}_akhir`).value = p.akhir || '';
-                        document.getElementById(`peristiwa${i}_sumber`).value = p.sumber || '';
-                        document.getElementById(`peristiwa${i}_manfaat`).value = p.manfaat || '';
-                    }
-                }
-            }
-
-            if (savedData.penjelasan_ilmiah) {
-                const pi = savedData.penjelasan_ilmiah;
-                document.getElementById('pilihan_peristiwa').value = pi.pilihan || '';
-                document.getElementById('pilihan_energi_awal').value = pi.energi_awal || '';
-                document.getElementById('pilihan_energi_akhir').value = pi.energi_akhir || '';
-                document.getElementById('pilihan_energi_lain').value = pi.energi_lain || '';
-                document.getElementById('penjelasan_ilmiah').value = pi.penjelasan || '';
+            if (savedData.bagian_c) {
+                const c = savedData.bagian_c;
                 
-                if (pi.istilah) {
-                    document.getElementById('istilah_kinetik').checked = pi.istilah.kinetik || false;
-                    document.getElementById('istilah_potensial').checked = pi.istilah.potensial || false;
-                    document.getElementById('istilah_panas').checked = pi.istilah.panas || false;
-                    document.getElementById('istilah_listrik').checked = pi.istilah.listrik || false;
-                    document.getElementById('istilah_kimia').checked = pi.istilah.kimia || false;
-                    document.getElementById('istilah_cahaya').checked = pi.istilah.cahaya || false;
-                    document.getElementById('istilah_bunyi').checked = pi.istilah.bunyi || false;
-                    document.getElementById('istilah_kekekalan').checked = pi.istilah.kekekalan || false;
-                    document.getElementById('istilah_perubahan').checked = pi.istilah.perubahan || false;
-                    document.getElementById('istilah_lainnya').value = pi.istilah.lainnya || '';
-                }
-            }
-
-            if (savedData.observasi_detail) {
-                const od = savedData.observasi_detail;
-                document.getElementById('observasi_peristiwa').value = od.peristiwa || '';
-                document.getElementById('observasi_energi').value = od.energi || '';
-                
-                if (od.waktu) {
-                    document.getElementById('obs_waktu0').value = od.waktu.waktu0?.kejadian || '';
-                    document.getElementById('obs_kondisi0').value = od.waktu.waktu0?.kondisi || '';
-                    document.getElementById('obs_waktu5').value = od.waktu.waktu5?.kejadian || '';
-                    document.getElementById('obs_kondisi5').value = od.waktu.waktu5?.kondisi || '';
-                    document.getElementById('obs_waktu10').value = od.waktu.waktu10?.kejadian || '';
-                    document.getElementById('obs_kondisi10').value = od.waktu.waktu10?.kondisi || '';
-                    document.getElementById('obs_waktu15').value = od.waktu.waktu15?.kejadian || '';
-                    document.getElementById('obs_kondisi15').value = od.waktu.waktu15?.kondisi || '';
-                    document.getElementById('obs_waktu20').value = od.waktu.waktu20?.kejadian || '';
-                    document.getElementById('obs_kondisi20').value = od.waktu.waktu20?.kondisi || '';
-                    document.getElementById('obs_waktu25').value = od.waktu.waktu25?.kejadian || '';
-                    document.getElementById('obs_kondisi25').value = od.waktu.waktu25?.kondisi || '';
-                    document.getElementById('obs_waktu30').value = od.waktu.waktu30?.kejadian || '';
-                    document.getElementById('obs_kondisi30').value = od.waktu.waktu30?.kondisi || '';
-                }
-            }
-
-            if (savedData.pola) {
-                document.getElementById('pola').value = savedData.pola.pola || '';
-                document.getElementById('pola_faktor').value = savedData.pola.faktor || '';
-            }
-
-            if (savedData.prediksi1) {
-                const radios = document.getElementsByName('prediksi1_opsi');
-                radios.forEach(r => { if (r.value === savedData.prediksi1.opsi) r.checked = true; });
-                document.getElementById('prediksi1_lain').value = savedData.prediksi1.lain || '';
-                document.getElementById('prediksi1_alasan').value = savedData.prediksi1.alasan || '';
-            }
-
-            if (savedData.prediksi2) {
-                const radios = document.getElementsByName('prediksi2_skenario');
-                radios.forEach(r => { if (r.value === savedData.prediksi2.skenario) r.checked = true; });
-                document.getElementById('prediksi2_lain').value = savedData.prediksi2.lain || '';
-                document.getElementById('prediksi2_hasil').value = savedData.prediksi2.hasil || '';
-                document.getElementById('prediksi2_alasan').value = savedData.prediksi2.alasan || '';
-            }
-
-            if (savedData.fenomena) {
-                const radios = document.getElementsByName('tipe_fenomena');
-                radios.forEach(r => { if (r.value === savedData.fenomena.tipe) r.checked = true; });
-                document.getElementById('komponen_peristiwa').value = savedData.fenomena.peristiwa || '';
-                document.getElementById('komponen_energi_awal').value = savedData.fenomena.energi_awal || '';
-                document.getElementById('komponen_energi_akhir').value = savedData.fenomena.energi_akhir || '';
-                document.getElementById('komponen_sumber').value = savedData.fenomena.sumber || '';
-                document.getElementById('komponen_manfaat').value = savedData.fenomena.manfaat || '';
-            }
-
-            if (savedData.pilihan_prediksi) {
-                const radios = document.getElementsByName('pilihan_prediksi');
-                radios.forEach(r => { if (r.value === savedData.pilihan_prediksi.pilihan) r.checked = true; });
-                document.getElementById('prediksi_terpilih').value = savedData.pilihan_prediksi.prediksi_terpilih || '';
-            }
-
-            if (savedData.cara_pembuktian) {
-                const cp = savedData.cara_pembuktian;
-                if (cp.cara1) {
-                    document.getElementById('cara1_waktu').checked = cp.cara1.waktu || false;
-                    document.getElementById('cara1_kondisi').checked = cp.cara1.kondisi || false;
-                    document.getElementById('cara1_objek').checked = cp.cara1.objek || false;
-                    document.getElementById('cara1_bandingkan').value = cp.cara1.bandingkan || '';
-                    document.getElementById('cara1_langkah1').value = cp.cara1.langkah1 || '';
-                    document.getElementById('cara1_langkah2').value = cp.cara1.langkah2 || '';
-                    document.getElementById('cara1_langkah3').value = cp.cara1.langkah3 || '';
-                }
-                if (cp.cara2) {
-                    document.getElementById('cara2_sumber').checked = cp.cara2.sumber || false;
-                    document.getElementById('cara2_suhu').checked = cp.cara2.suhu || false;
-                    document.getElementById('cara2_tinggi').checked = cp.cara2.tinggi || false;
-                    document.getElementById('cara2_jarak').checked = cp.cara2.jarak || false;
-                    document.getElementById('cara2_lain').checked = cp.cara2.lain || false;
-                    document.getElementById('cara2_lain_isi').value = cp.cara2.lain_isi || '';
-                    document.getElementById('cara2_perlakuan').value = cp.cara2.perlakuan || '';
-                    document.getElementById('cara2_kontrol').value = cp.cara2.kontrol || '';
-                    document.getElementById('cara2_langkah1').value = cp.cara2.langkah1 || '';
-                    document.getElementById('cara2_langkah2').value = cp.cara2.langkah2 || '';
-                    document.getElementById('cara2_langkah3').value = cp.cara2.langkah3 || '';
-                    document.getElementById('cara2_langkah4').value = cp.cara2.langkah4 || '';
-                    document.getElementById('cara2_langkah5').value = cp.cara2.langkah5 || '';
-                }
-            }
-
-            if (savedData.alat) {
-                const a = savedData.alat;
-                if (a.alat_ukur) {
-                    document.getElementById('alat_ukur_stopwatch').checked = a.alat_ukur.stopwatch || false;
-                    document.getElementById('alat_ukur_thermometer').checked = a.alat_ukur.thermometer || false;
-                    document.getElementById('alat_ukur_penggaris').checked = a.alat_ukur.penggaris || false;
-                    document.getElementById('alat_ukur_meteran').checked = a.alat_ukur.meteran || false;
-                    document.getElementById('alat_ukur_lain').value = a.alat_ukur.lain || '';
-                }
-                document.getElementById('alat_tidak').checked = a.tidak || false;
-                
-                for (let i = 1; i <= 4; i++) {
-                    const alat = a[`alat${i}`];
-                    if (alat) {
-                        document.getElementById(`alat${i}_nama`).value = alat.nama || '';
-                        document.getElementById(`alat${i}_guna`).value = alat.guna || '';
-                        document.getElementById(`alat${i}_tersedia`).value = alat.tersedia || '';
-                    }
-                }
-            }
-
-            if (savedData.etika) {
-                const e = savedData.etika;
-                document.getElementById('etik_listrik').checked = e.listrik || false;
-                document.getElementById('etik_panas').checked = e.panas || false;
-                document.getElementById('etik_jatuh').checked = e.jatuh || false;
-                document.getElementById('etik_kerja').checked = e.kerja || false;
-                document.getElementById('etik_sampah').checked = e.sampah || false;
-                document.getElementById('etik_bersih').checked = e.bersih || false;
-                document.getElementById('etik_kembali').checked = e.kembali || false;
-            }
-
-            if (savedData.hasil_pembuktian) {
-                for (let i = 1; i <= 6; i++) {
-                    const h = savedData.hasil_pembuktian[`hasil${i}`];
-                    if (h) {
-                        document.getElementById(`hasil_waktu${i}`).value = h.waktu || '';
-                        document.getElementById(`hasil_isi${i}`).value = h.isi || '';
-                    }
-                }
-            }
-
-            if (savedData.analisis) {
-                const a = savedData.analisis;
-                const radios = document.getElementsByName('kesesuaian');
-                radios.forEach(r => { if (r.value === a.kesesuaian) r.checked = true; });
-                document.getElementById('analisis_data').value = a.data || '';
-                document.getElementById('analisis_penjelasan').value = a.penjelasan || '';
-                document.getElementById('analisis_hilang').value = a.hilang || '';
-                document.getElementById('kesimpulan').value = a.kesimpulan || '';
-                
-                if (a.energi) {
-                    for (let i = 0; i < a.energi.length; i++) {
-                        const e = a.energi[i];
-                        if (e) {
-                            document.getElementById(`energi${i+1}`).value = e.energi || '';
-                            document.getElementById(`sumber${i+1}`).value = e.sumber || '';
-                            document.getElementById(`tujuan${i+1}`).value = e.tujuan || '';
+                if (c.peristiwa) {
+                    for (let i = 1; i <= 5; i++) {
+                        const p = c.peristiwa[`peristiwa${i}`];
+                        if (p) {
+                            document.getElementById(`peristiwa${i}_nama`).value = p.nama || '';
+                            document.getElementById(`peristiwa${i}_awal`).value = p.awal || '';
+                            document.getElementById(`peristiwa${i}_akhir`).value = p.akhir || '';
+                            document.getElementById(`peristiwa${i}_sumber`).value = p.sumber || '';
+                            document.getElementById(`peristiwa${i}_manfaat`).value = p.manfaat || '';
                         }
                     }
                 }
+                
+                if (c.pilihan) {
+                    document.getElementById('pilihan_peristiwa').value = c.pilihan.peristiwa || '';
+                    document.getElementById('pilihan_energi_awal').value = c.pilihan.energi_awal || '';
+                    document.getElementById('pilihan_energi_akhir').value = c.pilihan.energi_akhir || '';
+                    document.getElementById('pilihan_energi_lain').value = c.pilihan.energi_lain || '';
+                    document.getElementById('penjelasan_ilmiah').value = c.pilihan.penjelasan || '';
+                    
+                    if (c.pilihan.istilah) {
+                        const ist = c.pilihan.istilah;
+                        document.getElementById('istilah_kinetik').checked = ist.kinetik || false;
+                        document.getElementById('istilah_potensial').checked = ist.potensial || false;
+                        document.getElementById('istilah_panas').checked = ist.panas || false;
+                        document.getElementById('istilah_listrik').checked = ist.listrik || false;
+                        document.getElementById('istilah_kimia').checked = ist.kimia || false;
+                        document.getElementById('istilah_cahaya').checked = ist.cahaya || false;
+                        document.getElementById('istilah_bunyi').checked = ist.bunyi || false;
+                        document.getElementById('istilah_kekekalan').checked = ist.kekekalan || false;
+                        document.getElementById('istilah_perubahan').checked = ist.perubahan || false;
+                        document.getElementById('istilah_lainnya').value = ist.lainnya || '';
+                    }
+                }
+                
+                if (c.observasi_detail) {
+                    const od = c.observasi_detail;
+                    document.getElementById('observasi_peristiwa').value = od.peristiwa || '';
+                    document.getElementById('observasi_energi').value = od.energi || '';
+                    
+                    if (od.waktu) {
+                        const w = od.waktu;
+                        document.getElementById('obs_waktu0').value = w.waktu0?.kejadian || '';
+                        document.getElementById('obs_kondisi0').value = w.waktu0?.kondisi || '';
+                        document.getElementById('obs_waktu5').value = w.waktu5?.kejadian || '';
+                        document.getElementById('obs_kondisi5').value = w.waktu5?.kondisi || '';
+                        document.getElementById('obs_waktu10').value = w.waktu10?.kejadian || '';
+                        document.getElementById('obs_kondisi10').value = w.waktu10?.kondisi || '';
+                        document.getElementById('obs_waktu15').value = w.waktu15?.kejadian || '';
+                        document.getElementById('obs_kondisi15').value = w.waktu15?.kondisi || '';
+                        document.getElementById('obs_waktu20').value = w.waktu20?.kejadian || '';
+                        document.getElementById('obs_kondisi20').value = w.waktu20?.kondisi || '';
+                        document.getElementById('obs_waktu25').value = w.waktu25?.kejadian || '';
+                        document.getElementById('obs_kondisi25').value = w.waktu25?.kondisi || '';
+                        document.getElementById('obs_waktu30').value = w.waktu30?.kejadian || '';
+                        document.getElementById('obs_kondisi30').value = w.waktu30?.kondisi || '';
+                    }
+                }
+                
+                if (c.pola) {
+                    document.getElementById('pola').value = c.pola.pola || '';
+                    document.getElementById('pola_faktor').value = c.pola.faktor || '';
+                }
+                
+                if (c.prediksi1) {
+                    const radios = document.getElementsByName('prediksi1_opsi');
+                    radios.forEach(r => { if (r.value === c.prediksi1.opsi) r.checked = true; });
+                    document.getElementById('prediksi1_lain').value = c.prediksi1.lain || '';
+                    document.getElementById('prediksi1_alasan').value = c.prediksi1.alasan || '';
+                }
+                
+                if (c.prediksi2) {
+                    const radios = document.getElementsByName('prediksi2_skenario');
+                    radios.forEach(r => { if (r.value === c.prediksi2.skenario) r.checked = true; });
+                    document.getElementById('prediksi2_lain').value = c.prediksi2.lain || '';
+                    document.getElementById('prediksi2_hasil').value = c.prediksi2.hasil || '';
+                    document.getElementById('prediksi2_alasan').value = c.prediksi2.alasan || '';
+                }
             }
 
-            if (savedData.jurusan) {
-                const radios = document.getElementsByName('jurusan');
-                radios.forEach(r => { if (r.value === savedData.jurusan.pilihan) r.checked = true; });
-                document.getElementById('jurusan_lain').value = savedData.jurusan.lain || '';
+            if (savedData.bagian_d) {
+                const d = savedData.bagian_d;
+                
+                if (d.fenomena) {
+                    const radios = document.getElementsByName('tipe_fenomena');
+                    radios.forEach(r => { if (r.value === d.fenomena.tipe) r.checked = true; });
+                    document.getElementById('komponen_peristiwa').value = d.fenomena.peristiwa || '';
+                    document.getElementById('komponen_energi_awal').value = d.fenomena.energi_awal || '';
+                    document.getElementById('komponen_energi_akhir').value = d.fenomena.energi_akhir || '';
+                    document.getElementById('komponen_sumber').value = d.fenomena.sumber || '';
+                    document.getElementById('komponen_manfaat').value = d.fenomena.manfaat || '';
+                }
+                
+                if (d.pilihan_prediksi) {
+                    const radios = document.getElementsByName('pilihan_prediksi');
+                    radios.forEach(r => { if (r.value === d.pilihan_prediksi.pilihan) r.checked = true; });
+                    document.getElementById('prediksi_terpilih').value = d.pilihan_prediksi.prediksi_terpilih || '';
+                }
+                
+                if (d.cara_pembuktian) {
+                    const cp = d.cara_pembuktian;
+                    if (cp.cara1) {
+                        document.getElementById('cara1_waktu').checked = cp.cara1.waktu || false;
+                        document.getElementById('cara1_kondisi').checked = cp.cara1.kondisi || false;
+                        document.getElementById('cara1_objek').checked = cp.cara1.objek || false;
+                        document.getElementById('cara1_bandingkan').value = cp.cara1.bandingkan || '';
+                        document.getElementById('cara1_langkah1').value = cp.cara1.langkah1 || '';
+                        document.getElementById('cara1_langkah2').value = cp.cara1.langkah2 || '';
+                        document.getElementById('cara1_langkah3').value = cp.cara1.langkah3 || '';
+                    }
+                    if (cp.cara2) {
+                        document.getElementById('cara2_sumber').checked = cp.cara2.sumber || false;
+                        document.getElementById('cara2_suhu').checked = cp.cara2.suhu || false;
+                        document.getElementById('cara2_tinggi').checked = cp.cara2.tinggi || false;
+                        document.getElementById('cara2_jarak').checked = cp.cara2.jarak || false;
+                        document.getElementById('cara2_lain').checked = cp.cara2.lain || false;
+                        document.getElementById('cara2_lain_isi').value = cp.cara2.lain_isi || '';
+                        document.getElementById('cara2_perlakuan').value = cp.cara2.perlakuan || '';
+                        document.getElementById('cara2_kontrol').value = cp.cara2.kontrol || '';
+                        document.getElementById('cara2_langkah1').value = cp.cara2.langkah1 || '';
+                        document.getElementById('cara2_langkah2').value = cp.cara2.langkah2 || '';
+                        document.getElementById('cara2_langkah3').value = cp.cara2.langkah3 || '';
+                        document.getElementById('cara2_langkah4').value = cp.cara2.langkah4 || '';
+                        document.getElementById('cara2_langkah5').value = cp.cara2.langkah5 || '';
+                    }
+                }
+                
+                if (d.alat) {
+                    const a = d.alat;
+                    if (a.alat_ukur) {
+                        document.getElementById('alat_ukur_stopwatch').checked = a.alat_ukur.stopwatch || false;
+                        document.getElementById('alat_ukur_thermometer').checked = a.alat_ukur.thermometer || false;
+                        document.getElementById('alat_ukur_penggaris').checked = a.alat_ukur.penggaris || false;
+                        document.getElementById('alat_ukur_meteran').checked = a.alat_ukur.meteran || false;
+                        document.getElementById('alat_ukur_lain').value = a.alat_ukur.lain || '';
+                    }
+                    document.getElementById('alat_tidak').checked = a.tidak || false;
+                    
+                    for (let i = 1; i <= 4; i++) {
+                        const alat = a[`alat${i}`];
+                        if (alat) {
+                            document.getElementById(`alat${i}_nama`).value = alat.nama || '';
+                            document.getElementById(`alat${i}_guna`).value = alat.guna || '';
+                            document.getElementById(`alat${i}_tersedia`).value = alat.tersedia || '';
+                        }
+                    }
+                }
+                
+                if (d.etika) {
+                    const e = d.etika;
+                    document.getElementById('etik_listrik').checked = e.listrik || false;
+                    document.getElementById('etik_panas').checked = e.panas || false;
+                    document.getElementById('etik_jatuh').checked = e.jatuh || false;
+                    document.getElementById('etik_kerja').checked = e.kerja || false;
+                    document.getElementById('etik_sampah').checked = e.sampah || false;
+                    document.getElementById('etik_bersih').checked = e.bersih || false;
+                    document.getElementById('etik_kembali').checked = e.kembali || false;
+                }
+                
+                if (d.hasil_pembuktian) {
+                    for (let i = 1; i <= 6; i++) {
+                        const h = d.hasil_pembuktian[`hasil${i}`];
+                        if (h) {
+                            document.getElementById(`hasil_waktu${i}`).value = h.waktu || '';
+                            document.getElementById(`hasil_isi${i}`).value = h.isi || '';
+                        }
+                    }
+                }
+                
+                if (d.analisis) {
+                    const a = d.analisis;
+                    const radios = document.getElementsByName('kesesuaian');
+                    radios.forEach(r => { if (r.value === a.kesesuaian) r.checked = true; });
+                    document.getElementById('analisis_data').value = a.data || '';
+                    document.getElementById('analisis_penjelasan').value = a.penjelasan || '';
+                    document.getElementById('analisis_hilang').value = a.hilang || '';
+                    document.getElementById('kesimpulan').value = a.kesimpulan || '';
+                    
+                    if (a.energi) {
+                        for (let i = 0; i < a.energi.length; i++) {
+                            const e = a.energi[i];
+                            if (e) {
+                                document.getElementById(`energi${i+1}`).value = e.energi || '';
+                                document.getElementById(`sumber${i+1}`).value = e.sumber || '';
+                                document.getElementById(`tujuan${i+1}`).value = e.tujuan || '';
+                            }
+                        }
+                    }
+                }
+                
+                if (d.jurusan) {
+                    const radios = document.getElementsByName('jurusan');
+                    radios.forEach(r => { if (r.value === d.jurusan.pilihan) r.checked = true; });
+                    document.getElementById('jurusan_lain').value = d.jurusan.lain || '';
+                }
+                
+                if (d.aspek_jurusan) {
+                    const aj = d.aspek_jurusan;
+                    document.getElementById('aspek_sumber').value = aj.sumber || '';
+                    document.getElementById('aspek_alat').value = aj.alat || '';
+                    document.getElementById('aspek_proses').value = aj.proses || '';
+                    document.getElementById('aspek_produk').value = aj.produk || '';
+                    document.getElementById('aspek_limbah').value = aj.limbah || '';
+                }
+                
+                if (d.solusi) {
+                    const s = d.solusi;
+                    document.getElementById('solusi_masalah').value = s.masalah || '';
+                    document.getElementById('solusi_lokasi').value = s.lokasi || '';
+                    document.getElementById('solusi_penyebab').value = s.penyebab || '';
+                    document.getElementById('solusi_ide').value = s.ide || '';
+                    document.getElementById('solusi_cara').value = s.cara || '';
+                }
+                
+                if (d.potensi) {
+                    const p = d.potensi;
+                    document.getElementById('potensi_matahari_sumber').value = p.matahari?.sumber || '';
+                    document.getElementById('potensi_matahari_guna').value = p.matahari?.guna || '';
+                    document.getElementById('potensi_angin_sumber').value = p.angin?.sumber || '';
+                    document.getElementById('potensi_angin_guna').value = p.angin?.guna || '';
+                    document.getElementById('potensi_air_sumber').value = p.air?.sumber || '';
+                    document.getElementById('potensi_air_guna').value = p.air?.guna || '';
+                    document.getElementById('potensi_biomassa_sumber').value = p.biomassa?.sumber || '';
+                    document.getElementById('potensi_biomassa_guna').value = p.biomassa?.guna || '';
+                    document.getElementById('potensi_lain_sumber').value = p.lain?.sumber || '';
+                    document.getElementById('potensi_lain_guna').value = p.lain?.guna || '';
+                    document.getElementById('potensi_terpilih').value = p.terpilih || '';
+                    document.getElementById('potensi_ide').value = p.ide || '';
+                }
             }
 
-            if (savedData.aspek_jurusan) {
-                const aj = savedData.aspek_jurusan;
-                document.getElementById('aspek_sumber').value = aj.sumber || '';
-                document.getElementById('aspek_alat').value = aj.alat || '';
-                document.getElementById('aspek_proses').value = aj.proses || '';
-                document.getElementById('aspek_produk').value = aj.produk || '';
-                document.getElementById('aspek_limbah').value = aj.limbah || '';
-            }
-
-            if (savedData.solusi) {
-                const s = savedData.solusi;
-                document.getElementById('solusi_masalah').value = s.masalah || '';
-                document.getElementById('solusi_lokasi').value = s.lokasi || '';
-                document.getElementById('solusi_penyebab').value = s.penyebab || '';
-                document.getElementById('solusi_ide').value = s.ide || '';
-                document.getElementById('solusi_cara').value = s.cara || '';
-            }
-
-            if (savedData.potensi) {
-                const p = savedData.potensi;
-                document.getElementById('potensi_matahari_sumber').value = p.matahari?.sumber || '';
-                document.getElementById('potensi_matahari_guna').value = p.matahari?.guna || '';
-                document.getElementById('potensi_angin_sumber').value = p.angin?.sumber || '';
-                document.getElementById('potensi_angin_guna').value = p.angin?.guna || '';
-                document.getElementById('potensi_air_sumber').value = p.air?.sumber || '';
-                document.getElementById('potensi_air_guna').value = p.air?.guna || '';
-                document.getElementById('potensi_biomassa_sumber').value = p.biomassa?.sumber || '';
-                document.getElementById('potensi_biomassa_guna').value = p.biomassa?.guna || '';
-                document.getElementById('potensi_lain_sumber').value = p.lain?.sumber || '';
-                document.getElementById('potensi_lain_guna').value = p.lain?.guna || '';
-                document.getElementById('potensi_terpilih').value = p.terpilih || '';
-                document.getElementById('potensi_ide').value = p.ide || '';
-            }
-
-            if (savedData.refleksi) {
-                const r = savedData.refleksi;
+            if (savedData.bagian_e) {
+                const r = savedData.bagian_e;
                 document.getElementById('refleksi1').value = r.q1 || '';
                 document.getElementById('refleksi2').value = r.q2 || '';
                 document.getElementById('refleksi3').value = r.q3 || '';
                 document.getElementById('refleksi4').value = r.q4 || '';
             }
 
-            if (savedData.penilaian_diri) {
-                const p = savedData.penilaian_diri;
+            if (savedData.bagian_f) {
+                const p = savedData.bagian_f;
                 document.getElementById('nilai1').value = p.nilai1 || '3';
                 document.getElementById('nilai2').value = p.nilai2 || '3';
                 document.getElementById('nilai3').value = p.nilai3 || '3';
@@ -2270,17 +1851,33 @@
             updateProgress();
         }
 
+        // ==================== RESET FORM ====================
+        function resetAllForm() {
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.type === 'checkbox') el.checked = false;
+                else if (el.type === 'radio') el.checked = false;
+                else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                else el.value = '';
+            });
+            document.getElementById('kelas').value = '';
+            document.getElementById('nama').innerHTML = '<option value="">-- Pilih Nama --</option>';
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`nilai${i}`).value = '3';
+            }
+            clearLocalStorage();
+            updateProgress();
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function showModal() { document.getElementById('resetModal').style.display = 'block'; }
+        function closeModal() { document.getElementById('resetModal').style.display = 'none'; }
+        function confirmReset() { closeModal(); resetAllForm(); alert('Form berhasil direset!'); }
+
         // ==================== INIT ====================
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            
-            if (hamburger) {
-                hamburger.addEventListener('click', function() {
-                    navMenu.classList.toggle('active');
-                });
-            }
-
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
             checkConnection();
             loadDataFromGoogleSheets();
             setInterval(checkConnection, 5000);
@@ -2289,17 +1886,13 @@
         function updateNamaDropdown() {
             const kelas = document.getElementById('kelas').value;
             const namaSelect = document.getElementById('nama');
-            
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
                 return;
             }
-            
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            
-            const siswaList = dataSiswa[kelas] || [];
-            siswaList.sort().forEach(nama => {
-                if (nama && nama.trim() !== '') {
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                if (nama && nama.trim()) {
                     const option = document.createElement('option');
                     option.value = nama;
                     option.textContent = nama;
@@ -2314,12 +1907,10 @@
                 alert('Tidak ada koneksi internet. Silakan periksa koneksi Anda dan refresh halaman.');
                 return;
             }
-
             if (isLoading) {
                 alert('Data masih dimuat. Silakan tunggu beberapa saat.');
                 return;
             }
-            
             if (!document.getElementById('kelas').value) {
                 alert('Silakan isi kelas terlebih dahulu');
                 return;
@@ -2339,68 +1930,36 @@
 
             try {
                 const formData = new URLSearchParams();
-                
                 const allData = collectAllFormData();
                 
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
-                
-                // Data identitas (kolom terpisah)
-                formData.append('Kelas', allData.identitas.kelas);
-                formData.append('Nama', allData.identitas.nama);
-                formData.append('Kelompok', allData.identitas.kelompok);
-                formData.append('Tugas_Peran', allData.identitas.tugas);
-                
-                // Data per bagian sebagai JSON string
-                formData.append('data_literasi', JSON.stringify(allData.literasi));
-                formData.append('data_peristiwa', JSON.stringify(allData.peristiwa));
-                formData.append('data_penjelasan_ilmiah', JSON.stringify(allData.penjelasan_ilmiah));
-                formData.append('data_observasi_detail', JSON.stringify(allData.observasi_detail));
-                formData.append('data_pola', JSON.stringify(allData.pola));
-                formData.append('data_prediksi1', JSON.stringify(allData.prediksi1));
-                formData.append('data_prediksi2', JSON.stringify(allData.prediksi2));
-                formData.append('data_fenomena', JSON.stringify(allData.fenomena));
-                formData.append('data_pilihan_prediksi', JSON.stringify(allData.pilihan_prediksi));
-                formData.append('data_cara_pembuktian', JSON.stringify(allData.cara_pembuktian));
-                formData.append('data_alat', JSON.stringify(allData.alat));
-                formData.append('data_etika', JSON.stringify(allData.etika));
-                formData.append('data_hasil_pembuktian', JSON.stringify(allData.hasil_pembuktian));
-                formData.append('data_analisis', JSON.stringify(allData.analisis));
-                formData.append('data_jurusan', JSON.stringify(allData.jurusan));
-                formData.append('data_aspek_jurusan', JSON.stringify(allData.aspek_jurusan));
-                formData.append('data_solusi', JSON.stringify(allData.solusi));
-                formData.append('data_potensi', JSON.stringify(allData.potensi));
-                formData.append('data_refleksi', JSON.stringify(allData.refleksi));
-                formData.append('data_penilaian_diri', JSON.stringify(allData.penilaian_diri));
-                
+                formData.append('Bagian_A', JSON.stringify(allData.bagian_a));
+                formData.append('Bagian_B', JSON.stringify(allData.bagian_b));
+                formData.append('Bagian_C', JSON.stringify(allData.bagian_c));
+                formData.append('Bagian_D', JSON.stringify(allData.bagian_d));
+                formData.append('Bagian_E', JSON.stringify(allData.bagian_e));
+                formData.append('Bagian_F', JSON.stringify(allData.bagian_f));
                 formData.append('Timestamp', new Date().toISOString());
 
                 await fetch(URL_PEREKAP_AKTIVITAS, {
                     method: 'POST',
                     mode: 'no-cors',
                     redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData
                 });
 
                 clearLocalStorage();
-
                 document.getElementById('successMessage').style.display = 'block';
-                
-                setTimeout(() => {
-                    document.getElementById('successMessage').style.display = 'none';
-                }, 5000);
-
-                if (confirm('Data terkirim! Ingin mereset form?')) {
-                    location.reload();
-                }
+                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 3000);
+                showModal();
 
             } catch (error) {
                 alert('Terjadi kesalahan: ' + error.message);
                 document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
                 document.getElementById('errorMessage').style.display = 'block';
+                setTimeout(() => document.getElementById('errorMessage').style.display = 'none', 5000);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data';

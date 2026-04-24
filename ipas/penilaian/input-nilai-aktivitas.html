@@ -27,6 +27,74 @@
             line-height: 1.6;
         }
         
+        /* Profile Section */
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 0.3rem 0.8rem 0.3rem 0.3rem;
+            border-radius: 50px;
+            border: 1px solid var(--ipas-light);
+            margin-left: auto;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .profile-info {
+            font-size: 0.85rem;
+        }
+        .profile-name {
+            font-weight: 700;
+            color: var(--ipas-dark);
+        }
+        .profile-role {
+            font-size: 0.7rem;
+            color: #888;
+        }
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer !important;
+            font-size: 1rem;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            transform: scale(1.1);
+            color: #c0392b;
+        }
+        
+        /* Info Panel dengan flex */
+        .info-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .info-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--ipas-light);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: var(--ipas-dark);
+        }
+        
         /* Login Required Overlay */
         .login-required-overlay {
             position: fixed;
@@ -568,10 +636,12 @@
             .btn-cek { width: 100%; justify-content: center; }
             .top-header-area { flex-direction: column; }
             .rekap-ringkas { width: 100%; justify-content: center; }
+            .info-panel-header { flex-direction: column; align-items: flex-start; }
+            .profile-section { margin-left: 0; }
         }
         
         @media print {
-            .filter-form, .simple-card:first-child, header, .btn-cek, .btn-simpan-ringkas, .student-navigation, .rekap-ringkas { display: none !important; }
+            .filter-form, .simple-card:first-child, header, .btn-cek, .btn-simpan-ringkas, .student-navigation, .rekap-ringkas, .profile-section { display: none !important; }
             .two-column-layout { display: block; }
             .column-left, .column-right { max-height: none; overflow: visible; }
         }
@@ -629,8 +699,25 @@
     <div id="mainContent">
         <section class="preview-container">
             <div class="ipas-content-card">
-                <h2><i class="fas fa-file-alt"></i> Penilaian Aktivitas Siswa</h2>
-                <p>Lihat jawaban siswa dan beri penilaian langsung dengan mengklik skor pada tabel rubrik</p>
+                <div class="info-panel-header">
+                    <div>
+                        <h2><i class="fas fa-file-alt"></i> Penilaian Aktivitas Siswa</h2>
+                        <p>Lihat jawaban siswa dan beri penilaian langsung dengan mengklik skor pada tabel rubrik</p>
+                    </div>
+                    <!-- Profile Section -->
+                    <div id="profileContainer" style="display: none;">
+                        <div class="profile-section">
+                            <div class="profile-avatar" id="profileAvatar">G</div>
+                            <div class="profile-info">
+                                <div class="profile-name" id="profileName">Guru</div>
+                                <div class="profile-role" id="profileRole">Administrator</div>
+                            </div>
+                            <button class="logout-btn" id="logoutBtn" title="Logout" onclick="handleLogout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="simple-card">
@@ -778,6 +865,27 @@
         let selectedScores = {};
         let currentStudentList = [];
         let currentStudentIndex = -1;
+        
+        // ==================== AMBIL DATA PROFIL ====================
+        function loadProfileFromSession() {
+            const adminName = sessionStorage.getItem('adminName');
+            const adminRole = sessionStorage.getItem('adminRole');
+            if (adminName) {
+                document.getElementById('profileName').innerText = adminName;
+                document.getElementById('profileRole').innerText = adminRole || 'Administrator';
+                document.getElementById('profileAvatar').innerText = adminName.charAt(0);
+                document.getElementById('profileContainer').style.display = 'block';
+            }
+        }
+        
+        // ==================== LOGOUT ====================
+        function handleLogout() {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            sessionStorage.removeItem('adminName');
+            sessionStorage.removeItem('adminRole');
+            sessionStorage.removeItem('adminUsername');
+            window.location.href = 'index-penilaian-ipas.html';
+        }
         
         // ==================== LOAD DATA SISWA (JSONP) ====================
         function loadDataSiswa() {
@@ -989,7 +1097,7 @@
                     headers.forEach(header => {
                         tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`;
                     });
-                    tableHtml += '</tr></thead><tbody>';
+                    tableHtml += '<tr></thead><tbody>';
                     
                     value.forEach(item => {
                         tableHtml += '<tr>';
@@ -1180,7 +1288,7 @@
                 });
                 
                 html += `</tbody>
-                    </table>
+                    <tr>
                     <div class="tp-rata-panel" id="tp_rata_${tpKode}">
                         <i class="fas fa-calculator"></i> Nilai Rata-rata ${escapeHtml(tpKode)}: <strong id="tp_rata_value_${tpKode}">0</strong> (Skala 1-4)
                     </div>
@@ -1497,6 +1605,12 @@
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
             if (hamburger) { hamburger.addEventListener('click', () => navMenu.classList.toggle('active')); }
+            
+            // Load profile dari session
+            loadProfileFromSession();
+            
+            // Setup logout button dengan onclick langsung sudah ada di HTML
+            // No need for additional event listener
             
             document.getElementById('filterSemester').value = 'genap';
             

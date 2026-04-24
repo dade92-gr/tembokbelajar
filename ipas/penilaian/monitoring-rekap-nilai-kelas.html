@@ -24,6 +24,115 @@
             line-height: 1.6;
         }
         
+        /* Profile Section */
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 0.3rem 0.8rem 0.3rem 0.3rem;
+            border-radius: 50px;
+            border: 1px solid var(--ipas-light);
+            margin-left: auto;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .profile-info {
+            font-size: 0.85rem;
+        }
+        .profile-name {
+            font-weight: 700;
+            color: var(--ipas-dark);
+        }
+        .profile-role {
+            font-size: 0.7rem;
+            color: #888;
+        }
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            transform: scale(1.1);
+            color: #c0392b;
+        }
+        
+        /* Info Panel Header */
+        .info-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Login Required Overlay */
+        .login-required-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 20000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-required-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            max-width: 400px;
+            margin: 1rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .login-required-card i {
+            font-size: 3rem;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+        .login-required-card h2 {
+            color: #229954;
+            margin-bottom: 0.5rem;
+        }
+        .login-required-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        .login-required-card a {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .login-required-card a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46,204,113,0.3);
+        }
+        
         .rekap-container {
             padding: 2rem;
             max-width: 1400px;
@@ -357,6 +466,8 @@
             .filter-form { flex-direction: column; }
             .btn-cek { width: 100%; justify-content: center; }
             .rekap-table th, .rekap-table td { padding: 0.5rem; font-size: 0.75rem; }
+            .info-panel-header { flex-direction: column; align-items: flex-start; }
+            .profile-section { margin-left: 0; }
         }
     </style>
 </head>
@@ -384,78 +495,162 @@
         </nav>
     </header>
 
-    <div class="rekap-container">
-        <div class="ipas-content-card">
-            <h2><i class="fas fa-chart-line"></i> Rekap Nilai Siswa</h2>
-            <p>Lihat nilai seluruh siswa per TP (Tujuan Pembelajaran) dan Nilai Akhir</p>
-        </div>
-
-        <div class="simple-card">
-            <div class="section-title">
-                <i class="fas fa-filter"></i>
-                <h3>Filter Pencarian</h3>
-            </div>
-            <div class="filter-form">
-                <div class="filter-group">
-                    <label><i class="fas fa-building"></i> Kelas</label>
-                    <select id="filterKelas">
-                        <option value="">-- Pilih Kelas --</option>
-                        <option value="X ATPH 1">X ATPH 1</option>
-                        <option value="X ATPH 2">X ATPH 2</option>
-                        <option value="X TKJ 1">X TKJ 1</option>
-                        <option value="X TKJ 2">X TKJ 2</option>
-                        <option value="X TSM 1">X TSM 1</option>
-                        <option value="X TSM 2">X TSM 2</option>
-                        <option value="X AKL">X AKL</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <button class="btn-cek" id="btnCek"><i class="fas fa-search"></i> Tampilkan Rekap</button>
+    <!-- SEMUA KONTEN ASLI DI DALAM DIV INI -->
+    <div id="mainContent">
+        <div class="rekap-container">
+            <div class="ipas-content-card">
+                <div class="info-panel-header">
+                    <div>
+                        <h2><i class="fas fa-chart-line"></i> Rekap Nilai Siswa</h2>
+                        <p>Lihat nilai seluruh siswa per TP (Tujuan Pembelajaran) dan Nilai Akhir</p>
+                    </div>
+                    <!-- Profile Section -->
+                    <div id="profileContainer" style="display: none;">
+                        <div class="profile-section">
+                            <div class="profile-avatar" id="profileAvatar">G</div>
+                            <div class="profile-info">
+                                <div class="profile-name" id="profileName">Guru</div>
+                                <div class="profile-role" id="profileRole">Administrator</div>
+                            </div>
+                            <button class="logout-btn" id="logoutBtn" title="Logout" onclick="handleLogout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="info-panel" id="infoPanel" style="display: none;">
-                <span><i class="fas fa-building"></i> Kelas: <strong id="infoKelas">-</strong></span>
-                <span><i class="fas fa-users"></i> Total Siswa: <strong id="infoTotalSiswa">0</strong></span>
-                <span><i class="fas fa-chart-line"></i> Rata-rata Kelas: <strong id="infoRata">0</strong></span>
-            </div>
-        </div>
 
-        <div id="loadingOverlay" class="loading-overlay">
-            <div class="loading-card">
-                <div class="loading-spinner"></div>
-                <p>Memuat data...</p>
-                <div class="loading-text" id="loadingText">Mengambil data dari server</div>
+            <div class="simple-card">
+                <div class="section-title">
+                    <i class="fas fa-filter"></i>
+                    <h3>Filter Pencarian</h3>
+                </div>
+                <div class="filter-form">
+                    <div class="filter-group">
+                        <label><i class="fas fa-building"></i> Kelas</label>
+                        <select id="filterKelas">
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="X ATPH 1">X ATPH 1</option>
+                            <option value="X ATPH 2">X ATPH 2</option>
+                            <option value="X TKJ 1">X TKJ 1</option>
+                            <option value="X TKJ 2">X TKJ 2</option>
+                            <option value="X TSM 1">X TSM 1</option>
+                            <option value="X TSM 2">X TSM 2</option>
+                            <option value="X AKL">X AKL</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn-cek" id="btnCek"><i class="fas fa-search"></i> Tampilkan Rekap</button>
+                    </div>
+                </div>
+                <div class="info-panel" id="infoPanel" style="display: none;">
+                    <span><i class="fas fa-building"></i> Kelas: <strong id="infoKelas">-</strong></span>
+                    <span><i class="fas fa-users"></i> Total Siswa: <strong id="infoTotalSiswa">0</strong></span>
+                    <span><i class="fas fa-chart-line"></i> Rata-rata Kelas: <strong id="infoRata">0</strong></span>
+                </div>
             </div>
-        </div>
 
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-triangle"></i> 
-            <span id="errorText">Gagal memuat data.</span>
-        </div>
+            <div id="loadingOverlay" class="loading-overlay">
+                <div class="loading-card">
+                    <div class="loading-spinner"></div>
+                    <p>Memuat data...</p>
+                    <div class="loading-text" id="loadingText">Mengambil data dari server</div>
+                </div>
+            </div>
 
-        <div class="simple-card" id="resultCard" style="display: none;">
-            <div class="section-title">
-                <i class="fas fa-table-list"></i>
-                <h3>Rekap Nilai Siswa</h3>
+            <div id="errorMessage" class="error-message">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <span id="errorText">Gagal memuat data.</span>
             </div>
-            <div class="table-wrapper">
-                <table class="rekap-table" id="rekapTable">
-                    <thead id="tableHeader"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-            <div class="summary-stats" id="summaryStats" style="display: none;">
-                <div class="stat-card"><div class="number" id="totalSiswa">0</div><div class="label">Total Siswa</div></div>
-                <div class="stat-card"><div class="number" id="totalNilai">0</div><div class="label">Rata-rata Kelas</div></div>
-            </div>
-        </div>
 
-        <div class="back-nav-simple">
-            <a href="index-penilaian-ipas.html" class="back-btn-simple"><i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian</a>
+            <div class="simple-card" id="resultCard" style="display: none;">
+                <div class="section-title">
+                    <i class="fas fa-table-list"></i>
+                    <h3>Rekap Nilai Siswa</h3>
+                </div>
+                <div class="table-wrapper">
+                    <table class="rekap-table" id="rekapTable">
+                        <thead id="tableHeader"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+                <div class="summary-stats" id="summaryStats" style="display: none;">
+                    <div class="stat-card"><div class="number" id="totalSiswa">0</div><div class="label">Total Siswa</div></div>
+                    <div class="stat-card"><div class="number" id="totalNilai">0</div><div class="label">Rata-rata Kelas</div></div>
+                </div>
+            </div>
+
+            <div class="back-nav-simple">
+                <a href="index-penilaian-ipas.html" class="back-btn-simple"><i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian</a>
+            </div>
         </div>
     </div>
 
     <script>
+        // ==================== PROTEKSI LOGIN ====================
+        (function() {
+            const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
+            if (isLoggedIn !== 'true') {
+                // Sembunyikan konten utama
+                const mainContent = document.getElementById('mainContent');
+                if (mainContent) mainContent.style.display = 'none';
+                
+                // Tampilkan pesan akses ditolak
+                const body = document.body;
+                const warningDiv = document.createElement('div');
+                warningDiv.className = 'login-required-overlay';
+                warningDiv.innerHTML = `
+                    <div class="login-required-card">
+                        <i class="fas fa-lock"></i>
+                        <h2>Akses Terbatas</h2>
+                        <p>Halaman ini hanya dapat diakses oleh Guru/Admin yang telah login.</p>
+                        <a href="index-penilaian-ipas.html">
+                            <i class="fas fa-arrow-left"></i> Kembali ke Halaman Login
+                        </a>
+                    </div>
+                `;
+                body.appendChild(warningDiv);
+                
+                // Tambahkan Font Awesome jika belum ada
+                if (!document.querySelector('link[href*="font-awesome"]')) {
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+                    document.head.appendChild(link);
+                }
+                return;
+            }
+            const mainContent = document.getElementById('mainContent');
+            if (mainContent) mainContent.style.display = 'block';
+        })();
+        
+        // ==================== AMBIL DATA PROFIL ====================
+        function loadProfileFromSession() {
+            const adminName = sessionStorage.getItem('adminName');
+            const adminRole = sessionStorage.getItem('adminRole');
+            if (adminName) {
+                const profileName = document.getElementById('profileName');
+                const profileRole = document.getElementById('profileRole');
+                const profileAvatar = document.getElementById('profileAvatar');
+                const profileContainer = document.getElementById('profileContainer');
+                
+                if (profileName) profileName.innerText = adminName;
+                if (profileRole) profileRole.innerText = adminRole || 'Administrator';
+                if (profileAvatar) profileAvatar.innerText = adminName.charAt(0);
+                if (profileContainer) profileContainer.style.display = 'block';
+            }
+        }
+        
+        // ==================== LOGOUT ====================
+        function handleLogout() {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            sessionStorage.removeItem('adminName');
+            sessionStorage.removeItem('adminRole');
+            sessionStorage.removeItem('adminUsername');
+            window.location.href = 'index-penilaian-ipas.html';
+        }
+        
+        // ==================== KONFIGURASI URL ====================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyq2G4viOZ04k1b5nl27IYZ7HD9XUZdgBkhYj-46njXvLLVcjqNBqVElHU-BcpOVhOa/exec';
         
         // Header TP yang akan ditampilkan (NO, Kelas, Nama, TP 2.1, TP 2.2, TP 2.3, TP 3.1, TP 3.2, TP 3.3, TP 3.4, TP 3.5, Nilai Akhir)
@@ -597,11 +792,21 @@
             }
         }
         
-        // Event Listeners
-        document.getElementById('hamburger')?.addEventListener('click', () => {
-            document.getElementById('nav-menu')?.classList.toggle('active');
-        });
-        document.getElementById('btnCek').addEventListener('click', cekRekap);
+        // ==================== INIT ====================
+        function init() {
+            // Load profile dari session
+            loadProfileFromSession();
+            
+            // Event Listeners
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            }
+            document.getElementById('btnCek').addEventListener('click', cekRekap);
+        }
+        
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
