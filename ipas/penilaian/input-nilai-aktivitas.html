@@ -814,837 +814,764 @@
     </div>
 
     <script>
-        // ==================== PROTEKSI LOGIN ====================
-        (function() {
-            const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
-            if (isLoggedIn !== 'true') {
-                // Sembunyikan konten utama
-                document.getElementById('mainContent').style.display = 'none';
-                // Tampilkan pesan akses ditolak
-                const body = document.body;
-                const warningDiv = document.createElement('div');
-                warningDiv.className = 'login-required-overlay';
-                warningDiv.innerHTML = `
-                    <div class="login-required-card">
-                        <i class="fas fa-lock"></i>
-                        <h2>Akses Terbatas</h2>
-                        <p>Halaman ini hanya dapat diakses oleh Guru/Admin yang telah login.</p>
-                        <a href="index-penilaian-ipas.html">
-                            <i class="fas fa-arrow-left"></i> Kembali ke Halaman Login
-                        </a>
-                    </div>
-                `;
-                body.appendChild(warningDiv);
-                
-                // Tambahkan Font Awesome jika belum ada
-                if (!document.querySelector('link[href*="font-awesome"]')) {
-                    const link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-                    document.head.appendChild(link);
-                }
-                return;
+    // ==================== PROTEKSI LOGIN ====================
+    (function() {
+        const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
+        if (isLoggedIn !== 'true') {
+            document.getElementById('mainContent').style.display = 'none';
+            const body = document.body;
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'login-required-overlay';
+            warningDiv.innerHTML = `
+                <div class="login-required-card">
+                    <i class="fas fa-lock"></i>
+                    <h2>Akses Terbatas</h2>
+                    <p>Halaman ini hanya dapat diakses oleh Guru/Admin yang telah login.</p>
+                    <a href="index-penilaian-ipas.html">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Halaman Login
+                    </a>
+                </div>
+            `;
+            body.appendChild(warningDiv);
+            if (!document.querySelector('link[href*="font-awesome"]')) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+                document.head.appendChild(link);
             }
-            document.getElementById('mainContent').style.display = 'block';
-        })();
-        
-        // ==================== KONFIGURASI URL ====================
-        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_SEMESTER_GANJIL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
-        const URL_SEMESTER_GENAP = 'https://script.google.com/macros/s/AKfycbyq2G4viOZ04k1b5nl27IYZ7HD9XUZdgBkhYj-46njXvLLVcjqNBqVElHU-BcpOVhOa/exec';
-        
-        let dataKelas = [];
-        let dataSiswa = {};
-        let currentData = null;
-        let currentAktivitas = null;
-        let currentSemester = 'genap';
-        let currentKelas = '';
-        let currentNama = '';
-        let currentRubrikData = null;
-        
-        let selectedScores = {};
-        let currentStudentList = [];
-        let currentStudentIndex = -1;
-        
-        // ==================== AMBIL DATA PROFIL ====================
-        function loadProfileFromSession() {
-            const adminName = sessionStorage.getItem('adminName');
-            const adminRole = sessionStorage.getItem('adminRole');
-            if (adminName) {
-                document.getElementById('profileName').innerText = adminName;
-                document.getElementById('profileRole').innerText = adminRole || 'Administrator';
-                document.getElementById('profileAvatar').innerText = adminName.charAt(0);
-                document.getElementById('profileContainer').style.display = 'block';
-            }
+            return;
         }
-        
-        // ==================== LOGOUT ====================
-        function handleLogout() {
-            sessionStorage.removeItem('isAdminLoggedIn');
-            sessionStorage.removeItem('adminName');
-            sessionStorage.removeItem('adminRole');
-            sessionStorage.removeItem('adminUsername');
-            window.location.href = 'index-penilaian-ipas.html';
+        document.getElementById('mainContent').style.display = 'block';
+    })();
+    
+    // ==================== KONFIGURASI URL ====================
+    const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+    const URL_SEMESTER_GANJIL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
+    const URL_SEMESTER_GENAP = 'https://script.google.com/macros/s/AKfycbyq2G4viOZ04k1b5nl27IYZ7HD9XUZdgBkhYj-46njXvLLVcjqNBqVElHU-BcpOVhOa/exec';
+    
+    let dataKelas = [];
+    let dataSiswa = {};
+    let currentData = null;
+    let currentAktivitas = null;
+    let currentSemester = 'genap';
+    let currentKelas = '';
+    let currentNama = '';
+    let currentRubrikData = null;
+    
+    let selectedScores = {};
+    let currentStudentList = [];
+    let currentStudentIndex = -1;
+    
+    // Helper function untuk membuat ID aman (tanpa spasi)
+    function safeId(str) {
+        return str.replace(/\s+/g, '_').replace(/\./g, '_');
+    }
+    
+    // ==================== AMBIL DATA PROFIL ====================
+    function loadProfileFromSession() {
+        const adminName = sessionStorage.getItem('adminName');
+        const adminRole = sessionStorage.getItem('adminRole');
+        if (adminName) {
+            document.getElementById('profileName').innerText = adminName;
+            document.getElementById('profileRole').innerText = adminRole || 'Administrator';
+            document.getElementById('profileAvatar').innerText = adminName.charAt(0);
+            document.getElementById('profileContainer').style.display = 'block';
         }
-        
-        // ==================== LOAD DATA SISWA (JSONP) ====================
-        function loadDataSiswa() {
-            return new Promise((resolve, reject) => {
-                const callbackName = 'jsonp_callback_' + Date.now();
-                window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) document.head.removeChild(script);
-                    delete window[callbackName];
-                    
-                    if (result && result.success) {
-                        dataKelas = result.kelasList || [];
-                        dataSiswa = result.siswaPerKelas || {};
-                        resolve();
-                    } else {
-                        reject(new Error('Gagal memuat data siswa'));
-                    }
-                };
-                
-                const script = document.createElement('script');
-                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = () => reject(new Error('Gagal terhubung ke server data siswa'));
-                document.head.appendChild(script);
-            });
-        }
-        
-        // ==================== AMBIL DAFTAR AKTIVITAS ====================
-        async function loadDaftarAktivitas() {
-            const semester = document.getElementById('filterSemester').value;
-            if (!semester) return;
-            
-            const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
-            const aktivitasSelect = document.getElementById('filterAktivitas');
-            aktivitasSelect.innerHTML = '<option value="">-- Memuat... --</option>';
-            
-            try {
-                const response = await fetch(`${url}?action=getDaftarAktivitas&_=${Date.now()}`);
-                const result = await response.json();
-                
-                if (result && result.success && result.aktivitas && result.aktivitas.length > 0) {
-                    aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
-                    result.aktivitas.forEach(aktivitas => {
-                        if (aktivitas && aktivitas.trim()) {
-                            const option = document.createElement('option');
-                            option.value = aktivitas;
-                            option.textContent = aktivitas;
-                            aktivitasSelect.appendChild(option);
-                        }
-                    });
-                    aktivitasSelect.disabled = false;
+    }
+    
+    function handleLogout() {
+        sessionStorage.removeItem('isAdminLoggedIn');
+        sessionStorage.removeItem('adminName');
+        sessionStorage.removeItem('adminRole');
+        sessionStorage.removeItem('adminUsername');
+        window.location.href = 'index-penilaian-ipas.html';
+    }
+    
+    // ==================== LOAD DATA SISWA ====================
+    function loadDataSiswa() {
+        return new Promise((resolve, reject) => {
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(result) {
+                const script = document.querySelector(`script[src*="${callbackName}"]`);
+                if (script) document.head.removeChild(script);
+                delete window[callbackName];
+                if (result && result.success) {
+                    dataKelas = result.kelasList || [];
+                    dataSiswa = result.siswaPerKelas || {};
+                    resolve();
                 } else {
-                    aktivitasSelect.innerHTML = '<option value="">-- Tidak ada aktivitas --</option>';
-                    aktivitasSelect.disabled = true;
+                    reject(new Error('Gagal memuat data siswa'));
                 }
-            } catch (error) {
-                console.error('Gagal load daftar aktivitas:', error);
-                aktivitasSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
+            };
+            const script = document.createElement('script');
+            script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+            script.onerror = () => reject(new Error('Gagal terhubung ke server data siswa'));
+            document.head.appendChild(script);
+        });
+    }
+    
+    // ==================== AMBIL DAFTAR AKTIVITAS ====================
+    async function loadDaftarAktivitas() {
+        const semester = document.getElementById('filterSemester').value;
+        if (!semester) return;
+        const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
+        const aktivitasSelect = document.getElementById('filterAktivitas');
+        aktivitasSelect.innerHTML = '<option value="">-- Memuat... --</option>';
+        try {
+            const response = await fetch(`${url}?action=getDaftarAktivitas&_=${Date.now()}`);
+            const result = await response.json();
+            if (result && result.success && result.aktivitas && result.aktivitas.length > 0) {
+                aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
+                result.aktivitas.forEach(aktivitas => {
+                    if (aktivitas && aktivitas.trim()) {
+                        const option = document.createElement('option');
+                        option.value = aktivitas;
+                        option.textContent = aktivitas;
+                        aktivitasSelect.appendChild(option);
+                    }
+                });
+                aktivitasSelect.disabled = false;
+            } else {
+                aktivitasSelect.innerHTML = '<option value="">-- Tidak ada aktivitas --</option>';
                 aktivitasSelect.disabled = true;
             }
+        } catch (error) {
+            console.error('Gagal load daftar aktivitas:', error);
+            aktivitasSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
+            aktivitasSelect.disabled = true;
         }
-        
-        // ==================== UPDATE DROPDOWN KELAS ====================
-        function updateKelasDropdown() {
-            const kelasSelect = document.getElementById('filterKelas');
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            dataKelas.forEach(kelas => {
-                if (kelas && kelas.trim()) {
-                    const option = document.createElement('option');
-                    option.value = kelas;
-                    option.textContent = kelas;
-                    kelasSelect.appendChild(option);
-                }
-            });
-            kelasSelect.disabled = false;
-        }
-        
-        // ==================== UPDATE DROPDOWN NAMA ====================
-        function updateNamaDropdown() {
-            const kelas = document.getElementById('filterKelas').value;
-            const namaSelect = document.getElementById('filterNama');
-            
-            if (!kelas || !dataSiswa[kelas]) {
-                namaSelect.innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
-                namaSelect.disabled = true;
-                return;
+    }
+    
+    function updateKelasDropdown() {
+        const kelasSelect = document.getElementById('filterKelas');
+        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+        dataKelas.forEach(kelas => {
+            if (kelas && kelas.trim()) {
+                const option = document.createElement('option');
+                option.value = kelas;
+                option.textContent = kelas;
+                kelasSelect.appendChild(option);
             }
-            
-            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            (dataSiswa[kelas] || []).sort().forEach(nama => {
-                if (nama && nama.trim()) {
-                    const option = document.createElement('option');
-                    option.value = nama;
-                    option.textContent = nama;
-                    namaSelect.appendChild(option);
-                }
-            });
-            namaSelect.disabled = false;
+        });
+        kelasSelect.disabled = false;
+    }
+    
+    function updateNamaDropdown() {
+        const kelas = document.getElementById('filterKelas').value;
+        const namaSelect = document.getElementById('filterNama');
+        if (!kelas || !dataSiswa[kelas]) {
+            namaSelect.innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
+            namaSelect.disabled = true;
+            return;
         }
-        
-        // ==================== AMBIL DATA DARI SHEET ====================
-        async function fetchDataFromSheet(semester, sheetName, kelas, nama) {
-            const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
-            const fetchUrl = `${url}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&status=AKTIF&_=${Date.now()}`;
-            
-            try {
-                const response = await fetch(fetchUrl);
-                const data = await response.json();
-                if (data && data.success && data.data && data.data.length > 0) {
-                    return data.data[0];
-                }
-                return null;
-            } catch (error) {
-                console.error('Error fetch data:', error);
-                return null;
+        namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+        (dataSiswa[kelas] || []).sort().forEach(nama => {
+            if (nama && nama.trim()) {
+                const option = document.createElement('option');
+                option.value = nama;
+                option.textContent = nama;
+                namaSelect.appendChild(option);
             }
-        }
-        
-        // ==================== AMBIL RUBRIK DARI SHEET ====================
-        async function loadRubrikFromSheet(semester, aktivitasNama) {
-            const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
-            
-            try {
-                const response = await fetch(`${url}?action=getRubrikFromSheet&sheetName=RUBRIK_PENILAIAN&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`);
-                const result = await response.json();
-                
-                if (result && result.success && result.rubrik) {
-                    return result.rubrik;
-                }
-                return null;
-            } catch (error) {
-                console.error('Gagal load rubrik dari sheet:', error);
-                return null;
+        });
+        namaSelect.disabled = false;
+    }
+    
+    async function fetchDataFromSheet(semester, sheetName, kelas, nama) {
+        const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
+        const fetchUrl = `${url}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&status=AKTIF&_=${Date.now()}`;
+        try {
+            const response = await fetch(fetchUrl);
+            const data = await response.json();
+            if (data && data.success && data.data && data.data.length > 0) {
+                return data.data[0];
             }
+            return null;
+        } catch (error) {
+            console.error('Error fetch data:', error);
+            return null;
         }
-        
-        // ==================== AMBIL NILAI TERSIMPAN ====================
-        async function loadSavedScores(semester, kelas, nama, aktivitas) {
-            const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
-            
-            try {
-                const response = await fetch(`${url}?action=getPenilaianBySiswa&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&aktivitas=${encodeURIComponent(aktivitas)}&_=${Date.now()}`);
-                const result = await response.json();
-                
-                if (result && result.success && result.data && result.data.nilai_TP) {
-                    const savedScoresMap = {};
-                    for (const [tpKode, tpData] of Object.entries(result.data.nilai_TP)) {
-                        if (tpData.kriteria) {
-                            for (const [kriteriaNama, kriteriaData] of Object.entries(tpData.kriteria)) {
-                                savedScoresMap[`${tpKode}_${kriteriaNama}`] = {
-                                    skor: kriteriaData.skor,
-                                    tpKode: tpKode,
-                                    kriteriaNama: kriteriaNama,
-                                    deskripsi: kriteriaData.deskripsi
-                                };
-                            }
+    }
+    
+    async function loadRubrikFromSheet(semester, aktivitasNama) {
+        const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
+        try {
+            const response = await fetch(`${url}?action=getRubrikFromSheet&sheetName=RUBRIK_PENILAIAN&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`);
+            const result = await response.json();
+            if (result && result.success && result.rubrik) {
+                return result.rubrik;
+            }
+            return null;
+        } catch (error) {
+            console.error('Gagal load rubrik dari sheet:', error);
+            return null;
+        }
+    }
+    
+    async function loadSavedScores(semester, kelas, nama, aktivitas) {
+        const url = semester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
+        try {
+            const response = await fetch(`${url}?action=getPenilaianBySiswa&semester=${semester}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&aktivitas=${encodeURIComponent(aktivitas)}&_=${Date.now()}`);
+            const result = await response.json();
+            if (result && result.success && result.data && result.data.nilai_TP) {
+                const savedScoresMap = {};
+                for (const [tpKode, tpData] of Object.entries(result.data.nilai_TP)) {
+                    if (tpData.kriteria) {
+                        for (const [kriteriaNama, kriteriaData] of Object.entries(tpData.kriteria)) {
+                            const key = `${tpKode}_${kriteriaNama}`;
+                            savedScoresMap[key] = {
+                                skor: kriteriaData.skor,
+                                tpKode: tpKode,
+                                kriteriaNama: kriteriaNama,
+                                deskripsi: kriteriaData.deskripsi || ''
+                            };
                         }
                     }
-                    return savedScoresMap;
                 }
-                return {};
-            } catch (error) {
-                console.error('Gagal load nilai tersimpan:', error);
-                return {};
+                return savedScoresMap;
             }
+            return {};
+        } catch (error) {
+            console.error('Gagal load nilai tersimpan:', error);
+            return {};
         }
-        
-        // ==================== FORMAT FUNCTIONS ====================
-        function formatTanggal(timestamp) {
-            if (!timestamp) return '-';
-            try {
-                const date = new Date(timestamp);
-                if (!isNaN(date.getTime())) {
-                    return date.toLocaleDateString('id-ID', {
-                        day: '2-digit', month: '2-digit', year: 'numeric',
-                        hour: '2-digit', minute: '2-digit'
-                    });
-                }
-            } catch(e) {}
-            return timestamp;
-        }
-        
-        function formatLabel(key) {
-            return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
-        }
-        
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // ==================== RENDER VALUE ====================
-        function renderValue(value, depth = 0) {
-            if (value === null || value === undefined) return '<span class="field-value">-</span>';
-            
-            if (Array.isArray(value)) {
-                if (value.length === 0) return '<span class="field-value">(Kosong)</span>';
-                
-                const allObjects = value.every(item => typeof item === 'object' && item !== null);
-                if (allObjects && value.length > 0) {
-                    const allKeys = new Set();
-                    value.forEach(item => {
-                        Object.keys(item).forEach(key => allKeys.add(key));
-                    });
-                    const headers = Array.from(allKeys);
-                    
-                    let tableHtml = '<table class="inner-table"><thead><tr>';
+    }
+    
+    function formatTanggal(timestamp) {
+        if (!timestamp) return '-';
+        try {
+            const date = new Date(timestamp);
+            if (!isNaN(date.getTime())) {
+                return date.toLocaleDateString('id-ID', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            }
+        } catch(e) {}
+        return timestamp;
+    }
+    
+    function formatLabel(key) {
+        return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    function renderValue(value, depth = 0) {
+        if (value === null || value === undefined) return '<span class="field-value">-</span>';
+        if (Array.isArray(value)) {
+            if (value.length === 0) return '<span class="field-value">(Kosong)</span>';
+            const allObjects = value.every(item => typeof item === 'object' && item !== null);
+            if (allObjects && value.length > 0) {
+                const allKeys = new Set();
+                value.forEach(item => {
+                    Object.keys(item).forEach(key => allKeys.add(key));
+                });
+                const headers = Array.from(allKeys);
+                let tableHtml = '<table class="inner-table"><thead><tr>';
+                headers.forEach(header => {
+                    tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`;
+                });
+                tableHtml += '</tr></thead><tbody>';
+                value.forEach(item => {
+                    tableHtml += '<tr>';
                     headers.forEach(header => {
-                        tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`;
-                    });
-                    tableHtml += '<tr></thead><tbody>';
-                    
-                    value.forEach(item => {
-                        tableHtml += '<tr>';
-                        headers.forEach(header => {
-                            let cellValue = item[header];
-                            if (typeof cellValue === 'object') {
-                                cellValue = JSON.stringify(cellValue);
-                            }
-                            tableHtml += `<td>${escapeHtml(String(cellValue || '-'))}</td>`;
-                        });
-                        tableHtml += '</tr>';
-                    });
-                    tableHtml += '</tbody></table>';
-                    return tableHtml;
-                } else {
-                    let listHtml = '<ul style="margin: 0; padding-left: 1.2rem;">';
-                    value.forEach((item, idx) => {
-                        if (typeof item === 'object') {
-                            listHtml += `<li><strong>Item ${idx + 1}:</strong> ${renderValue(item, depth + 1)}</li>`;
-                        } else {
-                            listHtml += `<li>${escapeHtml(String(item))}</li>`;
+                        let cellValue = item[header];
+                        if (typeof cellValue === 'object') {
+                            cellValue = JSON.stringify(cellValue);
                         }
+                        tableHtml += `<td>${escapeHtml(String(cellValue || '-'))}</td>`;
                     });
-                    listHtml += '</ul>';
-                    return listHtml;
-                }
-            }
-            
-            if (typeof value === 'object') {
-                if (Object.keys(value).length === 0) return '<span class="field-value">(Kosong)</span>';
-                
-                let objHtml = '<div class="field-group">';
-                for (const [subKey, subValue] of Object.entries(value)) {
-                    if (Array.isArray(subValue)) {
-                        objHtml += `
-                            <div class="field-item full-width">
-                                <div class="field-label">${escapeHtml(formatLabel(subKey))}</div>
-                                <div class="field-value">${renderValue(subValue, depth + 1)}</div>
-                            </div>`;
-                    } else if (typeof subValue === 'object' && subValue !== null) {
-                        objHtml += `
-                            <div class="field-item full-width">
-                                <div class="field-label">${escapeHtml(formatLabel(subKey))}</div>
-                                <div class="field-value">${renderValue(subValue, depth + 1)}</div>
-                            </div>`;
+                    tableHtml += '</tr>';
+                });
+                tableHtml += '</tbody></table>';
+                return tableHtml;
+            } else {
+                let listHtml = '<ul style="margin: 0; padding-left: 1.2rem;">';
+                value.forEach((item, idx) => {
+                    if (typeof item === 'object') {
+                        listHtml += `<li><strong>Item ${idx + 1}:</strong> ${renderValue(item, depth + 1)}</li>`;
                     } else {
-                        objHtml += `
-                            <div class="field-item">
-                                <div class="field-label">${escapeHtml(formatLabel(subKey))}</div>
-                                <div class="field-value">${escapeHtml(String(subValue || '-'))}</div>
-                            </div>`;
+                        listHtml += `<li>${escapeHtml(String(item))}</li>`;
                     }
-                }
-                objHtml += '</div>';
-                return objHtml;
+                });
+                listHtml += '</ul>';
+                return listHtml;
             }
-            
-            return `<span class="field-value">${escapeHtml(String(value))}</span>`;
         }
-        
-        // ==================== RENDER JAWABAN SISWA ====================
-        function renderJawaban(data, sheetName, kelas, nama) {
-            if (!data) return '<div class="empty-message">Data tidak ditemukan</div>';
-            
-            let html = `<div class="info-siswa" style="margin-bottom: 1rem;">
-                <i class="fas fa-users"></i> Kelas: ${escapeHtml(kelas)} &nbsp;|&nbsp;
-                <i class="fas fa-user"></i> Nama: ${escapeHtml(nama)} &nbsp;|&nbsp;
-                <i class="fas fa-clock"></i> ${formatTanggal(data.Timestamp || data._timestamp || '')}
-            </div>`;
-            
-            function processValue(value) {
-                if (value === null || value === undefined) return { isJson: false, data: '-' };
-                
-                if (typeof value === 'string') {
-                    const trimmed = value.trim();
-                    if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || 
-                        (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
-                        try {
-                            const parsed = JSON.parse(trimmed);
-                            return { isJson: true, data: parsed };
-                        } catch(e) {}
-                    }
-                }
-                return { isJson: false, data: value };
-            }
-            
-            const bagianKeys = Object.keys(data).filter(key => key.startsWith('Bagian_')).sort();
-            
-            if (bagianKeys.length === 0) {
-                html += `<div class="bagian-card">
-                    <div class="bagian-title"><i class="fas fa-database"></i> Semua Data</div>`;
-                
-                for (const [key, value] of Object.entries(data)) {
-                    if (key === 'Timestamp' || key === 'Status' || key === '_timestamp' || key === '_status') continue;
-                    
-                    const processed = processValue(value);
-                    
-                    html += `
-                        <div class="field-item ${processed.isJson ? 'full-width' : ''}">
-                            <div class="field-label">${escapeHtml(formatLabel(key))}</div>
-                            ${processed.isJson ? renderValue(processed.data) : `<div class="field-value">${escapeHtml(String(processed.data))}</div>`}
+        if (typeof value === 'object') {
+            if (Object.keys(value).length === 0) return '<span class="field-value">(Kosong)</span>';
+            let objHtml = '<div class="field-group">';
+            for (const [subKey, subValue] of Object.entries(value)) {
+                if (Array.isArray(subValue)) {
+                    objHtml += `
+                        <div class="field-item full-width">
+                            <div class="field-label">${escapeHtml(formatLabel(subKey))}</div>
+                            <div class="field-value">${renderValue(subValue, depth + 1)}</div>
+                        </div>`;
+                } else if (typeof subValue === 'object' && subValue !== null) {
+                    objHtml += `
+                        <div class="field-item full-width">
+                            <div class="field-label">${escapeHtml(formatLabel(subKey))}</div>
+                            <div class="field-value">${renderValue(subValue, depth + 1)}</div>
+                        </div>`;
+                } else {
+                    objHtml += `
+                        <div class="field-item">
+                            <div class="field-label">${escapeHtml(formatLabel(subKey))}</div>
+                            <div class="field-value">${escapeHtml(String(subValue || '-'))}</div>
                         </div>`;
                 }
-                html += `</div>`;
-            } else {
-                for (const bagianKey of bagianKeys) {
-                    const bagianValue = data[bagianKey];
-                    if (!bagianValue) continue;
-                    
-                    const bagianTitle = bagianKey.replace('Bagian_', 'Bagian ');
-                    
-                    html += `<div class="bagian-card">
-                        <div class="bagian-title"><i class="fas fa-folder-open"></i> ${escapeHtml(bagianTitle)}</div>`;
-                    
-                    const processed = processValue(bagianValue);
-                    
-                    if (processed.isJson) {
-                        html += renderValue(processed.data);
-                    } else if (typeof bagianValue === 'object') {
-                        html += renderValue(bagianValue);
-                    } else {
-                        html += `<div class="field-value">${escapeHtml(String(bagianValue))}</div>`;
-                    }
-                    
-                    html += `</div>`;
+            }
+            objHtml += '</div>';
+            return objHtml;
+        }
+        return `<span class="field-value">${escapeHtml(String(value))}</span>`;
+    }
+    
+    function renderJawaban(data, sheetName, kelas, nama) {
+        if (!data) return '<div class="empty-message">Data tidak ditemukan</div>';
+        let html = `<div class="info-siswa" style="margin-bottom: 1rem;">
+            <i class="fas fa-users"></i> Kelas: ${escapeHtml(kelas)} &nbsp;|&nbsp;
+            <i class="fas fa-user"></i> Nama: ${escapeHtml(nama)} &nbsp;|&nbsp;
+            <i class="fas fa-clock"></i> ${formatTanggal(data.Timestamp || data._timestamp || '')}
+        </div>`;
+        function processValue(value) {
+            if (value === null || value === undefined) return { isJson: false, data: '-' };
+            if (typeof value === 'string') {
+                const trimmed = value.trim();
+                if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || 
+                    (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+                    try {
+                        const parsed = JSON.parse(trimmed);
+                        return { isJson: true, data: parsed };
+                    } catch(e) {}
                 }
             }
-            
-            return html;
+            return { isJson: false, data: value };
+        }
+        const bagianKeys = Object.keys(data).filter(key => key.startsWith('Bagian_')).sort();
+        if (bagianKeys.length === 0) {
+            html += `<div class="bagian-card"><div class="bagian-title"><i class="fas fa-database"></i> Semua Data</div>`;
+            for (const [key, value] of Object.entries(data)) {
+                if (key === 'Timestamp' || key === 'Status' || key === '_timestamp' || key === '_status') continue;
+                const processed = processValue(value);
+                html += `
+                    <div class="field-item ${processed.isJson ? 'full-width' : ''}">
+                        <div class="field-label">${escapeHtml(formatLabel(key))}</div>
+                        ${processed.isJson ? renderValue(processed.data) : `<div class="field-value">${escapeHtml(String(processed.data))}</div>`}
+                    </div>`;
+            }
+            html += `</div>`;
+        } else {
+            for (const bagianKey of bagianKeys) {
+                const bagianValue = data[bagianKey];
+                if (!bagianValue) continue;
+                const bagianTitle = bagianKey.replace('Bagian_', 'Bagian ');
+                html += `<div class="bagian-card"><div class="bagian-title"><i class="fas fa-folder-open"></i> ${escapeHtml(bagianTitle)}</div>`;
+                const processed = processValue(bagianValue);
+                if (processed.isJson) {
+                    html += renderValue(processed.data);
+                } else if (typeof bagianValue === 'object') {
+                    html += renderValue(bagianValue);
+                } else {
+                    html += `<div class="field-value">${escapeHtml(String(bagianValue))}</div>`;
+                }
+                html += `</div>`;
+            }
+        }
+        return html;
+    }
+    
+    // ==================== RENDER RUBRIK DENGAN URUTAN TEPAT ====================
+    function renderRubrikWithClick(rubrikData, savedScores = {}) {
+        if (!rubrikData || !rubrikData.rubrik_penilaian) {
+            return `<div class="empty-message">Rubrik penilaian tidak tersedia untuk aktivitas ini</div>`;
         }
         
-        // ==================== RENDER RUBRIK DENGAN KLIK ====================
-        function renderRubrikWithClick(rubrikData, savedScores = {}) {
-            if (!rubrikData || !rubrikData.rubrik_penilaian) {
-                return `<div class="empty-message">Rubrik penilaian tidak tersedia untuk aktivitas ini</div>`;
+        let html = '';
+        selectedScores = { ...savedScores };
+        
+        // Urutan TP yang benar (prioritas)
+        const urutanPrioritas = ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'];
+        const semuaKeys = Object.keys(rubrikData.rubrik_penilaian);
+        const urutanTP = [];
+        
+        // Tambahkan TP sesuai prioritas
+        for (const prioritas of urutanPrioritas) {
+            if (semuaKeys.includes(prioritas)) {
+                urutanTP.push(prioritas);
+            }
+        }
+        // Tambahkan sisanya (Refleksi_dan_Penilaian_Diri dll)
+        for (const key of semuaKeys) {
+            if (!urutanPrioritas.includes(key)) {
+                urutanTP.push(key);
+            }
+        }
+        
+        for (const tpKode of urutanTP) {
+            const tpData = rubrikData.rubrik_penilaian[tpKode];
+            if (!tpData || !tpData.kriteria || tpData.kriteria.length === 0) {
+                console.warn(`TP ${tpKode} tidak memiliki kriteria, dilewati`);
+                continue;
             }
             
-            let html = '';
-            selectedScores = { ...savedScores };
+            const tpIdSafe = safeId(tpKode);
             
-            for (const [tpKode, tpData] of Object.entries(rubrikData.rubrik_penilaian)) {
-                if (!tpData.kriteria) continue;
-                
-                html += `<div class="rubrik-tp-card">
-                    <div class="rubrik-tp-title">
-                        <i class="fas fa-clipboard-list"></i> ${escapeHtml(tpKode)}
-                    </div>
-                    <table class="rubrik-tabel">
-                        <thead>
-                            <tr>
-                                <th style="width: 28%">Kriteria Penilaian</th>
-                                <th style="width: 18%">Skor 4<br>(Sangat Baik)</th>
-                                <th style="width: 18%">Skor 3<br>(Baik)</th>
-                                <th style="width: 18%">Skor 2<br>(Cukup)</th>
-                                <th style="width: 18%">Skor 1<br>(Kurang)</th>
-                                <th style="width: 10%">Nilai</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-                
-                tpData.kriteria.forEach((kriteria, idx) => {
-                    const kriteriaId = `${tpKode}_${kriteria.nama}`;
-                    const savedScore = selectedScores[kriteriaId] ? selectedScores[kriteriaId].skor : '';
-                    
-                    html += `
+            html += `<div class="rubrik-tp-card">
+                <div class="rubrik-tp-title">
+                    <i class="fas fa-clipboard-list"></i> ${escapeHtml(tpKode)}
+                </div>
+                <table class="rubrik-tabel">
+                    <thead>
                         <tr>
-                            <td><strong>${escapeHtml(kriteria.nama)}</strong></td>
-                            <td class="skor-cell" data-id="${kriteriaId}" data-skor="4" data-tp="${tpKode}" data-kriteria="${escapeHtml(kriteria.nama)}" data-deskripsi="${escapeHtml(kriteria['4'] || '-')}" onclick="selectScore('${kriteriaId}', 4, '${tpKode}', '${escapeHtml(kriteria.nama)}', '${escapeHtml(kriteria['4'] || '-')}')">
-                                <div class="skor-value">4</div>
-                                <div class="skor-deskripsi">${escapeHtml(kriteria['4'] || '-')}</div>
-                            </td>
-                            <td class="skor-cell" data-id="${kriteriaId}" data-skor="3" data-tp="${tpKode}" data-kriteria="${escapeHtml(kriteria.nama)}" data-deskripsi="${escapeHtml(kriteria['3'] || '-')}" onclick="selectScore('${kriteriaId}', 3, '${tpKode}', '${escapeHtml(kriteria.nama)}', '${escapeHtml(kriteria['3'] || '-')}')">
-                                <div class="skor-value">3</div>
-                                <div class="skor-deskripsi">${escapeHtml(kriteria['3'] || '-')}</div>
-                            </td>
-                            <td class="skor-cell" data-id="${kriteriaId}" data-skor="2" data-tp="${tpKode}" data-kriteria="${escapeHtml(kriteria.nama)}" data-deskripsi="${escapeHtml(kriteria['2'] || '-')}" onclick="selectScore('${kriteriaId}', 2, '${tpKode}', '${escapeHtml(kriteria.nama)}', '${escapeHtml(kriteria['2'] || '-')}')">
-                                <div class="skor-value">2</div>
-                                <div class="skor-deskripsi">${escapeHtml(kriteria['2'] || '-')}</div>
-                            </td>
-                            <td class="skor-cell" data-id="${kriteriaId}" data-skor="1" data-tp="${tpKode}" data-kriteria="${escapeHtml(kriteria.nama)}" data-deskripsi="${escapeHtml(kriteria['1'] || '-')}" onclick="selectScore('${kriteriaId}', 1, '${tpKode}', '${escapeHtml(kriteria.nama)}', '${escapeHtml(kriteria['1'] || '-')}')">
-                                <div class="skor-value">1</div>
-                                <div class="skor-deskripsi">${escapeHtml(kriteria['1'] || '-')}</div>
-                            </td>
-                            <td class="nilai-display" id="nilai_${kriteriaId}" style="text-align: center; font-weight: bold; background: #f0f0f0;">
-                                ${savedScore || '-'}
-                            </td>
-                        </tr>`;
-                });
+                            <th style="width: 28%">Kriteria Penilaian</th>
+                            <th style="width: 18%">Skor 4<br>(Sangat Baik)</th>
+                            <th style="width: 18%">Skor 3<br>(Baik)</th>
+                            <th style="width: 18%">Skor 2<br>(Cukup)</th>
+                            <th style="width: 18%">Skor 1<br>(Kurang)</th>
+                            <th style="width: 10%">Nilai</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+            
+            tpData.kriteria.forEach((kriteria, idx) => {
+                const kriteriaId = `${tpKode}_${kriteria.nama}`;
+                const savedScore = selectedScores[kriteriaId] ? selectedScores[kriteriaId].skor : '';
                 
-                html += `</tbody>
+                html += `
                     <tr>
-                    <div class="tp-rata-panel" id="tp_rata_${tpKode}">
-                        <i class="fas fa-calculator"></i> Nilai Rata-rata ${escapeHtml(tpKode)}: <strong id="tp_rata_value_${tpKode}">0</strong> (Skala 1-4)
-                    </div>
-                </div>`;
-            }
+                        <td><strong>${escapeHtml(kriteria.nama)}</strong></td>
+                        <td class="skor-cell" data-id="${kriteriaId}" data-skor="4" onclick="selectScore('${kriteriaId}', 4, '${tpKode}', '${escapeHtml(kriteria.nama)}', '${escapeHtml(kriteria['4'] || '-')}')">
+                            <div class="skor-value">4</div>
+                            <div class="skor-deskripsi">${escapeHtml(kriteria['4'] || '-')}</div>
+                        </td>
+                        <td class="skor-cell" data-id="${kriteriaId}" data-skor="3" onclick="selectScore('${kriteriaId}', 3, '${tpKode}', '${escapeHtml(kriteria.nama)}', '${escapeHtml(kriteria['3'] || '-')}')">
+                            <div class="skor-value">3</div>
+                            <div class="skor-deskripsi">${escapeHtml(kriteria['3'] || '-')}</div>
+                        </td>
+                        <td class="skor-cell" data-id="${kriteriaId}" data-skor="2" onclick="selectScore('${kriteriaId}', 2, '${tpKode}', '${escapeHtml(kriteria.nama)}', '${escapeHtml(kriteria['2'] || '-')}')">
+                            <div class="skor-value">2</div>
+                            <div class="skor-deskripsi">${escapeHtml(kriteria['2'] || '-')}</div>
+                        </td>
+                        <td class="skor-cell" data-id="${kriteriaId}" data-skor="1" onclick="selectScore('${kriteriaId}', 1, '${tpKode}', '${escapeHtml(kriteria.nama)}', '${escapeHtml(kriteria['1'] || '-')}')">
+                            <div class="skor-value">1</div>
+                            <div class="skor-deskripsi">${escapeHtml(kriteria['1'] || '-')}</div>
+                        </td>
+                        <td class="nilai-display" id="nilai_${safeId(kriteriaId)}">
+                            ${savedScore || '-'}
+                        </td>
+                    </tr>`;
+            });
             
-            setTimeout(() => {
-                applySelectedHighlights();
-                updateAllDisplays();
-            }, 100);
-            
-            return html;
+            html += `</tbody>
+                </table>
+                <div class="tp-rata-panel" id="tp_rata_${tpIdSafe}">
+                    <i class="fas fa-calculator"></i> Nilai Rata-rata ${escapeHtml(tpKode)}: 
+                    <strong id="tp_rata_value_${tpIdSafe}">0</strong> (Skala 1-4)
+                </div>
+            </div>`;
         }
         
-        // ==================== FUNGSI PILIH SKOR ====================
-        window.selectScore = function(kriteriaId, skor, tpKode, kriteriaNama, deskripsi) {
-            selectedScores[kriteriaId] = {
-                skor: skor,
-                tpKode: tpKode,
-                kriteriaNama: kriteriaNama,
-                deskripsi: deskripsi
-            };
-            
-            const nilaiDisplay = document.getElementById(`nilai_${kriteriaId}`);
-            if (nilaiDisplay) {
-                nilaiDisplay.textContent = skor;
-                nilaiDisplay.style.background = '#27ae60';
-                nilaiDisplay.style.color = 'white';
+        setTimeout(() => {
+            applySelectedHighlights();
+            updateAllDisplays();
+        }, 100);
+        
+        return html;
+    }
+    
+    // ==================== FUNGSI PILIH SKOR ====================
+    window.selectScore = function(kriteriaId, skor, tpKode, kriteriaNama, deskripsi) {
+        selectedScores[kriteriaId] = {
+            skor: skor,
+            tpKode: tpKode,
+            kriteriaNama: kriteriaNama,
+            deskripsi: deskripsi
+        };
+        
+        const nilaiDisplay = document.getElementById(`nilai_${safeId(kriteriaId)}`);
+        if (nilaiDisplay) {
+            nilaiDisplay.textContent = skor;
+            nilaiDisplay.style.background = '#27ae60';
+            nilaiDisplay.style.color = 'white';
+        }
+        
+        const cells = document.querySelectorAll(`.skor-cell[data-id="${kriteriaId}"]`);
+        cells.forEach(cell => {
+            const cellSkor = parseInt(cell.getAttribute('data-skor'));
+            if (cellSkor === skor) {
+                cell.classList.add('selected');
+            } else {
+                cell.classList.remove('selected');
             }
-            
+        });
+        
+        updateAllDisplays();
+    };
+    
+    function applySelectedHighlights() {
+        for (const [kriteriaId, data] of Object.entries(selectedScores)) {
             const cells = document.querySelectorAll(`.skor-cell[data-id="${kriteriaId}"]`);
             cells.forEach(cell => {
                 const cellSkor = parseInt(cell.getAttribute('data-skor'));
-                if (cellSkor === skor) {
+                if (cellSkor === data.skor) {
                     cell.classList.add('selected');
                 } else {
                     cell.classList.remove('selected');
                 }
             });
             
-            updateAllDisplays();
-        };
-        
-        function applySelectedHighlights() {
-            for (const [kriteriaId, data] of Object.entries(selectedScores)) {
-                const cells = document.querySelectorAll(`.skor-cell[data-id="${kriteriaId}"]`);
-                cells.forEach(cell => {
-                    const cellSkor = parseInt(cell.getAttribute('data-skor'));
-                    if (cellSkor === data.skor) {
-                        cell.classList.add('selected');
-                    }
-                });
-                
-                const nilaiDisplay = document.getElementById(`nilai_${kriteriaId}`);
-                if (nilaiDisplay) {
-                    nilaiDisplay.textContent = data.skor;
-                    nilaiDisplay.style.background = '#27ae60';
-                    nilaiDisplay.style.color = 'white';
-                }
+            const nilaiDisplay = document.getElementById(`nilai_${safeId(kriteriaId)}`);
+            if (nilaiDisplay) {
+                nilaiDisplay.textContent = data.skor;
+                nilaiDisplay.style.background = '#27ae60';
+                nilaiDisplay.style.color = 'white';
             }
         }
-        
-        function calculateTPScores() {
-            const tpData = {};
-            
-            for (const [kriteriaId, data] of Object.entries(selectedScores)) {
-                const tpKode = data.tpKode;
-                if (!tpData[tpKode]) {
-                    tpData[tpKode] = {
-                        totalSkor: 0,
-                        jumlahKriteria: 0
-                    };
-                }
-                tpData[tpKode].totalSkor += data.skor;
-                tpData[tpKode].jumlahKriteria++;
+    }
+    
+    function calculateTPScores() {
+        const tpData = {};
+        for (const [kriteriaId, data] of Object.entries(selectedScores)) {
+            const tpKode = data.tpKode;
+            if (!tpData[tpKode]) {
+                tpData[tpKode] = { totalSkor: 0, jumlahKriteria: 0 };
             }
-            
-            const tpResults = {};
-            for (const [tpKode, data] of Object.entries(tpData)) {
-                const skorMaksimal = data.jumlahKriteria * 4;
-                const skorTotal = data.totalSkor;
-                const konversi = Math.round((skorTotal / skorMaksimal) * 100);
-                
-                tpResults[tpKode] = {
-                    skor_total: skorTotal,
-                    skor_maksimal: skorMaksimal,
-                    konversi: konversi,
-                    jumlah_kriteria: data.jumlahKriteria
-                };
-            }
-            
-            return tpResults;
+            tpData[tpKode].totalSkor += data.skor;
+            tpData[tpKode].jumlahKriteria++;
         }
-        
-        function updateRekapRingkas() {
-            const tpResults = calculateTPScores();
-            const rekapDiv = document.getElementById('rekapRingkas');
-            
-            if (Object.keys(tpResults).length === 0) {
-                rekapDiv.style.display = 'none';
-                return;
-            }
-            
-            rekapDiv.style.display = 'flex';
-            let html = '';
-            for (const [tpKode, data] of Object.entries(tpResults)) {
-                html += `<span class="tp-item-ringkas">
-                    <strong>${escapeHtml(tpKode)}</strong> (${data.skor_total} / ${data.konversi})
-                </span>`;
-            }
-            rekapDiv.innerHTML = html;
-        }
-        
-        function updateAllDisplays() {
-            const tpScores = {};
-            const tpCounts = {};
-            
-            for (const [kriteriaId, data] of Object.entries(selectedScores)) {
-                const tpKode = data.tpKode;
-                if (!tpScores[tpKode]) {
-                    tpScores[tpKode] = 0;
-                    tpCounts[tpKode] = 0;
-                }
-                tpScores[tpKode] += data.skor;
-                tpCounts[tpKode]++;
-            }
-            
-            for (const [tpKode, total] of Object.entries(tpScores)) {
-                const rata = total / tpCounts[tpKode];
-                const rataElement = document.getElementById(`tp_rata_value_${tpKode}`);
-                if (rataElement) {
-                    rataElement.textContent = rata.toFixed(2);
-                }
-            }
-            
-            updateRekapRingkas();
-            
-            const btnSimpan = document.getElementById('btnSimpanNilai');
-            if (Object.keys(selectedScores).length > 0) {
-                btnSimpan.style.display = 'inline-flex';
-            } else {
-                btnSimpan.style.display = 'none';
-            }
-        }
-        
-        function buildSaveData() {
-            const tpGroups = {};
-            
-            for (const [kriteriaId, data] of Object.entries(selectedScores)) {
-                const tpKode = data.tpKode;
-                if (!tpGroups[tpKode]) {
-                    tpGroups[tpKode] = {
-                        kriteria: {},
-                        totalSkor: 0,
-                        jumlahKriteria: 0
-                    };
-                }
-                tpGroups[tpKode].kriteria[data.kriteriaNama] = {
-                    skor: data.skor,
-                    deskripsi: data.deskripsi
-                };
-                tpGroups[tpKode].totalSkor += data.skor;
-                tpGroups[tpKode].jumlahKriteria++;
-            }
-            
-            const nilaiTP = {};
-            for (const [tpKode, group] of Object.entries(tpGroups)) {
-                const skorMaksimal = group.jumlahKriteria * 4;
-                const skorTotal = group.totalSkor;
-                
-                nilaiTP[tpKode] = {
-                    kriteria: group.kriteria,
-                    skor_total: skorTotal,
-                    skor_maksimal: skorMaksimal,
-                    jumlah_kriteria: group.jumlahKriteria
-                };
-            }
-            
-            return {
-                nama: currentNama,
-                kelas: currentKelas,
-                aktivitas: currentAktivitas,
-                semester: currentSemester,
-                nilai_TP: nilaiTP,
-                timestamp: new Date().toISOString()
+        const tpResults = {};
+        for (const [tpKode, data] of Object.entries(tpData)) {
+            const skorMaksimal = data.jumlahKriteria * 4;
+            const skorTotal = data.totalSkor;
+            const konversi = Math.round((skorTotal / skorMaksimal) * 100);
+            tpResults[tpKode] = {
+                skor_total: skorTotal,
+                skor_maksimal: skorMaksimal,
+                konversi: konversi,
+                jumlah_kriteria: data.jumlahKriteria
             };
         }
-        
-        async function simpanNilai() {
-            const btnSimpan = document.getElementById('btnSimpanNilai');
-            const saveStatus = document.getElementById('saveStatus');
-            
-            btnSimpan.disabled = true;
-            btnSimpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-            saveStatus.innerHTML = '';
-            
-            const saveData = buildSaveData();
-            const url = currentSemester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
-            
-            try {
-                const response = await fetch(`${url}?action=savePenilaianTP&data=${encodeURIComponent(JSON.stringify(saveData))}&_=${Date.now()}`, {
-                    method: 'GET'
-                });
-                
-                const result = await response.json();
-                
-                if (result && result.success) {
-                    saveStatus.innerHTML = '<span class="status-saved"><i class="fas fa-check"></i> Nilai berhasil disimpan!</span>';
-                    setTimeout(() => {
-                        saveStatus.innerHTML = '';
-                    }, 3000);
-                } else {
-                    saveStatus.innerHTML = '<span style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal menyimpan: ' + (result.error || 'Unknown error') + '</span>';
-                }
-            } catch (error) {
-                console.error('Error saving scores:', error);
-                saveStatus.innerHTML = '<span style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal menyimpan nilai</span>';
-            } finally {
-                btnSimpan.disabled = false;
-                btnSimpan.innerHTML = '<i class="fas fa-save"></i> Simpan Nilai';
+        return tpResults;
+    }
+    
+    function updateRekapRingkas() {
+        const tpResults = calculateTPScores();
+        const rekapDiv = document.getElementById('rekapRingkas');
+        if (Object.keys(tpResults).length === 0) {
+            rekapDiv.style.display = 'none';
+            return;
+        }
+        rekapDiv.style.display = 'flex';
+        let html = '';
+        for (const [tpKode, data] of Object.entries(tpResults)) {
+            html += `<span class="tp-item-ringkas">
+                <strong>${escapeHtml(tpKode)}</strong> (${data.skor_total} / ${data.konversi})
+            </span>`;
+        }
+        rekapDiv.innerHTML = html;
+    }
+    
+    function updateAllDisplays() {
+        const tpScores = {};
+        const tpCounts = {};
+        for (const [kriteriaId, data] of Object.entries(selectedScores)) {
+            const tpKode = data.tpKode;
+            if (!tpScores[tpKode]) {
+                tpScores[tpKode] = 0;
+                tpCounts[tpKode] = 0;
+            }
+            tpScores[tpKode] += data.skor;
+            tpCounts[tpKode]++;
+        }
+        for (const [tpKode, total] of Object.entries(tpScores)) {
+            const rata = total / tpCounts[tpKode];
+            const tpIdSafe = safeId(tpKode);
+            const rataElement = document.getElementById(`tp_rata_value_${tpIdSafe}`);
+            if (rataElement) {
+                rataElement.textContent = rata.toFixed(2);
             }
         }
-        
-        async function loadStudentByIndex(index) {
-            if (index < 0 || index >= currentStudentList.length) return;
-            
-            currentStudentIndex = index;
-            const newNama = currentStudentList[index];
-            
-            const namaSelect = document.getElementById('filterNama');
-            namaSelect.value = newNama;
-            currentNama = newNama;
-            
-            document.getElementById('navStudentName').textContent = newNama;
-            document.getElementById('navStudentCounter').textContent = `${index + 1} / ${currentStudentList.length}`;
-            
-            document.getElementById('navPrevBtn').disabled = (index === 0);
-            document.getElementById('navNextBtn').disabled = (index === currentStudentList.length - 1);
-            
-            await loadStudentData();
+        updateRekapRingkas();
+        const btnSimpan = document.getElementById('btnSimpanNilai');
+        if (Object.keys(selectedScores).length > 0) {
+            btnSimpan.style.display = 'inline-flex';
+        } else {
+            btnSimpan.style.display = 'none';
         }
-        
-        async function loadStudentData() {
-            if (!currentNama) return;
-            
-            document.getElementById('loadingMessage').style.display = 'block';
-            document.getElementById('errorMessage').style.display = 'none';
-            
-            try {
-                const data = await fetchDataFromSheet(currentSemester, currentAktivitas, currentKelas, currentNama);
-                const rubrik = await loadRubrikFromSheet(currentSemester, currentAktivitas);
-                const savedScores = await loadSavedScores(currentSemester, currentKelas, currentNama, currentAktivitas);
-                
-                if (data) {
-                    currentData = data;
-                    document.getElementById('jawabanContent').innerHTML = renderJawaban(data, currentAktivitas, currentKelas, currentNama);
-                    document.getElementById('infoSiswaPanel').innerHTML = `${currentKelas} | ${currentNama}`;
-                    
-                    if (rubrik) {
-                        document.getElementById('rubrikContent').innerHTML = renderRubrikWithClick(rubrik, savedScores);
-                    } else {
-                        document.getElementById('rubrikContent').innerHTML = `<div class="empty-message">Rubrik tidak ditemukan</div>`;
-                    }
-                    
-                    document.getElementById('twoColumnLayout').style.display = 'flex';
-                    
-                    const btnSimpan = document.getElementById('btnSimpanNilai');
-                    btnSimpan.onclick = simpanNilai;
-                } else {
-                    document.getElementById('emptyMessage').style.display = 'block';
-                    document.getElementById('emptyMessage').innerHTML = '<i class="fas fa-info-circle"></i> Data jawaban tidak ditemukan.';
-                    document.getElementById('twoColumnLayout').style.display = 'none';
-                }
-            } catch (error) {
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorText').innerHTML = error.message || 'Terjadi kesalahan';
-            } finally {
-                document.getElementById('loadingMessage').style.display = 'none';
+    }
+    
+    function buildSaveData() {
+        const tpGroups = {};
+        for (const [kriteriaId, data] of Object.entries(selectedScores)) {
+            const tpKode = data.tpKode;
+            if (!tpGroups[tpKode]) {
+                tpGroups[tpKode] = { kriteria: {}, totalSkor: 0, jumlahKriteria: 0 };
             }
+            tpGroups[tpKode].kriteria[data.kriteriaNama] = {
+                skor: data.skor,
+                deskripsi: data.deskripsi
+            };
+            tpGroups[tpKode].totalSkor += data.skor;
+            tpGroups[tpKode].jumlahKriteria++;
         }
-        
-        async function cekPreview() {
-            currentSemester = document.getElementById('filterSemester').value;
-            currentAktivitas = document.getElementById('filterAktivitas').value;
-            currentKelas = document.getElementById('filterKelas').value;
-            currentNama = document.getElementById('filterNama').value;
-            
-            if (!currentSemester) { alert('Pilih semester terlebih dahulu'); return; }
-            if (!currentAktivitas) { alert('Pilih aktivitas terlebih dahulu'); return; }
-            if (!currentKelas) { alert('Pilih kelas terlebih dahulu'); return; }
-            if (!currentNama) { alert('Pilih nama siswa terlebih dahulu'); return; }
-            
-            currentStudentList = dataSiswa[currentKelas] || [];
-            currentStudentList = [...currentStudentList].sort();
-            currentStudentIndex = currentStudentList.indexOf(currentNama);
-            
-            if (currentStudentList.length > 1) {
-                document.getElementById('studentNavigation').style.display = 'flex';
-                document.getElementById('navStudentName').textContent = currentNama;
-                document.getElementById('navStudentCounter').textContent = `${currentStudentIndex + 1} / ${currentStudentList.length}`;
-                document.getElementById('navPrevBtn').disabled = (currentStudentIndex === 0);
-                document.getElementById('navNextBtn').disabled = (currentStudentIndex === currentStudentList.length - 1);
-                
-                document.getElementById('navPrevBtn').onclick = () => loadStudentByIndex(currentStudentIndex - 1);
-                document.getElementById('navNextBtn').onclick = () => loadStudentByIndex(currentStudentIndex + 1);
+        const nilaiTP = {};
+        for (const [tpKode, group] of Object.entries(tpGroups)) {
+            const skorMaksimal = group.jumlahKriteria * 4;
+            const skorTotal = group.totalSkor;
+            nilaiTP[tpKode] = {
+                kriteria: group.kriteria,
+                skor_total: skorTotal,
+                skor_maksimal: skorMaksimal,
+                jumlah_kriteria: group.jumlahKriteria
+            };
+        }
+        return {
+            nama: currentNama,
+            kelas: currentKelas,
+            aktivitas: currentAktivitas,
+            semester: currentSemester,
+            nilai_TP: nilaiTP,
+            timestamp: new Date().toISOString()
+        };
+    }
+    
+    async function simpanNilai() {
+        const btnSimpan = document.getElementById('btnSimpanNilai');
+        const saveStatus = document.getElementById('saveStatus');
+        btnSimpan.disabled = true;
+        btnSimpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        saveStatus.innerHTML = '';
+        const saveData = buildSaveData();
+        const url = currentSemester === 'ganjil' ? URL_SEMESTER_GANJIL : URL_SEMESTER_GENAP;
+        try {
+            const response = await fetch(`${url}?action=savePenilaianTP&data=${encodeURIComponent(JSON.stringify(saveData))}&_=${Date.now()}`, { method: 'GET' });
+            const result = await response.json();
+            if (result && result.success) {
+                saveStatus.innerHTML = '<span class="status-saved"><i class="fas fa-check"></i> Nilai berhasil disimpan!</span>';
+                setTimeout(() => { saveStatus.innerHTML = ''; }, 3000);
             } else {
-                document.getElementById('studentNavigation').style.display = 'none';
+                saveStatus.innerHTML = '<span style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal menyimpan: ' + (result.error || 'Unknown error') + '</span>';
             }
-            
-            await loadStudentData();
+        } catch (error) {
+            console.error('Error saving scores:', error);
+            saveStatus.innerHTML = '<span style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal menyimpan nilai</span>';
+        } finally {
+            btnSimpan.disabled = false;
+            btnSimpan.innerHTML = '<i class="fas fa-save"></i> Simpan Nilai';
         }
-        
-        async function init() {
-            const hamburger = document.getElementById('hamburger');
-            const navMenu = document.getElementById('nav-menu');
-            if (hamburger) { hamburger.addEventListener('click', () => navMenu.classList.toggle('active')); }
-            
-            // Load profile dari session
-            loadProfileFromSession();
-            
-            // Setup logout button dengan onclick langsung sudah ada di HTML
-            // No need for additional event listener
-            
-            document.getElementById('filterSemester').value = 'genap';
-            
-            document.getElementById('loadingMessage').style.display = 'block';
-            
-            try {
-                await loadDataSiswa();
-                await loadDaftarAktivitas();
-                
-                document.getElementById('filterSemester').addEventListener('change', () => {
-                    loadDaftarAktivitas();
-                    document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
-                    document.getElementById('filterKelas').disabled = true;
-                    document.getElementById('filterNama').innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
-                    document.getElementById('filterNama').disabled = true;
-                    document.getElementById('twoColumnLayout').style.display = 'none';
-                });
-                
-                document.getElementById('filterAktivitas').addEventListener('change', () => { 
-                    updateKelasDropdown();
-                    document.getElementById('twoColumnLayout').style.display = 'none';
-                });
-                document.getElementById('filterKelas').addEventListener('change', updateNamaDropdown);
-                document.getElementById('btnCek').addEventListener('click', cekPreview);
-                
-                document.getElementById('loadingMessage').style.display = 'none';
-            } catch (error) {
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorText').innerHTML = 'Gagal memuat data awal. Silakan refresh halaman.';
+    }
+    
+    async function loadStudentByIndex(index) {
+        if (index < 0 || index >= currentStudentList.length) return;
+        currentStudentIndex = index;
+        const newNama = currentStudentList[index];
+        document.getElementById('filterNama').value = newNama;
+        currentNama = newNama;
+        document.getElementById('navStudentName').textContent = newNama;
+        document.getElementById('navStudentCounter').textContent = `${index + 1} / ${currentStudentList.length}`;
+        document.getElementById('navPrevBtn').disabled = (index === 0);
+        document.getElementById('navNextBtn').disabled = (index === currentStudentList.length - 1);
+        await loadStudentData();
+    }
+    
+    async function loadStudentData() {
+        if (!currentNama) return;
+        document.getElementById('loadingMessage').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+        try {
+            const data = await fetchDataFromSheet(currentSemester, currentAktivitas, currentKelas, currentNama);
+            const rubrik = await loadRubrikFromSheet(currentSemester, currentAktivitas);
+            const savedScores = await loadSavedScores(currentSemester, currentKelas, currentNama, currentAktivitas);
+            if (data) {
+                currentData = data;
+                document.getElementById('jawabanContent').innerHTML = renderJawaban(data, currentAktivitas, currentKelas, currentNama);
+                document.getElementById('infoSiswaPanel').innerHTML = `${currentKelas} | ${currentNama}`;
+                if (rubrik) {
+                    document.getElementById('rubrikContent').innerHTML = renderRubrikWithClick(rubrik, savedScores);
+                } else {
+                    document.getElementById('rubrikContent').innerHTML = `<div class="empty-message">Rubrik tidak ditemukan</div>`;
+                }
+                document.getElementById('twoColumnLayout').style.display = 'flex';
+                document.getElementById('btnSimpanNilai').onclick = simpanNilai;
+            } else {
+                document.getElementById('emptyMessage').style.display = 'block';
+                document.getElementById('emptyMessage').innerHTML = '<i class="fas fa-info-circle"></i> Data jawaban tidak ditemukan.';
+                document.getElementById('twoColumnLayout').style.display = 'none';
             }
+        } catch (error) {
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').innerHTML = error.message || 'Terjadi kesalahan';
+        } finally {
+            document.getElementById('loadingMessage').style.display = 'none';
         }
-        
-        document.addEventListener('DOMContentLoaded', init);
+    }
+    
+    async function cekPreview() {
+        currentSemester = document.getElementById('filterSemester').value;
+        currentAktivitas = document.getElementById('filterAktivitas').value;
+        currentKelas = document.getElementById('filterKelas').value;
+        currentNama = document.getElementById('filterNama').value;
+        if (!currentSemester) { alert('Pilih semester terlebih dahulu'); return; }
+        if (!currentAktivitas) { alert('Pilih aktivitas terlebih dahulu'); return; }
+        if (!currentKelas) { alert('Pilih kelas terlebih dahulu'); return; }
+        if (!currentNama) { alert('Pilih nama siswa terlebih dahulu'); return; }
+        currentStudentList = dataSiswa[currentKelas] || [];
+        currentStudentList = [...currentStudentList].sort();
+        currentStudentIndex = currentStudentList.indexOf(currentNama);
+        if (currentStudentList.length > 1) {
+            document.getElementById('studentNavigation').style.display = 'flex';
+            document.getElementById('navStudentName').textContent = currentNama;
+            document.getElementById('navStudentCounter').textContent = `${currentStudentIndex + 1} / ${currentStudentList.length}`;
+            document.getElementById('navPrevBtn').disabled = (currentStudentIndex === 0);
+            document.getElementById('navNextBtn').disabled = (currentStudentIndex === currentStudentList.length - 1);
+            document.getElementById('navPrevBtn').onclick = () => loadStudentByIndex(currentStudentIndex - 1);
+            document.getElementById('navNextBtn').onclick = () => loadStudentByIndex(currentStudentIndex + 1);
+        } else {
+            document.getElementById('studentNavigation').style.display = 'none';
+        }
+        await loadStudentData();
+    }
+    
+    async function init() {
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        if (hamburger) { hamburger.addEventListener('click', () => navMenu.classList.toggle('active')); }
+        loadProfileFromSession();
+        document.getElementById('filterSemester').value = 'genap';
+        document.getElementById('loadingMessage').style.display = 'block';
+        try {
+            await loadDataSiswa();
+            await loadDaftarAktivitas();
+            document.getElementById('filterSemester').addEventListener('change', () => {
+                loadDaftarAktivitas();
+                document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
+                document.getElementById('filterKelas').disabled = true;
+                document.getElementById('filterNama').innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
+                document.getElementById('filterNama').disabled = true;
+                document.getElementById('twoColumnLayout').style.display = 'none';
+            });
+            document.getElementById('filterAktivitas').addEventListener('change', () => { 
+                updateKelasDropdown();
+                document.getElementById('twoColumnLayout').style.display = 'none';
+            });
+            document.getElementById('filterKelas').addEventListener('change', updateNamaDropdown);
+            document.getElementById('btnCek').addEventListener('click', cekPreview);
+            document.getElementById('loadingMessage').style.display = 'none';
+        } catch (error) {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').innerHTML = 'Gagal memuat data awal. Silakan refresh halaman.';
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
