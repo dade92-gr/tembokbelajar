@@ -434,32 +434,6 @@
             .nav-btn { width: 100%; justify-content: center; }
         }
         
-        .progress-container {
-            margin: 2rem 0;
-            background: var(--informatika-gray);
-            border-radius: 30px;
-            padding: 1rem;
-            position: sticky;
-            top: 10px;
-            z-index: 99;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background: linear-gradient(90deg, var(--informatika-primary), var(--informatika-secondary));
-            border-radius: 5px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        .progress-text {
-            text-align: right;
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 5px;
-        }
-        
         .catatan-penting {
             background: #fff9e0;
             border-left: 5px solid #f1c40f;
@@ -531,11 +505,6 @@
             <br><button class="refresh-btn" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Refresh Halaman</button>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-            <div class="progress-text" id="progressText">0% selesai</div>
-        </div>
-
         <div class="worksheet-container" id="worksheetForm">
             <div class="catatan-penting" style="background: #e8f5e9; border-left-color: var(--informatika-primary);">
                 <i class="fas fa-lightbulb" style="color: var(--informatika-primary); margin-right: 10px;"></i>
@@ -576,10 +545,6 @@
                     <label><i class="fas fa-tasks"></i> Peran dalam Kelompok</label>
                     <input type="text" id="tugas" placeholder="Contoh: Ketua / Editor" class="answer-field" disabled>
                 </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-calendar"></i> Tanggal</label>
-                    <input type="date" id="tanggal" class="answer-field" disabled>
-                </div>
             </div>
 
             <!-- PETUNJUK PENGGUNAAN LKPD -->
@@ -606,7 +571,7 @@
                 <table class="lkpd-table">
                     <thead> <th>No</th><th>Proyek</th><th>TP</th><th>Pertanyaan</th><th>Jawaban</th> </thead>
                     <tbody>
-                        办证<td>1</td><td>Proyek 1: Fakta atau Hoaks?</td><td>TP 2.1, 2.2, 2.3, 2.10</td><td>Apa strategi utama untuk memilah fakta dan hoaks?</td><td><textarea class="answer-field large" id="review1"></textarea></td>  '</tbody></table>'
+                        <td>1</td><td>Proyek 1: Fakta atau Hoaks?</td><td>TP 2.1, 2.2, 2.3, 2.10</td><td>Apa strategi utama untuk memilah fakta dan hoaks?</td><td><textarea class="answer-field large" id="review1"></textarea></td>  '</tbody></table>'
                                         </tbody>
                  </table>
                  <table class="lkpd-table">
@@ -784,11 +749,11 @@
     <script>
         // ==================== KONFIGURASI URL ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbwVlC43L4zLXVoUS1-lx9Che_9nAcmXAghlDJ_4nMROUOjH5Gx3uw5tGmfmDoJXLKEwsA/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbwRlLJQQ5ypD1jzsHICPZH6kfrSFHKHGXo0hPKjzwtHH04EDrAid7dqtDv7q6TCbDRj/exec';
 
         const FORM_CONFIG = {
-            sheetName: "PROYEK 6 AKTIVITAS 3 - PORTOFOLIO",
-            headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Tugas/Peran", "Tanggal", "Data Review", "Data Inventarisasi", "Data Folder", "Data Portofolio", "Data Rekap", "Data Presentasi", "Data Pengamanan", "Data Penilaian", "Data Refleksi"]
+            sheetName: "P6-A3",
+            headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Tugas/Peran", "Data Review", "Data Inventarisasi", "Data Folder", "Data Portofolio", "Data Rekap", "Data Presentasi", "Data Pengamanan", "Data Penilaian", "Data Refleksi"]
         };
 
         let dataKelas = [], dataSiswa = {}, isLoading = true, isOnline = true, saveTimeout = null;
@@ -818,24 +783,12 @@
                         } else element.value = formData[key];
                     }
                 });
-                updateProgressBar();
                 updatePenilaianTotal();
             } catch (e) { console.error(e); }
         }
 
         function clearLocalStorage() { localStorage.removeItem(STORAGE_KEY); }
         function debounceSave() { if (saveTimeout) clearTimeout(saveTimeout); saveTimeout = setTimeout(saveToLocalStorage, 1000); }
-
-        function updateProgressBar() {
-            const totalFields = document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').length;
-            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea'))
-                .filter(el => el.value && el.value.trim() !== '').length;
-            const progress = Math.round((filledFields / totalFields) * 100) || 0;
-            const pb = document.getElementById('progressBar');
-            const pt = document.getElementById('progressText');
-            if (pb) pb.style.width = progress + '%';
-            if (pt) pt.textContent = progress + '% selesai';
-        }
 
         function updatePenilaianTotal() {
             for (let i = 1; i <= 6; i++) {
@@ -1140,10 +1093,6 @@
                 
                 // Data Refleksi
                 const dataRefleksi = {
-                    nama: document.getElementById('ref_nama')?.value || '',
-                    kelas: document.getElementById('ref_kelas')?.value || '',
-                    kelompok: document.getElementById('ref_kelompok')?.value || '',
-                    peran: document.getElementById('ref_peran')?.value || '',
                     ref1: document.getElementById('ref1')?.value || '',
                     ref2: document.getElementById('ref2')?.value || '',
                     ref3: document.getElementById('ref3')?.value || '',
@@ -1183,10 +1132,9 @@
             const navMenu = document.getElementById('nav-menu');
             if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
             document.querySelectorAll('input, select, textarea').forEach(el => {
-                el.addEventListener('input', () => { updateProgressBar(); debounceSave(); });
-                el.addEventListener('change', () => { updateProgressBar(); debounceSave(); if (el.id && el.id.startsWith('nilai')) updatePenilaianTotal(); });
+                el.addEventListener('input', () => { debounceSave(); });
+                el.addEventListener('change', () => { debounceSave(); if (el.id && el.id.startsWith('nilai')) updatePenilaianTotal(); });
             });
-            updateProgressBar();
             updateConnectionStatus();
         });
     </script>

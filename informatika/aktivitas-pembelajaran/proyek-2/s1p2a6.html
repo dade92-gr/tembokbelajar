@@ -594,33 +594,6 @@
             margin: 1.5rem 0;
         }
         
-        /* Progress Bar */
-        .progress-container {
-            margin: 2rem 0;
-            background: var(--informatika-gray);
-            border-radius: 30px;
-            padding: 1rem;
-            position: sticky;
-            top: 10px;
-            z-index: 99;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background: linear-gradient(90deg, var(--informatika-primary), var(--informatika-secondary));
-            border-radius: 5px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        .progress-text {
-            text-align: right;
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 5px;
-        }
-        
         /* Catatan Penting */
         .catatan-penting {
             background: #fff9e0;
@@ -704,12 +677,6 @@
         <div id="errorMessage" class="error-message" style="display: none;">
             <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke server. Silakan cek koneksi internet Anda.</span>
             <br><button class="refresh-btn" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Refresh Halaman</button>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-            <div class="progress-text" id="progressText">0% selesai</div>
         </div>
 
         <!-- Worksheet Container - LKPD Proyek 2 Aktivitas 6 -->
@@ -984,15 +951,6 @@
                     <i class="fas fa-question-circle"></i> "Apa yang aku pelajari dari seluruh proyek ini?"
                 </div>
                 
-                <div style="background: var(--informatika-light); padding: 1rem; border-radius: 10px; margin-bottom: 20px;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                        <div><strong>Nama:</strong> <input type="text" class="answer-field" id="ref_nama" placeholder="Nama"></div>
-                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="ref_kelas" placeholder="Kelas"></div>
-                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="ref_kelompok" placeholder="Kelompok"></div>
-                        <div><strong>Peran:</strong> <input type="text" class="answer-field" id="ref_peran" placeholder="Peran"></div>
-                    </div>
-                </div>
-                
                 <h4 class="section-subtitle">A. Refleksi Pemahaman Materi</h4>
                 <table class="lkpd-table"><tbody>
                     <tr><td>1</td><td>Apa hal paling penting yang aku pelajari tentang algoritma? (TP 1.1)</td><td><textarea class="answer-field" id="ref1"></textarea></td></tr>
@@ -1103,11 +1061,11 @@
     <script>
         // ==================== KONFIGURASI URL ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbz6oBgz9hrztA6gH8a19LP7gsC5jPZc1O8TbRoO-7L55ySxtIAVxLRMLaeftDnNY4NYzw/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbwRlLJQQ5ypD1jzsHICPZH6kfrSFHKHGXo0hPKjzwtHH04EDrAid7dqtDv7q6TCbDRj/exec';
 
         // ==================== KONFIGURASI FORM ====================
         const FORM_CONFIG = {
-            sheetName: "AKTIVITAS 6 - PRESENTASI PROYEK 2",
+            sheetName: "P2-A6",
             headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Tugas/Peran", "Data Review Materi", "Data Persiapan Presentasi", "Data Observasi", "Data Penilaian", "Data Penghargaan", "Data Refleksi", "Data Komitmen"]
         };
 
@@ -1152,24 +1110,11 @@
                         }
                     }
                 });
-                updateProgressBar();
             } catch (e) { console.error(e); }
         }
 
         function clearLocalStorage() { localStorage.removeItem(STORAGE_KEY); }
         function debounceSave() { if (saveTimeout) clearTimeout(saveTimeout); saveTimeout = setTimeout(saveToLocalStorage, 1000); }
-
-        // ==================== PROGRESS BAR ====================
-        function updateProgressBar() {
-            const totalFields = document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').length;
-            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea'))
-                .filter(el => el.value && el.value.trim() !== '').length;
-            const progress = Math.round((filledFields / totalFields) * 100) || 0;
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            if (progressBar) progressBar.style.width = progress + '%';
-            if (progressText) progressText.textContent = progress + '% selesai';
-        }
 
         // ==================== KONEKSI ====================
         function updateConnectionStatus() {
@@ -1341,7 +1286,7 @@
                 formData.append('Data Penghargaan', JSON.stringify(dataPenghargaan));
                 
                 // Data Refleksi
-                const dataRefleksi = { identitas: { nama: document.getElementById('ref_nama')?.value || '', kelas: document.getElementById('ref_kelas')?.value || '', kelompok: document.getElementById('ref_kelompok')?.value || '', peran: document.getElementById('ref_peran')?.value || '' }, pemahaman: { ref1: document.getElementById('ref1')?.value || '', ref2: document.getElementById('ref2')?.value || '', ref3: document.getElementById('ref3')?.value || '', ref4: document.getElementById('ref4')?.value || '', ref5: document.getElementById('ref5')?.value || '', ref6: document.getElementById('ref6')?.value || '', ref7: document.getElementById('ref7')?.value || '', ref8: document.getElementById('ref8')?.value || '' }, program: { ref9: document.getElementById('ref9')?.value || '', ref10: document.getElementById('ref10')?.value || '', ref11: document.getElementById('ref11')?.value || '', ref12: document.getElementById('ref12')?.value || '', ref13: document.getElementById('ref13')?.value || '', ref14: document.getElementById('ref14')?.value || '' }, kolaborasi: { ref15: document.getElementById('ref15')?.value || '', ref16: document.getElementById('ref16')?.value || '', ref17: document.getElementById('ref17')?.value || '', ref18: document.getElementById('ref18')?.value || '' }, keterampilan: { ref19: document.getElementById('ref19')?.value || '', ref20: document.getElementById('ref20')?.value || '', ref21: document.getElementById('ref21')?.value || '', ref22: document.getElementById('ref22')?.value || '', ref23: document.getElementById('ref23')?.value || '', ref24: document.getElementById('ref24')?.value || '' }, perbandingan: { awal1: document.querySelector('input[name="awal1"]:checked')?.value || '', awal2: document.querySelector('input[name="awal2"]:checked')?.value || '', awal3: document.querySelector('input[name="awal3"]:checked')?.value || '', akhir1: document.querySelector('input[name="akhir1"]:checked')?.value || '', akhir2: document.querySelector('input[name="akhir2"]:checked')?.value || '', akhir3: document.querySelector('input[name="akhir3"]:checked')?.value || '' }, rencana: { ref28: document.getElementById('ref28')?.value || '', ref29: document.getElementById('ref29')?.value || '', ref30: document.getElementById('ref30')?.value || '', ref31: document.getElementById('ref31')?.value || '' } };
+                const dataRefleksi = {pemahaman: { ref1: document.getElementById('ref1')?.value || '', ref2: document.getElementById('ref2')?.value || '', ref3: document.getElementById('ref3')?.value || '', ref4: document.getElementById('ref4')?.value || '', ref5: document.getElementById('ref5')?.value || '', ref6: document.getElementById('ref6')?.value || '', ref7: document.getElementById('ref7')?.value || '', ref8: document.getElementById('ref8')?.value || '' }, program: { ref9: document.getElementById('ref9')?.value || '', ref10: document.getElementById('ref10')?.value || '', ref11: document.getElementById('ref11')?.value || '', ref12: document.getElementById('ref12')?.value || '', ref13: document.getElementById('ref13')?.value || '', ref14: document.getElementById('ref14')?.value || '' }, kolaborasi: { ref15: document.getElementById('ref15')?.value || '', ref16: document.getElementById('ref16')?.value || '', ref17: document.getElementById('ref17')?.value || '', ref18: document.getElementById('ref18')?.value || '' }, keterampilan: { ref19: document.getElementById('ref19')?.value || '', ref20: document.getElementById('ref20')?.value || '', ref21: document.getElementById('ref21')?.value || '', ref22: document.getElementById('ref22')?.value || '', ref23: document.getElementById('ref23')?.value || '', ref24: document.getElementById('ref24')?.value || '' }, perbandingan: { awal1: document.querySelector('input[name="awal1"]:checked')?.value || '', awal2: document.querySelector('input[name="awal2"]:checked')?.value || '', awal3: document.querySelector('input[name="awal3"]:checked')?.value || '', akhir1: document.querySelector('input[name="akhir1"]:checked')?.value || '', akhir2: document.querySelector('input[name="akhir2"]:checked')?.value || '', akhir3: document.querySelector('input[name="akhir3"]:checked')?.value || '' }, rencana: { ref28: document.getElementById('ref28')?.value || '', ref29: document.getElementById('ref29')?.value || '', ref30: document.getElementById('ref30')?.value || '', ref31: document.getElementById('ref31')?.value || '' } };
                 formData.append('Data Refleksi', JSON.stringify(dataRefleksi));
                 
                 // Data Komitmen
@@ -1373,10 +1318,9 @@
             const navMenu = document.getElementById('nav-menu');
             if (hamburger) hamburger.addEventListener('click', function() { navMenu.classList.toggle('active'); });
             document.querySelectorAll('input, select, textarea').forEach(el => {
-                el.addEventListener('input', function() { updateProgressBar(); debounceSave(); });
-                el.addEventListener('change', function() { updateProgressBar(); debounceSave(); });
+                el.addEventListener('input', function() { debounceSave(); });
+                el.addEventListener('change', function() { debounceSave(); });
             });
-            updateProgressBar();
             updateConnectionStatus();
         });
     </script>

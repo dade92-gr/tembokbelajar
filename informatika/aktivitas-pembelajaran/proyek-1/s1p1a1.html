@@ -473,32 +473,6 @@
             margin-left: 1rem;
         }
         
-        /* Progress Bar */
-        .progress-container {
-            margin: 2rem 0;
-            background: var(--informatika-gray);
-            border-radius: 30px;
-            padding: 1rem;
-            position: sticky;
-            top: 10px;
-            z-index: 99;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background: linear-gradient(90deg, var(--informatika-primary), var(--informatika-secondary));
-            border-radius: 5px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        .progress-text {
-            text-align: right;
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 5px;
-        }
         
         /* Catatan Penting */
         .catatan-penting {
@@ -555,12 +529,6 @@
         <!-- Error Message -->
         <div id="errorMessage" class="error-message" style="display: none;">
             <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke database. Silakan cek koneksi internet Anda dan refresh halaman.</span>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-            <div class="progress-text" id="progressText">0% selesai</div>
         </div>
 
         <!-- Worksheet Container - LKPD Aktivitas 1 -->
@@ -1048,15 +1016,6 @@
                     <i class="fas fa-question-circle"></i> "Apa yang aku pelajari hari ini?"
                 </div>
                 
-                <div style="background: var(--informatika-light); padding: 1rem; border-radius: 10px; margin-bottom: 20px;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                        <div><strong>Nama:</strong> <input type="text" class="answer-field" id="ref_nama" placeholder="Nama"></div>
-                        <div><strong>Kelas:</strong> <input type="text" class="answer-field" id="ref_kelas" placeholder="Kelas"></div>
-                        <div><strong>Kelompok:</strong> <input type="text" class="answer-field" id="ref_kelompok" placeholder="Kelompok"></div>
-                        <div><strong>Peran:</strong> <input type="text" class="answer-field" id="ref_peran" placeholder="Peran"></div>
-                    </div>
-                </div>
-                
                 <table class="lkpd-table">
                     <thead>
                         <tr>
@@ -1132,11 +1091,11 @@
     <script>
         // ==================== KONFIGURASI URL ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbzKGEcwDHHjWza6iSghSDtgwahTIClGQsDmCjVqVzQPuovu82XUkchCigSSZMxcYjmRkw/exec';
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbwRlLJQQ5ypD1jzsHICPZH6kfrSFHKHGXo0hPKjzwtHH04EDrAid7dqtDv7q6TCbDRj/exec';
 
         // ==================== KONFIGURASI FORM ====================
         const FORM_CONFIG = {
-            sheetName: "AKTIVITAS 1 - PENGANTAR LITERASI INFORMASI",
+            sheetName: "P1-A1",
             headers: [
                 "Timestamp",
                 "Kelas",
@@ -1218,8 +1177,6 @@
                         }
                     }
                 });
-                
-                updateProgressBar();
             } catch (e) {
                 console.error('Gagal memuat data dari localStorage', e);
             }
@@ -1246,32 +1203,16 @@
             // Load data dari localStorage
             loadFromLocalStorage();
             
-            // Update progress bar
-            updateProgressBar();
-            
-            // Tambahkan event listener untuk auto-save dan update progress
+            // Tambahkan event listener untuk auto-save
             document.querySelectorAll('input, select, textarea').forEach(el => {
                 el.addEventListener('input', function() {
                     saveToLocalStorage();
-                    updateProgressBar();
                 });
                 el.addEventListener('change', function() {
                     saveToLocalStorage();
-                    updateProgressBar();
                 });
             });
         });
-
-        // ==================== FUNGSI PROGRESS BAR ====================
-        function updateProgressBar() {
-            const totalFields = document.querySelectorAll('input:not([type=checkbox]), select, textarea').length;
-            const filledFields = Array.from(document.querySelectorAll('input:not([type=checkbox]), select, textarea'))
-                .filter(el => el.value && el.value.trim() !== '').length;
-            
-            const progress = Math.round((filledFields / totalFields) * 100) || 0;
-            document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressText').textContent = progress + '% selesai';
-        }
 
         // ==================== LOAD DATA SISWA ====================
         function loadDataFromGoogleSheets() {
@@ -1410,7 +1351,7 @@
                 
                 // Data Review Materi (Bagian A)
                 const dataReview = {
-                    q1: document.getElementById('review1')?.value || '',
+                    	'Berdasarkan materi yang kamu baca, apa definisi literasi digital?': document.getElementById('review1')?.value || '',
                     q2: document.getElementById('review2')?.value || '',
                     q3: document.getElementById('review3')?.value || '',
                     q4: document.getElementById('review4')?.value || '',
@@ -1529,10 +1470,6 @@
                 
                 // Data Refleksi Akhir (Bagian G)
                 const dataRefleksi = {
-                    nama: document.getElementById('ref_nama')?.value || '',
-                    kelas: document.getElementById('ref_kelas')?.value || '',
-                    kelompok: document.getElementById('ref_kelompok')?.value || '',
-                    peran: document.getElementById('ref_peran')?.value || '',
                     q1: document.getElementById('ref1')?.value || '',
                     q2: document.getElementById('ref2')?.value || '',
                     q3: document.getElementById('ref3')?.value || '',
