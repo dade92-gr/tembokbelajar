@@ -139,28 +139,6 @@
             margin: 1rem 0 2rem 0;
         }
 
-        .progress-container {
-            margin: 20px 0 30px 0;
-            background: #f0f0f0;
-            border-radius: 25px;
-            padding: 3px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-        }
-        
-        .progress-bar {
-            height: 25px;
-            border-radius: 25px;
-            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.9rem;
-            font-weight: 600;
-            min-width: 30px;
-        }
-
         .connection-status {
             display: flex;
             align-items: center;
@@ -403,6 +381,132 @@
         .modal-btn.no { background: #6c757d; color: white; }
         .modal-btn.no:hover { background: #5a6268; transform: translateY(-2px); }
 
+        .btn-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px 2px;
+        }
+        
+        .btn-row-add {
+            background: var(--ipas-primary);
+            color: white;
+        }
+        
+        .btn-row-add:hover {
+            background: var(--ipas-secondary);
+            transform: scale(1.05);
+        }
+        
+        .btn-row-remove {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-row-remove:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        
+        .btn-row-remove:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        /* Langkah Container Styles */
+        .langkah-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px 0;
+            background: #fafafa;
+        }
+        
+        .langkah-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .langkah-item input {
+            flex: 1;
+        }
+        
+        .langkah-item .btn-langkah-remove {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .langkah-item .btn-langkah-remove:hover {
+            background: #c0392b;
+        }
+        
+        .langkah-item .btn-langkah-remove:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-langkah-add {
+            background: var(--ipas-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+        
+        .btn-langkah-add:hover {
+            background: var(--ipas-secondary);
+            transform: scale(1.02);
+        }
+
+        .info-note {
+            background: #e7f3ff;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+            border-left: 5px solid #3498db;
+        }
+        
+        .info-note a {
+            color: var(--ipas-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .info-note a:hover {
+            text-decoration: underline;
+            color: var(--ipas-secondary);
+        }
+
         @media (max-width: 768px) {
             .activity-detail-container { padding: 1rem; }
             .lembar-aktivitas { padding: 1.5rem; }
@@ -470,10 +574,6 @@
             <p style="text-align: center; font-size: 1.3rem; color: var(--ipas-secondary);">EKSPLORASI PERILAKU EKONOMI DAN KESEJAHTERAAN</p>
             <div class="garis-judul"></div>
 
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
-            </div>
-
             <!-- A. PETUNJUK PENGGUNAAN & IDENTITAS -->
             <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem;">
                 <h3><i class="fas fa-info-circle" style="color: var(--ipas-primary); margin-right: 10px;"></i> A. PETUNJUK PENGGUNAAN & IDENTITAS</h3>
@@ -481,23 +581,23 @@
                 <div class="identitas-box">
                     <div class="identitas-item">
                         <label><i class="fas fa-users"></i> Kelas</label>
-                        <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage(); updateProgress();" disabled>
+                        <select id="kelas" onchange="updateNamaDropdown(); saveToLocalStorage();" disabled>
                             <option value="">-- Pilih Kelas --</option>
                         </select>
                     </div>
                     <div class="identitas-item">
                         <label><i class="fas fa-user"></i> Nama</label>
-                        <select id="nama" onchange="saveToLocalStorage(); updateProgress();" disabled>
+                        <select id="nama" onchange="saveToLocalStorage();" disabled>
                             <option value="">-- Pilih Nama --</option>
                         </select>
                     </div>
                     <div class="identitas-item">
                         <label><i class="fas fa-users"></i> Kelompok</label>
-                        <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage(); updateProgress();" disabled>
+                        <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveToLocalStorage();" disabled>
                     </div>
                     <div class="identitas-item">
                         <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
-                        <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage(); updateProgress();" disabled>
+                        <input type="text" id="tugas" placeholder="Contoh: Ketua Kelompok" oninput="saveToLocalStorage();" disabled>
                     </div>
                 </div>
 
@@ -511,28 +611,29 @@
             </div>
 
             <!-- ANGGOTA KELOMPOK -->
-            <div class="table-responsive">
-                <table style="margin-top: 0;">
-                    <thead><tr><th colspan="3" style="background: var(--ipas-light);">ANGGOTA KELOMPOK</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">1. <input type="text" id="anggota1" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent">Ketua</th><td style="background:transparent"></td></tr>
-                        <tr><td style="background:transparent">2. <input type="text" id="anggota2" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent">Sekretaris</th><td style="background:transparent"></td></tr>
-                        <tr><td style="background:transparent">3. <input type="text" id="anggota3" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent">Presenter</th><td style="background:transparent"></td></tr>
-                        <tr><td style="background:transparent">4. <input type="text" id="anggota4" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent">Observer</th><td style="background:transparent"></td></tr>
-                        <tr><td style="background:transparent">5. <input type="text" id="anggota5" placeholder="nama" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent">Logistik</th><td style="background:transparent"></td></tr>
-                    </tbody>
-                </table>
+            <p><strong>Anggota Kelompok:</strong></p>
+            <div id="anggotaContainer">
+                <!-- Akan diisi JavaScript -->
             </div>
+            <button class="btn-langkah-add" onclick="tambahAnggota()"><i class="fas fa-plus"></i> Tambah Anggota</button>
 
             <!-- B. LITERASI -->
             <h2><i class="fas fa-book-open"></i> B. LITERASI: BEKAL PENGETAHUAN AWAL</h2>
+            <div class="info-note">
+                <i class="fas fa-info-circle"></i> Sebelum memulai aktivitas, bacalah terlebih dahulu materi 
+                <a href="../materi-pembelajaran/s1-bab-7.html" target="_blank">
+                    <strong>"Perilaku Ekonomi dan Kesejahteraan"</strong>
+                </a> 
+                yang tersedia di menu Daftar Materi.
+            </div>
+            
             <p><strong>1. Apa yang dimaksud dengan kelangkaan (scarcity) dan mengapa manusia harus membuat pilihan ekonomi?</strong></p>
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>Istilah</th><th>Pengertian</th></tr></thead>
                     <tbody>
-                        <tr><td style="background:transparent">Kelangkaan (scarcity)</th><td style="background:transparent"><input type="text" id="kelangkaan_pengertian" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">Mengapa manusia harus membuat pilihan ekonomi?</th><td style="background:transparent"><input type="text" id="pilihan_ekonomi" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                        <tr><td style="background:transparent">Kelangkaan (scarcity)</td><td style="background:transparent"><input type="text" id="kelangkaan_pengertian" oninput="saveToLocalStorage();"></td></tr>
+                        <tr><td style="background:transparent">Mengapa manusia harus membuat pilihan ekonomi?</td><td style="background:transparent"><input type="text" id="pilihan_ekonomi" oninput="saveToLocalStorage();"></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -541,10 +642,8 @@
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>Jenis Kebutuhan</th><th colspan="3">Contoh</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">Primer (kebutuhan pokok)</th><td style="background:transparent">a. <input type="text" id="primer_a" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent">b. <input type="text" id="primer_b" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent">c. <input type="text" id="primer_c" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">Sekunder (kebutuhan tambahan)</th><td style="background:transparent">a. <input type="text" id="sekunder_a" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent">b. <input type="text" id="sekunder_b" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent">c. <input type="text" id="sekunder_c" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">Tersier (kebutuhan mewah)</th><td style="background:transparent">a. <input type="text" id="tersier_a" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent">b. <input type="text" id="tersier_b" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent">c. <input type="text" id="tersier_c" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tbody id="kebutuhanBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -553,9 +652,8 @@
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>Istilah</th><th>Pengertian</th><th>Contoh</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">Permintaan (demand)</th><td style="background:transparent"><input type="text" id="demand_pengertian" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="demand_contoh" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">Penawaran (supply)</th><td style="background:transparent"><input type="text" id="supply_pengertian" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="supply_contoh" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tbody id="permintaanPenawaranBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -564,10 +662,8 @@
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>No</th><th>Fungsi Uang</th><th>Penjelasan Singkat</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">1</th><td style="background:transparent"><input type="text" id="fungsi_uang1" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="fungsi_uang1_penjelasan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">2</th><td style="background:transparent"><input type="text" id="fungsi_uang2" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="fungsi_uang2_penjelasan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">3</th><td style="background:transparent"><input type="text" id="fungsi_uang3" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="fungsi_uang3_penjelasan" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tbody id="fungsiUangBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -583,14 +679,14 @@
                     <thead>
                         <tr><th>No</th><th>Lokasi/Tempat</th><th>Kegiatan Ekonomi</th><th>Pelaku (Penjual/Pembeli)</th><th>Barang/Jasa</th><th>Harga</th></tr>
                     </thead>
-                    <tbody>
-                        <tr><td style="background:transparent">1</th><td style="background:transparent"><input type="text" id="ekonomi1_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi1_kegiatan" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi1_pelaku" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi1_barang" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi1_harga" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">2</th><td style="background:transparent"><input type="text" id="ekonomi2_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi2_kegiatan" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi2_pelaku" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi2_barang" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi2_harga" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">3</th><td style="background:transparent"><input type="text" id="ekonomi3_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi3_kegiatan" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi3_pelaku" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi3_barang" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi3_harga" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">4</th><td style="background:transparent"><input type="text" id="ekonomi4_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi4_kegiatan" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi4_pelaku" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi4_barang" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi4_harga" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">5</th><td style="background:transparent"><input type="text" id="ekonomi5_lokasi" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi5_kegiatan" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi5_pelaku" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi5_barang" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="ekonomi5_harga" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
+                    <tbody id="observasiEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
+            </div>
+            <div class="table-actions">
+                <button class="btn-row btn-row-add" onclick="tambahBarisObservasiEkonomi()"><i class="fas fa-plus"></i> Tambah Baris</button>
+                <button class="btn-row btn-row-remove" id="hapusObservasiEkonomiBtn" onclick="hapusBarisObservasiEkonomi()"><i class="fas fa-minus"></i> Hapus Baris Terakhir</button>
             </div>
 
             <h4>C2. KLASIFIKASI DAN JELASKAN! (45 Menit)</h4>
@@ -598,98 +694,70 @@
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>Jenis Kegiatan</th><th>Jumlah</th><th>Nomor Kegiatan</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">Jual beli barang</th><td style="background:transparent"><input type="text" id="klas_barang_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="klas_barang_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">Jual beli jasa</th><td style="background:transparent"><input type="text" id="klas_jasa_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="klas_jasa_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">Simpan pinjam</th><td style="background:transparent"><input type="text" id="klas_simpan_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="klas_simpan_no" oninput="saveToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td style="background:transparent">Produksi</th><td style="background:transparent"><input type="text" id="klas_produksi_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();"></td><td style="background:transparent"><input type="text" id="klas_produksi_no" oninput="saveToLocalStorage(); updateProgress();">NonNull</td>
-                        <tr><td style="background:transparent">Konsumsi</th><td style="background:transparent"><input type="text" id="klas_konsumsi_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="klas_konsumsi_no" oninput="saveToLocalStorage(); updateProgress();">NonNull</td>
-                        <tr><td style="background:transparent">Distribusi</th><td style="background:transparent"><input type="text" id="klas_distribusi_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="klas_distribusi_no" oninput="saveToLocalStorage(); updateProgress();">NonNull</td>
-                        <tr><td style="background:transparent">Lainnya: <input type="text" id="klas_lainnya_nama" style="width:120px;" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="klas_lainnya_jml" style="width:60px" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="klas_lainnya_no" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
+                    <tbody id="klasifikasiEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
 
-            <p><strong>Kegiatan Ekonomi Pilihan Saya:</strong> <input type="text" id="kegiatan_pilihan" style="width:70%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p><strong>Kegiatan Ekonomi Pilihan Saya:</strong> <input type="text" id="kegiatan_pilihan" style="width:70%" oninput="saveToLocalStorage();"></p>
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>Aspek</th><th>Penjelasan</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">Barang/jasa yang diperjualbelikan</th><td style="background:transparent"><input type="text" id="pilihan_barang" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Siapa penjualnya (produsen)</th><td style="background:transparent"><input type="text" id="pilihan_penjual" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Siapa pembelinya (konsumen)</th><td style="background:transparent"><input type="text" id="pilihan_pembeli" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Berapa harganya</th><td style="background:transparent"><input type="text" id="pilihan_harga" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Faktor yang mempengaruhi harga</th><td style="background:transparent"><input type="text" id="pilihan_faktor" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Apakah ada tawar-menawar?</th><td style="background:transparent"><input type="text" id="pilihan_tawar" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Cara pembayaran</th><td style="background:transparent"><input type="text" id="pilihan_pembayaran" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
+                    <tbody id="pilihanEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
-            <p>Penjelasan ilmiah secara lengkap: <input type="text" id="penjelasan_ilmiah" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
-            
-            <div class="checkbox-list">
-                <span class="checkbox-item"><input type="checkbox" id="istilah_permintaan" onchange="saveToLocalStorage(); updateProgress();"> Permintaan</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_penawaran" onchange="saveToLocalStorage(); updateProgress();"> Penawaran</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_harga" onchange="saveToLocalStorage(); updateProgress();"> Harga pasar</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_konsumen" onchange="saveToLocalStorage(); updateProgress();"> Konsumen</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_produsen" onchange="saveToLocalStorage(); updateProgress();"> Produsen</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_distribusi" onchange="saveToLocalStorage(); updateProgress();"> Distribusi</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_kelangkaan" onchange="saveToLocalStorage(); updateProgress();"> Kelangkaan</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_uang" onchange="saveToLocalStorage(); updateProgress();"> Uang</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_transaksi" onchange="saveToLocalStorage(); updateProgress();"> Transaksi</span>
-                <span class="checkbox-item"><input type="checkbox" id="istilah_laba" onchange="saveToLocalStorage(); updateProgress();"> Laba</span>
-                <span class="checkbox-item">Lainnya: <input type="text" id="istilah_lainnya" style="width:100px;" oninput="saveToLocalStorage(); updateProgress();"></span>
-            </div>
+            <p>Penjelasan ilmiah secara lengkap: <input type="text" id="penjelasan_ilmiah" style="width:100%" oninput="saveToLocalStorage();"></p>
 
             <h3>TP 1.2: Membuat Prediksi Sederhana</h3>
             <h4>C3. OBSERVASI DETAIL (60 Menit)</h4>
-            <p>Lokasi/Kegiatan ekonomi yang diamati: <input type="text" id="observasi_lokasi" style="width:60%" oninput="saveToLocalStorage(); updateProgress();"></p>
-            <p>Waktu mulai: <input type="text" id="observasi_mulai" style="width:150px" oninput="saveToLocalStorage(); updateProgress();"> Waktu selesai: <input type="text" id="observasi_selesai" style="width:150px" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>Lokasi/Kegiatan ekonomi yang diamati: <input type="text" id="observasi_lokasi" style="width:60%" oninput="saveToLocalStorage();"></p>
+            <p>Waktu mulai: <input type="text" id="observasi_mulai" style="width:150px" oninput="saveToLocalStorage();"> Waktu selesai: <input type="text" id="observasi_selesai" style="width:150px" oninput="saveToLocalStorage();"></p>
             
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr><th>Waktu (menit)</th><th>Jumlah Pembeli</th><th>Barang yang Dibeli</th><th>Total Transaksi</th><th>Suasana</th></tr>
                     </thead>
-                    <tbody>
-                        <tr><td style="background:transparent">0</th><td style="background:transparent"><input type="text" id="obs0_jumlah" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs0_barang" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs0_transaksi" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs0_suasana" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">5</th><td style="background:transparent"><input type="text" id="obs5_jumlah" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs5_barang" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs5_transaksi" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs5_suasana" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">10</th><td style="background:transparent"><input type="text" id="obs10_jumlah" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs10_barang" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs10_transaksi" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs10_suasana" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">15</th><td style="background:transparent"><input type="text" id="obs15_jumlah" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs15_barang" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs15_transaksi" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs15_suasana" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">20</th><td style="background:transparent"><input type="text" id="obs20_jumlah" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs20_barang" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs20_transaksi" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs20_suasana" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">25</th><td style="background:transparent"><input type="text" id="obs25_jumlah" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs25_barang" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs25_transaksi" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs25_suasana" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">30</th><td style="background:transparent"><input type="text" id="obs30_jumlah" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs30_barang" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs30_transaksi" oninput="saveToLocalStorage(); updateProgress();">NonNull<td style="background:transparent"><input type="text" id="obs30_suasana" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
+                    <tbody id="observasiDetailEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
-            <p>Catatan khusus: <input type="text" id="observasi_catatan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <div class="table-actions">
+                <button class="btn-row btn-row-add" onclick="tambahBarisObservasiDetailEkonomi()"><i class="fas fa-plus"></i> Tambah Baris Waktu</button>
+                <button class="btn-row btn-row-remove" id="hapusObservasiDetailEkonomiBtn" onclick="hapusBarisObservasiDetailEkonomi()"><i class="fas fa-minus"></i> Hapus Baris Terakhir</button>
+            </div>
+            <p>Catatan khusus: <input type="text" id="observasi_catatan" style="width:100%" oninput="saveToLocalStorage();"></p>
 
             <h4>C4. CARI POLA! (20 Menit)</h4>
-            <p>Pola yang saya temukan: <input type="text" id="pola" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
-            <p>Waktu paling ramai: <input type="text" id="waktu_ramai" oninput="saveToLocalStorage(); updateProgress();"> Waktu paling sepi: <input type="text" id="waktu_sepi" oninput="saveToLocalStorage(); updateProgress();"></p>
-            <p>Faktor yang mempengaruhi: <input type="text" id="faktor" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>Pola yang saya temukan: <input type="text" id="pola" style="width:100%" oninput="saveToLocalStorage();"></p>
+            <p>Waktu paling ramai: <input type="text" id="waktu_ramai" oninput="saveToLocalStorage();"> Waktu paling sepi: <input type="text" id="waktu_sepi" oninput="saveToLocalStorage();"></p>
+            <p>Faktor yang mempengaruhi: <input type="text" id="faktor" style="width:100%" oninput="saveToLocalStorage();"></p>
 
             <h4>C5. BUAT 2 PREDIKSI! (25 Menit)</h4>
             <p><strong>PREDIKSI 1 (Pola di Waktu Berbeda)</strong><br>
             Skenario perbandingan: 
-            <label><input type="radio" name="prediksi1_skenario" value="Pagi vs Siang" onchange="saveToLocalStorage(); updateProgress();"> Pagi vs Siang</label>
-            <label><input type="radio" name="prediksi1_skenario" value="Hari sekolah vs Libur" onchange="saveToLocalStorage(); updateProgress();"> Hari sekolah vs Libur</label>
-            <label><input type="radio" name="prediksi1_skenario" value="Senin vs Jumat" onchange="saveToLocalStorage(); updateProgress();"> Senin vs Jumat</label>
-            <label><input type="radio" name="prediksi1_skenario" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya</label>: <input type="text" id="prediksi1_lainnya" oninput="saveToLocalStorage(); updateProgress();"><br>
+            <label><input type="radio" name="prediksi1_skenario" value="Pagi vs Siang" onchange="saveToLocalStorage();"> Pagi vs Siang</label>
+            <label><input type="radio" name="prediksi1_skenario" value="Hari sekolah vs Libur" onchange="saveToLocalStorage();"> Hari sekolah vs Libur</label>
+            <label><input type="radio" name="prediksi1_skenario" value="Senin vs Jumat" onchange="saveToLocalStorage();"> Senin vs Jumat</label>
+            <label><input type="radio" name="prediksi1_skenario" value="lain" onchange="saveToLocalStorage();"> Lainnya</label>: <input type="text" id="prediksi1_lainnya" oninput="saveToLocalStorage();"><br>
             Prediksi: 
-            <label><input type="radio" name="prediksi1_hasil" value="Sama" onchange="saveToLocalStorage(); updateProgress();"> Sama</label>
-            <label><input type="radio" name="prediksi1_hasil" value="Berbeda" onchange="saveToLocalStorage(); updateProgress();"> Berbeda</label>: <input type="text" id="prediksi1_berbeda_isi" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Alasan: <input type="text" id="prediksi1_alasan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <label><input type="radio" name="prediksi1_hasil" value="Sama" onchange="saveToLocalStorage();"> Sama</label>
+            <label><input type="radio" name="prediksi1_hasil" value="Berbeda" onchange="saveToLocalStorage();"> Berbeda</label>: <input type="text" id="prediksi1_berbeda_isi" oninput="saveToLocalStorage();"><br>
+            Alasan: <input type="text" id="prediksi1_alasan" style="width:100%" oninput="saveToLocalStorage();"></p>
             
             <p><strong>PREDIKSI 2 (Jika Harga Berubah)</strong><br>
             Skenario perubahan: 
-            <label><input type="radio" name="prediksi2_skenario" value="Harga naik 20%" onchange="saveToLocalStorage(); updateProgress();"> Harga naik 20%</label>
-            <label><input type="radio" name="prediksi2_skenario" value="Harga turun 20%" onchange="saveToLocalStorage(); updateProgress();"> Harga turun 20%</label>
-            <label><input type="radio" name="prediksi2_skenario" value="Barang baru lebih murah" onchange="saveToLocalStorage(); updateProgress();"> Barang baru lebih murah</label>
-            <label><input type="radio" name="prediksi2_skenario" value="Pesaing baru" onchange="saveToLocalStorage(); updateProgress();"> Pesaing baru</label>
-            <label><input type="radio" name="prediksi2_skenario" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya</label>: <input type="text" id="prediksi2_lainnya" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Prediksi: <input type="text" id="prediksi2_hasil" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Alasan (kaitkan dengan hukum permintaan/penawaran): <input type="text" id="prediksi2_alasan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <label><input type="radio" name="prediksi2_skenario" value="Harga naik 20%" onchange="saveToLocalStorage();"> Harga naik 20%</label>
+            <label><input type="radio" name="prediksi2_skenario" value="Harga turun 20%" onchange="saveToLocalStorage();"> Harga turun 20%</label>
+            <label><input type="radio" name="prediksi2_skenario" value="Barang baru lebih murah" onchange="saveToLocalStorage();"> Barang baru lebih murah</label>
+            <label><input type="radio" name="prediksi2_skenario" value="Pesaing baru" onchange="saveToLocalStorage();"> Pesaing baru</label>
+            <label><input type="radio" name="prediksi2_skenario" value="lain" onchange="saveToLocalStorage();"> Lainnya</label>: <input type="text" id="prediksi2_lainnya" oninput="saveToLocalStorage();"><br>
+            Prediksi: <input type="text" id="prediksi2_hasil" style="width:100%" oninput="saveToLocalStorage();"><br>
+            Alasan (kaitkan dengan hukum permintaan/penawaran): <input type="text" id="prediksi2_alasan" style="width:100%" oninput="saveToLocalStorage();"></p>
 
             <div class="catatan-penting"><i class="fas fa-mug-hot"></i> ⏸️ ISTIRAHAT 15 MENIT</div>
 
@@ -698,159 +766,156 @@
             <h3>TP 1.3: Pembuktian Sederhana</h3>
             <h4>D1. KENALI FENOMENA EKONOMI KELOMPOKMU</h4>
             <p>Tipe kegiatan ekonomi kelompok kami: 
-                <label><input type="radio" name="tipe_ekonomi" value="Perdagangan eceran" onchange="saveToLocalStorage(); updateProgress();"> Perdagangan eceran</label>
-                <label><input type="radio" name="tipe_ekonomi" value="Jasa" onchange="saveToLocalStorage(); updateProgress();"> Jasa</label>
-                <label><input type="radio" name="tipe_ekonomi" value="Pertanian/perikanan" onchange="saveToLocalStorage(); updateProgress();"> Pertanian/perikanan</label>
-                <label><input type="radio" name="tipe_ekonomi" value="Koperasi" onchange="saveToLocalStorage(); updateProgress();"> Koperasi</label>
-                <label><input type="radio" name="tipe_ekonomi" value="UMKM" onchange="saveToLocalStorage(); updateProgress();"> UMKM</label>
-                <label><input type="radio" name="tipe_ekonomi" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya</label>: <input type="text" id="tipe_lainnya" oninput="saveToLocalStorage(); updateProgress();">
+                <label><input type="radio" name="tipe_ekonomi" value="Perdagangan eceran" onchange="saveToLocalStorage();"> Perdagangan eceran</label>
+                <label><input type="radio" name="tipe_ekonomi" value="Jasa" onchange="saveToLocalStorage();"> Jasa</label>
+                <label><input type="radio" name="tipe_ekonomi" value="Pertanian/perikanan" onchange="saveToLocalStorage();"> Pertanian/perikanan</label>
+                <label><input type="radio" name="tipe_ekonomi" value="Koperasi" onchange="saveToLocalStorage();"> Koperasi</label>
+                <label><input type="radio" name="tipe_ekonomi" value="UMKM" onchange="saveToLocalStorage();"> UMKM</label>
+                <label><input type="radio" name="tipe_ekonomi" value="lain" onchange="saveToLocalStorage();"> Lainnya</label>: <input type="text" id="tipe_lainnya" oninput="saveToLocalStorage();">
             </p>
             
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>Aspek</th><th>Deskripsi</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">Lokasi</th><td style="background:transparent"><input type="text" id="fenomena_lokasi" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Penjual</th><td style="background:transparent"><input type="text" id="fenomena_penjual" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Pembeli/konsumen</th><td style="background:transparent"><input type="text" id="fenomena_pembeli" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Barang/jasa utama</th><td style="background:transparent"><input type="text" id="fenomena_barang" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Harga rata-rata</th><td style="background:transparent"><input type="text" id="fenomena_harga" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Waktu operasional</th><td style="background:transparent"><input type="text" id="fenomena_waktu" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
-                        <tr><td style="background:transparent">Cara pembayaran</th><td style="background:transparent"><input type="text" id="fenomena_pembayaran" oninput="saveToLocalStorage(); updateProgress();">NonNull</tr>
+                    <tbody id="fenomenaEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
 
             <h4>D2. PILIH PREDIKSI YANG AKAN DIBUKTIKAN</h4>
             <p>
-                <label><input type="radio" name="pilihan_prediksi" value="Prediksi 1" onchange="saveToLocalStorage(); updateProgress();"> Prediksi 1</label>
-                <label><input type="radio" name="pilihan_prediksi" value="Prediksi 2" onchange="saveToLocalStorage(); updateProgress();"> Prediksi 2</label><br>
-                Tulis ulang prediksi: <input type="text" id="prediksi_terpilih" style="width:100%" oninput="saveToLocalStorage(); updateProgress();">
+                <label><input type="radio" name="pilihan_prediksi" value="Prediksi 1" onchange="saveToLocalStorage();"> Prediksi 1</label>
+                <label><input type="radio" name="pilihan_prediksi" value="Prediksi 2" onchange="saveToLocalStorage();"> Prediksi 2</label><br>
+                Tulis ulang prediksi: <input type="text" id="prediksi_terpilih" style="width:100%" oninput="saveToLocalStorage();">
             </p>
 
             <h4>D3. RANCANG CARA PEMBUKTIAN</h4>
             <div class="checkbox-list">
-                <span class="checkbox-item"><input type="checkbox" id="cara1" onchange="saveToLocalStorage(); updateProgress();"> CARA 1: Observasi ulang waktu berbeda</span>
-                <span class="checkbox-item"><input type="checkbox" id="cara2" onchange="saveToLocalStorage(); updateProgress();"> CARA 2: Wawancara sederhana</span>
-                <span class="checkbox-item"><input type="checkbox" id="cara3" onchange="saveToLocalStorage(); updateProgress();"> CARA 3: Studi banding harga</span>
-                <span class="checkbox-item"><input type="checkbox" id="cara4" onchange="saveToLocalStorage(); updateProgress();"> CARA 4: Simulasi sederhana</span>
+                <span class="checkbox-item"><input type="checkbox" id="cara1" onchange="saveToLocalStorage();"> CARA 1: Observasi ulang waktu berbeda</span>
+                <span class="checkbox-item"><input type="checkbox" id="cara2" onchange="saveToLocalStorage();"> CARA 2: Wawancara sederhana</span>
+                <span class="checkbox-item"><input type="checkbox" id="cara3" onchange="saveToLocalStorage();"> CARA 3: Studi banding harga</span>
+                <span class="checkbox-item"><input type="checkbox" id="cara4" onchange="saveToLocalStorage();"> CARA 4: Simulasi sederhana</span>
             </div>
             
-            <p><strong>Jika memilih wawancara:</strong></p>
-            <p>Langkah-langkah wawancara: <input type="text" id="langkah_wawancara" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p><strong>Langkah-langkah pembuktian:</strong></p>
+            <div id="langkahContainer" class="langkah-container">
+                <!-- Akan diisi JavaScript -->
+            </div>
+            <button class="btn-langkah-add" onclick="tambahLangkah()"><i class="fas fa-plus"></i> Tambah Langkah</button>
+            
+            <p><strong>Pertanyaan wawancara (jika menggunakan cara 2):</strong></p>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Tujuan</th></tr></thead>
+                    <tbody id="pertanyaanWawancaraEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
+                    </tbody>
+                </table>
+            </div>
 
+            <p><strong>Alat dan Bahan yang Dibutuhkan:</strong></p>
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>No</th><th>Alat/Bahan</th><th>Kegunaan</th><th>Ketersediaan</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">1</th><td style="background:transparent">Alat tulis</th><td style="background:transparent">Mencatat</th><td style="background:transparent"><label><input type="checkbox" id="alat_tulis_ada" onchange="saveToLocalStorage(); updateProgress();"> Ada</label> / <label><input type="checkbox" id="alat_tulis_siap" onchange="saveToLocalStorage(); updateProgress();"> Siapkan</label></th></tr>
-                        <tr><td style="background:transparent">2</th><td style="background:transparent">Handphone</th><td style="background:transparent">Dokumentasi</th><td style="background:transparent"><label><input type="checkbox" id="hp_ada" onchange="saveToLocalStorage(); updateProgress();"> Ada</label> / <label><input type="checkbox" id="hp_siap" onchange="saveToLocalStorage(); updateProgress();"> Siapkan</label></th></tr>
-                        <tr><td style="background:transparent">3</th><td style="background:transparent">Lembar wawancara</th><td style="background:transparent">Panduan</th><td style="background:transparent"><label><input type="checkbox" id="lembar_siap" onchange="saveToLocalStorage(); updateProgress();"> Siapkan</label></th></tr>
-                        <tr><td style="background:transparent">4</th><td style="background:transparent">Uang</th><td style="background:transparent">Membeli produk</th><td style="background:transparent"><label><input type="checkbox" id="uang_siap" onchange="saveToLocalStorage(); updateProgress();"> Siapkan</label></th></tr>
+                    <tbody id="alatEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
 
             <div class="kotak-checklist">
                 <p>ETIKA (centang): 
-                    <label><input type="checkbox" id="etik_izin" onchange="saveToLocalStorage(); updateProgress();"> minta izin</label>
-                    <label><input type="checkbox" id="etik_tujuan" onchange="saveToLocalStorage(); updateProgress();"> jelaskan tujuan</label>
-                    <label><input type="checkbox" id="etik_ganggu" onchange="saveToLocalStorage(); updateProgress();"> tidak ganggu</label>
-                    <label><input type="checkbox" id="etik_sopan" onchange="saveToLocalStorage(); updateProgress();"> sopan</label>
-                    <label><input type="checkbox" id="etik_beli" onchange="saveToLocalStorage(); updateProgress();"> membeli produk</label>
-                    <label><input type="checkbox" id="etik_jujur" onchange="saveToLocalStorage(); updateProgress();"> jujur</label>
-                    <label><input type="checkbox" id="etik_terimakasih" onchange="saveToLocalStorage(); updateProgress();"> ucap terima kasih</label>
-                    <label><input type="checkbox" id="etik_privasi" onchange="saveToLocalStorage(); updateProgress();"> jaga privasi</label>
+                    <label><input type="checkbox" id="etik_izin" onchange="saveToLocalStorage();"> minta izin</label>
+                    <label><input type="checkbox" id="etik_tujuan" onchange="saveToLocalStorage();"> jelaskan tujuan</label>
+                    <label><input type="checkbox" id="etik_ganggu" onchange="saveToLocalStorage();"> tidak ganggu</label>
+                    <label><input type="checkbox" id="etik_sopan" onchange="saveToLocalStorage();"> sopan</label>
+                    <label><input type="checkbox" id="etik_beli" onchange="saveToLocalStorage();"> membeli produk</label>
+                    <label><input type="checkbox" id="etik_jujur" onchange="saveToLocalStorage();"> jujur</label>
+                    <label><input type="checkbox" id="etik_terimakasih" onchange="saveToLocalStorage();"> ucap terima kasih</label>
+                    <label><input type="checkbox" id="etik_privasi" onchange="saveToLocalStorage();"> jaga privasi</label>
                 </p>
             </div>
 
             <h4>D4. LAKUKAN PEMBUKTIAN! (60 Menit)</h4>
             <p>Hasil Observasi Ulang / Studi Banding:</p>
             <div class="table-responsive">
-                </table>
+                <table>
                     <thead><tr><th>Waktu/Lokasi</th><th>Hasil</th><th>Jumlah Pembeli</th><th>Total Transaksi</th><th>Perbandingan</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent"><input type="text" id="bukti1_waktu" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="bukti1_hasil" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="bukti1_jumlah" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="bukti1_transaksi" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="bukti1_banding" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent"><input type="text" id="bukti2_waktu" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="bukti2_hasil" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="bukti2_jumlah" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="bukti2_transaksi" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="bukti2_banding" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
+                    <tbody id="hasilPembuktianBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
+            </div>
+            <div class="table-actions">
+                <button class="btn-row btn-row-add" onclick="tambahBarisHasilPembuktian()"><i class="fas fa-plus"></i> Tambah Pengamatan</button>
+                <button class="btn-row btn-row-remove" id="hapusHasilPembuktianBtn" onclick="hapusBarisHasilPembuktian()"><i class="fas fa-minus"></i> Hapus Pengamatan Terakhir</button>
             </div>
             
             <p>Hasil Wawancara:</p>
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>Nama</th><th>Jenis Usaha</th><th>Jawaban</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent"><input type="text" id="wawancara_nama1" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="wawancara_usaha1" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="wawancara_jawaban1" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent"><input type="text" id="wawancara_nama2" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="wawancara_usaha2" oninput="saveToLocalStorage(); updateProgress();"></th><td style="background:transparent"><input type="text" id="wawancara_jawaban2" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
+                    <tbody id="wawancaraEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
+            <div class="table-actions">
+                <button class="btn-row btn-row-add" onclick="tambahBarisWawancaraEkonomi()"><i class="fas fa-plus"></i> Tambah Narasumber</button>
+                <button class="btn-row btn-row-remove" id="hapusWawancaraEkonomiBtn" onclick="hapusBarisWawancaraEkonomi()"><i class="fas fa-minus"></i> Hapus Narasumber Terakhir</button>
+            </div>
             
-            <p>Dokumentasi: <input type="text" id="dokumentasi" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>Dokumentasi: <input type="text" id="dokumentasi" style="width:100%" oninput="saveToLocalStorage();"></p>
 
             <h4>D5. ANALISIS HASIL</h4>
             <p>1. Apakah sesuai prediksi? 
-                <label><input type="radio" name="kesesuaian" value="Sesuai" onchange="saveToLocalStorage(); updateProgress();"> Sesuai</label>
-                <label><input type="radio" name="kesesuaian" value="Tidak sesuai" onchange="saveToLocalStorage(); updateProgress();"> Tidak sesuai</label>
-                <label><input type="radio" name="kesesuaian" value="Sebagian sesuai" onchange="saveToLocalStorage(); updateProgress();"> Sebagian sesuai</label>
+                <label><input type="radio" name="kesesuaian" value="Sesuai" onchange="saveToLocalStorage();"> Sesuai</label>
+                <label><input type="radio" name="kesesuaian" value="Tidak sesuai" onchange="saveToLocalStorage();"> Tidak sesuai</label>
+                <label><input type="radio" name="kesesuaian" value="Sebagian sesuai" onchange="saveToLocalStorage();"> Sebagian sesuai</label>
             </p>
-            <p>2. Data yang diperoleh: <input type="text" id="analisis_data" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
-            <p>3. Penjelasan ilmiah: <input type="text" id="analisis_penjelasan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>2. Data yang diperoleh: <input type="text" id="analisis_data" style="width:100%" oninput="saveToLocalStorage();"></p>
+            <p>3. Penjelasan ilmiah: <input type="text" id="analisis_penjelasan" style="width:100%" oninput="saveToLocalStorage();"></p>
             
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>Faktor</th><th>Pengaruhnya terhadap Kegiatan Ekonomi</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">Waktu</th><td style="background:transparent"><input type="text" id="faktor_waktu" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Harga barang</th><td style="background:transparent"><input type="text" id="faktor_harga" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Lokasi/akses</th><td style="background:transparent"><input type="text" id="faktor_lokasi" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Kualitas barang</th><td style="background:transparent"><input type="text" id="faktor_kualitas" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Pelayanan</th><td style="background:transparent"><input type="text" id="faktor_pelayanan" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Musim/hari besar</th><td style="background:transparent"><input type="text" id="faktor_musim" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
+                    <tbody id="faktorEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
-            <p>5. Hukum ekonomi yang ditemukan: <input type="text" id="hukum_ekonomi" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
-            <p>6. Kesimpulan: <input type="text" id="kesimpulan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>5. Hukum ekonomi yang ditemukan: <input type="text" id="hukum_ekonomi" style="width:100%" oninput="saveToLocalStorage();"></p>
+            <p>6. Kesimpulan: <input type="text" id="kesimpulan" style="width:100%" oninput="saveToLocalStorage();"></p>
 
             <h3>TP 1.4: Koneksi dengan Bidang Keahlian</h3>
             <h4>D6. HUBUNGKAN DENGAN PROGRAM KEAHLIANMU!</h4>
             <p>Program Keahlian Kami: 
-                <label><input type="radio" name="jurusan" value="ATPH" onchange="saveToLocalStorage(); updateProgress();"> ATPH</label>
-                <label><input type="radio" name="jurusan" value="TSM" onchange="saveToLocalStorage(); updateProgress();"> TSM</label>
-                <label><input type="radio" name="jurusan" value="AKL" onchange="saveToLocalStorage(); updateProgress();"> AKL</label>
-                <label><input type="radio" name="jurusan" value="TKJ" onchange="saveToLocalStorage(); updateProgress();"> TKJ</label>
-                <label><input type="radio" name="jurusan" value="TATA BOGA" onchange="saveToLocalStorage(); updateProgress();"> TATA BOGA</label>
-                <label><input type="radio" name="jurusan" value="TATA BUSANA" onchange="saveToLocalStorage(); updateProgress();"> TATA BUSANA</label>
-                <label><input type="radio" name="jurusan" value="DKV" onchange="saveToLocalStorage(); updateProgress();"> DKV</label>
-                <label><input type="radio" name="jurusan" value="TEI" onchange="saveToLocalStorage(); updateProgress();"> TEI</label>
-                <label><input type="radio" name="jurusan" value="lain" onchange="saveToLocalStorage(); updateProgress();"> Lainnya</label>: <input type="text" id="jurusan_lainnya" oninput="saveToLocalStorage(); updateProgress();">
+                <label><input type="radio" name="jurusan" value="ATPH" onchange="saveToLocalStorage();"> ATPH</label>
+                <label><input type="radio" name="jurusan" value="TSM" onchange="saveToLocalStorage();"> TSM</label>
+                <label><input type="radio" name="jurusan" value="AKL" onchange="saveToLocalStorage();"> AKL</label>
+                <label><input type="radio" name="jurusan" value="TKJ" onchange="saveToLocalStorage();"> TKJ</label>
+                <label><input type="radio" name="jurusan" value="lain" onchange="saveToLocalStorage();"> Lainnya</label>: <input type="text" id="jurusan_lainnya" oninput="saveToLocalStorage();">
             </p>
             
             <div class="table-responsive">
                 <table>
-                    <thead><td><th>Aspek Ekonomi</th><th>Penjelasan</th></tr></thead>
-                    <tbody>
-                        <tr><td style="background:transparent">Produk/jasa yang dihasilkan</th><td style="background:transparent"><input type="text" id="aspek_produk" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Konsumen/pelanggan</th><td style="background:transparent"><input type="text" id="aspek_konsumen" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Penentuan harga</th><td style="background:transparent"><input type="text" id="aspek_harga" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Biaya produksi/operasional</th><td style="background:transparent"><input type="text" id="aspek_biaya" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Keuntungan (laba)</th><td style="background:transparent"><input type="text" id="aspek_laba" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Strategi pemasaran</th><td style="background:transparent"><input type="text" id="aspek_pemasaran" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
+                    <thead><tr><th>Aspek Ekonomi</th><th>Penjelasan</th></tr></thead>
+                    <tbody id="aspekJurusanEkonomiBody">
+                        <!-- Akan diisi JavaScript -->
                     </tbody>
                 </table>
             </div>
 
             <h4>D7. AMATI DAN BERI SOLUSI!</h4>
-            <p>Masalah ekonomi: <input type="text" id="solusi_masalah" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Lokasi: <input type="text" id="solusi_lokasi" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Pihak terdampak: <input type="text" id="solusi_pihak" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Penyebab: <input type="text" id="solusi_penyebab" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Dampak: <input type="text" id="solusi_dampak" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Ide solusi: <input type="text" id="solusi_ide" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Penerapan: <input type="text" id="solusi_penerapan" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"><br>
-            Relevansi dengan program keahlian: <input type="text" id="solusi_relevansi" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></p>
+            <p>Masalah ekonomi: <input type="text" id="solusi_masalah" style="width:100%" oninput="saveToLocalStorage();"><br>
+            Lokasi: <input type="text" id="solusi_lokasi" style="width:100%" oninput="saveToLocalStorage();"><br>
+            Pihak terdampak: <input type="text" id="solusi_pihak" style="width:100%" oninput="saveToLocalStorage();"><br>
+            Penyebab: <input type="text" id="solusi_penyebab" style="width:100%" oninput="saveToLocalStorage();"><br>
+            Dampak: <input type="text" id="solusi_dampak" style="width:100%" oninput="saveToLocalStorage();"><br>
+            Ide solusi: <input type="text" id="solusi_ide" style="width:100%" oninput="saveToLocalStorage();"><br>
+            Penerapan: <input type="text" id="solusi_penerapan" style="width:100%" oninput="saveToLocalStorage();"><br>
+            Relevansi dengan program keahlian: <input type="text" id="solusi_relevansi" style="width:100%" oninput="saveToLocalStorage();"></p>
 
             <hr>
 
@@ -861,10 +926,10 @@
                 <table>
                     <thead><tr><th>Pertanyaan</th><th>Jawaban</th></tr></thead>
                     <tbody>
-                        <tr><td style="background:transparent">Hal paling menarik?</th><td style="background:transparent"><input type="text" id="refleksi1" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Hal baru yang saya pahami?</th><td style="background:transparent"><input type="text" id="refleksi2" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Kebiasaan ekonomi yang perlu diperbaiki?</th><td style="background:transparent"><input type="text" id="refleksi3" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">Rencana ekonomi yang akan dimulai?</th><td style="background:transparent"><input type="text" id="refleksi4" style="width:100%" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
+                        <tr><td style="background:transparent">Hal paling menarik?</td><td style="background:transparent"><input type="text" id="refleksi1" style="width:100%" oninput="saveToLocalStorage();"></td></tr>
+                        <tr><td style="background:transparent">Hal baru yang saya pahami?</td><td style="background:transparent"><input type="text" id="refleksi2" style="width:100%" oninput="saveToLocalStorage();"></td></tr>
+                        <tr><td style="background:transparent">Kebiasaan ekonomi yang perlu diperbaiki?</td><td style="background:transparent"><input type="text" id="refleksi3" style="width:100%" oninput="saveToLocalStorage();"></td></tr>
+                        <tr><td style="background:transparent">Rencana ekonomi yang akan dimulai?</td><td style="background:transparent"><input type="text" id="refleksi4" style="width:100%" oninput="saveToLocalStorage();"></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -876,12 +941,12 @@
                 <table>
                     <thead><tr><th>No</th><th>Aspek</th><th>Nilai (1-4)</th></tr></thead>
                     <tbody>
-                        <tr><td style="background:transparent">1</th><td style="background:transparent">Semua anggota ikut observasi</th><td style="background:transparent"><input type="number" id="nilai1" min="1" max="4" value="3" style="width:70px" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">2</th><td style="background:transparent">Semua anggota ikut diskusi</th><td style="background:transparent"><input type="number" id="nilai2" min="1" max="4" value="3" style="width:70px" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">3</th><td style="background:transparent">Selesai tepat waktu</th><td style="background:transparent"><input type="number" id="nilai3" min="1" max="4" value="3" style="width:70px" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">4</th><td style="background:transparent">Bekerja sama dengan baik</th><td style="background:transparent"><input type="number" id="nilai4" min="1" max="4" value="3" style="width:70px" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">5</th><td style="background:transparent">Bersikap sopan saat observasi/wawancara</th><td style="background:transparent"><input type="number" id="nilai5" min="1" max="4" value="3" style="width:70px" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
-                        <tr><td style="background:transparent">6</th><td style="background:transparent">Berani bertanya/mewawancarai pedagang</th><td style="background:transparent"><input type="number" id="nilai6" min="1" max="4" value="3" style="width:70px" oninput="saveToLocalStorage(); updateProgress();"></th></tr>
+                        <tr><td style="background:transparent">1</td><td style="background:transparent">Semua anggota ikut observasi</td><td style="background:transparent"><select id="nilai1" onchange="saveToLocalStorage();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td style="background:transparent">2</td><td style="background:transparent">Semua anggota ikut diskusi</td><td style="background:transparent"><select id="nilai2" onchange="saveToLocalStorage();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td style="background:transparent">3</td><td style="background:transparent">Selesai tepat waktu</td><td style="background:transparent"><select id="nilai3" onchange="saveToLocalStorage();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td style="background:transparent">4</td><td style="background:transparent">Bekerja sama dengan baik</td><td style="background:transparent"><select id="nilai4" onchange="saveToLocalStorage();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td style="background:transparent">5</td><td style="background:transparent">Bersikap sopan saat observasi/wawancara</td><td style="background:transparent"><select id="nilai5" onchange="saveToLocalStorage();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                        <tr><td style="background:transparent">6</td><td style="background:transparent">Berani bertanya/mewawancarai pedagang</td><td style="background:transparent"><select id="nilai6" onchange="saveToLocalStorage();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -919,16 +984,54 @@
     </div>
 
     <script>
+        // ==================== KONFIGURASI URL ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
 
+        // ==================== KONFIGURASI FORM ====================
         const FORM_CONFIG = {
-            sheetName: "AKTIVITAS 7 - PERILAKU EKONOMI",
-            headers: ["Timestamp", "Bagian_A", "Bagian_B", "Bagian_C", "Bagian_D", "Bagian_E", "Bagian_F"]
+            sheetName: "S1-A7",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas",
+                "Status",
+                "Key",
+                "Bagian_B",
+                "Bagian_C",
+                "Bagian_D",
+                "Bagian_E",
+                "Bagian_F"
+            ]
         };
 
-        let dataKelas = [], dataSiswa = {}, isLoading = true, isOnline = true, autoSaveTimeout;
+        // ==================== DATA DEFINISI ====================
+        const ASPEK_PENILAIAN = [
+            'Semua anggota ikut observasi',
+            'Semua anggota ikut diskusi',
+            'Selesai tepat waktu',
+            'Bekerja sama dengan baik',
+            'Bersikap sopan saat observasi/wawancara',
+            'Berani bertanya/mewawancarai pedagang'
+        ];
 
+        const PERTANYAAN_REFLEKSI = [
+            'Hal paling menarik?',
+            'Hal baru yang saya pahami?',
+            'Kebiasaan ekonomi yang perlu diperbaiki?',
+            'Rencana ekonomi yang akan dimulai?'
+        ];
+
+        // ==================== VARIABEL GLOBAL ====================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let isLoading = true;
+        let isOnline = true;
+        let autoSaveTimeout;
+
+        // ==================== CEK KONEKSI INTERNET ====================
         function checkConnection() {
             const statusIndicator = document.getElementById('statusIndicator');
             const connectionStatus = document.getElementById('connectionStatus');
@@ -962,6 +1065,7 @@
             });
         }
 
+        // ==================== LOAD DATA SISWA ====================
         function loadDataFromGoogleSheets() {
             checkConnection();
             if (!navigator.onLine) {
@@ -1023,6 +1127,7 @@
             }
         }
 
+        // ==================== LOCALSTORAGE AUTO-SAVE ====================
         function saveToLocalStorage() {
             if (!isOnline) return;
             if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
@@ -1033,179 +1138,1472 @@
             }, 1000);
         }
 
+        // ==================== ENSURE TABLES HAVE ONE ROW ====================
+        function ensureTablesHaveOneRow() {
+            // Anggota Kelompok
+            const anggotaContainer = document.getElementById('anggotaContainer');
+            if (anggotaContainer && anggotaContainer.querySelectorAll('.langkah-item').length === 0) {
+                initAnggota();
+            }
+
+            // Kebutuhan (B) - statis, tidak perlu ensure
+            // Permintaan-Penawaran (B) - statis
+            // Fungsi Uang (B) - statis
+
+            // Observasi Ekonomi (C1)
+            const observasiEkonomiBody = document.getElementById('observasiEkonomiBody');
+            if (observasiEkonomiBody && observasiEkonomiBody.querySelectorAll('tr').length === 0) {
+                initObservasiEkonomi();
+            }
+            updateHapusButton('observasiEkonomi');
+
+            // Klasifikasi Ekonomi (C2) - statis
+            // Pilihan Ekonomi (C2) - statis
+
+            // Observasi Detail Ekonomi (C3)
+            const observasiDetailEkonomiBody = document.getElementById('observasiDetailEkonomiBody');
+            if (observasiDetailEkonomiBody && observasiDetailEkonomiBody.querySelectorAll('tr').length === 0) {
+                initObservasiDetailEkonomi();
+            }
+            updateHapusButton('observasiDetailEkonomi');
+
+            // Fenomena Ekonomi (D1) - statis
+
+            // Pertanyaan Wawancara Ekonomi (D3) - statis
+            // Alat Ekonomi (D3) - statis
+
+            // Hasil Pembuktian (D4)
+            const hasilPembuktianBody = document.getElementById('hasilPembuktianBody');
+            if (hasilPembuktianBody && hasilPembuktianBody.querySelectorAll('tr').length === 0) {
+                initHasilPembuktian();
+            }
+            updateHapusButton('hasilPembuktian');
+
+            // Wawancara Ekonomi (D4)
+            const wawancaraEkonomiBody = document.getElementById('wawancaraEkonomiBody');
+            if (wawancaraEkonomiBody && wawancaraEkonomiBody.querySelectorAll('tr').length === 0) {
+                initWawancaraEkonomi();
+            }
+            updateHapusButton('wawancaraEkonomi');
+
+            // Faktor Ekonomi (D5) - statis
+
+            // Aspek Jurusan Ekonomi (D6) - statis
+
+            // Langkah (D3)
+            const langkahContainer = document.getElementById('langkahContainer');
+            if (langkahContainer && langkahContainer.querySelectorAll('.langkah-item').length === 0) {
+                initLangkah();
+            }
+        }
+
+        // ==================== LOAD FROM LOCAL STORAGE ====================
         function loadFromLocalStorage() {
             const savedData = localStorage.getItem('ipas_aktivitas7_draft');
             if (savedData) {
                 try {
                     const data = JSON.parse(savedData);
                     populateFormData(data);
+                    ensureTablesHaveOneRow();
                 } catch (e) {
                     console.error('Error loading saved data:', e);
+                    initAllTables();
+                    ensureTablesHaveOneRow();
                 }
+            } else {
+                initAllTables();
+                ensureTablesHaveOneRow();
             }
         }
 
         function clearLocalStorage() { localStorage.removeItem('ipas_aktivitas7_draft'); }
 
-        function updateProgress() {
-            let totalFields = 0, filledFields = 0;
-            const textInputs = document.querySelectorAll('input[type="text"]');
-            const numberInputs = document.querySelectorAll('input[type="number"]');
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const radioGroups = ['prediksi1_skenario', 'prediksi1_hasil', 'prediksi2_skenario', 'tipe_ekonomi', 'pilihan_prediksi', 'kesesuaian', 'jurusan'];
-            
-            textInputs.forEach(input => { totalFields++; if (input.value && input.value.trim() !== '') filledFields++; });
-            numberInputs.forEach(input => { totalFields++; if (input.value) filledFields++; });
-            checkboxes.forEach(checkbox => { totalFields++; if (checkbox.checked) filledFields++; });
-            radioGroups.forEach(group => { totalFields++; if (document.querySelector(`input[name="${group}"]:checked`)) filledFields++; });
-            
-            const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
-            const progressBar = document.getElementById('progressBar');
-            progressBar.style.width = percentage + '%';
-            progressBar.innerHTML = percentage + '%';
+        // ==================== INIT ALL TABLES ====================
+        function initAllTables() {
+            initAnggota();
+            initKebutuhan();
+            initPermintaanPenawaran();
+            initFungsiUang();
+            initObservasiEkonomi();
+            initKlasifikasiEkonomi();
+            initPilihanEkonomi();
+            initObservasiDetailEkonomi();
+            initLangkah();
+            initFenomenaEkonomi();
+            initPertanyaanWawancaraEkonomi();
+            initAlatEkonomi();
+            initHasilPembuktian();
+            initWawancaraEkonomi();
+            initFaktorEkonomi();
+            initAspekJurusanEkonomi();
         }
 
-        function collectAllFormData() {
-            return {
-                bagian_a: {
-                    identitas: {
-                        kelas: document.getElementById('kelas')?.value || '',
-                        nama: document.getElementById('nama')?.value || '',
-                        kelompok: document.getElementById('kelompok')?.value || '',
-                        tugas: document.getElementById('tugas')?.value || ''
-                    },
-                    anggota: {
-                        anggota1: document.getElementById('anggota1')?.value || '',
-                        anggota2: document.getElementById('anggota2')?.value || '',
-                        anggota3: document.getElementById('anggota3')?.value || '',
-                        anggota4: document.getElementById('anggota4')?.value || '',
-                        anggota5: document.getElementById('anggota5')?.value || ''
+        // ==================== INIT FUNCTIONS ====================
+        function initAnggota() {
+            const container = document.getElementById('anggotaContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            const defaultAnggota = [
+                { nama: '', peran: 'Ketua' },
+                { nama: '', peran: 'Sekretaris' },
+                { nama: '', peran: 'Presenter' },
+                { nama: '', peran: 'Observer' },
+                { nama: '', peran: 'Logistik' }
+            ];
+            defaultAnggota.forEach((item, index) => {
+                const num = index + 1;
+                container.innerHTML += `
+                    <div class="langkah-item" id="anggota_${num}">
+                        <span>${num}.</span>
+                        <input type="text" id="anggota${num}_nama" value="${item.nama}" placeholder="Nama" style="flex:1;" oninput="saveToLocalStorage();">
+                        <input type="text" id="anggota${num}_peran" value="${item.peran}" placeholder="Peran" style="flex:0.7;" oninput="saveToLocalStorage();">
+                        <button class="btn-langkah-remove" onclick="hapusAnggota(${num})" ${defaultAnggota.length <= 1 ? 'disabled' : ''}>✕</button>
+                    </div>
+                `;
+            });
+        }
+
+        function initKebutuhan() {
+            const tbody = document.getElementById('kebutuhanBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr>
+                    <td style="background:transparent">Primer (kebutuhan pokok)</td>
+                    <td style="background:transparent">a. <input type="text" id="primer_a" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent">b. <input type="text" id="primer_b" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent">c. <input type="text" id="primer_c" oninput="saveToLocalStorage();"></td>
+                </tr>
+                <tr>
+                    <td style="background:transparent">Sekunder (kebutuhan tambahan)</td>
+                    <td style="background:transparent">a. <input type="text" id="sekunder_a" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent">b. <input type="text" id="sekunder_b" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent">c. <input type="text" id="sekunder_c" oninput="saveToLocalStorage();"></td>
+                </tr>
+                <tr>
+                    <td style="background:transparent">Tersier (kebutuhan mewah)</td>
+                    <td style="background:transparent">a. <input type="text" id="tersier_a" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent">b. <input type="text" id="tersier_b" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent">c. <input type="text" id="tersier_c" oninput="saveToLocalStorage();"></td>
+                </tr>
+            `;
+        }
+
+        function initPermintaanPenawaran() {
+            const tbody = document.getElementById('permintaanPenawaranBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr>
+                    <td style="background:transparent">Permintaan (demand)</td>
+                    <td style="background:transparent"><input type="text" id="demand_pengertian" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent"><input type="text" id="demand_contoh" oninput="saveToLocalStorage();"></td>
+                </tr>
+                <tr>
+                    <td style="background:transparent">Penawaran (supply)</td>
+                    <td style="background:transparent"><input type="text" id="supply_pengertian" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent"><input type="text" id="supply_contoh" oninput="saveToLocalStorage();"></td>
+                </tr>
+            `;
+        }
+
+        function initFungsiUang() {
+            const tbody = document.getElementById('fungsiUangBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr>
+                    <td style="background:transparent">1</td>
+                    <td style="background:transparent"><input type="text" id="fungsi_uang1" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent"><input type="text" id="fungsi_uang1_penjelasan" oninput="saveToLocalStorage();"></td>
+                </tr>
+                <tr>
+                    <td style="background:transparent">2</td>
+                    <td style="background:transparent"><input type="text" id="fungsi_uang2" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent"><input type="text" id="fungsi_uang2_penjelasan" oninput="saveToLocalStorage();"></td>
+                </tr>
+                <tr>
+                    <td style="background:transparent">3</td>
+                    <td style="background:transparent"><input type="text" id="fungsi_uang3" oninput="saveToLocalStorage();"></td>
+                    <td style="background:transparent"><input type="text" id="fungsi_uang3_penjelasan" oninput="saveToLocalStorage();"></td>
+                </tr>
+            `;
+        }
+
+        function initObservasiEkonomi() {
+            const tbody = document.getElementById('observasiEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="background:transparent">${i}</td>
+                        <td style="background:transparent"><input type="text" id="ekonomi${i}_lokasi" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="ekonomi${i}_kegiatan" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="ekonomi${i}_pelaku" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="ekonomi${i}_barang" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="ekonomi${i}_harga" oninput="saveToLocalStorage();"></td>
+                    </tr>
+                `;
+            }
+            document.getElementById('hapusObservasiEkonomiBtn').disabled = true;
+        }
+
+        function initKlasifikasiEkonomi() {
+            const tbody = document.getElementById('klasifikasiEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr><td style="background:transparent">Jual beli barang</td><td style="background:transparent"><input type="text" id="klas_barang_jml" style="width:60px" oninput="saveToLocalStorage();"></td><td style="background:transparent"><input type="text" id="klas_barang_no" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Jual beli jasa</td><td style="background:transparent"><input type="text" id="klas_jasa_jml" style="width:60px" oninput="saveToLocalStorage();"></td><td style="background:transparent"><input type="text" id="klas_jasa_no" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Simpan pinjam</td><td style="background:transparent"><input type="text" id="klas_simpan_jml" style="width:60px" oninput="saveToLocalStorage();"></td><td style="background:transparent"><input type="text" id="klas_simpan_no" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Produksi</td><td style="background:transparent"><input type="text" id="klas_produksi_jml" style="width:60px" oninput="saveToLocalStorage();"></td><td style="background:transparent"><input type="text" id="klas_produksi_no" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Konsumsi</td><td style="background:transparent"><input type="text" id="klas_konsumsi_jml" style="width:60px" oninput="saveToLocalStorage();"></td><td style="background:transparent"><input type="text" id="klas_konsumsi_no" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Distribusi</td><td style="background:transparent"><input type="text" id="klas_distribusi_jml" style="width:60px" oninput="saveToLocalStorage();"></td><td style="background:transparent"><input type="text" id="klas_distribusi_no" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Lainnya: <input type="text" id="klas_lainnya_nama" style="width:120px;" oninput="saveToLocalStorage();"></td><td style="background:transparent"><input type="text" id="klas_lainnya_jml" style="width:60px" oninput="saveToLocalStorage();"></td><td style="background:transparent"><input type="text" id="klas_lainnya_no" oninput="saveToLocalStorage();"></td></tr>
+            `;
+        }
+
+        function initPilihanEkonomi() {
+            const tbody = document.getElementById('pilihanEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr><td style="background:transparent">Barang/jasa yang diperjualbelikan</td><td style="background:transparent"><input type="text" id="pilihan_barang" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Siapa penjualnya (produsen)</td><td style="background:transparent"><input type="text" id="pilihan_penjual" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Siapa pembelinya (konsumen)</td><td style="background:transparent"><input type="text" id="pilihan_pembeli" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Berapa harganya</td><td style="background:transparent"><input type="text" id="pilihan_harga" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Faktor yang mempengaruhi harga</td><td style="background:transparent"><input type="text" id="pilihan_faktor" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Apakah ada tawar-menawar?</td><td style="background:transparent"><input type="text" id="pilihan_tawar" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Cara pembayaran</td><td style="background:transparent"><input type="text" id="pilihan_pembayaran" oninput="saveToLocalStorage();"></td></tr>
+            `;
+        }
+
+        function initObservasiDetailEkonomi() {
+            const tbody = document.getElementById('observasiDetailEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="background:transparent"><input type="number" id="obsDetWaktu${i}" placeholder="Waktu" style="width:80px;" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="obsDet${i}_jumlah" placeholder="Jumlah Pembeli" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="obsDet${i}_barang" placeholder="Barang yang Dibeli" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="obsDet${i}_transaksi" placeholder="Total Transaksi" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="obsDet${i}_suasana" placeholder="Suasana" oninput="saveToLocalStorage();"></td>
+                    </tr>
+                `;
+            }
+            document.getElementById('hapusObservasiDetailEkonomiBtn').disabled = true;
+        }
+
+        function initLangkah() {
+            const container = document.getElementById('langkahContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 1; i <= 2; i++) {
+                container.innerHTML += `
+                    <div class="langkah-item" id="langkah_${i}">
+                        <span>${i}.</span>
+                        <input type="text" id="langkah_${i}" placeholder="Langkah ${i}" style="flex:1;" oninput="saveToLocalStorage();">
+                        <button class="btn-langkah-remove" onclick="hapusLangkah(${i})" ${i <= 1 ? 'disabled' : ''}>✕</button>
+                    </div>
+                `;
+            }
+        }
+
+        function initFenomenaEkonomi() {
+            const tbody = document.getElementById('fenomenaEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr><td style="background:transparent">Lokasi</td><td style="background:transparent"><input type="text" id="fenomena_lokasi" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Penjual</td><td style="background:transparent"><input type="text" id="fenomena_penjual" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Pembeli/konsumen</td><td style="background:transparent"><input type="text" id="fenomena_pembeli" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Barang/jasa utama</td><td style="background:transparent"><input type="text" id="fenomena_barang" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Harga rata-rata</td><td style="background:transparent"><input type="text" id="fenomena_harga" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Waktu operasional</td><td style="background:transparent"><input type="text" id="fenomena_waktu" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Cara pembayaran</td><td style="background:transparent"><input type="text" id="fenomena_pembayaran" oninput="saveToLocalStorage();"></td></tr>
+            `;
+        }
+
+        function initPertanyaanWawancaraEkonomi() {
+            const tbody = document.getElementById('pertanyaanWawancaraEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="background:transparent">${i}</td>
+                        <td style="background:transparent"><input type="text" id="wawancara_pertanyaan${i}" placeholder="Pertanyaan" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="wawancara_tujuan${i}" placeholder="Tujuan" oninput="saveToLocalStorage();"></td>
+                    </tr>
+                `;
+            }
+        }
+
+        function initAlatEkonomi() {
+            const tbody = document.getElementById('alatEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="background:transparent">${i}</td>
+                        <td style="background:transparent"><input type="text" id="alat${i}_nama" placeholder="Alat/Bahan" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="alat${i}_guna" placeholder="Kegunaan" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><select id="alat${i}_tersedia" onchange="saveToLocalStorage();"><option value="">Pilih</option><option value="Ada">Ada</option><option value="Tidak Ada">Tidak Ada</option></select></td>
+                    </tr>
+                `;
+            }
+        }
+
+        function initHasilPembuktian() {
+            const tbody = document.getElementById('hasilPembuktianBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            for (let i = 1; i <= 2; i++) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="background:transparent"><input type="text" id="hasil${i}_waktu" placeholder="Waktu/Lokasi" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="hasil${i}_hasil" placeholder="Hasil" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="hasil${i}_jumlah" placeholder="Jumlah Pembeli" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="hasil${i}_transaksi" placeholder="Total Transaksi" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="hasil${i}_banding" placeholder="Perbandingan" oninput="saveToLocalStorage();"></td>
+                    </tr>
+                `;
+            }
+            document.getElementById('hapusHasilPembuktianBtn').disabled = true;
+        }
+
+        function initWawancaraEkonomi() {
+            const tbody = document.getElementById('wawancaraEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            for (let i = 1; i <= 2; i++) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="background:transparent"><input type="text" id="wawancara${i}_nama" placeholder="Nama" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="wawancara${i}_usaha" placeholder="Jenis Usaha" oninput="saveToLocalStorage();"></td>
+                        <td style="background:transparent"><input type="text" id="wawancara${i}_jawaban" placeholder="Jawaban" oninput="saveToLocalStorage();"></td>
+                    </tr>
+                `;
+            }
+            document.getElementById('hapusWawancaraEkonomiBtn').disabled = true;
+        }
+
+        function initFaktorEkonomi() {
+            const tbody = document.getElementById('faktorEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr><td style="background:transparent">Waktu</td><td style="background:transparent"><input type="text" id="faktor_waktu" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Harga barang</td><td style="background:transparent"><input type="text" id="faktor_harga" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Lokasi/akses</td><td style="background:transparent"><input type="text" id="faktor_lokasi" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Kualitas barang</td><td style="background:transparent"><input type="text" id="faktor_kualitas" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Pelayanan</td><td style="background:transparent"><input type="text" id="faktor_pelayanan" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Musim/hari besar</td><td style="background:transparent"><input type="text" id="faktor_musim" oninput="saveToLocalStorage();"></td></tr>
+            `;
+        }
+
+        function initAspekJurusanEkonomi() {
+            const tbody = document.getElementById('aspekJurusanEkonomiBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr><td style="background:transparent">Produk/jasa yang dihasilkan</td><td style="background:transparent"><input type="text" id="aspek_produk" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Konsumen/pelanggan</td><td style="background:transparent"><input type="text" id="aspek_konsumen" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Penentuan harga</td><td style="background:transparent"><input type="text" id="aspek_harga" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Biaya produksi/operasional</td><td style="background:transparent"><input type="text" id="aspek_biaya" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Keuntungan (laba)</td><td style="background:transparent"><input type="text" id="aspek_laba" oninput="saveToLocalStorage();"></td></tr>
+                <tr><td style="background:transparent">Strategi pemasaran</td><td style="background:transparent"><input type="text" id="aspek_pemasaran" oninput="saveToLocalStorage();"></td></tr>
+            `;
+        }
+
+        // ==================== ANGGOTA FUNCTIONS ====================
+        function tambahAnggota() {
+            const container = document.getElementById('anggotaContainer');
+            if (!container) return;
+            const items = container.querySelectorAll('.langkah-item');
+            const newIndex = items.length + 1;
+            
+            const div = document.createElement('div');
+            div.className = 'langkah-item';
+            div.id = `anggota_${newIndex}`;
+            div.innerHTML = `
+                <span>${newIndex}.</span>
+                <input type="text" id="anggota${newIndex}_nama" placeholder="Nama" style="flex:1;" oninput="saveToLocalStorage();">
+                <input type="text" id="anggota${newIndex}_peran" placeholder="Peran" style="flex:0.7;" oninput="saveToLocalStorage();">
+                <button class="btn-langkah-remove" onclick="hapusAnggota(${newIndex})">✕</button>
+            `;
+            container.appendChild(div);
+            container.querySelectorAll('.btn-langkah-remove').forEach(btn => btn.disabled = false);
+            saveToLocalStorage();
+        }
+
+        function hapusAnggota(index) {
+            const container = document.getElementById('anggotaContainer');
+            if (!container) return;
+            const items = container.querySelectorAll('.langkah-item');
+            if (items.length <= 1) return;
+            
+            const item = document.getElementById(`anggota_${index}`);
+            if (item) {
+                container.removeChild(item);
+                const remaining = container.querySelectorAll('.langkah-item');
+                remaining.forEach((el, i) => {
+                    const num = i + 1;
+                    el.id = `anggota_${num}`;
+                    const span = el.querySelector('span');
+                    if (span) span.textContent = `${num}.`;
+                    const inputs = el.querySelectorAll('input');
+                    if (inputs.length >= 2) {
+                        inputs[0].id = `anggota${num}_nama`;
+                        inputs[1].id = `anggota${num}_peran`;
                     }
+                    const btn = el.querySelector('.btn-langkah-remove');
+                    if (btn) {
+                        btn.onclick = function() { hapusAnggota(num); };
+                        btn.disabled = remaining.length <= 1;
+                    }
+                });
+                saveToLocalStorage();
+            }
+        }
+
+        function collectAnggotaData() {
+            const data = [];
+            const container = document.getElementById('anggotaContainer');
+            if (!container) return data;
+            const items = container.querySelectorAll('.langkah-item');
+            items.forEach((item) => {
+                const inputs = item.querySelectorAll('input');
+                if (inputs.length >= 2) {
+                    const nama = inputs[0]?.value || '';
+                    const peran = inputs[1]?.value || '';
+                    if (nama || peran) {
+                        data.push({ nama, peran });
+                    }
+                }
+            });
+            return data;
+        }
+
+        function populateAnggotaData(data) {
+            const container = document.getElementById('anggotaContainer');
+            if (!container) return;
+            if (!data || data.length === 0) {
+                initAnggota();
+                return;
+            }
+            container.innerHTML = '';
+            data.forEach((item, index) => {
+                const num = index + 1;
+                container.innerHTML += `
+                    <div class="langkah-item" id="anggota_${num}">
+                        <span>${num}.</span>
+                        <input type="text" id="anggota${num}_nama" value="${item.nama || ''}" placeholder="Nama" style="flex:1;" oninput="saveToLocalStorage();">
+                        <input type="text" id="anggota${num}_peran" value="${item.peran || ''}" placeholder="Peran" style="flex:0.7;" oninput="saveToLocalStorage();">
+                        <button class="btn-langkah-remove" onclick="hapusAnggota(${num})" ${data.length <= 1 ? 'disabled' : ''}>✕</button>
+                    </div>
+                `;
+            });
+        }
+
+        // ==================== LANGKAH FUNCTIONS ====================
+        function tambahLangkah() {
+            const container = document.getElementById('langkahContainer');
+            if (!container) return;
+            const items = container.querySelectorAll('.langkah-item');
+            const newIndex = items.length + 1;
+            
+            const div = document.createElement('div');
+            div.className = 'langkah-item';
+            div.id = `langkah_${newIndex}`;
+            div.innerHTML = `
+                <span>${newIndex}.</span>
+                <input type="text" id="langkah_${newIndex}" placeholder="Langkah ${newIndex}" style="flex:1;" oninput="saveToLocalStorage();">
+                <button class="btn-langkah-remove" onclick="hapusLangkah(${newIndex})">✕</button>
+            `;
+            container.appendChild(div);
+            container.querySelectorAll('.btn-langkah-remove').forEach(btn => btn.disabled = false);
+            saveToLocalStorage();
+        }
+
+        function hapusLangkah(index) {
+            const container = document.getElementById('langkahContainer');
+            if (!container) return;
+            const items = container.querySelectorAll('.langkah-item');
+            if (items.length <= 1) return;
+            
+            const item = document.getElementById(`langkah_${index}`);
+            if (item) {
+                container.removeChild(item);
+                const remaining = container.querySelectorAll('.langkah-item');
+                remaining.forEach((el, i) => {
+                    const num = i + 1;
+                    el.id = `langkah_${num}`;
+                    const span = el.querySelector('span');
+                    if (span) span.textContent = `${num}.`;
+                    const input = el.querySelector('input');
+                    if (input) {
+                        input.id = `langkah_${num}`;
+                        input.placeholder = `Langkah ${num}`;
+                    }
+                    const btn = el.querySelector('.btn-langkah-remove');
+                    if (btn) {
+                        btn.onclick = function() { hapusLangkah(num); };
+                        btn.disabled = remaining.length <= 1;
+                    }
+                });
+                saveToLocalStorage();
+            }
+        }
+
+        function collectLangkahData() {
+            const data = [];
+            const container = document.getElementById('langkahContainer');
+            if (!container) return data;
+            const items = container.querySelectorAll('.langkah-item');
+            items.forEach((item) => {
+                const input = item.querySelector('input');
+                if (input && input.value) {
+                    data.push(input.value);
+                }
+            });
+            return data;
+        }
+
+        function populateLangkahData(data) {
+            const container = document.getElementById('langkahContainer');
+            if (!container) return;
+            if (!data || data.length === 0) {
+                initLangkah();
+                return;
+            }
+            container.innerHTML = '';
+            data.forEach((value, index) => {
+                const num = index + 1;
+                container.innerHTML += `
+                    <div class="langkah-item" id="langkah_${num}">
+                        <span>${num}.</span>
+                        <input type="text" id="langkah_${num}" value="${value || ''}" placeholder="Langkah ${num}" style="flex:1;" oninput="saveToLocalStorage();">
+                        <button class="btn-langkah-remove" onclick="hapusLangkah(${num})" ${data.length <= 1 ? 'disabled' : ''}>✕</button>
+                    </div>
+                `;
+            });
+        }
+
+        // ==================== UPDATE HAPUS BUTTON ====================
+        function updateHapusButton(tableType) {
+            let btn, rowCount;
+            
+            const tableMap = {
+                'observasiEkonomi': { btn: 'hapusObservasiEkonomiBtn', body: 'observasiEkonomiBody' },
+                'observasiDetailEkonomi': { btn: 'hapusObservasiDetailEkonomiBtn', body: 'observasiDetailEkonomiBody' },
+                'hasilPembuktian': { btn: 'hapusHasilPembuktianBtn', body: 'hasilPembuktianBody' },
+                'wawancaraEkonomi': { btn: 'hapusWawancaraEkonomiBtn', body: 'wawancaraEkonomiBody' }
+            };
+            
+            const config = tableMap[tableType];
+            if (!config) return;
+            
+            btn = document.getElementById(config.btn);
+            const body = document.getElementById(config.body);
+            rowCount = body ? body.querySelectorAll('tr').length : 0;
+            
+            if (btn) {
+                btn.disabled = rowCount <= 1;
+            }
+        }
+
+        // ==================== TAMBAH BARIS FUNCTIONS ====================
+        function tambahBarisObservasiEkonomi() {
+            const tbody = document.getElementById('observasiEkonomiBody');
+            if (!tbody) return;
+            const num = tbody.querySelectorAll('tr').length + 1;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="background:transparent">${num}</td>
+                <td style="background:transparent"><input type="text" id="ekonomi${num}_lokasi" placeholder="Lokasi" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="ekonomi${num}_kegiatan" placeholder="Kegiatan" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="ekonomi${num}_pelaku" placeholder="Pelaku" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="ekonomi${num}_barang" placeholder="Barang/Jasa" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="ekonomi${num}_harga" placeholder="Harga" oninput="saveToLocalStorage();"></td>
+            `;
+            tbody.appendChild(tr);
+            updateHapusButton('observasiEkonomi');
+            saveToLocalStorage();
+        }
+
+        function tambahBarisObservasiDetailEkonomi() {
+            const tbody = document.getElementById('observasiDetailEkonomiBody');
+            if (!tbody) return;
+            const num = tbody.querySelectorAll('tr').length + 1;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="background:transparent"><input type="number" id="obsDetWaktu${num}" placeholder="Waktu" style="width:80px;" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="obsDet${num}_jumlah" placeholder="Jumlah Pembeli" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="obsDet${num}_barang" placeholder="Barang yang Dibeli" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="obsDet${num}_transaksi" placeholder="Total Transaksi" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="obsDet${num}_suasana" placeholder="Suasana" oninput="saveToLocalStorage();"></td>
+            `;
+            tbody.appendChild(tr);
+            updateHapusButton('observasiDetailEkonomi');
+            saveToLocalStorage();
+        }
+
+        function tambahBarisHasilPembuktian() {
+            const tbody = document.getElementById('hasilPembuktianBody');
+            if (!tbody) return;
+            const num = tbody.querySelectorAll('tr').length + 1;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="background:transparent"><input type="text" id="hasil${num}_waktu" placeholder="Waktu/Lokasi" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="hasil${num}_hasil" placeholder="Hasil" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="hasil${num}_jumlah" placeholder="Jumlah Pembeli" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="hasil${num}_transaksi" placeholder="Total Transaksi" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="hasil${num}_banding" placeholder="Perbandingan" oninput="saveToLocalStorage();"></td>
+            `;
+            tbody.appendChild(tr);
+            updateHapusButton('hasilPembuktian');
+            saveToLocalStorage();
+        }
+
+        function tambahBarisWawancaraEkonomi() {
+            const tbody = document.getElementById('wawancaraEkonomiBody');
+            if (!tbody) return;
+            const num = tbody.querySelectorAll('tr').length + 1;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="background:transparent"><input type="text" id="wawancara${num}_nama" placeholder="Nama" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="wawancara${num}_usaha" placeholder="Jenis Usaha" oninput="saveToLocalStorage();"></td>
+                <td style="background:transparent"><input type="text" id="wawancara${num}_jawaban" placeholder="Jawaban" oninput="saveToLocalStorage();"></td>
+            `;
+            tbody.appendChild(tr);
+            updateHapusButton('wawancaraEkonomi');
+            saveToLocalStorage();
+        }
+
+        // ==================== HAPUS BARIS FUNCTIONS ====================
+        function hapusBarisObservasiEkonomi() { 
+            const body = document.getElementById('observasiEkonomiBody');
+            if (!body) return;
+            const rows = body.querySelectorAll('tr');
+            if (rows.length > 1) {
+                body.removeChild(rows[rows.length - 1]);
+                updateHapusButton('observasiEkonomi');
+                saveToLocalStorage();
+            }
+        }
+
+        function hapusBarisObservasiDetailEkonomi() { 
+            const body = document.getElementById('observasiDetailEkonomiBody');
+            if (!body) return;
+            const rows = body.querySelectorAll('tr');
+            if (rows.length > 1) {
+                body.removeChild(rows[rows.length - 1]);
+                updateHapusButton('observasiDetailEkonomi');
+                saveToLocalStorage();
+            }
+        }
+
+        function hapusBarisHasilPembuktian() { 
+            const body = document.getElementById('hasilPembuktianBody');
+            if (!body) return;
+            const rows = body.querySelectorAll('tr');
+            if (rows.length > 1) {
+                body.removeChild(rows[rows.length - 1]);
+                updateHapusButton('hasilPembuktian');
+                saveToLocalStorage();
+            }
+        }
+
+        function hapusBarisWawancaraEkonomi() { 
+            const body = document.getElementById('wawancaraEkonomiBody');
+            if (!body) return;
+            const rows = body.querySelectorAll('tr');
+            if (rows.length > 1) {
+                body.removeChild(rows[rows.length - 1]);
+                updateHapusButton('wawancaraEkonomi');
+                saveToLocalStorage();
+            }
+        }
+
+        // ==================== COLLECT FUNCTIONS ====================
+        function collectBagianB() {
+            return {
+                'Kelangkaan (scarcity)': document.getElementById('kelangkaan_pengertian')?.value || '',
+                'Mengapa manusia harus membuat pilihan ekonomi?': document.getElementById('pilihan_ekonomi')?.value || '',
+                'Anggota Kelompok': collectAnggotaData(),
+                'Kebutuhan Primer': {
+                    a: document.getElementById('primer_a')?.value || '',
+                    b: document.getElementById('primer_b')?.value || '',
+                    c: document.getElementById('primer_c')?.value || ''
                 },
-                bagian_b: {
-                    kelangkaan_pengertian: document.getElementById('kelangkaan_pengertian')?.value || '',
-                    pilihan_ekonomi: document.getElementById('pilihan_ekonomi')?.value || '',
-                    primer_a: document.getElementById('primer_a')?.value || '',
-                    primer_b: document.getElementById('primer_b')?.value || '',
-                    primer_c: document.getElementById('primer_c')?.value || '',
-                    sekunder_a: document.getElementById('sekunder_a')?.value || '',
-                    sekunder_b: document.getElementById('sekunder_b')?.value || '',
-                    sekunder_c: document.getElementById('sekunder_c')?.value || '',
-                    tersier_a: document.getElementById('tersier_a')?.value || '',
-                    tersier_b: document.getElementById('tersier_b')?.value || '',
-                    tersier_c: document.getElementById('tersier_c')?.value || '',
-                    demand_pengertian: document.getElementById('demand_pengertian')?.value || '',
-                    demand_contoh: document.getElementById('demand_contoh')?.value || '',
-                    supply_pengertian: document.getElementById('supply_pengertian')?.value || '',
-                    supply_contoh: document.getElementById('supply_contoh')?.value || '',
-                    fungsi_uang1: document.getElementById('fungsi_uang1')?.value || '',
-                    fungsi_uang1_penjelasan: document.getElementById('fungsi_uang1_penjelasan')?.value || '',
-                    fungsi_uang2: document.getElementById('fungsi_uang2')?.value || '',
-                    fungsi_uang2_penjelasan: document.getElementById('fungsi_uang2_penjelasan')?.value || '',
-                    fungsi_uang3: document.getElementById('fungsi_uang3')?.value || '',
-                    fungsi_uang3_penjelasan: document.getElementById('fungsi_uang3_penjelasan')?.value || ''
+                'Kebutuhan Sekunder': {
+                    a: document.getElementById('sekunder_a')?.value || '',
+                    b: document.getElementById('sekunder_b')?.value || '',
+                    c: document.getElementById('sekunder_c')?.value || ''
                 },
-                bagian_c: {
-                    observasi_ekonomi: {},
-                    klasifikasi: {},
-                    pilihan_ekonomi: {},
-                    istilah: {},
-                    observasi_detail: {},
-                    pola: {},
-                    prediksi1: {},
-                    prediksi2: {}
+                'Kebutuhan Tersier': {
+                    a: document.getElementById('tersier_a')?.value || '',
+                    b: document.getElementById('tersier_b')?.value || '',
+                    c: document.getElementById('tersier_c')?.value || ''
                 },
-                bagian_d: {
-                    fenomena: {},
-                    pilihan_prediksi: {},
-                    cara_pembuktian: {},
-                    alat: {},
-                    etika: {},
-                    hasil_pembuktian: {},
-                    analisis: {},
-                    jurusan: {},
-                    aspek_jurusan: {},
-                    solusi: {}
+                'Permintaan (demand)': {
+                    pengertian: document.getElementById('demand_pengertian')?.value || '',
+                    contoh: document.getElementById('demand_contoh')?.value || ''
                 },
-                bagian_e: {
-                    refleksi1: document.getElementById('refleksi1')?.value || '',
-                    refleksi2: document.getElementById('refleksi2')?.value || '',
-                    refleksi3: document.getElementById('refleksi3')?.value || '',
-                    refleksi4: document.getElementById('refleksi4')?.value || ''
+                'Penawaran (supply)': {
+                    pengertian: document.getElementById('supply_pengertian')?.value || '',
+                    contoh: document.getElementById('supply_contoh')?.value || ''
                 },
-                bagian_f: {
-                    nilai1: document.getElementById('nilai1')?.value || '3',
-                    nilai2: document.getElementById('nilai2')?.value || '3',
-                    nilai3: document.getElementById('nilai3')?.value || '3',
-                    nilai4: document.getElementById('nilai4')?.value || '3',
-                    nilai5: document.getElementById('nilai5')?.value || '3',
-                    nilai6: document.getElementById('nilai6')?.value || '3'
+                'Fungsi Uang': {
+                    fungsi1: document.getElementById('fungsi_uang1')?.value || '',
+                    penjelasan1: document.getElementById('fungsi_uang1_penjelasan')?.value || '',
+                    fungsi2: document.getElementById('fungsi_uang2')?.value || '',
+                    penjelasan2: document.getElementById('fungsi_uang2_penjelasan')?.value || '',
+                    fungsi3: document.getElementById('fungsi_uang3')?.value || '',
+                    penjelasan3: document.getElementById('fungsi_uang3_penjelasan')?.value || ''
                 }
             };
         }
 
-        function populateFormData(savedData) {
-            if (savedData.bagian_a?.identitas) {
-                const id = savedData.bagian_a.identitas;
-                if (id.kelas) { document.getElementById('kelas').value = id.kelas; updateNamaDropdown(); }
-                setTimeout(() => { if (id.nama) document.getElementById('nama').value = id.nama; }, 100);
-                document.getElementById('kelompok').value = id.kelompok || '';
-                document.getElementById('tugas').value = id.tugas || '';
+        function collectBagianC() {
+            // Collect observasi ekonomi data
+            const observasiEkonomi = [];
+            const obsBody = document.getElementById('observasiEkonomiBody');
+            if (obsBody) {
+                const rows = obsBody.querySelectorAll('tr');
+                rows.forEach((row, index) => {
+                    const num = index + 1;
+                    const lokasi = document.getElementById(`ekonomi${num}_lokasi`)?.value || '';
+                    const kegiatan = document.getElementById(`ekonomi${num}_kegiatan`)?.value || '';
+                    const pelaku = document.getElementById(`ekonomi${num}_pelaku`)?.value || '';
+                    const barang = document.getElementById(`ekonomi${num}_barang`)?.value || '';
+                    const harga = document.getElementById(`ekonomi${num}_harga`)?.value || '';
+                    if (lokasi || kegiatan || pelaku || barang || harga) {
+                        observasiEkonomi.push({ lokasi, kegiatan, pelaku, barang, harga });
+                    }
+                });
             }
-            
-            if (savedData.bagian_a?.anggota) {
-                for (let i = 1; i <= 5; i++) {
-                    if (savedData.bagian_a.anggota[`anggota${i}`]) {
-                        document.getElementById(`anggota${i}`).value = savedData.bagian_a.anggota[`anggota${i}`];
+
+            // Collect klasifikasi data
+            const klasifikasi = [];
+            const klasBody = document.getElementById('klasifikasiEkonomiBody');
+            if (klasBody) {
+                const rows = klasBody.querySelectorAll('tr');
+                const jenisList = ['Jual beli barang', 'Jual beli jasa', 'Simpan pinjam', 'Produksi', 'Konsumsi', 'Distribusi', 'Lainnya'];
+                rows.forEach((row, index) => {
+                    const num = index + 1;
+                    let jenis = jenisList[index] || document.getElementById(`klas${num}_jenis`)?.value || '';
+                    const jml = document.getElementById(`klas${num}_jml`)?.value || '';
+                    const no = document.getElementById(`klas${num}_no`)?.value || '';
+                    if (index === 6) {
+                        jenis = document.getElementById('klas_lainnya_nama')?.value || '';
+                        klasifikasi.push({ jenis, jml: document.getElementById('klas_lainnya_jml')?.value || '', no: document.getElementById('klas_lainnya_no')?.value || '' });
+                    } else {
+                        klasifikasi.push({ jenis, jml, no });
+                    }
+                });
+            }
+
+            // Collect pilihan ekonomi
+            const pilihanEkonomi = [
+                { aspek: 'Barang/jasa yang diperjualbelikan', isi: document.getElementById('pilihan_barang')?.value || '' },
+                { aspek: 'Siapa penjualnya (produsen)', isi: document.getElementById('pilihan_penjual')?.value || '' },
+                { aspek: 'Siapa pembelinya (konsumen)', isi: document.getElementById('pilihan_pembeli')?.value || '' },
+                { aspek: 'Berapa harganya', isi: document.getElementById('pilihan_harga')?.value || '' },
+                { aspek: 'Faktor yang mempengaruhi harga', isi: document.getElementById('pilihan_faktor')?.value || '' },
+                { aspek: 'Apakah ada tawar-menawar?', isi: document.getElementById('pilihan_tawar')?.value || '' },
+                { aspek: 'Cara pembayaran', isi: document.getElementById('pilihan_pembayaran')?.value || '' }
+            ];
+
+            // Collect observasi detail
+            const observasiDetail = [];
+            const obsDetBody = document.getElementById('observasiDetailEkonomiBody');
+            if (obsDetBody) {
+                const rows = obsDetBody.querySelectorAll('tr');
+                rows.forEach((row, index) => {
+                    const num = index + 1;
+                    const waktu = document.getElementById(`obsDetWaktu${num}`)?.value || '';
+                    const jumlah = document.getElementById(`obsDet${num}_jumlah`)?.value || '';
+                    const barang = document.getElementById(`obsDet${num}_barang`)?.value || '';
+                    const transaksi = document.getElementById(`obsDet${num}_transaksi`)?.value || '';
+                    const suasana = document.getElementById(`obsDet${num}_suasana`)?.value || '';
+                    if (waktu || jumlah || barang || transaksi || suasana) {
+                        observasiDetail.push({ waktu, jumlah, barang, transaksi, suasana });
+                    }
+                });
+            }
+
+            return {
+                'C1. OBSERVASI KEGIATAN EKONOMI': observasiEkonomi,
+                'C2. KLASIFIKASI DAN JELASKAN': {
+                    klasifikasi: klasifikasi,
+                    kegiatan_pilihan: document.getElementById('kegiatan_pilihan')?.value || '',
+                    pilihan: pilihanEkonomi,
+                    penjelasan_ilmiah: document.getElementById('penjelasan_ilmiah')?.value || ''
+                },
+                'C3. OBSERVASI DETAIL': {
+                    lokasi: document.getElementById('observasi_lokasi')?.value || '',
+                    waktu_mulai: document.getElementById('observasi_mulai')?.value || '',
+                    waktu_selesai: document.getElementById('observasi_selesai')?.value || '',
+                    catatan: document.getElementById('observasi_catatan')?.value || '',
+                    observasi: observasiDetail
+                },
+                'C4. CARI POLA': {
+                    pola: document.getElementById('pola')?.value || '',
+                    waktu_ramai: document.getElementById('waktu_ramai')?.value || '',
+                    waktu_sepi: document.getElementById('waktu_sepi')?.value || '',
+                    faktor: document.getElementById('faktor')?.value || ''
+                },
+                'C5. BUAT 2 PREDIKSI': {
+                    prediksi1: {
+                        skenario: document.querySelector('input[name="prediksi1_skenario"]:checked')?.value || '',
+                        lainnya: document.getElementById('prediksi1_lainnya')?.value || '',
+                        hasil: document.querySelector('input[name="prediksi1_hasil"]:checked')?.value || '',
+                        berbeda_isi: document.getElementById('prediksi1_berbeda_isi')?.value || '',
+                        alasan: document.getElementById('prediksi1_alasan')?.value || ''
+                    },
+                    prediksi2: {
+                        skenario: document.querySelector('input[name="prediksi2_skenario"]:checked')?.value || '',
+                        lainnya: document.getElementById('prediksi2_lainnya')?.value || '',
+                        hasil: document.getElementById('prediksi2_hasil')?.value || '',
+                        alasan: document.getElementById('prediksi2_alasan')?.value || ''
+                    }
+                }
+            };
+        }
+
+        function collectBagianD() {
+            // Collect fenomena ekonomi
+            const fenomena = [
+                { aspek: 'Lokasi', isi: document.getElementById('fenomena_lokasi')?.value || '' },
+                { aspek: 'Penjual', isi: document.getElementById('fenomena_penjual')?.value || '' },
+                { aspek: 'Pembeli/konsumen', isi: document.getElementById('fenomena_pembeli')?.value || '' },
+                { aspek: 'Barang/jasa utama', isi: document.getElementById('fenomena_barang')?.value || '' },
+                { aspek: 'Harga rata-rata', isi: document.getElementById('fenomena_harga')?.value || '' },
+                { aspek: 'Waktu operasional', isi: document.getElementById('fenomena_waktu')?.value || '' },
+                { aspek: 'Cara pembayaran', isi: document.getElementById('fenomena_pembayaran')?.value || '' }
+            ];
+
+            // Collect pertanyaan wawancara
+            const pertanyaanWawancara = [];
+            const pwBody = document.getElementById('pertanyaanWawancaraEkonomiBody');
+            if (pwBody) {
+                const rows = pwBody.querySelectorAll('tr');
+                rows.forEach((row, index) => {
+                    const num = index + 1;
+                    const pertanyaan = document.getElementById(`wawancara_pertanyaan${num}`)?.value || '';
+                    const tujuan = document.getElementById(`wawancara_tujuan${num}`)?.value || '';
+                    if (pertanyaan || tujuan) {
+                        pertanyaanWawancara.push({ pertanyaan, tujuan });
+                    }
+                });
+            }
+
+            // Collect alat
+            const alat = [];
+            const alatBody = document.getElementById('alatEkonomiBody');
+            if (alatBody) {
+                const rows = alatBody.querySelectorAll('tr');
+                rows.forEach((row, index) => {
+                    const num = index + 1;
+                    const nama = document.getElementById(`alat${num}_nama`)?.value || '';
+                    const guna = document.getElementById(`alat${num}_guna`)?.value || '';
+                    const tersedia = document.getElementById(`alat${num}_tersedia`)?.value || '';
+                    if (nama || guna || tersedia) {
+                        alat.push({ nama, guna, tersedia });
+                    }
+                });
+            }
+
+            // Collect hasil pembuktian
+            const hasil = [];
+            const hasilBody = document.getElementById('hasilPembuktianBody');
+            if (hasilBody) {
+                const rows = hasilBody.querySelectorAll('tr');
+                rows.forEach((row, index) => {
+                    const num = index + 1;
+                    const waktu = document.getElementById(`hasil${num}_waktu`)?.value || '';
+                    const hasilVal = document.getElementById(`hasil${num}_hasil`)?.value || '';
+                    const jumlah = document.getElementById(`hasil${num}_jumlah`)?.value || '';
+                    const transaksi = document.getElementById(`hasil${num}_transaksi`)?.value || '';
+                    const banding = document.getElementById(`hasil${num}_banding`)?.value || '';
+                    if (waktu || hasilVal || jumlah || transaksi || banding) {
+                        hasil.push({ waktu, hasil: hasilVal, jumlah, transaksi, banding });
+                    }
+                });
+            }
+
+            // Collect wawancara
+            const wawancara = [];
+            const wawBody = document.getElementById('wawancaraEkonomiBody');
+            if (wawBody) {
+                const rows = wawBody.querySelectorAll('tr');
+                rows.forEach((row, index) => {
+                    const num = index + 1;
+                    const nama = document.getElementById(`wawancara${num}_nama`)?.value || '';
+                    const usaha = document.getElementById(`wawancara${num}_usaha`)?.value || '';
+                    const jawaban = document.getElementById(`wawancara${num}_jawaban`)?.value || '';
+                    if (nama || usaha || jawaban) {
+                        wawancara.push({ nama, usaha, jawaban });
+                    }
+                });
+            }
+
+            // Collect faktor
+            const faktor = [
+                { nama: 'Waktu', pengaruh: document.getElementById('faktor_waktu')?.value || '' },
+                { nama: 'Harga barang', pengaruh: document.getElementById('faktor_harga')?.value || '' },
+                { nama: 'Lokasi/akses', pengaruh: document.getElementById('faktor_lokasi')?.value || '' },
+                { nama: 'Kualitas barang', pengaruh: document.getElementById('faktor_kualitas')?.value || '' },
+                { nama: 'Pelayanan', pengaruh: document.getElementById('faktor_pelayanan')?.value || '' },
+                { nama: 'Musim/hari besar', pengaruh: document.getElementById('faktor_musim')?.value || '' }
+            ];
+
+            // Collect aspek jurusan
+            const aspekJurusan = [
+                { nama: 'Produk/jasa yang dihasilkan', penjelasan: document.getElementById('aspek_produk')?.value || '' },
+                { nama: 'Konsumen/pelanggan', penjelasan: document.getElementById('aspek_konsumen')?.value || '' },
+                { nama: 'Penentuan harga', penjelasan: document.getElementById('aspek_harga')?.value || '' },
+                { nama: 'Biaya produksi/operasional', penjelasan: document.getElementById('aspek_biaya')?.value || '' },
+                { nama: 'Keuntungan (laba)', penjelasan: document.getElementById('aspek_laba')?.value || '' },
+                { nama: 'Strategi pemasaran', penjelasan: document.getElementById('aspek_pemasaran')?.value || '' }
+            ];
+
+            return {
+                'D1. KENALI FENOMENA EKONOMI KELOMPOKMU': {
+                    tipe: document.querySelector('input[name="tipe_ekonomi"]:checked')?.value || '',
+                    tipe_lainnya: document.getElementById('tipe_lainnya')?.value || '',
+                    fenomena: fenomena
+                },
+                'D2. PILIH PREDIKSI YANG AKAN DIBUKTIKAN': {
+                    pilihan: document.querySelector('input[name="pilihan_prediksi"]:checked')?.value || '',
+                    prediksi_terpilih: document.getElementById('prediksi_terpilih')?.value || ''
+                },
+                'D3. RANCANG CARA PEMBUKTIAN': {
+                    cara1: document.getElementById('cara1')?.checked || false,
+                    cara2: document.getElementById('cara2')?.checked || false,
+                    cara3: document.getElementById('cara3')?.checked || false,
+                    cara4: document.getElementById('cara4')?.checked || false,
+                    langkah: collectLangkahData(),
+                    pertanyaan_wawancara: pertanyaanWawancara,
+                    alat: alat,
+                    etika: {
+                        izin: document.getElementById('etik_izin')?.checked || false,
+                        tujuan: document.getElementById('etik_tujuan')?.checked || false,
+                        ganggu: document.getElementById('etik_ganggu')?.checked || false,
+                        sopan: document.getElementById('etik_sopan')?.checked || false,
+                        beli: document.getElementById('etik_beli')?.checked || false,
+                        jujur: document.getElementById('etik_jujur')?.checked || false,
+                        terimakasih: document.getElementById('etik_terimakasih')?.checked || false,
+                        privasi: document.getElementById('etik_privasi')?.checked || false
+                    }
+                },
+                'D4. LAKUKAN PEMBUKTIAN': {
+                    hasil: hasil,
+                    wawancara: wawancara,
+                    dokumentasi: document.getElementById('dokumentasi')?.value || ''
+                },
+                'D5. ANALISIS HASIL': {
+                    kesesuaian: document.querySelector('input[name="kesesuaian"]:checked')?.value || '',
+                    data: document.getElementById('analisis_data')?.value || '',
+                    penjelasan: document.getElementById('analisis_penjelasan')?.value || '',
+                    faktor: faktor,
+                    hukum_ekonomi: document.getElementById('hukum_ekonomi')?.value || '',
+                    kesimpulan: document.getElementById('kesimpulan')?.value || ''
+                },
+                'D6. HUBUNGKAN DENGAN PROGRAM KEAHLIANMU': {
+                    jurusan: {
+                        pilihan: document.querySelector('input[name="jurusan"]:checked')?.value || '',
+                        lainnya: document.getElementById('jurusan_lainnya')?.value || ''
+                    },
+                    aspek: aspekJurusan
+                },
+                'D7. AMATI DAN BERI SOLUSI': {
+                    masalah: document.getElementById('solusi_masalah')?.value || '',
+                    lokasi: document.getElementById('solusi_lokasi')?.value || '',
+                    pihak: document.getElementById('solusi_pihak')?.value || '',
+                    penyebab: document.getElementById('solusi_penyebab')?.value || '',
+                    dampak: document.getElementById('solusi_dampak')?.value || '',
+                    ide: document.getElementById('solusi_ide')?.value || '',
+                    penerapan: document.getElementById('solusi_penerapan')?.value || '',
+                    relevansi: document.getElementById('solusi_relevansi')?.value || ''
+                }
+            };
+        }
+
+        function collectBagianE() {
+            const data = {};
+            PERTANYAAN_REFLEKSI.forEach((pertanyaan, index) => {
+                const num = index + 1;
+                data[pertanyaan] = document.getElementById(`refleksi${num}`)?.value || '';
+            });
+            return data;
+        }
+
+        function collectBagianF() {
+            const data = {};
+            ASPEK_PENILAIAN.forEach((aspek, index) => {
+                const num = index + 1;
+                data[aspek] = parseInt(document.getElementById(`nilai${num}`)?.value || '3');
+            });
+            return data;
+        }
+
+        // ==================== COLLECT ALL FORM DATA ====================
+        function collectAllFormData() {
+            return {
+                bagian_b: collectBagianB(),
+                bagian_c: collectBagianC(),
+                bagian_d: collectBagianD(),
+                bagian_e: collectBagianE(),
+                bagian_f: collectBagianF()
+            };
+        }
+
+        // ==================== POPULATE FUNCTIONS ====================
+        function populateFormData(savedData) {
+            if (!savedData) return;
+
+            // Bagian B
+            if (savedData.bagian_b) {
+                const b = savedData.bagian_b;
+                document.getElementById('kelangkaan_pengertian').value = b['Kelangkaan (scarcity)'] || '';
+                document.getElementById('pilihan_ekonomi').value = b['Mengapa manusia harus membuat pilihan ekonomi?'] || '';
+                
+                if (b['Anggota Kelompok']) {
+                    populateAnggotaData(b['Anggota Kelompok']);
+                }
+                
+                if (b['Kebutuhan Primer']) {
+                    document.getElementById('primer_a').value = b['Kebutuhan Primer'].a || '';
+                    document.getElementById('primer_b').value = b['Kebutuhan Primer'].b || '';
+                    document.getElementById('primer_c').value = b['Kebutuhan Primer'].c || '';
+                }
+                if (b['Kebutuhan Sekunder']) {
+                    document.getElementById('sekunder_a').value = b['Kebutuhan Sekunder'].a || '';
+                    document.getElementById('sekunder_b').value = b['Kebutuhan Sekunder'].b || '';
+                    document.getElementById('sekunder_c').value = b['Kebutuhan Sekunder'].c || '';
+                }
+                if (b['Kebutuhan Tersier']) {
+                    document.getElementById('tersier_a').value = b['Kebutuhan Tersier'].a || '';
+                    document.getElementById('tersier_b').value = b['Kebutuhan Tersier'].b || '';
+                    document.getElementById('tersier_c').value = b['Kebutuhan Tersier'].c || '';
+                }
+                
+                if (b['Permintaan (demand)']) {
+                    document.getElementById('demand_pengertian').value = b['Permintaan (demand)'].pengertian || '';
+                    document.getElementById('demand_contoh').value = b['Permintaan (demand)'].contoh || '';
+                }
+                if (b['Penawaran (supply)']) {
+                    document.getElementById('supply_pengertian').value = b['Penawaran (supply)'].pengertian || '';
+                    document.getElementById('supply_contoh').value = b['Penawaran (supply)'].contoh || '';
+                }
+                
+                if (b['Fungsi Uang']) {
+                    document.getElementById('fungsi_uang1').value = b['Fungsi Uang'].fungsi1 || '';
+                    document.getElementById('fungsi_uang1_penjelasan').value = b['Fungsi Uang'].penjelasan1 || '';
+                    document.getElementById('fungsi_uang2').value = b['Fungsi Uang'].fungsi2 || '';
+                    document.getElementById('fungsi_uang2_penjelasan').value = b['Fungsi Uang'].penjelasan2 || '';
+                    document.getElementById('fungsi_uang3').value = b['Fungsi Uang'].fungsi3 || '';
+                    document.getElementById('fungsi_uang3_penjelasan').value = b['Fungsi Uang'].penjelasan3 || '';
+                }
+            }
+
+            // Bagian C
+            if (savedData.bagian_c) {
+                const c = savedData.bagian_c;
+                
+                // C1 - Observasi Ekonomi
+                if (c['C1. OBSERVASI KEGIATAN EKONOMI'] && c['C1. OBSERVASI KEGIATAN EKONOMI'].length > 0) {
+                    const tbody = document.getElementById('observasiEkonomiBody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        c['C1. OBSERVASI KEGIATAN EKONOMI'].forEach((item, index) => {
+                            const num = index + 1;
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td style="background:transparent">${num}</td>
+                                    <td style="background:transparent"><input type="text" id="ekonomi${num}_lokasi" value="${item.lokasi || ''}" oninput="saveToLocalStorage();"></td>
+                                    <td style="background:transparent"><input type="text" id="ekonomi${num}_kegiatan" value="${item.kegiatan || ''}" oninput="saveToLocalStorage();"></td>
+                                    <td style="background:transparent"><input type="text" id="ekonomi${num}_pelaku" value="${item.pelaku || ''}" oninput="saveToLocalStorage();"></td>
+                                    <td style="background:transparent"><input type="text" id="ekonomi${num}_barang" value="${item.barang || ''}" oninput="saveToLocalStorage();"></td>
+                                    <td style="background:transparent"><input type="text" id="ekonomi${num}_harga" value="${item.harga || ''}" oninput="saveToLocalStorage();"></td>
+                                </tr>
+                            `;
+                        });
+                        updateHapusButton('observasiEkonomi');
+                    }
+                }
+                
+                // C2 - Klasifikasi
+                if (c['C2. KLASIFIKASI DAN JELASKAN']) {
+                    const c2 = c['C2. KLASIFIKASI DAN JELASKAN'];
+                    if (c2.klasifikasi) {
+                        const tbody = document.getElementById('klasifikasiEkonomiBody');
+                        if (tbody) {
+                            tbody.innerHTML = '';
+                            c2.klasifikasi.forEach((item, index) => {
+                                const num = index + 1;
+                                if (index === 6) {
+                                    tbody.innerHTML += `
+                                        <tr>
+                                            <td style="background:transparent">Lainnya: <input type="text" id="klas_lainnya_nama" value="${item.jenis || ''}" style="width:120px;" oninput="saveToLocalStorage();"></td>
+                                            <td style="background:transparent"><input type="text" id="klas_lainnya_jml" value="${item.jml || ''}" style="width:60px" oninput="saveToLocalStorage();"></td>
+                                            <td style="background:transparent"><input type="text" id="klas_lainnya_no" value="${item.no || ''}" oninput="saveToLocalStorage();"></td>
+                                        </tr>
+                                    `;
+                                } else {
+                                    tbody.innerHTML += `
+                                        <tr>
+                                            <td style="background:transparent">${item.jenis}</td>
+                                            <td style="background:transparent"><input type="text" id="klas${num}_jml" value="${item.jml || ''}" style="width:60px" oninput="saveToLocalStorage();"></td>
+                                            <td style="background:transparent"><input type="text" id="klas${num}_no" value="${item.no || ''}" oninput="saveToLocalStorage();"></td>
+                                        </tr>
+                                    `;
+                                }
+                            });
+                        }
+                    }
+                    
+                    document.getElementById('kegiatan_pilihan').value = c2.kegiatan_pilihan || '';
+                    document.getElementById('penjelasan_ilmiah').value = c2.penjelasan_ilmiah || '';
+                    
+                    if (c2.pilihan) {
+                        const pilihanMap = {
+                            'Barang/jasa yang diperjualbelikan': 'pilihan_barang',
+                            'Siapa penjualnya (produsen)': 'pilihan_penjual',
+                            'Siapa pembelinya (konsumen)': 'pilihan_pembeli',
+                            'Berapa harganya': 'pilihan_harga',
+                            'Faktor yang mempengaruhi harga': 'pilihan_faktor',
+                            'Apakah ada tawar-menawar?': 'pilihan_tawar',
+                            'Cara pembayaran': 'pilihan_pembayaran'
+                        };
+                        c2.pilihan.forEach(item => {
+                            const id = pilihanMap[item.aspek];
+                            if (id) {
+                                document.getElementById(id).value = item.isi || '';
+                            }
+                        });
+                    }
+                }
+                
+                // C3 - Observasi Detail
+                if (c['C3. OBSERVASI DETAIL']) {
+                    const c3 = c['C3. OBSERVASI DETAIL'];
+                    document.getElementById('observasi_lokasi').value = c3.lokasi || '';
+                    document.getElementById('observasi_mulai').value = c3.waktu_mulai || '';
+                    document.getElementById('observasi_selesai').value = c3.waktu_selesai || '';
+                    document.getElementById('observasi_catatan').value = c3.catatan || '';
+                    
+                    if (c3.observasi && c3.observasi.length > 0) {
+                        const tbody = document.getElementById('observasiDetailEkonomiBody');
+                        if (tbody) {
+                            tbody.innerHTML = '';
+                            c3.observasi.forEach((item, index) => {
+                                const num = index + 1;
+                                tbody.innerHTML += `
+                                    <tr>
+                                        <td style="background:transparent"><input type="number" id="obsDetWaktu${num}" value="${item.waktu || ''}" placeholder="Waktu" style="width:80px;" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="obsDet${num}_jumlah" value="${item.jumlah || ''}" placeholder="Jumlah Pembeli" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="obsDet${num}_barang" value="${item.barang || ''}" placeholder="Barang yang Dibeli" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="obsDet${num}_transaksi" value="${item.transaksi || ''}" placeholder="Total Transaksi" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="obsDet${num}_suasana" value="${item.suasana || ''}" placeholder="Suasana" oninput="saveToLocalStorage();"></td>
+                                    </tr>
+                                `;
+                            });
+                            updateHapusButton('observasiDetailEkonomi');
+                        }
+                    }
+                }
+                
+                // C4 - Pola
+                if (c['C4. CARI POLA']) {
+                    document.getElementById('pola').value = c['C4. CARI POLA'].pola || '';
+                    document.getElementById('waktu_ramai').value = c['C4. CARI POLA'].waktu_ramai || '';
+                    document.getElementById('waktu_sepi').value = c['C4. CARI POLA'].waktu_sepi || '';
+                    document.getElementById('faktor').value = c['C4. CARI POLA'].faktor || '';
+                }
+                
+                // C5 - Prediksi
+                if (c['C5. BUAT 2 PREDIKSI']) {
+                    const c5 = c['C5. BUAT 2 PREDIKSI'];
+                    if (c5.prediksi1) {
+                        const radios = document.getElementsByName('prediksi1_skenario');
+                        radios.forEach(r => { if (r.value === c5.prediksi1.skenario) r.checked = true; });
+                        document.getElementById('prediksi1_lainnya').value = c5.prediksi1.lainnya || '';
+                        const radios2 = document.getElementsByName('prediksi1_hasil');
+                        radios2.forEach(r => { if (r.value === c5.prediksi1.hasil) r.checked = true; });
+                        document.getElementById('prediksi1_berbeda_isi').value = c5.prediksi1.berbeda_isi || '';
+                        document.getElementById('prediksi1_alasan').value = c5.prediksi1.alasan || '';
+                    }
+                    if (c5.prediksi2) {
+                        const radios = document.getElementsByName('prediksi2_skenario');
+                        radios.forEach(r => { if (r.value === c5.prediksi2.skenario) r.checked = true; });
+                        document.getElementById('prediksi2_lainnya').value = c5.prediksi2.lainnya || '';
+                        document.getElementById('prediksi2_hasil').value = c5.prediksi2.hasil || '';
+                        document.getElementById('prediksi2_alasan').value = c5.prediksi2.alasan || '';
                     }
                 }
             }
 
-            if (savedData.bagian_b) {
-                const b = savedData.bagian_b;
-                document.getElementById('kelangkaan_pengertian').value = b.kelangkaan_pengertian || '';
-                document.getElementById('pilihan_ekonomi').value = b.pilihan_ekonomi || '';
-                document.getElementById('primer_a').value = b.primer_a || '';
-                document.getElementById('primer_b').value = b.primer_b || '';
-                document.getElementById('primer_c').value = b.primer_c || '';
-                document.getElementById('sekunder_a').value = b.sekunder_a || '';
-                document.getElementById('sekunder_b').value = b.sekunder_b || '';
-                document.getElementById('sekunder_c').value = b.sekunder_c || '';
-                document.getElementById('tersier_a').value = b.tersier_a || '';
-                document.getElementById('tersier_b').value = b.tersier_b || '';
-                document.getElementById('tersier_c').value = b.tersier_c || '';
-                document.getElementById('demand_pengertian').value = b.demand_pengertian || '';
-                document.getElementById('demand_contoh').value = b.demand_contoh || '';
-                document.getElementById('supply_pengertian').value = b.supply_pengertian || '';
-                document.getElementById('supply_contoh').value = b.supply_contoh || '';
-                document.getElementById('fungsi_uang1').value = b.fungsi_uang1 || '';
-                document.getElementById('fungsi_uang1_penjelasan').value = b.fungsi_uang1_penjelasan || '';
-                document.getElementById('fungsi_uang2').value = b.fungsi_uang2 || '';
-                document.getElementById('fungsi_uang2_penjelasan').value = b.fungsi_uang2_penjelasan || '';
-                document.getElementById('fungsi_uang3').value = b.fungsi_uang3 || '';
-                document.getElementById('fungsi_uang3_penjelasan').value = b.fungsi_uang3_penjelasan || '';
+            // Bagian D
+            if (savedData.bagian_d) {
+                const d = savedData.bagian_d;
+                
+                // D1 - Fenomena
+                if (d['D1. KENALI FENOMENA EKONOMI KELOMPOKMU']) {
+                    const d1 = d['D1. KENALI FENOMENA EKONOMI KELOMPOKMU'];
+                    const radios = document.getElementsByName('tipe_ekonomi');
+                    radios.forEach(r => { if (r.value === d1.tipe) r.checked = true; });
+                    document.getElementById('tipe_lainnya').value = d1.tipe_lainnya || '';
+                    
+                    if (d1.fenomena) {
+                        const fenomenaMap = {
+                            'Lokasi': 'fenomena_lokasi',
+                            'Penjual': 'fenomena_penjual',
+                            'Pembeli/konsumen': 'fenomena_pembeli',
+                            'Barang/jasa utama': 'fenomena_barang',
+                            'Harga rata-rata': 'fenomena_harga',
+                            'Waktu operasional': 'fenomena_waktu',
+                            'Cara pembayaran': 'fenomena_pembayaran'
+                        };
+                        d1.fenomena.forEach(item => {
+                            const id = fenomenaMap[item.aspek];
+                            if (id) {
+                                document.getElementById(id).value = item.isi || '';
+                            }
+                        });
+                    }
+                }
+                
+                // D2 - Pilih Prediksi
+                if (d['D2. PILIH PREDIKSI YANG AKAN DIBUKTIKAN']) {
+                    const radios = document.getElementsByName('pilihan_prediksi');
+                    radios.forEach(r => { if (r.value === d['D2. PILIH PREDIKSI YANG AKAN DIBUKTIKAN'].pilihan) r.checked = true; });
+                    document.getElementById('prediksi_terpilih').value = d['D2. PILIH PREDIKSI YANG AKAN DIBUKTIKAN'].prediksi_terpilih || '';
+                }
+                
+                // D3 - Rancang Cara Pembuktian
+                if (d['D3. RANCANG CARA PEMBUKTIAN']) {
+                    const d3 = d['D3. RANCANG CARA PEMBUKTIAN'];
+                    document.getElementById('cara1').checked = d3.cara1 || false;
+                    document.getElementById('cara2').checked = d3.cara2 || false;
+                    document.getElementById('cara3').checked = d3.cara3 || false;
+                    document.getElementById('cara4').checked = d3.cara4 || false;
+                    
+                    if (d3.langkah) populateLangkahData(d3.langkah);
+                    
+                    if (d3.pertanyaan_wawancara) {
+                        const tbody = document.getElementById('pertanyaanWawancaraEkonomiBody');
+                        if (tbody) {
+                            tbody.innerHTML = '';
+                            d3.pertanyaan_wawancara.forEach((item, index) => {
+                                const num = index + 1;
+                                tbody.innerHTML += `
+                                    <tr>
+                                        <td style="background:transparent">${num}</td>
+                                        <td style="background:transparent"><input type="text" id="wawancara_pertanyaan${num}" value="${item.pertanyaan || ''}" placeholder="Pertanyaan" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="wawancara_tujuan${num}" value="${item.tujuan || ''}" placeholder="Tujuan" oninput="saveToLocalStorage();"></td>
+                                    </tr>
+                                `;
+                            });
+                        }
+                    }
+                    
+                    if (d3.alat) {
+                        const tbody = document.getElementById('alatEkonomiBody');
+                        if (tbody) {
+                            tbody.innerHTML = '';
+                            d3.alat.forEach((item, index) => {
+                                const num = index + 1;
+                                tbody.innerHTML += `
+                                    <tr>
+                                        <td style="background:transparent">${num}</td>
+                                        <td style="background:transparent"><input type="text" id="alat${num}_nama" value="${item.nama || ''}" placeholder="Alat/Bahan" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="alat${num}_guna" value="${item.guna || ''}" placeholder="Kegunaan" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><select id="alat${num}_tersedia" onchange="saveToLocalStorage();"><option value="">Pilih</option><option value="Ada" ${item.tersedia === 'Ada' ? 'selected' : ''}>Ada</option><option value="Tidak Ada" ${item.tersedia === 'Tidak Ada' ? 'selected' : ''}>Tidak Ada</option></select></td>
+                                    </tr>
+                                `;
+                            });
+                        }
+                    }
+                    
+                    if (d3.etika) {
+                        document.getElementById('etik_izin').checked = d3.etika.izin || false;
+                        document.getElementById('etik_tujuan').checked = d3.etika.tujuan || false;
+                        document.getElementById('etik_ganggu').checked = d3.etika.ganggu || false;
+                        document.getElementById('etik_sopan').checked = d3.etika.sopan || false;
+                        document.getElementById('etik_beli').checked = d3.etika.beli || false;
+                        document.getElementById('etik_jujur').checked = d3.etika.jujur || false;
+                        document.getElementById('etik_terimakasih').checked = d3.etika.terimakasih || false;
+                        document.getElementById('etik_privasi').checked = d3.etika.privasi || false;
+                    }
+                }
+                
+                // D4 - Hasil Pembuktian
+                if (d['D4. LAKUKAN PEMBUKTIAN']) {
+                    const d4 = d['D4. LAKUKAN PEMBUKTIAN'];
+                    document.getElementById('dokumentasi').value = d4.dokumentasi || '';
+                    
+                    if (d4.hasil) {
+                        const tbody = document.getElementById('hasilPembuktianBody');
+                        if (tbody) {
+                            tbody.innerHTML = '';
+                            d4.hasil.forEach((item, index) => {
+                                const num = index + 1;
+                                tbody.innerHTML += `
+                                    <tr>
+                                        <td style="background:transparent"><input type="text" id="hasil${num}_waktu" value="${item.waktu || ''}" placeholder="Waktu/Lokasi" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="hasil${num}_hasil" value="${item.hasil || ''}" placeholder="Hasil" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="hasil${num}_jumlah" value="${item.jumlah || ''}" placeholder="Jumlah Pembeli" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="hasil${num}_transaksi" value="${item.transaksi || ''}" placeholder="Total Transaksi" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="hasil${num}_banding" value="${item.banding || ''}" placeholder="Perbandingan" oninput="saveToLocalStorage();"></td>
+                                    </tr>
+                                `;
+                            });
+                            updateHapusButton('hasilPembuktian');
+                        }
+                    }
+                    
+                    if (d4.wawancara) {
+                        const tbody = document.getElementById('wawancaraEkonomiBody');
+                        if (tbody) {
+                            tbody.innerHTML = '';
+                            d4.wawancara.forEach((item, index) => {
+                                const num = index + 1;
+                                tbody.innerHTML += `
+                                    <tr>
+                                        <td style="background:transparent"><input type="text" id="wawancara${num}_nama" value="${item.nama || ''}" placeholder="Nama" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="wawancara${num}_usaha" value="${item.usaha || ''}" placeholder="Jenis Usaha" oninput="saveToLocalStorage();"></td>
+                                        <td style="background:transparent"><input type="text" id="wawancara${num}_jawaban" value="${item.jawaban || ''}" placeholder="Jawaban" oninput="saveToLocalStorage();"></td>
+                                    </tr>
+                                `;
+                            });
+                            updateHapusButton('wawancaraEkonomi');
+                        }
+                    }
+                }
+                
+                // D5 - Analisis
+                if (d['D5. ANALISIS HASIL']) {
+                    const d5 = d['D5. ANALISIS HASIL'];
+                    const radios = document.getElementsByName('kesesuaian');
+                    radios.forEach(r => { if (r.value === d5.kesesuaian) r.checked = true; });
+                    document.getElementById('analisis_data').value = d5.data || '';
+                    document.getElementById('analisis_penjelasan').value = d5.penjelasan || '';
+                    document.getElementById('hukum_ekonomi').value = d5.hukum_ekonomi || '';
+                    document.getElementById('kesimpulan').value = d5.kesimpulan || '';
+                    
+                    if (d5.faktor) {
+                        const faktorMap = {
+                            'Waktu': 'faktor_waktu',
+                            'Harga barang': 'faktor_harga',
+                            'Lokasi/akses': 'faktor_lokasi',
+                            'Kualitas barang': 'faktor_kualitas',
+                            'Pelayanan': 'faktor_pelayanan',
+                            'Musim/hari besar': 'faktor_musim'
+                        };
+                        d5.faktor.forEach(item => {
+                            const id = faktorMap[item.nama];
+                            if (id) {
+                                document.getElementById(id).value = item.pengaruh || '';
+                            }
+                        });
+                    }
+                }
+                
+                // D6 - Jurusan
+                if (d['D6. HUBUNGKAN DENGAN PROGRAM KEAHLIANMU']) {
+                    const d6 = d['D6. HUBUNGKAN DENGAN PROGRAM KEAHLIANMU'];
+                    if (d6.jurusan) {
+                        const radios = document.getElementsByName('jurusan');
+                        radios.forEach(r => { if (r.value === d6.jurusan.pilihan) r.checked = true; });
+                        document.getElementById('jurusan_lainnya').value = d6.jurusan.lainnya || '';
+                    }
+                    if (d6.aspek) {
+                        const aspekMap = {
+                            'Produk/jasa yang dihasilkan': 'aspek_produk',
+                            'Konsumen/pelanggan': 'aspek_konsumen',
+                            'Penentuan harga': 'aspek_harga',
+                            'Biaya produksi/operasional': 'aspek_biaya',
+                            'Keuntungan (laba)': 'aspek_laba',
+                            'Strategi pemasaran': 'aspek_pemasaran'
+                        };
+                        d6.aspek.forEach(item => {
+                            const id = aspekMap[item.nama];
+                            if (id) {
+                                document.getElementById(id).value = item.penjelasan || '';
+                            }
+                        });
+                    }
+                }
+                
+                // D7 - Solusi
+                if (d['D7. AMATI DAN BERI SOLUSI']) {
+                    const d7 = d['D7. AMATI DAN BERI SOLUSI'];
+                    document.getElementById('solusi_masalah').value = d7.masalah || '';
+                    document.getElementById('solusi_lokasi').value = d7.lokasi || '';
+                    document.getElementById('solusi_pihak').value = d7.pihak || '';
+                    document.getElementById('solusi_penyebab').value = d7.penyebab || '';
+                    document.getElementById('solusi_dampak').value = d7.dampak || '';
+                    document.getElementById('solusi_ide').value = d7.ide || '';
+                    document.getElementById('solusi_penerapan').value = d7.penerapan || '';
+                    document.getElementById('solusi_relevansi').value = d7.relevansi || '';
+                }
             }
 
+            // Bagian E - Refleksi
             if (savedData.bagian_e) {
-                const r = savedData.bagian_e;
-                document.getElementById('refleksi1').value = r.refleksi1 || '';
-                document.getElementById('refleksi2').value = r.refleksi2 || '';
-                document.getElementById('refleksi3').value = r.refleksi3 || '';
-                document.getElementById('refleksi4').value = r.refleksi4 || '';
+                const e = savedData.bagian_e;
+                PERTANYAAN_REFLEKSI.forEach((pertanyaan, index) => {
+                    const num = index + 1;
+                    document.getElementById(`refleksi${num}`).value = e[pertanyaan] || '';
+                });
             }
 
+            // Bagian F - Penilaian
             if (savedData.bagian_f) {
-                const p = savedData.bagian_f;
-                document.getElementById('nilai1').value = p.nilai1 || '3';
-                document.getElementById('nilai2').value = p.nilai2 || '3';
-                document.getElementById('nilai3').value = p.nilai3 || '3';
-                document.getElementById('nilai4').value = p.nilai4 || '3';
-                document.getElementById('nilai5').value = p.nilai5 || '3';
-                document.getElementById('nilai6').value = p.nilai6 || '3';
+                const f = savedData.bagian_f;
+                ASPEK_PENILAIAN.forEach((aspek, index) => {
+                    const num = index + 1;
+                    document.getElementById(`nilai${num}`).value = f[aspek] || '3';
+                });
             }
 
-            updateProgress();
+            ensureTablesHaveOneRow();
         }
+
+        // ==================== RESET FORM ====================
+        function resetAllForm() {
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.type === 'checkbox') el.checked = false;
+                else if (el.type === 'radio') el.checked = false;
+                else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                else el.value = '';
+            });
+            document.getElementById('kelas').value = '';
+            document.getElementById('nama').innerHTML = '<option value="">-- Pilih Nama --</option>';
+            document.getElementById('kelompok').value = '';
+            document.getElementById('tugas').value = '';
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`nilai${i}`).value = '3';
+            }
+            
+            initAllTables();
+            clearLocalStorage();
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function showModal() { document.getElementById('resetModal').style.display = 'block'; }
+        function closeModal() { document.getElementById('resetModal').style.display = 'none'; }
+        function confirmReset() { closeModal(); resetAllForm(); alert('Form berhasil direset!'); }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            checkConnection();
+            loadDataFromGoogleSheets();
+            setInterval(checkConnection, 5000);
+        });
 
         function updateNamaDropdown() {
             const kelas = document.getElementById('kelas').value;
@@ -1225,23 +2623,7 @@
             });
         }
 
-        function resetAllForm() {
-            document.querySelectorAll('input, select, textarea').forEach(el => {
-                if (el.type === 'checkbox') el.checked = false;
-                else if (el.type === 'radio') el.checked = false;
-                else if (el.type === 'number') el.value = '3';
-                else el.value = '';
-            });
-            document.getElementById('kelas').value = '';
-            document.getElementById('nama').innerHTML = '<option value="">-- Pilih Nama --</option>';
-            clearLocalStorage();
-            updateProgress();
-        }
-
-        function showModal() { document.getElementById('resetModal').style.display = 'block'; }
-        function closeModal() { document.getElementById('resetModal').style.display = 'none'; }
-        function confirmReset() { closeModal(); resetAllForm(); alert('Form berhasil direset!'); }
-
+        // ==================== SUBMIT DATA ====================
         async function submitData() {
             if (!isOnline) {
                 alert('Tidak ada koneksi internet. Silakan periksa koneksi Anda dan refresh halaman.');
@@ -1251,15 +2633,21 @@
                 alert('Data masih dimuat. Silakan tunggu beberapa saat.');
                 return;
             }
-            if (!document.getElementById('kelas').value) {
+            
+            const kelas = document.getElementById('kelas').value;
+            const nama = document.getElementById('nama').value;
+            const kelompok = document.getElementById('kelompok').value;
+            const tugas = document.getElementById('tugas').value;
+            
+            if (!kelas) {
                 alert('Silakan isi kelas terlebih dahulu');
                 return;
             }
-            if (!document.getElementById('nama').value) {
+            if (!nama) {
                 alert('Silakan isi nama terlebih dahulu');
                 return;
             }
-            if (!document.getElementById('kelompok').value) {
+            if (!kelompok) {
                 alert('Silakan isi nama kelompok');
                 return;
             }
@@ -1269,17 +2657,24 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
 
             try {
-                const formData = new URLSearchParams();
                 const allData = collectAllFormData();
+                
+                const formData = new URLSearchParams();
                 
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
-                formData.append('Bagian_A', JSON.stringify(allData.bagian_a));
+                
+                formData.append('Kelas', kelas);
+                formData.append('Nama', nama);
+                formData.append('Kelompok', kelompok);
+                formData.append('Tugas', tugas);
+                
                 formData.append('Bagian_B', JSON.stringify(allData.bagian_b));
                 formData.append('Bagian_C', JSON.stringify(allData.bagian_c));
                 formData.append('Bagian_D', JSON.stringify(allData.bagian_d));
                 formData.append('Bagian_E', JSON.stringify(allData.bagian_e));
                 formData.append('Bagian_F', JSON.stringify(allData.bagian_f));
+                
                 formData.append('Timestamp', new Date().toISOString());
 
                 await fetch(URL_PEREKAP_AKTIVITAS, {
@@ -1305,15 +2700,6 @@
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data';
             }
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const hamburger = document.getElementById('hamburger');
-            const navMenu = document.getElementById('nav-menu');
-            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
-            checkConnection();
-            loadDataFromGoogleSheets();
-            setInterval(checkConnection, 5000);
-        });
     </script>
 </body>
 </html>

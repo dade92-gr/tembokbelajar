@@ -55,6 +55,9 @@
         .back-nav-simple { text-align: center; margin-top: 2rem; }
         .back-btn-simple { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--ipas-dark); padding: 0.8rem 2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: 1px solid var(--ipas-light); }
         .back-btn-simple:hover { background: var(--ipas-primary); color: white; }
+        .loading-spinner { display: none; text-align: center; padding: 1rem; }
+        .loading-spinner i { font-size: 2rem; color: var(--ipas-primary); animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @media (max-width: 768px) { .activities-container { padding: 1rem; } .role-toggle { flex-direction: column; align-items: center; } }
     </style>
 </head>
@@ -115,12 +118,7 @@
                         <p>Pantau progres aktivitas dan nilai capaian TP siswa</p>
                         <span class="role-badge"><i class="fas fa-user"></i> Pengguna Umum</span>
                     </a>
-                    <a href="preview-lembar-aktivitas.html" class="assessment-card">
-                        <div class="assessment-icon"><i class="fas fa-file-alt"></i></div>
-                        <h4>Preview Lembar Aktivitas</h4>
-                        <p>Lihat pratinjau lembar aktivitas</p>
-                        <span class="role-badge"><i class="fas fa-user"></i> Pengguna Umum</span>
-                    </a>
+                    <!-- Preview Lembar Aktivitas dihapus -->
                 </div>
             </div>
         </div>
@@ -141,12 +139,7 @@
                         <p>Ringkasan pengumpulan aktivitas siswa</p>
                         <span class="role-badge rekap-badge"><i class="fas fa-chalkboard-user"></i> Guru</span>
                     </a>
-                    <a href="monitoring-rekap-nilai-kelas.html" class="assessment-card rekap-card">
-                        <div class="assessment-icon"><i class="fas fa-table-list"></i></div>
-                        <h4>Rekap Nilai Per Kelas</h4>
-                        <p>Ringkasan nilai seluruh siswa</p>
-                        <span class="role-badge rekap-badge"><i class="fas fa-chalkboard-user"></i> Guru</span>
-                    </a>
+                    <!-- Rekap Nilai Per Kelas dihapus -->
                 </div>
             </div>
             <div class="simple-card" id="adminSummaryContent">
@@ -184,16 +177,20 @@
             <p>Masukkan kredensial Anda untuk mengakses menu guru</p>
             <div class="input-group"><label>Username</label><input type="text" id="loginUsername" placeholder="Masukkan username"></div>
             <div class="input-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Masukkan password"></div>
+            <div class="loading-spinner" id="loginLoading"><i class="fas fa-spinner"></i> Memverifikasi...</div>
             <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
             <div id="loginError" class="login-error"><i class="fas fa-exclamation-circle"></i> Username atau password salah!</div>
-            <div style="margin-top: 1rem; font-size: 0.7rem; color: #999;"><i class="fas fa-info-circle"></i> Demo: username <strong>guru</strong> | password <strong>ipas2024</strong></div>
+            <div style="margin-top: 1rem; font-size: 0.7rem; color: #999;"><i class="fas fa-info-circle"></i> Login menggunakan akun resmi dari database</div>
         </div>
     </div>
 
     <script>
-        const ADMIN_CREDENTIALS = { username: "guru", password: "ipas2024" };
+        // Konfigurasi URL Apps Script untuk validasi login
+        const LOGIN_API_URL = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+        
         let isLoggedIn = false;
         let currentAdmin = null;
+        let userData = null;
         
         const adminSection = document.getElementById('admin-section');
         const umumSection = document.getElementById('umum-section');
@@ -203,57 +200,79 @@
         const profileContainer = document.getElementById('profileContainer');
         const profileName = document.getElementById('profileName');
         const profileAvatar = document.getElementById('profileAvatar');
+        const profileRole = document.getElementById('profileRole');
         const logoutBtn = document.getElementById('logoutBtn');
         const loginModal = document.getElementById('loginModal');
         const loginUsername = document.getElementById('loginUsername');
         const loginPassword = document.getElementById('loginPassword');
         const loginBtnElement = document.getElementById('loginBtn');
         const loginError = document.getElementById('loginError');
+        const loginLoading = document.getElementById('loginLoading');
         
         function saveLoginSession(adminData) {
             sessionStorage.setItem('isAdminLoggedIn', 'true');
             sessionStorage.setItem('adminName', adminData.name);
             sessionStorage.setItem('adminRole', adminData.role);
             sessionStorage.setItem('adminUsername', adminData.username);
+            sessionStorage.setItem('adminMapel', JSON.stringify(adminData.mapel || []));
         }
+        
         function clearLoginSession() {
             sessionStorage.removeItem('isAdminLoggedIn');
             sessionStorage.removeItem('adminName');
             sessionStorage.removeItem('adminRole');
             sessionStorage.removeItem('adminUsername');
+            sessionStorage.removeItem('adminMapel');
         }
+        
         function loadLoginSession() {
             if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
-                return { username: sessionStorage.getItem('adminUsername'), name: sessionStorage.getItem('adminName'), role: sessionStorage.getItem('adminRole') };
+                return {
+                    username: sessionStorage.getItem('adminUsername'),
+                    name: sessionStorage.getItem('adminName'),
+                    role: sessionStorage.getItem('adminRole'),
+                    mapel: JSON.parse(sessionStorage.getItem('adminMapel') || '[]')
+                };
             }
             return null;
         }
+        
         function hideAdminMenu() {
             const adminMenuGrid = document.getElementById('adminMenuGrid');
             const adminSummary = document.getElementById('adminSummaryContent');
             if (adminMenuGrid) adminMenuGrid.style.display = 'none';
             if (adminSummary) adminSummary.style.display = 'none';
         }
+        
         function showAdminMenu() {
             const adminMenuGrid = document.getElementById('adminMenuGrid');
             const adminSummary = document.getElementById('adminSummaryContent');
             if (adminMenuGrid) adminMenuGrid.style.display = 'grid';
             if (adminSummary) adminSummary.style.display = 'block';
         }
+        
         function updateUIAfterLogin(adminData) {
             profileName.innerText = adminData.name;
             profileAvatar.innerText = adminData.name.charAt(0);
+            profileRole.innerText = adminData.role || 'Guru';
             profileContainer.style.display = 'block';
-            roleDisplay.innerHTML = adminData.name + ' (Guru)';
+            
+            // Tampilkan mata pelajaran yang diampu
+            let mapelText = adminData.mapel && adminData.mapel.length > 0 ? 
+                adminData.mapel.join(', ') : 'IPAS';
+            roleDisplay.innerHTML = adminData.name + ' (Guru - ' + mapelText + ')';
+            
             showAdminMenu();
             umumBtn.classList.remove('active');
             adminBtn.classList.add('active');
             umumSection.classList.remove('active-section');
             adminSection.classList.add('active-section');
         }
+        
         function logout() {
             isLoggedIn = false;
             currentAdmin = null;
+            userData = null;
             clearLoginSession();
             profileContainer.style.display = 'none';
             roleDisplay.innerHTML = 'Pengguna Umum';
@@ -266,20 +285,49 @@
             loginPassword.value = '';
             loginError.style.display = 'none';
         }
-        function login(username, password) {
-            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                isLoggedIn = true;
-                currentAdmin = { username: username, name: "Guru", role: "Administrator" };
-                saveLoginSession(currentAdmin);
-                updateUIAfterLogin(currentAdmin);
-                loginModal.classList.remove('active');
+        
+        async function loginWithAPI(username, password) {
+            try {
+                loginLoading.style.display = 'block';
+                loginBtnElement.disabled = true;
                 loginError.style.display = 'none';
-                return true;
-            } else {
+                
+                // Panggil API untuk validasi login
+                const response = await fetch(LOGIN_API_URL + '?action=login&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password));
+                const data = await response.json();
+                
+                loginLoading.style.display = 'none';
+                loginBtnElement.disabled = false;
+                
+                if (data.success && data.user) {
+                    isLoggedIn = true;
+                    currentAdmin = {
+                        username: data.user.username,
+                        name: data.user.nama || data.user.username,
+                        role: data.user.peran || 'Guru',
+                        mapel: data.user.mapel || []
+                    };
+                    userData = data.user;
+                    saveLoginSession(currentAdmin);
+                    updateUIAfterLogin(currentAdmin);
+                    loginModal.classList.remove('active');
+                    loginError.style.display = 'none';
+                    return true;
+                } else {
+                    loginError.style.display = 'block';
+                    loginError.innerText = data.message || 'Username atau password salah!';
+                    return false;
+                }
+            } catch (error) {
+                loginLoading.style.display = 'none';
+                loginBtnElement.disabled = false;
                 loginError.style.display = 'block';
+                loginError.innerText = 'Gagal terhubung ke server. Periksa koneksi internet Anda.';
+                console.error('Login error:', error);
                 return false;
             }
         }
+        
         function checkAndRestoreLogin() {
             const savedAdmin = loadLoginSession();
             if (savedAdmin && savedAdmin.username) {
@@ -290,6 +338,7 @@
                 hideAdminMenu();
             }
         }
+        
         adminBtn.addEventListener('click', function() {
             if (isLoggedIn) {
                 umumBtn.classList.remove('active');
@@ -302,16 +351,42 @@
                 loginUsername.focus();
             }
         });
+        
         umumBtn.addEventListener('click', function() {
             umumBtn.classList.add('active');
             adminBtn.classList.remove('active');
             umumSection.classList.add('active-section');
             adminSection.classList.remove('active-section');
         });
-        loginBtnElement.addEventListener('click', function() { login(loginUsername.value.trim(), loginPassword.value); });
-        loginPassword.addEventListener('keypress', function(e) { if (e.key === 'Enter') login(loginUsername.value.trim(), loginPassword.value); });
+        
+        loginBtnElement.addEventListener('click', function() {
+            const username = loginUsername.value.trim();
+            const password = loginPassword.value.trim();
+            if (username && password) {
+                loginWithAPI(username, password);
+            } else {
+                loginError.style.display = 'block';
+                loginError.innerText = 'Mohon isi username dan password!';
+            }
+        });
+        
+        loginPassword.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginBtnElement.click();
+            }
+        });
+        
         logoutBtn.addEventListener('click', logout);
-        loginModal.addEventListener('click', function(e) { if (e.target === loginModal) { loginModal.classList.remove('active'); loginError.style.display = 'none'; } });
+        
+        loginModal.addEventListener('click', function(e) {
+            if (e.target === loginModal) {
+                loginModal.classList.remove('active');
+                loginError.style.display = 'none';
+                loginLoading.style.display = 'none';
+                loginBtnElement.disabled = false;
+            }
+        });
+        
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');

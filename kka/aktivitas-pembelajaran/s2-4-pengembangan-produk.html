@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aktivitas Proyek 4 - Pengembangan Produk | KKA Kelas X</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Proyek 4 - Pengembangan Produk | KKA Kelas X</title>
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,11 +12,11 @@
             --kka-secondary: #2980b9;
             --kka-light: #ebf5fb;
             --kka-dark: #21618c;
-            --kka-accent: #9b59b6;
             --kka-success: #27ae60;
             --kka-warning: #f39c12;
             --kka-danger: #e74c3c;
             --kka-gray: #f5f7fa;
+            --kka-soft-bg: #fef9e4;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,102 +36,521 @@
             padding: 2rem;
             box-shadow: 0 10px 30px rgba(52, 152, 219, 0.1);
             border-left: 5px solid var(--kka-primary);
-            position: relative;
-            overflow: hidden;
             margin-bottom: 2rem;
         }
         
-        .kka-content-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
-            z-index: 0;
+        .worksheet-container {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
         }
         
-        .kka-content-card > * { position: relative; z-index: 1; }
-        
-        .kka-content-card h2 {
+        .worksheet-title {
             color: var(--kka-dark);
             font-size: 1.8rem;
-            margin-bottom: 0.8rem;
-            display: inline-block;
-            padding-bottom: 8px;
-            border-bottom: 3px solid var(--kka-primary);
+            text-align: center;
+            margin-bottom: 0.5rem;
         }
         
-        .subtitle { color: #666; font-size: 0.85rem; margin: 0.5rem 0 1rem; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .subtitle i { color: var(--kka-primary); }
-        .kka-content-card > p { font-size: 0.95rem; line-height: 1.5; color: #555; padding: 0.8rem 1.2rem; background: var(--kka-light); border-radius: 10px; border-left: 4px solid var(--kka-primary); }
+        .kka-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+        }
         
-        .connection-status { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 15px; padding: 6px 12px; border-radius: 30px; background: #f8f9fa; width: fit-content; margin-left: auto; font-size: 0.8rem; }
-        .status-indicator { width: 10px; height: 10px; border-radius: 50%; background: #28a745; animation: pulse 2s infinite; }
-        .status-indicator.offline { background: #dc3545; animation: none; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(40, 167, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
-        .refresh-btn { background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 4px 8px; border-radius: 20px; color: var(--kka-primary); }
-        .refresh-btn:hover { background: rgba(0,0,0,0.05); }
+        .section-title {
+            color: var(--kka-dark);
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--kka-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
         
-        .loading-message, .error-message, .success-message { padding: 0.8rem; border-radius: 10px; margin: 1rem 0; text-align: center; font-size: 0.9rem; }
-        .loading-message { background: #fff3cd; color: #856404; border-left: 5px solid var(--kka-warning); display: none; }
-        .error-message { background: #f8d7da; color: #721c24; border-left: 5px solid var(--kka-danger); display: none; }
-        .success-message { background: #d4edda; color: #155724; border-left: 5px solid var(--kka-success); display: none; }
+        .section-title i {
+            color: var(--kka-primary);
+            font-size: 1.5rem;
+        }
         
-        .progress-container { margin: 1rem 0; background: var(--kka-gray); border-radius: 30px; padding: 0.6rem; position: sticky; top: 10px; z-index: 99; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .progress-bar { height: 8px; background: linear-gradient(90deg, var(--kka-primary), var(--kka-secondary)); border-radius: 4px; width: 0%; transition: width 0.3s ease; }
-        .progress-text { text-align: right; font-size: 0.75rem; color: #666; margin-top: 5px; }
+        .instruction-box {
+            background: var(--kka-soft-bg);
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--kka-warning);
+            font-size: 0.95rem;
+        }
         
-        .worksheet-container { background: white; border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--kka-light); }
-        .worksheet-title { color: var(--kka-dark); font-size: 1.4rem; text-align: center; border-bottom: 2px solid var(--kka-light); padding-bottom: 0.8rem; margin-bottom: 1rem; }
+        .help-box {
+            background: #e0f2fe;
+            padding: 1rem;
+            border-radius: 16px;
+            margin: 1rem 0;
+            border-left: 5px solid #0284c7;
+            font-size: 0.9rem;
+        }
         
-        .kka-section { background: white; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; border: 1px solid #e0e7ff; }
-        .section-title { color: var(--kka-dark); font-size: 1.2rem; margin-bottom: 0.8rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--kka-light); display: flex; align-items: center; gap: 8px; }
-        .section-title i { color: var(--kka-primary); font-size: 1.2rem; }
-        .section-subtitle { color: var(--kka-secondary); font-size: 1rem; margin: 1rem 0 0.6rem; font-weight: 600; }
-        .instruction-box { background: var(--kka-light); padding: 0.6rem 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--kka-primary); font-style: italic; font-size: 0.85rem; }
+        .kka-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            table-layout: fixed;
+        }
         
-        .kka-table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.8rem; }
-        .kka-table th { background: var(--kka-primary); color: white; padding: 8px 10px; text-align: left; }
-        .kka-table td { padding: 8px 10px; border-bottom: 1px solid #e0e7ff; vertical-align: top; }
-        .kka-table tr:hover { background: var(--kka-light); }
+        .kka-table th {
+            background: var(--kka-primary);
+            color: white;
+            font-weight: 600;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
         
-        .answer-field { width: 100%; padding: 6px 10px; border: 2px solid #e0e7ff; border-radius: 6px; font-family: monospace; font-size: 0.8rem; transition: all 0.3s ease; }
-        .answer-field:focus { outline: none; border-color: var(--kka-primary); box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1); }
-        .answer-field.large { min-height: 80px; resize: vertical; }
+        .kka-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
         
-        .identitas-box { background: var(--kka-light); border-radius: 12px; padding: 1rem; margin: 1rem 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; }
-        .identitas-item { display: flex; flex-direction: column; gap: 0.4rem; }
-        .identitas-item label { font-weight: 600; color: var(--kka-dark); font-size: 0.8rem; }
-        .identitas-item input, .identitas-item select { padding: 6px 10px; border: 2px solid white; border-radius: 6px; font-size: 0.8rem; background: white; }
+        .kka-table th:nth-child(1), .kka-table td:nth-child(1) { width: 8%; }
+        .kka-table th:nth-child(2), .kka-table td:nth-child(2) { width: 35%; }
+        .kka-table th:nth-child(3), .kka-table td:nth-child(3) { width: 50%; }
         
-        .checklist-container { background: #f8fafc; border-radius: 8px; padding: 0.8rem; margin: 0.8rem 0; border: 1px dashed var(--kka-primary); }
-        .checklist-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 0.8rem; }
+        /* Tabel Uji Fungsional */
+        #tabel-uji th:nth-child(1), #tabel-uji td:nth-child(1) { width: 6%; }
+        #tabel-uji th:nth-child(2), #tabel-uji td:nth-child(2) { width: 14%; }
+        #tabel-uji th:nth-child(3), #tabel-uji td:nth-child(3) { width: 16%; }
+        #tabel-uji th:nth-child(4), #tabel-uji td:nth-child(4) { width: 12%; }
+        #tabel-uji th:nth-child(5), #tabel-uji td:nth-child(5) { width: 14%; }
+        #tabel-uji th:nth-child(6), #tabel-uji td:nth-child(6) { width: 14%; }
+        #tabel-uji th:nth-child(7), #tabel-uji td:nth-child(7) { width: 10%; }
+        #tabel-uji th:nth-child(8), #tabel-uji td:nth-child(8) { width: 6%; }
         
-        .radio-group { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
-        .radio-item { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; }
+        /* Tabel UAT */
+        #tabel-uat th:nth-child(1), #tabel-uat td:nth-child(1) { width: 6%; }
+        #tabel-uat th:nth-child(2), #tabel-uat td:nth-child(2) { width: 20%; }
+        #tabel-uat th:nth-child(3), #tabel-uat td:nth-child(3) { width: 20%; }
+        #tabel-uat th:nth-child(4), #tabel-uat td:nth-child(4) { width: 27%; }
+        #tabel-uat th:nth-child(5), #tabel-uat td:nth-child(5) { width: 20%; }
+        #tabel-uat th:nth-child(6), #tabel-uat td:nth-child(6) { width: 7%; }
         
-        .submit-button { background: linear-gradient(135deg, var(--kka-primary), var(--kka-secondary)); color: white; border: none; padding: 0.7rem 1.8rem; border-radius: 40px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: block; width: fit-content; margin: 1rem auto; box-shadow: 0 2px 10px rgba(52, 152, 219, 0.3); }
-        .submit-button:hover:not(:disabled) { transform: translateY(-2px); }
-        .submit-button:disabled { opacity: 0.6; cursor: not-allowed; }
+        /* Tabel Keamanan */
+        #tabel-keamanan th:nth-child(1), #tabel-keamanan td:nth-child(1) { width: 6%; }
+        #tabel-keamanan th:nth-child(2), #tabel-keamanan td:nth-child(2) { width: 20%; }
+        #tabel-keamanan th:nth-child(3), #tabel-keamanan td:nth-child(3) { width: 15%; }
+        #tabel-keamanan th:nth-child(4), #tabel-keamanan td:nth-child(4) { width: 53%; }
+        #tabel-keamanan th:nth-child(5), #tabel-keamanan td:nth-child(5) { width: 6%; }
         
-        .activity-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
-        .nav-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--kka-dark); padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid var(--kka-light); }
-        .nav-btn:hover { background: var(--kka-primary); color: white; }
-        .nav-btn.primary { background: var(--kka-primary); color: white; border: none; }
+        /* Tabel Debugging */
+        #tabel-debug th:nth-child(1), #tabel-debug td:nth-child(1) { width: 6%; }
+        #tabel-debug th:nth-child(2), #tabel-debug td:nth-child(2) { width: 18%; }
+        #tabel-debug th:nth-child(3), #tabel-debug td:nth-child(3) { width: 18%; }
+        #tabel-debug th:nth-child(4), #tabel-debug td:nth-child(4) { width: 35%; }
+        #tabel-debug th:nth-child(5), #tabel-debug td:nth-child(5) { width: 15%; }
+        #tabel-debug th:nth-child(6), #tabel-debug td:nth-child(6) { width: 8%; }
         
-        .form-disabled { opacity: 0.6; pointer-events: none; }
+        .answer-field {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            background: #fafcff;
+        }
         
-        .code-box { background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 0.75rem; overflow-x: auto; margin: 8px 0; }
+        .answer-field:focus {
+            outline: none;
+            border-color: var(--kka-primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            background: white;
+        }
+        
+        textarea.answer-field {
+            resize: vertical;
+            min-height: 50px;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        
+        .identitas-box {
+            background: var(--kka-light);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+        }
+        
+        .identitas-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .identitas-item label {
+            font-weight: 700;
+            color: var(--kka-dark);
+            font-size: 0.85rem;
+        }
+        
+        .btn-add {
+            background: #ecfdf5;
+            color: var(--kka-success);
+            border: 1px solid #a7f3d0;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .btn-add:hover {
+            background: var(--kka-success);
+            color: white;
+            border-color: var(--kka-success);
+        }
+        
+        .btn-remove {
+            background: none;
+            border: none;
+            color: var(--kka-danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 4px;
+        }
+        
+        .submit-button {
+            background: linear-gradient(135deg, var(--kka-primary), var(--kka-secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            width: fit-content;
+            margin: 2rem auto;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+            background: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            width: fit-content;
+            margin-left: auto;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+        }
+        
+        .status-indicator.offline {
+            background: #dc3545;
+        }
+        
+        .error-message, .success-message, .loading-message {
+            padding: 1rem;
+            border-radius: 16px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .error-message { background: #fee2e2; color: #991b1b; display: none; }
+        .success-message { background: #d1fae5; color: #065f46; display: none; }
+        .loading-message { background: #e0f2fe; color: #0369a1; display: none; }
+        
+        .badge-tp {
+            display: inline-block;
+            background: var(--kka-primary);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+        
+        .badge-tp.kelompok {
+            background: #9b59b6;
+        }
+        
+        .badge-tp.individu {
+            background: #27ae60;
+        }
+        
+        .time-estimate {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .checklist-container {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 16px;
+            margin-top: 1rem;
+        }
+        
+        .checklist-container div {
+            padding: 4px 0;
+        }
+        
+        .lampiran-box {
+            background: #f0fdf4;
+            border: 2px dashed #86efac;
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .lampiran-box:hover {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+        
+        .lampiran-box label {
+            font-weight: 700;
+            color: #166534;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .lampiran-box .btn-toggle-lampiran {
+            background: #86efac;
+            color: #14532d;
+            border: none;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .lampiran-box .btn-toggle-lampiran:hover {
+            background: #4ade80;
+        }
+        
+        .lampiran-box .lampiran-field {
+            display: none;
+            margin-top: 10px;
+        }
+        
+        .lampiran-box .lampiran-field.show {
+            display: block;
+        }
+        
+        .lampiran-box .lampiran-field input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #86efac;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            background: white;
+        }
+        
+        .lampiran-box .lampiran-field input:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        }
+        
+        .lampiran-box .lampiran-field .hint {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .lampiran-box .lampiran-field .hint i {
+            color: #22c55e;
+        }
+        
+        .activity-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .activity-navigation a {
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .activity-navigation .nav-back {
+            background: #e2e8f0;
+            color: #2c3e50;
+        }
+        
+        .activity-navigation .nav-back:hover {
+            background: #cbd5e1;
+        }
+        
+        .activity-navigation .nav-next {
+            background: var(--kka-primary);
+            color: white;
+        }
+        
+        .activity-navigation .nav-next:hover {
+            background: var(--kka-secondary);
+            transform: translateX(3px);
+        }
+        
+        .form-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .code-box {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+        
+        /* Opsi Database */
+        .db-option {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 0.5rem 0 1rem 0;
+        }
+        
+        .db-option label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .db-option label:hover {
+            border-color: var(--kka-primary);
+            background: var(--kka-light);
+        }
+        
+        .db-option input[type="radio"]:checked + span {
+            color: var(--kka-primary);
+        }
+        
+        .db-option label:has(input:checked) {
+            border-color: var(--kka-primary);
+            background: var(--kka-light);
+        }
+        
+        .db-section {
+            display: none;
+            padding: 0.5rem 0;
+        }
+        
+        .db-section.active {
+            display: block;
+        }
+        
+        .db-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
         
         @media (max-width: 768px) {
             .activity-detail-container { padding: 1rem; }
             .worksheet-container { padding: 1rem; }
             .kka-table { display: block; overflow-x: auto; }
+            .kka-table th, .kka-table td { width: auto !important; }
+            #tabel-uji th, #tabel-uji td { width: auto !important; }
+            #tabel-uat th, #tabel-uat td { width: auto !important; }
+            #tabel-keamanan th, #tabel-keamanan td { width: auto !important; }
+            #tabel-debug th, #tabel-debug td { width: auto !important; }
+            .section-title { font-size: 1.1rem; }
+            .badge-tp { font-size: 0.6rem; padding: 2px 10px; }
+            .time-estimate { font-size: 0.6rem; padding: 2px 8px; }
             .identitas-box { grid-template-columns: 1fr; }
-            .activity-navigation { flex-direction: column; gap: 0.8rem; }
-            .nav-btn { width: 100%; justify-content: center; }
+            .activity-navigation { flex-direction: column; }
+            .activity-navigation a { width: 100%; text-align: center; }
+            .radio-group { flex-direction: column; gap: 8px; }
+            .db-option { flex-direction: column; gap: 0.5rem; }
         }
     </style>
 </head>
@@ -151,9 +570,7 @@
                     <li><a href="../penilaian/index-penilaian-kka.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
                 </ul>
                 <div class="hamburger" id="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
+                    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
                 </div>
             </div>
         </nav>
@@ -163,105 +580,156 @@
         <div class="connection-status">
             <div class="status-indicator" id="statusIndicator"></div>
             <span id="connectionStatus">Online</span>
-            <button class="refresh-btn" onclick="refreshPage()"><i class="fas fa-sync-alt"></i></button>
+            <button class="refresh-btn" onclick="refreshPage()" style="background:none; border:none; cursor:pointer; color:#64748b;"><i class="fas fa-sync-alt"></i></button>
         </div>
 
         <div class="kka-content-card">
             <h2>Aktivitas Proyek 4: Pengembangan Produk</h2>
-            <div class="subtitle">
+            <div style="display: flex; gap: 1rem; flex-wrap:wrap; margin:10px 0">
                 <span><i class="fas fa-calendar"></i> Semester Genap • Proyek Pengembangan Aplikasi Web</span>
                 <span><i class="fas fa-clock"></i> 8 JP (4 pertemuan)</span>
                 <span><i class="fas fa-tag"></i> Tahap 4 dari 6</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap:wrap; margin:5px 0">
+                <span class="badge-tp"><i class="fas fa-bullseye"></i> TP 3.1</span>
+                <span class="badge-tp" style="background:#9b59b6;"><i class="fas fa-bullseye"></i> TP 4.1</span>
+                <span class="badge-tp" style="background:#27ae60;"><i class="fas fa-bullseye"></i> TP 5.1</span>
+                <span class="badge-tp" style="background:#e67e22;"><i class="fas fa-bullseye"></i> TP 6.1</span>
             </div>
             <p><i class="fas fa-quote-left"></i> Mengimplementasikan aplikasi web sesuai rancangan, melakukan pengujian, debugging, dan deployment. <i class="fas fa-quote-right"></i></p>
         </div>
 
         <div id="loadingMessage" class="loading-message"><i class="fas fa-spinner fa-spin"></i> Memuat data murid...</div>
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorText">Gagal terhubung ke server. Silakan cek koneksi internet dan refresh halaman.</span>
-            <br><button onclick="location.reload()" style="margin-top:8px; padding:6px 15px; background:#dc3545; color:white; border:none; border-radius:5px;"><i class="fas fa-sync-alt"></i> Refresh</button>
-        </div>
-
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-            <div class="progress-text" id="progressText">0% selesai</div>
-        </div>
+        <div id="errorMessage" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span id="errorText"></span><br><button onclick="location.reload()" style="margin-top:8px; background:#dc3545; color:white; border:none; padding:6px 12px; border-radius:8px; cursor:pointer;">Refresh</button></div>
 
         <div class="worksheet-container" id="worksheetForm">
             <div class="instruction-box" style="background:#e8f5e9; border-left-color:var(--kka-success);">
-                <i class="fas fa-code"></i> <strong>HALO, PROGRAMMER HEBAT! 👋</strong><br>
+                <i class="fas fa-code" style="color:var(--kka-primary);"></i> 
+                <strong>HALO, PROGRAMMER HEBAT! 👋</strong><br> 
                 Selamat datang di tahap pengembangan produk! Saatnya mengimplementasikan aplikasi impian kalian menjadi kode nyata!
             </div>
-            <h1 class="worksheet-title">LEMBAR AKTIVITAS PROYEK 4 – PENGEMBANGAN PRODUK</h1>
-            <p style="text-align:center; font-size:0.85rem; margin-bottom:1rem;">TAHAP 4: IMPLEMENTASI, PENGUJIAN & DEPLOYMENT</p>
 
-            <!-- Identitas -->
-            <div class="identitas-box">
-                <div class="identitas-item">
-                    <label><i class="fas fa-building"></i> Kelas</label>
-                    <select id="kelas" class="answer-field">
-                        <option value="">-- Pilih Kelas --</option>
-                    </select>
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-user"></i> Nama Lengkap</label>
-                    <select id="nama" class="answer-field">
-                        <option value="">-- Pilih Nama --</option>
-                    </select>
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-users"></i> Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok Web Developer" class="answer-field">
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-tasks"></i> Peran</label>
-                    <input type="text" id="peran" placeholder="Contoh: Backend Developer" class="answer-field">
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-briefcase"></i> Bidang Keahlian</label>
-                    <input type="text" id="bidang_keahlian" placeholder="Contoh: RPL / TKJ / Multimedia" class="answer-field">
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-mobile-alt"></i> Nama Aplikasi</label>
-                    <input type="text" id="nama_aplikasi" placeholder="Nama Aplikasi dari Tahap 2" class="answer-field">
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-calendar-alt"></i> Tanggal Mulai</label>
-                    <input type="date" id="tanggal_mulai" class="answer-field">
-                </div>
-                <div class="identitas-item">
-                    <label><i class="fas fa-calendar-check"></i> Tanggal Selesai</label>
-                    <input type="date" id="tanggal_selesai" class="answer-field">
+            <h1 class="worksheet-title">📝 LEMBAR AKTIVITAS PROYEK 4 – PENGEMBANGAN PRODUK</h1>
+            <p style="text-align:center; margin-bottom:1.5rem;">TAHAP 4: IMPLEMENTASI, PENGUJIAN & DEPLOYMENT</p>
+
+            <!-- ===== IDENTITAS ===== -->
+            <div class="kka-section">
+                <h3 class="section-title">
+                    <i class="fas fa-user-graduate"></i> 
+                    Identitas Diri & Kelompok 
+                    <span class="time-estimate"><i class="far fa-clock"></i> 5 menit</span>
+                </h3>
+                <div class="identitas-box">
+                    <div class="identitas-item">
+                        <label>Kelas</label>
+                        <select id="kelas" class="answer-field">
+                            <option value="">-- Pilih Kelas --</option>
+                        </select>
+                    </div>
+                    <div class="identitas-item">
+                        <label>Nama Lengkap</label>
+                        <select id="nama" class="answer-field">
+                            <option value="">-- Pilih Nama --</option>
+                        </select>
+                    </div>
+                    <div class="identitas-item">
+                        <label>Nama Kelompok</label>
+                        <input type="text" id="kelompok" placeholder="Contoh: Kelompok Web Developer" class="answer-field">
+                    </div>
+                    <div class="identitas-item">
+                        <label>Peran dalam Kelompok</label>
+                        <input type="text" id="peran" placeholder="Backend Developer / API Developer" class="answer-field">
+                    </div>
+                    <div class="identitas-item">
+                        <label>Bidang Keahlian</label>
+                        <input type="text" id="bidang_keahlian" placeholder="Contoh: RPL / TKJ" class="answer-field">
+                    </div>
+                    <div class="identitas-item">
+                        <label>Nama Aplikasi</label>
+                        <input type="text" id="nama_aplikasi" placeholder="Nama Aplikasi dari Tahap 2" class="answer-field">
+                    </div>
+                    <div class="identitas-item">
+                        <label>Tanggal Mulai</label>
+                        <input type="date" id="tanggal_mulai" class="answer-field">
+                    </div>
+                    <div class="identitas-item">
+                        <label>Tanggal Selesai</label>
+                        <input type="date" id="tanggal_selesai" class="answer-field">
+                    </div>
                 </div>
             </div>
 
-            <div class="instruction-box"><i class="fas fa-info-circle"></i> <strong>PETUNJUK PENGGUNAAN</strong><br>Sebelum mengerjakan, pastikan membaca materi "Implementasi Aplikasi Web" dan "Pengujian dan Debugging" di Daftar Materi.</div>
-
-            <!-- BAGIAN A: PEMAHAMAN MATERI -->
+            <!-- ===== BAGIAN A: PEMAHAMAN MATERI ===== -->
             <div class="kka-section">
-                <h3 class="section-title"><i class="fas fa-book-reader"></i> 📖 BAGIAN A: PEMAHAMAN MATERI (INDIVIDU) – 10 menit</h3>
+                <h3 class="section-title">
+                    <i class="fas fa-book-open"></i> 
+                    Bagian A: Pemahaman Materi 
+                    <span class="badge-tp individu">Individu</span>
+                    <span class="time-estimate"><i class="far fa-clock"></i> 10 menit</span>
+                </h3>
+                <div class="instruction-box">
+                    <i class="fas fa-external-link-alt"></i> <strong>Baca materi dulu ya!</strong> 
+                    <a href="../materi-pembelajaran/s2-bab-4-pengembangan-produk.html" target="_blank" style="color:var(--kka-primary); font-weight:bold;">📄 Klik di sini untuk membuka Materi Pengembangan Produk</a>
+                </div>
+                <p>Jawab pertanyaan berikut berdasarkan materi yang sudah kamu baca.</p>
                 <table class="kka-table">
-                    <thead> <th>No</th><th>Pertanyaan</th><th>Jawaban</th> </thead>
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr></thead>
                     <tbody>
-                        2.  <td>1<td>Apa yang dimaksud dengan version control (Git) dan mengapa penting?<td><textarea class="answer-field large" id="a1"></textarea>  '
-                        2.  <td>2<td>Sebutkan 3 langkah dalam deployment aplikasi web!<td><textarea class="answer-field large" id="a2"></textarea>  '
-                        2.  <td>3<td>Apa pentingnya pengujian (testing) dalam pengembangan aplikasi?<td><textarea class="answer-field large" id="a3"></textarea>  '
-                        2.  <td>4<td>Sebutkan 3 jenis pengujian yang umum dilakukan!<td><textarea class="answer-field large" id="a4"></textarea>  '
-                        2.  <td>5<td>Apa yang dimaksud dengan debugging?<td><textarea class="answer-field large" id="a5"></textarea>  '
+                        <tr>
+                            <td>1</td>
+                            <td>Apa yang dimaksud dengan version control (Git) dan mengapa penting?</td>
+                            <td><textarea id="definisi_git" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Sebutkan 3 langkah dalam deployment aplikasi web!</td>
+                            <td><textarea id="langkah_deploy" rows="2" class="answer-field" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Apa pentingnya pengujian (testing) dalam pengembangan aplikasi?</td>
+                            <td><textarea id="penting_testing" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Sebutkan 3 jenis pengujian yang umum dilakukan!</td>
+                            <td><textarea id="jenis_testing" rows="2" class="answer-field" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea></td>
+                        </tr>
                     </tbody>
                 </table>
-                <div class="checklist-container">
-                    <div class="checklist-item"><input type="checkbox" id="bacaMateri1"> <label>Ya, saya sudah membaca materi "Implementasi Aplikasi Web"</label></div>
-                    <div class="checklist-item"><input type="checkbox" id="bacaMateri2"> <label>Ya, saya sudah membaca materi "Pengujian dan Debugging"</label></div>
-                    <div class="checklist-item"><label>Tanggal baca: </label><input type="date" id="tanggalBaca" style="width:auto;"></div>
-                </div>
             </div>
 
-            <!-- BAGIAN B: IMPLEMENTASI DATABASE -->
+            <!-- ===== BAGIAN B: IMPLEMENTASI DATABASE ===== -->
             <div class="kka-section">
-                <h3 class="section-title"><i class="fas fa-database"></i> 💻 BAGIAN B: IMPLEMENTASI DATABASE (TP.4.1) – 30 menit</h3>
-                <div class="instruction-box">Aktivitas 1: Membuat Database</div>
-                <textarea id="sql_database" class="answer-field large" rows="15" placeholder="-- Membuat Database
+                <h3 class="section-title">
+                    <i class="fas fa-database"></i> 
+                    Bagian B: Implementasi Database <span class="badge-tp" style="background:#9b59b6;">TP 4.1</span>
+                    <span class="badge-tp kelompok">Kelompok</span>
+                    <span class="time-estimate"><i class="far fa-clock"></i> 30 menit</span>
+                </h3>
+
+                <div class="help-box" style="background:#fef3c7; border-left-color:#f59e0b;">
+                    <i class="fas fa-lightbulb" style="color:#f59e0b;"></i> 
+                    <strong>💡 Pilih salah satu jenis database yang sesuai dengan kemampuan dan sumber daya kelompok:</strong><br>
+                    • <strong>SQL</strong> - Jika sudah bisa instal XAMPP/Laragon atau pakai SQLite<br>
+                    • <strong>Google Sheets + Apps Script</strong> - Jika hanya punya HP, tidak bisa instal server lokal
+                </div>
+
+                <div class="db-option">
+                    <label>
+                        <input type="radio" name="db_type" id="db_sql" value="sql" onchange="toggleDatabase('sql')">
+                        <span><i class="fas fa-database"></i> SQL <span class="db-badge">MySQL / SQLite</span></span>
+                    </label>
+                    <label>
+                        <input type="radio" name="db_type" id="db_sheets" value="sheets" onchange="toggleDatabase('sheets')">
+                        <span><i class="fas fa-table"></i> Google Sheets + Apps Script <span class="db-badge" style="background:#e3f2fd; color:#0d47a1;">📱 HP Friendly</span></span>
+                    </label>
+                </div>
+
+                <!-- Opsi SQL -->
+                <div id="db-sql-section" class="db-section">
+                    <h4>SQL - Struktur Database</h4>
+                    <textarea id="sql_database" rows="15" class="answer-field" placeholder="-- Membuat Database
 CREATE DATABASE [nama_database];
 
 -- Menggunakan Database
@@ -274,96 +742,219 @@ CREATE TABLE [nama_tabel_1] (
     [field3] [tipe_data],
     [created_at] DATETIME DEFAULT CURRENT_TIMESTAMP
 );"></textarea>
-                <div class="instruction-box">Screenshot/Tuliskan hasil implementasi database:</div>
-                <textarea id="db_screenshot" class="answer-field large" rows="5" placeholder="+--------------------------------------------------+
-|                                                  |
-|                                                  |
-+--------------------------------------------------+"></textarea>
 
-                <div class="instruction-box">Aktivitas 2: Mengisi Data Awal (Seeding)</div>
-                <textarea id="sql_seeding" class="answer-field large" rows="10" placeholder="-- Insert data ke tabel 1
+                    <h4 style="margin-top:1rem;">Data Awal (Seeding)</h4>
+                    <textarea id="sql_seeding" rows="10" class="answer-field" placeholder="-- Insert data ke tabel 1
 INSERT INTO [nama_tabel_1] ([field1], [field2], [field3])
 VALUES 
     ('value1_1', 'value2_1', 'value3_1'),
     ('value1_2', 'value2_2', 'value3_2');"></textarea>
+
+                    <!-- LAMPIRAN SCREENSHOT SQL -->
+                    <div class="lampiran-box">
+                        <label>
+                            <i class="fas fa-paperclip"></i> 
+                            📎 Lampirkan Screenshot Database (SQL) <span style="font-weight:400; color:#6b7280; font-size:0.8rem;">(Opsional)</span>
+                            <button type="button" class="btn-toggle-lampiran" onclick="toggleLampiran('lampiran_db_sql')">
+                                <i class="fas fa-plus"></i> Tambahkan Link
+                            </button>
+                        </label>
+                        <div id="lampiran_db_sql" class="lampiran-field">
+                            <p style="font-size:0.9rem; color:#4b5563; margin-bottom:8px;">
+                                <strong>📸 Screenshot hasil implementasi SQL (struktur tabel dan data).</strong>
+                            </p>
+                            <input type="url" id="link_db_sql" class="answer-field" placeholder="https://drive.google.com/file/d/.../view">
+                            <div class="hint">
+                                <i class="fas fa-info-circle"></i> Pastikan akses file diatur menjadi "Siapa saja dengan tautan bisa melihat"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opsi Google Sheets + Apps Script -->
+                <div id="db-sheets-section" class="db-section">
+                    <div class="help-box" style="background:#e3f2fd; border-left-color:#0d47a1;">
+                        <i class="fas fa-mobile-alt" style="color:#0d47a1;"></i> 
+                        <strong>📱 Panduan Google Sheets + Apps Script untuk HP:</strong><br>
+                        1. Buat Google Sheets baru di HP (bisa lewat browser)<br>
+                        2. Buka menu <strong>Ekstensi → Apps Script</strong> (atau buka script.google.com)<br>
+                        3. Buat fungsi doGet() dan doPost() untuk API<br>
+                        4. Deploy sebagai Web App (Deploy → New Deployment → Web App)<br>
+                        5. Dapatkan link API untuk diakses aplikasi
+                    </div>
+
+                    <h4>Link Google Sheets (Database)</h4>
+                    <input type="url" id="link_google_sheets" class="answer-field" placeholder="https://docs.google.com/spreadsheets/d/.../edit" style="margin-bottom:1rem;">
+
+                    <h4>Link Apps Script (Backend API)</h4>
+                    <input type="url" id="link_apps_script" class="answer-field" placeholder="https://script.google.com/macros/s/.../exec" style="margin-bottom:1rem;">
+
+                    <h4>Struktur Data di Google Sheets</h4>
+                    <table class="kka-table">
+                        <thead><tr><th>Nama Sheet/Tabel</th><th>Kolom yang Digunakan</th><th>Fungsi</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" id="sheet1_nama" class="answer-field" placeholder="Contoh: User"></td>
+                                <td><input type="text" id="sheet1_kolom" class="answer-field" placeholder="id, nama, email, password"></td>
+                                <td><input type="text" id="sheet1_fungsi" class="answer-field" placeholder="Menyimpan data pengguna"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="sheet2_nama" class="answer-field" placeholder="Contoh: Transaksi"></td>
+                                <td><input type="text" id="sheet2_kolom" class="answer-field" placeholder="id, id_user, total, tanggal"></td>
+                                <td><input type="text" id="sheet2_fungsi" class="answer-field" placeholder="Menyimpan data transaksi"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="sheet3_nama" class="answer-field" placeholder="Contoh: Produk"></td>
+                                <td><input type="text" id="sheet3_kolom" class="answer-field" placeholder="id, nama, harga, stok"></td>
+                                <td><input type="text" id="sheet3_fungsi" class="answer-field" placeholder="Menyimpan data produk"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Contoh Kode Apps Script (doGet & doPost)</h4>
+                    <textarea id="apps_script_code" rows="20" class="answer-field" placeholder="// ==================== APPS SCRIPT API ====================
+// Contoh kode untuk mengambil dan menyimpan data dari Google Sheets
+
+function doGet(e) {
+    // Ambil data dari Google Sheets
+    const ss = SpreadsheetApp.openByUrl('[LINK_SHEETS]');
+    const sheet = ss.getSheetByName('[NAMA_SHEET]');
+    const data = sheet.getDataRange().getValues();
+    
+    return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        data: data
+    })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+    // Simpan data ke Google Sheets
+    const params = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.openByUrl('[LINK_SHEETS]');
+    const sheet = ss.getSheetByName('[NAMA_SHEET]');
+    
+    // Tambahkan data baru
+    sheet.appendRow([params.field1, params.field2, params.field3]);
+    
+    return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        message: 'Data berhasil disimpan'
+    })).setMimeType(ContentService.MimeType.JSON);
+}"></textarea>
+
+                    <!-- LAMPIRAN SCREENSHOT SHEETS -->
+                    <div class="lampiran-box">
+                        <label>
+                            <i class="fas fa-paperclip"></i> 
+                            📎 Lampirkan Screenshot Google Sheets & Apps Script <span style="font-weight:400; color:#6b7280; font-size:0.8rem;">(Opsional)</span>
+                            <button type="button" class="btn-toggle-lampiran" onclick="toggleLampiran('lampiran_db_sheets')">
+                                <i class="fas fa-plus"></i> Tambahkan Link
+                            </button>
+                        </label>
+                        <div id="lampiran_db_sheets" class="lampiran-field">
+                            <p style="font-size:0.9rem; color:#4b5563; margin-bottom:8px;">
+                                <strong>📸 Screenshot Google Sheets (struktur data) dan Apps Script (kode API).</strong>
+                            </p>
+                            <input type="url" id="link_db_sheets" class="answer-field" placeholder="https://drive.google.com/file/d/.../view">
+                            <div class="hint">
+                                <i class="fas fa-info-circle"></i> Pastikan akses file diatur menjadi "Siapa saja dengan tautan bisa melihat"
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- BAGIAN C: IMPLEMENTASI BACKEND -->
+            <!-- ===== BAGIAN C: IMPLEMENTASI BACKEND ===== -->
             <div class="kka-section">
-                <h3 class="section-title"><i class="fas fa-server"></i> 💻 BAGIAN C: IMPLEMENTASI BACKEND (TP.3.1) – 60 menit</h3>
-                <div class="instruction-box">Aktivitas 3: Struktur Proyek</div>
-                <textarea id="struktur_proyek" class="answer-field large" rows="12" placeholder="[nama_proyek]/
+                <h3 class="section-title">
+                    <i class="fas fa-server"></i> 
+                    Bagian C: Implementasi Backend <span class="badge-tp" style="background:#9b59b6;">TP 3.1</span>
+                    <span class="badge-tp kelompok">Kelompok</span>
+                    <span class="time-estimate"><i class="far fa-clock"></i> 60 menit</span>
+                </h3>
+
+                <div class="help-box">
+                    <i class="fas fa-lightbulb"></i> 
+                    <strong>💡 Pilih bahasa pemrograman sesuai kemampuan:</strong><br>
+                    • <strong>PHP</strong> - Jika pakai XAMPP/Laragon<br>
+                    • <strong>JavaScript (Node.js)</strong> - Jika pakai Node.js + Express<br>
+                    • <strong>Python (Flask)</strong> - Jika pakai Python<br>
+                    • <strong>Google Apps Script</strong> - Jika pakai Google Sheets API (✅ HP Friendly)
+                </div>
+
+                <h4>Kegiatan 1: Struktur Proyek / Organisasi Kode</h4>
+                <textarea id="struktur_proyek" rows="12" class="answer-field" placeholder="[nama_proyek]/
 ├── config/
-│   └── database.php
+│   └── database.php  (atau config.js / config.py)
 ├── public/
 │   ├── css/
 │   │   └── style.css
 │   ├── js/
 │   │   └── script.js
-│   └── index.php
+│   └── index.php (atau index.html / app.py)
 ├── src/
 │   ├── controllers/
-│   │   └── [nama_controller].php
 │   ├── models/
-│   │   └── [nama_model].php
 │   └── views/
-│       └── [nama_view].php
 └── .env"></textarea>
 
-                <div class="instruction-box">Aktivitas 4: Implementasi Koneksi Database</div>
-                <textarea id="koneksi_db" class="answer-field large" rows="12" placeholder="&lt;?php
-// Koneksi ke database
-$host = 'localhost';
-$dbname = '[nama_database]';
-$username = '[username]';
-$password = '[password]';
+                <h4>Kegiatan 2: Koneksi ke Database / API</h4>
+                <textarea id="koneksi_db" rows="15" class="answer-field" placeholder="// Contoh koneksi ke database (pilih salah satu sesuai bahasa)&#10;&#10;// PHP (MySQL)&#10;$host = 'localhost';&#10;$dbname = '[nama_database]';&#10;$username = '[username]';&#10;$password = '[password]';&#10;&#10;// Atau: JavaScript (Google Apps Script)&#10;// const url = 'https://script.google.com/macros/s/.../exec';&#10;// fetch(url).then(res => res.json()).then(data => console.log(data));"></textarea>
 
-try {
-    $pdo = new PDO(&quot;mysql:host=$host;dbname=$dbname&quot;, $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo &quot;Koneksi berhasil&quot;;
-} catch(PDOException $e) {
-    echo &quot;Koneksi gagal: &quot; . $e->getMessage();
-}
-?&gt;"></textarea>
+                <h4>Kegiatan 3: Implementasi Fitur Utama 1</h4>
+                <div class="identitas-item" style="margin-bottom:1rem;">
+                    <label>Nama Fitur</label>
+                    <input type="text" id="fitur1_nama" class="answer-field" placeholder="Contoh: Login, Registrasi, CRUD Data">
+                </div>
+                <textarea id="fitur1_kode" rows="15" class="answer-field" placeholder="// Tuliskan kode implementasi fitur utama 1 di sini
+// Bisa menggunakan PHP, JavaScript, Python, atau Google Apps Script"></textarea>
 
-                <div class="instruction-box">Aktivitas 5: Implementasi Fitur Utama 1</div>
-                <input type="text" id="fitur1_nama" placeholder="Fitur: " class="answer-field" style="width:300px; margin-bottom:10px;">
-                <textarea id="fitur1_kode" class="answer-field large" rows="20" placeholder="&lt;?php
-class [NamaModel] {
-    private $db;
-    
-    public function __construct($pdo) {
-        $this->db = $pdo;
-    }
-    
-    public function [nama_method]($params) {
-        try {
-            $query = &quot;SELECT * FROM [nama_tabel] WHERE [kondisi]&quot;;
-            $stmt = $this->db->prepare($query);
-            $stmt->execute([$params]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch(PDOException $e) {
-            return false;
-        }
-    }
-}
-?&gt;"></textarea>
+                <h4>Kegiatan 4: Implementasi Fitur Utama 2</h4>
+                <div class="identitas-item" style="margin-bottom:1rem;">
+                    <label>Nama Fitur</label>
+                    <input type="text" id="fitur2_nama" class="answer-field" placeholder="Contoh: Pencarian, Filter">
+                </div>
+                <textarea id="fitur2_kode" rows="15" class="answer-field" placeholder="// Tuliskan kode implementasi fitur utama 2 di sini"></textarea>
 
-                <div class="instruction-box">Aktivitas 6: Implementasi Fitur Utama 2</div>
-                <input type="text" id="fitur2_nama" placeholder="Fitur: " class="answer-field" style="width:300px; margin-bottom:10px;">
-                <textarea id="fitur2_kode" class="answer-field large" rows="15" placeholder="// Tuliskan kode implementasi fitur utama 2 di sini"></textarea>
+                <h4>Kegiatan 5: Implementasi Fitur Utama 3</h4>
+                <div class="identitas-item" style="margin-bottom:1rem;">
+                    <label>Nama Fitur</label>
+                    <input type="text" id="fitur3_nama" class="answer-field" placeholder="Contoh: CRUD Data">
+                </div>
+                <textarea id="fitur3_kode" rows="15" class="answer-field" placeholder="// Tuliskan kode implementasi fitur utama 3 di sini"></textarea>
 
-                <div class="instruction-box">Aktivitas 7: Implementasi Fitur Utama 3</div>
-                <input type="text" id="fitur3_nama" placeholder="Fitur: " class="answer-field" style="width:300px; margin-bottom:10px;">
-                <textarea id="fitur3_kode" class="answer-field large" rows="15" placeholder="// Tuliskan kode implementasi fitur utama 3 di sini"></textarea>
+                <!-- LAMPIRAN KODE PROGRAM -->
+                <div class="lampiran-box">
+                    <label>
+                        <i class="fas fa-file-code"></i> 
+                        📎 Lampirkan File Kode Program <span style="font-weight:400; color:#6b7280; font-size:0.8rem;">(Opsional)</span>
+                        <button type="button" class="btn-toggle-lampiran" onclick="toggleLampiran('lampiran_kode')">
+                            <i class="fas fa-plus"></i> Tambahkan Link
+                        </button>
+                    </label>
+                    <div id="lampiran_kode" class="lampiran-field">
+                        <p style="font-size:0.9rem; color:#4b5563; margin-bottom:8px;">
+                            <strong>📄 Upload file kode program (.zip, .rar) atau link repository (GitHub).</strong>
+                        </p>
+                        <input type="url" id="link_kode" class="answer-field" placeholder="https://drive.google.com/file/d/.../view atau https://github.com/...">
+                        <div class="hint">
+                            <i class="fas fa-info-circle"></i> Pastikan akses file diatur menjadi "Siapa saja dengan tautan bisa melihat"
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- BAGIAN D: IMPLEMENTASI FRONTEND -->
+            <!-- ===== BAGIAN D: IMPLEMENTASI FRONTEND ===== -->
             <div class="kka-section">
-                <h3 class="section-title"><i class="fas fa-paint-brush"></i> 🎨 BAGIAN D: IMPLEMENTASI FRONTEND – 40 menit</h3>
-                <div class="instruction-box">Aktivitas 8: Membuat Antarmuka Halaman Utama</div>
-                <textarea id="frontend_html" class="answer-field large" rows="25" placeholder="&lt;!DOCTYPE html&gt;
+                <h3 class="section-title">
+                    <i class="fas fa-paint-brush"></i> 
+                    Bagian D: Implementasi Frontend 
+                    <span class="badge-tp kelompok">Kelompok</span>
+                    <span class="time-estimate"><i class="far fa-clock"></i> 40 menit</span>
+                </h3>
+
+                <h4>Kegiatan 1: HTML - Struktur Halaman</h4>
+                <textarea id="frontend_html" rows="20" class="answer-field" placeholder="&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;id&quot;&gt;
 &lt;head&gt;
     &lt;meta charset=&quot;UTF-8&quot;&gt;
@@ -376,9 +967,8 @@ class [NamaModel] {
         &lt;div class=&quot;logo&quot;&gt;[Logo Aplikasi]&lt;/div&gt;
         &lt;nav&gt;
             &lt;ul&gt;
-                &lt;li&gt;&lt;a href=&quot;index.php&quot;&gt;Beranda&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href=&quot;fitur1.php&quot;&gt;[Fitur 1]&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href=&quot;fitur2.php&quot;&gt;[Fitur 2]&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;index.html&quot;&gt;Beranda&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;fitur1.html&quot;&gt;[Fitur 1]&lt;/a&gt;&lt;/li&gt;
             &lt;/ul&gt;
         &lt;/nav&gt;
     &lt;/header&gt;
@@ -395,8 +985,8 @@ class [NamaModel] {
 &lt;/body&gt;
 &lt;/html&gt;"></textarea>
 
-                <div class="instruction-box">Aktivitas 9: Styling dengan CSS</div>
-                <textarea id="frontend_css" class="answer-field large" rows="20" placeholder="/* Reset CSS */
+                <h4>Kegiatan 2: CSS - Styling</h4>
+                <textarea id="frontend_css" rows="15" class="answer-field" placeholder="/* Reset CSS */
 * {
     margin: 0;
     padding: 0;
@@ -431,8 +1021,8 @@ footer {
     padding: 1rem;
 }"></textarea>
 
-                <div class="instruction-box">Aktivitas 10: Interaktivitas dengan JavaScript</div>
-                <textarea id="frontend_js" class="answer-field large" rows="15" placeholder="// JavaScript untuk interaktivitas
+                <h4>Kegiatan 3: JavaScript - Interaktivitas</h4>
+                <textarea id="frontend_js" rows="15" class="answer-field" placeholder="// JavaScript untuk interaktivitas
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('contact-form');
     if (form) {
@@ -442,460 +1032,852 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });"></textarea>
+
+                <!-- LAMPIRAN SCREENSHOT UI -->
+                <div class="lampiran-box">
+                    <label>
+                        <i class="fas fa-paperclip"></i> 
+                        📎 Lampirkan Screenshot UI <span style="font-weight:400; color:#6b7280; font-size:0.8rem;">(Opsional)</span>
+                        <button type="button" class="btn-toggle-lampiran" onclick="toggleLampiran('lampiran_ui')">
+                            <i class="fas fa-plus"></i> Tambahkan Link
+                        </button>
+                    </label>
+                    <div id="lampiran_ui" class="lampiran-field">
+                        <p style="font-size:0.9rem; color:#4b5563; margin-bottom:8px;">
+                            <strong>📸 Screenshot tampilan antarmuka aplikasi.</strong>
+                        </p>
+                        <input type="url" id="link_ui" class="answer-field" placeholder="https://drive.google.com/file/d/.../view">
+                        <div class="hint">
+                            <i class="fas fa-info-circle"></i> Pastikan akses file diatur menjadi "Siapa saja dengan tautan bisa melihat"
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- BAGIAN E: PENGUJIAN DAN DEBUGGING -->
+            <!-- ===== BAGIAN E: PENGUJIAN DAN DEBUGGING ===== -->
             <div class="kka-section">
-                <h3 class="section-title"><i class="fas fa-flask"></i> 🧪 BAGIAN E: PENGUJIAN DAN DEBUGGING (TP.3.1 & TP.5.1) – 35 menit</h3>
-                <div class="instruction-box">Aktivitas 11: Pengujian Fungsional</div>
-                <table class="kka-table" id="ujiFungsionalTable">
-                    <thead> <th>No</th><th>Fitur</th><th>Skenario Uji</th><th>Input</th><th>Output Diharapkan</th><th>Output Aktual</th><th>Status</th> </thead>
+                <h3 class="section-title">
+                    <i class="fas fa-flask"></i> 
+                    Bagian E: Pengujian & Debugging <span class="badge-tp" style="background:#9b59b6;">TP 3.1</span>
+                    <span class="badge-tp" style="background:#27ae60;">TP 5.1</span>
+                    <span class="badge-tp kelompok">Kelompok</span>
+                    <span class="time-estimate"><i class="far fa-clock"></i> 35 menit</span>
+                </h3>
+
+                <div class="help-box" style="background:#fef3c7; border-left-color:#f59e0b;">
+                    <i class="fas fa-lightbulb" style="color:#f59e0b;"></i> 
+                    <strong>💡 Cara Pengujian:</strong><br>
+                    • <strong>Jika pakai SQL:</strong> Uji langsung di aplikasi web atau pakai phpMyAdmin / SQLite Browser<br>
+                    • <strong>Jika pakai Google Sheets + Apps Script:</strong> Uji API menggunakan Postman, browser, atau aplikasi web yang terhubung
+                </div>
+
+                <div class="identitas-item" style="margin-bottom:1rem;">
+                    <label>Jenis Aplikasi yang Diuji</label>
+                    <div class="radio-group">
+                        <label class="radio-item"><input type="radio" name="jenis_aplikasi_uji" id="uji_sql" value="SQL"> SQL (MySQL/SQLite)</label>
+                        <label class="radio-item"><input type="radio" name="jenis_aplikasi_uji" id="uji_sheets" value="Google Sheets + Apps Script"> Google Sheets + Apps Script</label>
+                    </div>
+                </div>
+
+                <h4>Kegiatan 1: Pengujian Fungsional</h4>
+                <table id="tabel-uji" class="kka-table">
+                    <thead><tr><th>No</th><th>Fitur</th><th>Skenario Uji</th><th>Input</th><th>Output Harapan</th><th>Output Aktual</th><th>Status</th><th></th></tr></thead>
+                    <tbody id="ujiBody"></tbody>
+                </table>
+                <button type="button" class="btn-add" onclick="tambahUji()"><i class="fas fa-plus"></i> Tambah Uji Fungsional</button>
+
+                <h4>Kegiatan 2: Pengujian Keamanan</h4>
+                <table id="tabel-keamanan" class="kka-table">
+                    <thead><tr><th>No</th><th style="width:20%;">Uji Keamanan</th><th style="width:15%;">Hasil Uji</th><th style="width:53%;">Tindak Lanjut Perbaikan</th><th style="width:6%;"></th></tr></thead>
                     <tbody>
-                        2.  <td>1<td><input type="text" class="answer-field" id="uji1_fitur"><td><input type="text" class="answer-field" id="uji1_skenario"><td><input type="text" class="answer-field" id="uji1_input"><td><input type="text" class="answer-field" id="uji1_output_harap"><td><input type="text" class="answer-field" id="uji1_output_aktual"><td><select id="uji1_status"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select>  '
-                        2.  <td>2<td><input type="text" class="answer-field" id="uji2_fitur"><td><input type="text" class="answer-field" id="uji2_skenario"><td><input type="text" class="answer-field" id="uji2_input"><td><input type="text" class="answer-field" id="uji2_output_harap"><td><input type="text" class="answer-field" id="uji2_output_aktual"><td><select id="uji2_status"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select>  '
-                        2.  <td>3<td><input type="text" class="answer-field" id="uji3_fitur"><td><input type="text" class="answer-field" id="uji3_skenario"><td><input type="text" class="answer-field" id="uji3_input"><td><input type="text" class="answer-field" id="uji3_output_harap"><td><input type="text" class="answer-field" id="uji3_output_aktual"><td><select id="uji3_status"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select>  '
-                        2.  <td>4<td><input type="text" class="answer-field" id="uji4_fitur"><td><input type="text" class="answer-field" id="uji4_skenario"><td><input type="text" class="answer-field" id="uji4_input"><td><input type="text" class="answer-field" id="uji4_output_harap"><td><input type="text" class="answer-field" id="uji4_output_aktual"><td><select id="uji4_status"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select>  '
-                        2.  <td>5<td><input type="text" class="answer-field" id="uji5_fitur"><td><input type="text" class="answer-field" id="uji5_skenario"><td><input type="text" class="answer-field" id="uji5_input"><td><input type="text" class="answer-field" id="uji5_output_harap"><td><input type="text" class="answer-field" id="uji5_output_aktual"><td><select id="uji5_status"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select>  '
+                        <tr>
+                            <td style="width:6%;">1</td>
+                            <td style="width:20%;">SQL Injection / NoSQL Injection <br><small style="color:#6b7280;">(input karakter khusus ' atau ")</small></td>
+                            <td style="width:15%;"><select id="keamanan1" class="answer-field"><option value="">Pilih</option><option value="Aman">✅ Aman</option><option value="Rentan">❌ Rentan</option></select></td>
+                            <td style="width:53%;"><input type="text" id="keamanan1_tindak" class="answer-field" placeholder="Jika rentan, jelaskan perbaikan..."></td>
+                            <td style="width:6%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:6%;">2</td>
+                            <td style="width:20%;">XSS (Cross-Site Scripting) <br><small style="color:#6b7280;">(input tag HTML/JavaScript)</small></td>
+                            <td style="width:15%;"><select id="keamanan2" class="answer-field"><option value="">Pilih</option><option value="Aman">✅ Aman</option><option value="Rentan">❌ Rentan</option></select></td>
+                            <td style="width:53%;"><input type="text" id="keamanan2_tindak" class="answer-field" placeholder="Jika rentan, jelaskan perbaikan..."></td>
+                            <td style="width:6%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:6%;">3</td>
+                            <td style="width:20%;">Autentikasi & Otorisasi <br><small style="color:#6b7280;">(akses tanpa login / akses data orang lain)</small></td>
+                            <td style="width:15%;"><select id="keamanan3" class="answer-field"><option value="">Pilih</option><option value="Aman">✅ Aman</option><option value="Rentan">❌ Rentan</option></select></td>
+                            <td style="width:53%;"><input type="text" id="keamanan3_tindak" class="answer-field" placeholder="Jika rentan, jelaskan perbaikan..."></td>
+                            <td style="width:6%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:6%;">4</td>
+                            <td style="width:20%;">API Endpoint Testing <br><small style="color:#6b7280;">(khusus Google Sheets/Apps Script)</small></td>
+                            <td style="width:15%;"><select id="keamanan4" class="answer-field"><option value="">Pilih</option><option value="Aman">✅ Aman</option><option value="Rentan">❌ Rentan</option></select></td>
+                            <td style="width:53%;"><input type="text" id="keamanan4_tindak" class="answer-field" placeholder="Cek apakah API bisa diakses tanpa izin..."></td>
+                            <td style="width:6%;"></td>
+                        </tr>
                     </tbody>
                 </table>
 
-                <div class="instruction-box">Aktivitas 12: Pengujian Keamanan</div>
-                <table class="kka-table">
-                    <thead> <th>No</th><th>Uji Keamanan</th><th>Hasil Uji</th><th>Tindak Lanjut Perbaikan</th> </thead>
+                <h4>Kegiatan 3: Debugging dan Perbaikan</h4>
+                <table id="tabel-debug" class="kka-table">
+                    <thead><tr><th style="width:6%;">No</th><th style="width:18%;">Bug yang Ditemukan</th><th style="width:18%;">Penyebab</th><th style="width:35%;">Solusi Perbaikan</th><th style="width:15%;">Status</th><th style="width:8%;"></th></tr></thead>
                     <tbody>
-                        2.  <td>1<td>SQL Injection (input karakter khusus ' atau ")<td><select id="keamanan1"><option value="">Pilih</option><option value="Aman">Aman</option><option value="Rentan">Rentan</option></select><td><input type="text" class="answer-field" id="keamanan1_tindak">  '
-                        2.  <td>2<td>XSS (input tag HTML/JavaScript)<td><select id="keamanan2"><option value="">Pilih</option><option value="Aman">Aman</option><option value="Rentan">Rentan</option></select><td><input type="text" class="answer-field" id="keamanan2_tindak">  '
-                        2.  <td>3<td>Autentikasi (akses tanpa login)<td><select id="keamanan3"><option value="">Pilih</option><option value="Aman">Aman</option><option value="Rentan">Rentan</option></select><td><input type="text" class="answer-field" id="keamanan3_tindak">  '
-                        2.  <td>4<td>Validasi Input (input kosong/tidak valid)<td><select id="keamanan4"><option value="">Pilih</option><option value="Aman">Aman</option><option value="Rentan">Rentan</option></select><td><input type="text" class="answer-field" id="keamanan4_tindak">  '
+                        <tr>
+                            <td style="width:6%;">1</td>
+                            <td style="width:18%;"><input type="text" id="bug1" class="answer-field" placeholder="Deskripsi bug..."></td>
+                            <td style="width:18%;"><input type="text" id="bug1_penyebab" class="answer-field" placeholder="Penyebab..."></td>
+                            <td style="width:35%;"><input type="text" id="bug1_solusi" class="answer-field" placeholder="Solusi..."></td>
+                            <td style="width:15%;"><select id="bug1_status" class="answer-field"><option value="">Pilih</option><option value="Selesai">✅ Selesai</option><option value="Dalam Proses">⏳ Dalam Proses</option></select></td>
+                            <td style="width:8%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:6%;">2</td>
+                            <td style="width:18%;"><input type="text" id="bug2" class="answer-field" placeholder="Deskripsi bug..."></td>
+                            <td style="width:18%;"><input type="text" id="bug2_penyebab" class="answer-field" placeholder="Penyebab..."></td>
+                            <td style="width:35%;"><input type="text" id="bug2_solusi" class="answer-field" placeholder="Solusi..."></td>
+                            <td style="width:15%;"><select id="bug2_status" class="answer-field"><option value="">Pilih</option><option value="Selesai">✅ Selesai</option><option value="Dalam Proses">⏳ Dalam Proses</option></select></td>
+                            <td style="width:8%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:6%;">3</td>
+                            <td style="width:18%;"><input type="text" id="bug3" class="answer-field" placeholder="Deskripsi bug..."></td>
+                            <td style="width:18%;"><input type="text" id="bug3_penyebab" class="answer-field" placeholder="Penyebab..."></td>
+                            <td style="width:35%;"><input type="text" id="bug3_solusi" class="answer-field" placeholder="Solusi..."></td>
+                            <td style="width:15%;"><select id="bug3_status" class="answer-field"><option value="">Pilih</option><option value="Selesai">✅ Selesai</option><option value="Dalam Proses">⏳ Dalam Proses</option></select></td>
+                            <td style="width:8%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:6%;">4</td>
+                            <td style="width:18%;"><input type="text" id="bug4" class="answer-field" placeholder="Deskripsi bug..."></td>
+                            <td style="width:18%;"><input type="text" id="bug4_penyebab" class="answer-field" placeholder="Penyebab..."></td>
+                            <td style="width:35%;"><input type="text" id="bug4_solusi" class="answer-field" placeholder="Solusi..."></td>
+                            <td style="width:15%;"><select id="bug4_status" class="answer-field"><option value="">Pilih</option><option value="Selesai">✅ Selesai</option><option value="Dalam Proses">⏳ Dalam Proses</option></select></td>
+                            <td style="width:8%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:6%;">5</td>
+                            <td style="width:18%;"><input type="text" id="bug5" class="answer-field" placeholder="Deskripsi bug..."></td>
+                            <td style="width:18%;"><input type="text" id="bug5_penyebab" class="answer-field" placeholder="Penyebab..."></td>
+                            <td style="width:35%;"><input type="text" id="bug5_solusi" class="answer-field" placeholder="Solusi..."></td>
+                            <td style="width:15%;"><select id="bug5_status" class="answer-field"><option value="">Pilih</option><option value="Selesai">✅ Selesai</option><option value="Dalam Proses">⏳ Dalam Proses</option></select></td>
+                            <td style="width:8%;"></td>
+                        </tr>
                     </tbody>
-                }</
+                </table>
 
-                <div class="instruction-box">Aktivitas 13: Debugging dan Perbaikan</div>
-                <table class="kka-table">
-                    <thead> <th>No</th><th>Bug yang Ditemukan</th><th>Penyebab</th><th>Solusi Perbaikan</th><th>Status</th> </thead>
-                    <tbody>
-                        2.  <td>1<td><input type="text" class="answer-field" id="bug1"> <td><input type="text" class="answer-field" id="bug1_penyebab"> <td><input type="text" class="answer-field" id="bug1_solusi"> <td><select id="bug1_status"><option value="">Pilih</option><option value="Selesai">Selesai</option><option value="Dalam Proses">Dalam Proses</option></select>  '
-                        2.  <td>2<td><input type="text" class="answer-field" id="bug2"> <td><input type="text" class="answer-field" id="bug2_penyebab"> <td><input type="text" class="answer-field" id="bug2_solusi"> <td><select id="bug2_status"><option value="">Pilih</option><option value="Selesai">Selesai</option><option value="Dalam Proses">Dalam Proses</option></select>  '
-                        2.  <td>3<td><input type="text" class="answer-field" id="bug3"> <td><input type="text" class="answer-field" id="bug3_penyebab"> <td><input type="text" class="answer-field" id="bug3_solusi"> <td><select id="bug3_status"><option value="">Pilih</option><option value="Selesai">Selesai</option><option value="Dalam Proses">Dalam Proses</option></select>  '
-                    </tbody>
-                }</
-
-                <div class="instruction-box">Aktivitas 14: Pengujian Pengguna (User Acceptance Test)</div>
-                <table class="kka-table">
-                    <thead> <th>No</th><th>Nama Penguji</th><th>Fitur yang Dicoba</th><th>Feedback</th><th>Saran Perbaikan</th> </thead>
-                    <tbody>
-                        2.  <td>1<td><input type="text" class="answer-field" id="uat1_nama"> <td><input type="text" class="answer-field" id="uat1_fitur"> <td><input type="text" class="answer-field" id="uat1_feedback"> <td><input type="text" class="answer-field" id="uat1_saran">  '
-                        2.  <td>2<td><input type="text" class="answer-field" id="uat2_nama"> <td><input type="text" class="answer-field" id="uat2_fitur"> <td><input type="text" class="answer-field" id="uat2_feedback"> <td><input type="text" class="answer-field" id="uat2_saran">  '
-                        2.  <td>3<td><input type="text" class="answer-field" id="uat3_nama"> <td><input type="text" class="answer-field" id="uat3_fitur"> <td><input type="text" class="answer-field" id="uat3_feedback"> <td><input type="text" class="answer-field" id="uat3_saran">  '
-                    </tbody>
-                }</
-            </div>
-
-            <!-- BAGIAN F: DEPLOYMENT -->
-            <div class="kka-section">
-                <h3 class="section-title"><i class="fas fa-rocket"></i> 🚀 BAGIAN F: DEPLOYMENT – 20 menit</h3>
-                <div class="instruction-box">Aktivitas 15: Persiapan Deployment</div>
-                <table class="kka-table">
-                    <thead> <th>No</th><th>Persiapan</th><th>Status</th><th>Keterangan</th> </thead>
-                    <tbody>
-                        2.  <td>1<td>File siap diupload (compress jika perlu)<td><select id="deploy1"><option value="">Pilih</option><option value="Siap">Siap</option><option value="Belum">Belum</option></select><td><input type="text" class="answer-field" id="deploy1_ket">  '
-                        2.  <td>2<td>Konfigurasi database di server<td><select id="deploy2"><option value="">Pilih</option><option value="Siap">Siap</option><option value="Belum">Belum</option></select><td><input type="text" class="answer-field" id="deploy2_ket">  '
-                        2.  <td>3<td>Testing di localhost (final)<td><select id="deploy3"><option value="">Pilih</option><option value="Siap">Siap</option><option value="Belum">Belum</option></select><td><input type="text" class="answer-field" id="deploy3_ket">  '
-                        2.  <td>4<td>Backup data dan file<td><select id="deploy4"><option value="">Pilih</option><option value="Siap">Siap</option><option value="Belum">Belum</option></select><td><input type="text" class="answer-field" id="deploy4_ket">  '
-                        2.  <td>5<td>Dokumentasi teknis siap<td><select id="deploy5"><option value="">Pilih</option><option value="Siap">Siap</option><option value="Belum">Belum</option></select><td><input type="text" class="answer-field" id="deploy5_ket">  '
-                    </tbody>
-                }</
-
-                <div class="instruction-box">Aktivitas 16: Proses Deployment</div>
-                <table class="kka-table">
-                    <thead> <th>Langkah</th><th>Kegiatan</th><th>Hasil</th><th>Catatan</th> </thead>
-                    <tbody>
-                        2.  <td>1<td>Upload file ke server hosting<td><select id="deploy_step1"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select><td><input type="text" class="answer-field" id="deploy_step1_ket">  '
-                        2.  <td>2<td>Import database ke server<td><select id="deploy_step2"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select><td><input type="text" class="answer-field" id="deploy_step2_ket">  '
-                        2.  <td>3<td>Update konfigurasi koneksi<td><select id="deploy_step3"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select><td><input type="text" class="answer-field" id="deploy_step3_ket">  '
-                        2.  <td>4<td>Testing di server live<td><select id="deploy_step4"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select><td><input type="text" class="answer-field" id="deploy_step4_ket">  '
-                        2.  <td>5<td>Final check semua fitur<td><select id="deploy_step5"><option value="">Pilih</option><option value="Berhasil">Berhasil</option><option value="Gagal">Gagal</option></select><td><input type="text" class="answer-field" id="deploy_step5_ket">  '
-                    </tbody>
-                }</
-                <div class="instruction-box">Link Aplikasi yang Telah Dideploy:</div>
-                <input type="text" id="deploy_link" class="answer-field" placeholder="https://..." style="width:100%;">
-            </div>
-
-            <!-- BAGIAN G: PEMANFAATAN KA GENERATIF -->
-            <div class="kka-section">
-                <h3 class="section-title"><i class="fas fa-robot"></i> 🤖 BAGIAN G: PEMANFAATAN KA GENERATIF (TP.6.1) – 15 menit</h3>
-                <div class="instruction-box">Aktivitas 17: Prompt Engineering untuk Pengembangan</div>
-                <table class="kka-table">
-                    <thead> <th>No</th><th>Prompt yang Digunakan</th><th>Output KA Generatif</th><th>Adopsi ke dalam Kode</th> </thead>
-                    <tbody>
-                        2.  <td>1<td><textarea class="answer-field" id="gen_prompt1" rows="2"></textarea><td><textarea class="answer-field" id="gen_output1" rows="2"></textarea><td><input type="text" class="answer-field" id="gen_adopsi1">  '
-                        2.  <td>2<td><textarea class="answer-field" id="gen_prompt2" rows="2"></textarea><td><textarea class="answer-field" id="gen_output2" rows="2"></textarea><td><input type="text" class="answer-field" id="gen_adopsi2">  '
-                        2.  <td>3<td><textarea class="answer-field" id="gen_prompt3" rows="2"></textarea><td><textarea class="answer-field" id="gen_output3" rows="2"></textarea><td><input type="text" class="answer-field" id="gen_adopsi3">  '
-                    </tbody>
-                }</
-            </div>
-
-            <!-- BAGIAN H: ETIKA DAN KEAMANAN DATA -->
-            <div class="kka-section">
-                <h3 class="section-title"><i class="fas fa-shield-alt"></i> ⚖️ BAGIAN H: ETIKA DAN KEAMANAN DATA (TP.5.1) – 15 menit</h3>
-                <div class="instruction-box">Aktivitas 18: Evaluasi Etika Produk Akhir</div>
-                <table class="kka-table">
-                    <thead> <th>Aspek</th><th>Evaluasi</th><th>Tindak Lanjut / Perbaikan</th> </thead>
-                    <tbody>
-                        2.  <td>Keamanan Data Pengguna<td><textarea class="answer-field" id="etika1"></textarea><td><input type="text" class="answer-field" id="etika1_tindak">  '
-                        2.  <td>Transparansi Kebijakan Privasi<td><textarea class="answer-field" id="etika2"></textarea><td><input type="text" class="answer-field" id="etika2_tindak">  '
-                        2.  <td>Kepatuhan terhadap Regulasi (UU PDP)<td><textarea class="answer-field" id="etika3"></textarea><td><input type="text" class="answer-field" id="etika3_tindak">  '
-                        2.  <td>Potensi Penyalahgunaan Aplikasi<td><textarea class="answer-field" id="etika4"></textarea><td><input type="text" class="answer-field" id="etika4_tindak">  '
-                        2.  <td>Dampak Sosial Positif<td><textarea class="answer-field" id="etika5"></textarea><td><input type="text" class="answer-field" id="etika5_tindak">  '
-                        2.  <td>Dampak Sosial Negatif (yang perlu diantisipasi)<td><textarea class="answer-field" id="etika6"></textarea><td><input type="text" class="answer-field" id="etika6_tindak">  '
-                    </tbody>
-                }</
-            </div>
-
-            <!-- BAGIAN I: REFLEKSI AKHIR -->
-            <div class="kka-section">
-                <h3 class="section-title"><i class="fas fa-pen-fancy"></i> 📝 BAGIAN I: REFLEKSI AKHIR (INDIVIDU) – 10 menit</h3>
-                <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:8px; margin-bottom:1rem;">
-                    <div><strong>Nama:</strong> <input type="text" id="ref_nama" class="answer-field"></div>
-                    <div><strong>Kelas:</strong> <input type="text" id="ref_kelas" class="answer-field"></div>
-                    <div><strong>Kelompok:</strong> <input type="text" id="ref_kelompok" class="answer-field"></div>
+                <div class="help-box" style="background:#e3f2fd; border-left-color:#0d47a1; margin-top:0.5rem;">
+                    <i class="fas fa-mobile-alt" style="color:#0d47a1;"></i> 
+                    <strong>📱 Tips Debugging dari HP:</strong><br>
+                    • Gunakan <strong>Chrome DevTools</strong> (di HP: chrome://inspect)<br>
+                    • Untuk Google Sheets API: cek response di <strong>console.log()</strong> atau gunakan <strong>Postman</strong><br>
+                    • Untuk SQL: cek error di <strong>phpMyAdmin</strong> atau <strong>SQLite Browser</strong>
                 </div>
+
+                <h4>Kegiatan 4: User Acceptance Test (UAT)</h4>
+                <table id="tabel-uat" class="kka-table">
+                    <thead><tr><th>No</th><th>Nama Penguji</th><th>Fitur Dicoba</th><th>Feedback</th><th>Saran Perbaikan</th><th></th></tr></thead>
+                    <tbody id="uatBody"></tbody>
+                </table>
+                <button type="button" class="btn-add" onclick="tambahUAT()"><i class="fas fa-plus"></i> Tambah Penguji</button>
+            </div>
+
+<!-- ===== BAGIAN F: DEPLOYMENT ===== -->
+<div class="kka-section">
+    <h3 class="section-title">
+        <i class="fas fa-rocket"></i> 
+        Bagian F: Deployment 
+        <span class="badge-tp kelompok">Kelompok</span>
+        <span class="time-estimate"><i class="far fa-clock"></i> 20 menit</span>
+    </h3>
+
+    <div class="help-box">
+        <i class="fas fa-lightbulb"></i> 
+        <strong>💡 Pilih metode deployment sesuai kemampuan:</strong><br>
+        • <strong>Hosting (PHP/MySQL)</strong> - Upload ke hosting seperti Niagahoster, Hostinger<br>
+        • <strong>Google Apps Script</strong> - Deploy sebagai Web App (✅ HP Friendly, gratis)<br>
+        • <strong>Replit / Glitch</strong> - Untuk Node.js / Python (✅ Bisa dari HP)<br>
+        • <strong>Vercel / Netlify</strong> - Untuk frontend statis (HTML/CSS/JS)
+    </div>
+
+    <h4>Kegiatan 1: Persiapan Deployment</h4>
+    <table id="tabel-deploy" class="kka-table">
+        <thead><tr><th style="width:6%;">No</th><th style="width:25%;">Persiapan</th><th style="width:18%;">Status</th><th style="width:51%;">Keterangan</th></tr></thead>
+        <tbody>
+            <tr>
+                <td style="width:6%;">1</td>
+                <td style="width:25%;">File siap diupload (compress jika perlu)</td>
+                <td style="width:18%;"><select id="deploy1" class="answer-field"><option value="">Pilih</option><option value="Siap">✅ Siap</option><option value="Belum">❌ Belum</option></select></td>
+                <td style="width:51%;"><input type="text" id="deploy1_ket" class="answer-field" placeholder="..."></td>
+            </tr>
+            <tr>
+                <td style="width:6%;">2</td>
+                <td style="width:25%;">Konfigurasi database / API siap</td>
+                <td style="width:18%;"><select id="deploy2" class="answer-field"><option value="">Pilih</option><option value="Siap">✅ Siap</option><option value="Belum">❌ Belum</option></select></td>
+                <td style="width:51%;"><input type="text" id="deploy2_ket" class="answer-field" placeholder="..."></td>
+            </tr>
+            <tr>
+                <td style="width:6%;">3</td>
+                <td style="width:25%;">Testing final di lokal / development</td>
+                <td style="width:18%;"><select id="deploy3" class="answer-field"><option value="">Pilih</option><option value="Siap">✅ Siap</option><option value="Belum">❌ Belum</option></select></td>
+                <td style="width:51%;"><input type="text" id="deploy3_ket" class="answer-field" placeholder="..."></td>
+            </tr>
+            <tr>
+                <td style="width:6%;">4</td>
+                <td style="width:25%;">Backup data dan file (jika ada data lama)</td>
+                <td style="width:18%;"><select id="deploy4" class="answer-field"><option value="">Pilih</option><option value="Siap">✅ Siap</option><option value="Belum">❌ Belum</option></select></td>
+                <td style="width:51%;"><input type="text" id="deploy4_ket" class="answer-field" placeholder="..."></td>
+            </tr>
+            <tr>
+                <td style="width:6%;">5</td>
+                <td style="width:25%;">Dokumentasi teknis siap</td>
+                <td style="width:18%;"><select id="deploy5" class="answer-field"><option value="">Pilih</option><option value="Siap">✅ Siap</option><option value="Belum">❌ Belum</option></select></td>
+                <td style="width:51%;"><input type="text" id="deploy5_ket" class="answer-field" placeholder="..."></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>Kegiatan 2: Link Hasil Deployment</h4>
+    <input type="url" id="deploy_link" class="answer-field" placeholder="https://[nama-aplikasi].vercel.app/ atau https://script.google.com/macros/s/.../exec" style="width:100%; margin-bottom:1rem;">
+    <div class="help-box" style="background:#e8f5e9; border-left-color:#43a047; margin-top:0.5rem;">
+        <i class="fas fa-check-circle" style="color:#43a047;"></i> 
+        <strong>📌 Untuk Google Apps Script:</strong> Link Web App bisa didapat dari Deploy → New Deployment → Web App
+    </div>
+
+    <!-- LAMPIRAN SCREENSHOT DEPLOY -->
+    <div class="lampiran-box">
+        <label>
+            <i class="fas fa-paperclip"></i> 
+            📎 Lampirkan Screenshot Hasil Deploy <span style="font-weight:400; color:#6b7280; font-size:0.8rem;">(Opsional)</span>
+            <button type="button" class="btn-toggle-lampiran" onclick="toggleLampiran('lampiran_deploy')">
+                <i class="fas fa-plus"></i> Tambahkan Link
+            </button>
+        </label>
+        <div id="lampiran_deploy" class="lampiran-field">
+            <p style="font-size:0.9rem; color:#4b5563; margin-bottom:8px;">
+                <strong>📸 Screenshot hasil deployment aplikasi yang sudah berjalan (bisa screenshot dari HP).</strong>
+            </p>
+            <input type="url" id="link_deploy" class="answer-field" placeholder="https://drive.google.com/file/d/.../view">
+            <div class="hint">
+                <i class="fas fa-info-circle"></i> Pastikan akses file diatur menjadi "Siapa saja dengan tautan bisa melihat"
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== BAGIAN G: PEMANFAATAN KA GENERATIF ===== -->
+<div class="kka-section">
+    <h3 class="section-title">
+        <i class="fas fa-robot"></i> 
+        Bagian G: Pemanfaatan KA Generatif <span class="badge-tp" style="background:#e67e22;">TP 6.1</span>
+        <span class="badge-tp kelompok">Kelompok</span>
+        <span class="time-estimate"><i class="far fa-clock"></i> 15 menit</span>
+    </h3>
+    <div class="help-box">
+        <i class="fas fa-lightbulb"></i> <strong>Gunakan KA Generatif (ChatGPT, Gemini, DeepSeek, dll)</strong> untuk membantu pengembangan produk.
+    </div>
+    
+    <h4>Prompt Engineering untuk Pengembangan</h4>
+    <table id="tabel-prompt" class="kka-table">
+        <thead><tr><th style="width:6%;">No</th><th style="width:28%;">Prompt yang Digunakan</th><th style="width:38%;">Output KA Generatif</th><th style="width:28%;">Adopsi ke dalam Kode</th></tr></thead>
+        <tbody>
+            <tr>
+                <td style="width:6%;">1</td>
+                <td style="width:28%;"><textarea id="gen_prompt1" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:38%;"><textarea id="gen_output1" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:28%;"><input type="text" id="gen_adopsi1" class="answer-field" placeholder="..."></td>
+            </tr>
+            <tr>
+                <td style="width:6%;">2</td>
+                <td style="width:28%;"><textarea id="gen_prompt2" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:38%;"><textarea id="gen_output2" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:28%;"><input type="text" id="gen_adopsi2" class="answer-field" placeholder="..."></td>
+            </tr>
+            <tr>
+                <td style="width:6%;">3</td>
+                <td style="width:28%;"><textarea id="gen_prompt3" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:38%;"><textarea id="gen_output3" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:28%;"><input type="text" id="gen_adopsi3" class="answer-field" placeholder="..."></td>
+            </tr>
+            <tr>
+                <td style="width:6%;">4</td>
+                <td style="width:28%;"><textarea id="gen_prompt4" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:38%;"><textarea id="gen_output4" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:28%;"><input type="text" id="gen_adopsi4" class="answer-field" placeholder="..."></td>
+            </tr>
+            <tr>
+                <td style="width:6%;">5</td>
+                <td style="width:28%;"><textarea id="gen_prompt5" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:38%;"><textarea id="gen_output5" rows="3" class="answer-field" placeholder="..."></textarea></td>
+                <td style="width:28%;"><input type="text" id="gen_adopsi5" class="answer-field" placeholder="..."></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- LAMPIRAN SCREENSHOT PROMPT -->
+    <div class="lampiran-box">
+        <label>
+            <i class="fas fa-paperclip"></i> 
+            📎 Lampirkan Screenshot Prompt KA <span style="font-weight:400; color:#6b7280; font-size:0.8rem;">(Opsional)</span>
+            <button type="button" class="btn-toggle-lampiran" onclick="toggleLampiran('lampiran_prompt')">
+                <i class="fas fa-plus"></i> Tambahkan Link
+            </button>
+        </label>
+        <div id="lampiran_prompt" class="lampiran-field">
+            <p style="font-size:0.9rem; color:#4b5563; margin-bottom:8px;">
+                <strong>📸 Screenshot hasil prompt yang kalian buat.</strong>
+            </p>
+            <input type="url" id="link_prompt" class="answer-field" placeholder="https://drive.google.com/file/d/.../view">
+            <div class="hint">
+                <i class="fas fa-info-circle"></i> Pastikan akses file diatur menjadi "Siapa saja dengan tautan bisa melihat"
+            </div>
+        </div>
+    </div>
+</div>
+
+            <!-- ===== BAGIAN H: ETIKA DAN KEAMANAN DATA ===== -->
+            <div class="kka-section">
+                <h3 class="section-title">
+                    <i class="fas fa-shield-alt"></i> 
+                    Bagian H: Etika & Keamanan Data <span class="badge-tp" style="background:#27ae60;">TP 5.1</span>
+                    <span class="badge-tp kelompok">Kelompok</span>
+                    <span class="time-estimate"><i class="far fa-clock"></i> 15 menit</span>
+                </h3>
+
+                <h4>Evaluasi Etika Produk Akhir</h4>
                 <table class="kka-table">
-                    <thead> <th>No</th><th>Pertanyaan</th><th>Jawabanku</th> </thead>
+                    <thead><tr><th>Aspek</th><th>Evaluasi</th><th>Tindak Lanjut</th></tr></thead>
                     <tbody>
-                        2.  <td>1<td>Apakah aku sudah bisa mengimplementasikan algoritma ke dalam program? (TP.3.1)<td><textarea class="answer-field large" id="ref1"></textarea>  '
-                        2.  <td>2<td>Apakah aku sudah bisa mengimplementasikan database sesuai rancangan? (TP.4.1)<td><textarea class="answer-field large" id="ref2"></textarea>  '
-                        2.  <td>3<td>Apa tantangan terbesar dalam coding aplikasi ini?<td><textarea class="answer-field large" id="ref3"></textarea>  '
-                        2.  <td>4<td>Bagaimana perasaanku melihat aplikasi yang sudah berjalan dan dideploy?<td><textarea class="answer-field large" id="ref4"></textarea>  '
-                        2.  <td>5<td>Apa kontribusiku dalam pengembangan aplikasi ini?<td><textarea class="answer-field large" id="ref5"></textarea>  '
-                        2.  <td>6<td>Apa yang akan aku lakukan berbeda jika mengerjakan proyek serupa di masa depan?<td><textarea class="answer-field large" id="ref6"></textarea>  '
+                        <tr>
+                            <td>Keamanan Data Pengguna</td>
+                            <td><textarea id="etika1" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                            <td><input type="text" id="etika1_tindak" class="answer-field" placeholder="..."></td>
+                        </tr>
+                        <tr>
+                            <td>Transparansi Kebijakan Privasi</td>
+                            <td><textarea id="etika2" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                            <td><input type="text" id="etika2_tindak" class="answer-field" placeholder="..."></td>
+                        </tr>
+                        <tr>
+                            <td>Kepatuhan terhadap Regulasi (UU PDP)</td>
+                            <td><textarea id="etika3" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                            <td><input type="text" id="etika3_tindak" class="answer-field" placeholder="..."></td>
+                        </tr>
+                        <tr>
+                            <td>Dampak Sosial Positif</td>
+                            <td><textarea id="etika4" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                            <td><input type="text" id="etika4_tindak" class="answer-field" placeholder="..."></td>
+                        </tr>
+                        <tr>
+                            <td>Dampak Sosial Negatif (yang perlu diantisipasi)</td>
+                            <td><textarea id="etika5" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                            <td><input type="text" id="etika5_tindak" class="answer-field" placeholder="..."></td>
+                        </tr>
                     </tbody>
-                }</
+                </table>
+            </div>
+
+            <!-- ===== BAGIAN I: REFLEKSI AKHIR ===== -->
+            <div class="kka-section">
+                <h3 class="section-title">
+                    <i class="fas fa-pen-fancy"></i> 
+                    Bagian I: Refleksi Akhir 
+                    <span class="badge-tp individu">Individu</span>
+                    <span class="time-estimate"><i class="far fa-clock"></i> 10 menit</span>
+                </h3>
+                <p>Tuliskan pendapat dan perasaanmu setelah menyelesaikan aktivitas ini.</p>
+                <table class="kka-table">
+                    <thead><tr><th>No</th><th>Pertanyaan</th><th>Jawaban</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Apakah kamu sudah bisa mengimplementasikan algoritma ke dalam program? (TP 3.1)</td>
+                            <td><textarea id="refleksi1" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Apakah kamu sudah bisa mengimplementasikan database (SQL atau Google Sheets)? (TP 4.1)</td>
+                            <td><textarea id="refleksi2" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Komitmenmu untuk tahap selanjutnya dalam proyek ini?</td>
+                            <td><textarea id="refleksi3" rows="2" class="answer-field" placeholder="..."></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+
                 <div class="checklist-container">
-                    <div class="checklist-item"><input type="checkbox" id="final_check1"> Saya sudah membaca materi implementasi dan pengujian</div>
-                    <div class="checklist-item"><input type="checkbox" id="final_check2"> Saya sudah mengimplementasikan database</div>
-                    <div class="checklist-item"><input type="checkbox" id="final_check3"> Saya sudah mengimplementasikan fitur-fitur aplikasi</div>
-                    <div class="checklist-item"><input type="checkbox" id="final_check4"> Saya sudah melakukan pengujian dan debugging</div>
-                    <div class="checklist-item"><input type="checkbox" id="final_check5"> Saya sudah melakukan deployment aplikasi</div>
-                    <div class="checklist-item"><input type="checkbox" id="final_check6"> Saya sudah mempertimbangkan aspek etika dan keamanan</div>
+                    <p style="font-weight:600; margin-bottom:8px;"><i class="fas fa-check-circle" style="color:var(--kka-success);"></i> Checklist Penyelesaian:</p>
+                    <div><input type="checkbox" id="final_check1"> ✅ Saya sudah membaca materi implementasi dan pengujian</div>
+                    <div><input type="checkbox" id="final_check2"> ✅ Saya sudah mengimplementasikan database (TP 4.1)</div>
+                    <div><input type="checkbox" id="final_check3"> ✅ Saya sudah mengimplementasikan fitur-fitur aplikasi (TP 3.1)</div>
+                    <div><input type="checkbox" id="final_check4"> ✅ Saya sudah melakukan pengujian dan debugging</div>
+                    <div><input type="checkbox" id="final_check5"> ✅ Saya sudah melakukan deployment aplikasi</div>
+                    <div><input type="checkbox" id="final_check6"> ✅ Saya sudah mempertimbangkan aspek etika dan keamanan (TP 5.1)</div>
                 </div>
             </div>
 
-            <button class="submit-button" id="submitBtn" onclick="submitData()" disabled><i class="fas fa-paper-plane"></i> Kumpulkan Lembar Aktivitas</button>
+            <button class="submit-button" id="submitBtn" onclick="submitData()">
+                <i class="fas fa-paper-plane"></i> Kumpulkan Lembar Aktivitas
+            </button>
             <div id="successMessage" class="success-message"><i class="fas fa-check-circle"></i> Lembar aktivitas berhasil dikumpulkan! Lanjut ke tahap berikutnya! 🚀</div>
         </div>
 
         <div class="activity-navigation">
-            <a href="s2-3-perancangan-produk.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Kembali ke Aktivitas 3</a>
-            <a href="s2-5-diseminasi-produk.html" class="nav-btn primary">Lanjut ke Aktivitas 5 <i class="fas fa-arrow-right"></i></a>
+            <a href="s2-3-perancangan-produk.html" class="nav-back"><i class="fas fa-arrow-left"></i> Kembali ke Aktivitas 3</a>
+            <a href="s2-5-diseminasi-produk.html" class="nav-next">Lanjut ke Aktivitas 5 <i class="fas fa-arrow-right"></i></a>
         </div>
     </section>
 
     <script>
+        // ==================== KONFIGURASI ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_PEREKAPAN = 'https://script.google.com/macros/s/AKfycbyIYF3NX2fK2u4QNi9uPR238_bKb9bOkNA1gonV8UHysoiChUd_pHzw3zOXiUB5_1t7/exec';
-        const STORAGE_KEY = 'kka_proyek4_pengembangan';
+        const URL_PEREKAPAN = 'https://script.google.com/macros/s/AKfycbycRj2MQDC0JNM0jY2hI1UWwwZ7XK-bgULuMSOKzUU8QwhZ_QVCkRRcGPH3_RMnBUPT/exec';
+        const STORAGE_KEY = 'kka_proyek4_pengembangan_final';
+        let dataKelas = [], dataSiswa = {};
+        let isLoading = true;
 
-        const FORM_CONFIG = {
-            sheetName: "AKTIVITAS PROYEK 4 - PENGEMBANGAN PRODUK",
-            headers: ["Timestamp", "Kelas", "Nama", "Kelompok", "Peran", "Bidang Keahlian", "Nama Aplikasi", "Tanggal Mulai", "Tanggal Selesai", "Data Bagian A", "Data Bagian B", "Data Bagian C", "Data Bagian D", "Data Bagian E", "Data Bagian F", "Data Bagian G", "Data Bagian H", "Data Bagian I"]
-        };
+        // Variabel untuk tabel dinamis
+        let ujiRows = 3;
+        let uatRows = 2;
 
-        let dataKelas = [], dataSiswa = {}, isLoading = true, autoSaveTimeout = null, isOnline = navigator.onLine;
+        // ===== FUNGSI TOGGLE DATABASE =====
+        function toggleDatabase(type) {
+            document.getElementById('db-sql-section').classList.remove('active');
+            document.getElementById('db-sheets-section').classList.remove('active');
+            if (type === 'sql') {
+                document.getElementById('db-sql-section').classList.add('active');
+            } else if (type === 'sheets') {
+                document.getElementById('db-sheets-section').classList.add('active');
+            }
+            autoSaveToLocal();
+        }
 
-        function updateConnectionStatus() {
-            isOnline = navigator.onLine;
-            const statusIndicator = document.getElementById('statusIndicator');
-            const connectionStatus = document.getElementById('connectionStatus');
-            if (isOnline) {
-                statusIndicator.classList.remove('offline');
-                connectionStatus.textContent = 'Online';
-                if (!isLoading && dataKelas.length === 0) loadDataFromGoogleSheets();
-                disableForm(false);
-                document.getElementById('errorMessage').style.display = 'none';
-            } else {
-                statusIndicator.classList.add('offline');
-                connectionStatus.textContent = 'Offline - Form Dinonaktifkan';
-                disableForm(true);
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorText').innerHTML = 'Anda sedang offline. Silakan cek koneksi internet dan refresh halaman.';
+        // ===== FUNGSI FORMAT TIMESTAMP =====
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const hariName = hari[now.getDay()];
+            const tanggal = now.getDate().toString().padStart(2, '0');
+            const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                           'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const bulanName = bulan[now.getMonth()];
+            const tahun = now.getFullYear();
+            const jam = now.getHours().toString().padStart(2, '0');
+            const menit = now.getMinutes().toString().padStart(2, '0');
+            const detik = now.getSeconds().toString().padStart(2, '0');
+            return `${hariName}, ${tanggal} ${bulanName} ${tahun} - ${jam}:${menit}:${detik}`;
+        }
+
+        // ===== FUNGSI TOGGLE LAMPIRAN =====
+        function toggleLampiran(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.toggle('show');
+                const btn = el.parentElement.querySelector('.btn-toggle-lampiran');
+                if (el.classList.contains('show')) {
+                    btn.innerHTML = '<i class="fas fa-minus"></i> Sembunyikan';
+                } else {
+                    btn.innerHTML = '<i class="fas fa-plus"></i> Tambahkan Link';
+                }
             }
         }
 
-        function refreshPage() { location.reload(); }
-
-        function disableForm(disabled) {
-            const container = document.getElementById('worksheetForm');
-            if (disabled) {
-                container.classList.add('form-disabled');
-                document.getElementById('submitBtn').disabled = true;
-                document.getElementById('kelas').disabled = true;
-                document.getElementById('nama').disabled = true;
-            } else {
-                container.classList.remove('form-disabled');
-                document.getElementById('submitBtn').disabled = false;
-                document.getElementById('kelas').disabled = false;
-                document.getElementById('nama').disabled = false;
+        // ===== RENDER TABEL UJI =====
+        function renderTabelUji() {
+            let tbody = document.querySelector('#ujiBody');
+            if(!tbody) return;
+            let html = '';
+            for(let i=0; i<ujiRows; i++) {
+                html += `<tr>
+                    <td style="text-align:center">${i+1}</td>
+                    <td><input type="text" class="answer-field" id="uji_fitur_${i}" placeholder="Login"></td>
+                    <td><input type="text" class="answer-field" id="uji_skenario_${i}" placeholder="Login dengan username & password"></td>
+                    <td><input type="text" class="answer-field" id="uji_input_${i}" placeholder="user123, pass123"></td>
+                    <td><input type="text" class="answer-field" id="uji_output_harap_${i}" placeholder="Berhasil login"></td>
+                    <td><input type="text" class="answer-field" id="uji_output_aktual_${i}" placeholder="Berhasil login"></td>
+                    <td><select id="uji_status_${i}" class="answer-field"><option value="">Pilih</option><option value="Berhasil">✅ Berhasil</option><option value="Gagal">❌ Gagal</option></select></td>
+                    <td style="text-align:center"><button class="btn-remove" onclick="hapusUji(${i})"><i class="fas fa-trash-alt"></i></button></td>
+                </tr>`;
             }
+            tbody.innerHTML = html;
         }
 
-        function saveToLocalStorage() {
-            if (!isOnline) return;
-            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
-            autoSaveTimeout = setTimeout(() => {
-                const formData = {};
-                document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').forEach(el => { if (el.id) formData[el.id] = el.value; });
-                document.querySelectorAll('input[type="checkbox"]').forEach(el => { if (el.id) formData[el.id] = el.checked; });
-                document.querySelectorAll('input[type="radio"]').forEach(el => { if (el.checked && el.name) formData[`radio_${el.name}`] = el.value; });
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
-            }, 1000);
+        function tambahUji() { ujiRows++; renderTabelUji(); autoSaveToLocal(); }
+        function hapusUji(idx) { if(ujiRows>1) { ujiRows--; renderTabelUji(); autoSaveToLocal(); } }
+
+        // ===== RENDER TABEL UAT =====
+        function renderTabelUAT() {
+            let tbody = document.querySelector('#uatBody');
+            if(!tbody) return;
+            let html = '';
+            for(let i=0; i<uatRows; i++) {
+                html += `<tr>
+                    <td style="text-align:center">${i+1}</td>
+                    <td><input type="text" class="answer-field" id="uat_nama_${i}" placeholder="Nama penguji"></td>
+                    <td><input type="text" class="answer-field" id="uat_fitur_${i}" placeholder="Fitur yang dicoba"></td>
+                    <td><textarea id="uat_feedback_${i}" rows="2" class="answer-field" placeholder="Feedback..."></textarea></td>
+                    <td><input type="text" class="answer-field" id="uat_saran_${i}" placeholder="Saran perbaikan..."></td>
+                    <td style="text-align:center"><button class="btn-remove" onclick="hapusUAT(${i})"><i class="fas fa-trash-alt"></i></button></td>
+                </tr>`;
+            }
+            tbody.innerHTML = html;
         }
 
-        function loadFromLocalStorage() {
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (!savedData) return;
+        function tambahUAT() { uatRows++; renderTabelUAT(); autoSaveToLocal(); }
+        function hapusUAT(idx) { if(uatRows>1) { uatRows--; renderTabelUAT(); autoSaveToLocal(); } }
+
+        // ===== RENDER SEMUA TABEL =====
+        function renderSemuaTabel() {
+            renderTabelUji();
+            renderTabelUAT();
+        }
+
+        // ===== AUTO SAVE =====
+        function autoSaveToLocal() {
             try {
-                const formData = JSON.parse(savedData);
-                Object.keys(formData).forEach(key => {
-                    const element = document.getElementById(key);
-                    if (element) {
-                        if (element.type === 'checkbox') element.checked = formData[key];
-                        else if (element.type === 'radio') {}
-                        else element.value = formData[key];
-                    }
-                    if (key.startsWith('radio_')) {
-                        const radioName = key.replace('radio_', '');
-                        const radioToCheck = document.querySelector(`input[name="${radioName}"][value="${formData[key]}"]`);
-                        if (radioToCheck) radioToCheck.checked = true;
-                    }
+                let allData = {};
+                document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea').forEach(el => {
+                    if(el.id) allData[el.id] = el.value;
                 });
-                updateProgressBar();
-            } catch(e) { console.error('Gagal load localStorage', e); }
+                document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                    if(el.id) allData[el.id] = el.checked;
+                });
+                document.querySelectorAll('input[type="radio"]').forEach(el => {
+                    if(el.checked && el.name) allData[`radio_${el.name}`] = el.value;
+                });
+                allData.ujiRows = ujiRows;
+                allData.uatRows = uatRows;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+            } catch(e) {}
         }
 
-        function clearLocalStorage() { localStorage.removeItem(STORAGE_KEY); }
-
-        function triggerAutoSave() {
-            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
-            autoSaveTimeout = setTimeout(() => { saveToLocalStorage(); updateProgressBar(); }, 1000);
-        }
-
-        function updateProgressBar() {
-            const allFields = document.querySelectorAll('input:not([type=checkbox]):not([type="radio"]), select, textarea');
-            let filled = 0;
-            allFields.forEach(field => { if (field.value && field.value.trim() !== '') filled++; });
-            const total = allFields.length;
-            const progress = total > 0 ? Math.round((filled / total) * 100) : 0;
-            document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressText').textContent = progress + '% selesai';
-        }
-
-        function loadDataFromGoogleSheets() {
-            if (!isOnline) return;
+        function loadFromLocal() {
+            let saved = localStorage.getItem(STORAGE_KEY);
+            if(!saved) return;
             try {
-                document.getElementById('loadingMessage').style.display = 'block';
-                const callbackName = 'jsonp_callback_' + Date.now();
-                window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
-                    if (script) script.remove();
-                    delete window[callbackName];
-                    if (result && result.success) {
-                        dataKelas = result.kelasList || [];
-                        dataSiswa = result.siswaPerKelas || {};
-                        const kelasSelect = document.getElementById('kelas');
-                        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-                        dataKelas.forEach(kelas => { const opt = document.createElement('option'); opt.value = kelas; opt.textContent = kelas; kelasSelect.appendChild(opt); });
-                        disableForm(false);
-                        document.getElementById('loadingMessage').style.display = 'none';
-                        loadFromLocalStorage();
-                    } else {
-                        document.getElementById('loadingMessage').style.display = 'none';
-                        document.getElementById('errorMessage').style.display = 'block';
-                        document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
-                        disableForm(true);
+                let data = JSON.parse(saved);
+                for(let key in data) {
+                    let el = document.getElementById(key);
+                    if(el) {
+                        if(el.type === 'checkbox') el.checked = data[key];
+                        else if(el.type !== 'radio') el.value = data[key];
                     }
-                    isLoading = false;
-                };
-                const script = document.createElement('script');
-                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = function() {
+                    if(key.startsWith('radio_')) {
+                        let radioName = key.replace('radio_', '');
+                        let radioToCheck = document.querySelector(`input[name="${radioName}"][value="${data[key]}"]`);
+                        if(radioToCheck) radioToCheck.checked = true;
+                    }
+                }
+                if(data.ujiRows) ujiRows = data.ujiRows;
+                if(data.uatRows) uatRows = data.uatRows;
+                renderSemuaTabel();
+                // Restore database selection
+                if(data['radio_db_type'] === 'sql') {
+                    document.getElementById('db_sql').checked = true;
+                    toggleDatabase('sql');
+                } else if(data['radio_db_type'] === 'sheets') {
+                    document.getElementById('db_sheets').checked = true;
+                    toggleDatabase('sheets');
+                }
+                if(data['radio_jenis_aplikasi_uji'] === 'SQL') {
+                    document.getElementById('uji_sql').checked = true;
+                } else if(data['radio_jenis_aplikasi_uji'] === 'Google Sheets + Apps Script') {
+                    document.getElementById('uji_sheets').checked = true;
+                }
+            } catch(e) {}
+        }
+
+        window.addEventListener('beforeunload', () => autoSaveToLocal());
+
+        function attachAutoSave() {
+            document.querySelectorAll('input, select, textarea').forEach(el => el.addEventListener('input', () => autoSaveToLocal()));
+        }
+
+        // ===== LOAD DATA SISWA =====
+        function loadDataFromGoogleSheets() {
+            if(!navigator.onLine) {
+                document.getElementById('statusIndicator').classList.add('offline');
+                document.getElementById('connectionStatus').textContent = 'Offline';
+                return;
+            }
+            document.getElementById('loadingMessage').style.display = 'block';
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(result) {
+                if(result && result.success) {
+                    dataKelas = result.kelasList || [];
+                    dataSiswa = result.siswaPerKelas || {};
+                    let kelasSelect = document.getElementById('kelas');
+                    kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                    dataKelas.forEach(k => { let opt = document.createElement('option'); opt.value=k; opt.textContent=k; kelasSelect.appendChild(opt); });
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    loadFromLocal();
+                    attachAutoSave();
+                } else {
                     document.getElementById('loadingMessage').style.display = 'none';
                     document.getElementById('errorMessage').style.display = 'block';
-                    document.getElementById('errorText').innerHTML = 'Gagal terhubung ke server. Silakan refresh halaman.';
-                    disableForm(true);
-                    isLoading = false;
-                };
-                document.head.appendChild(script);
-            } catch(error) {
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('errorMessage').style.display = 'block';
-                disableForm(true);
-                isLoading = false;
-            }
+                    document.getElementById('errorText').innerText = 'Gagal memuat data siswa.';
+                }
+                isLoading=false;
+                delete window[callbackName];
+            };
+            let script = document.createElement('script');
+            script.src = `${URL_DATA_SISWA}?callback=${callbackName}`;
+            script.onerror = () => { 
+                document.getElementById('loadingMessage').style.display='none'; 
+                document.getElementById('errorMessage').style.display='block'; 
+                document.getElementById('errorText').innerText = 'Gagal terhubung ke server. Periksa koneksi internet.';
+                isLoading=false; 
+            };
+            document.head.appendChild(script);
         }
 
         function updateNamaDropdown() {
-            const kelas = document.getElementById('kelas').value;
-            const namaSelect = document.getElementById('nama');
-            if (!kelas || !dataSiswa[kelas]) { namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>'; return; }
+            let kelas = document.getElementById('kelas').value;
+            let namaSelect = document.getElementById('nama');
+            if(!kelas || !dataSiswa[kelas]) { 
+                namaSelect.innerHTML='<option value="">-- Pilih Nama --</option>'; 
+                return; 
+            }
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            (dataSiswa[kelas] || []).sort().forEach(nama => { const opt = document.createElement('option'); opt.value = nama; opt.textContent = nama; namaSelect.appendChild(opt); });
+            dataSiswa[kelas].sort().forEach(n => { 
+                let opt = document.createElement('option'); 
+                opt.value=n; 
+                opt.textContent=n; 
+                namaSelect.appendChild(opt); 
+            });
         }
 
-        async function submitData() {
-            if (!isOnline) { alert('Anda sedang offline. Silakan cek koneksi internet.'); return; }
-            if (isLoading) { alert('Data masih dimuat.'); return; }
-            if (!document.getElementById('kelas').value || !document.getElementById('nama').value) { alert('Lengkapi identitas terlebih dahulu!'); return; }
+        // ===== GET VALUE =====
+        function getValue(id) { 
+            let el = document.getElementById(id); 
+            return el ? el.value : ''; 
+        }
 
-            const submitBtn = document.getElementById('submitBtn');
+        function getRadioValue(name) {
+            let el = document.querySelector(`input[name="${name}"]:checked`);
+            return el ? el.value : '';
+        }
+
+        // ===== AMBIL DATA DINAMIS =====
+        function ambilDataUji() {
+            let arr = [];
+            for(let i=0; i<ujiRows; i++) {
+                let fitur = getValue(`uji_fitur_${i}`);
+                let skenario = getValue(`uji_skenario_${i}`);
+                let input = getValue(`uji_input_${i}`);
+                let output_harap = getValue(`uji_output_harap_${i}`);
+                let output_aktual = getValue(`uji_output_aktual_${i}`);
+                let status = getValue(`uji_status_${i}`);
+                if(fitur || skenario || input || output_harap || output_aktual || status) {
+                    arr.push({ fitur, skenario, input, output_harap, output_aktual, status });
+                }
+            }
+            return arr;
+        }
+
+        function ambilDataUAT() {
+            let arr = [];
+            for(let i=0; i<uatRows; i++) {
+                let nama = getValue(`uat_nama_${i}`);
+                let fitur = getValue(`uat_fitur_${i}`);
+                let feedback = getValue(`uat_feedback_${i}`);
+                let saran = getValue(`uat_saran_${i}`);
+                if(nama || fitur || feedback || saran) {
+                    arr.push({ nama, fitur, feedback, saran });
+                }
+            }
+            return arr;
+        }
+
+        // ===== SUBMIT DATA =====
+        async function submitData() {
+            if(!navigator.onLine) { 
+                alert('Anda sedang offline. Periksa koneksi internet.'); 
+                return; 
+            }
+            
+            let kelas = document.getElementById('kelas').value;
+            let nama = document.getElementById('nama').value;
+            
+            if(!kelas || !nama) { 
+                alert('Lengkapi identitas (Kelas & Nama)!'); 
+                return; 
+            }
+            
+            let submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
-
+            
             try {
-                const formData = new URLSearchParams();
-                formData.append('sheetName', FORM_CONFIG.sheetName);
-                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
-                formData.append('Kelas', document.getElementById('kelas').value);
-                formData.append('Nama', document.getElementById('nama').value);
-                formData.append('Kelompok', document.getElementById('kelompok').value || '');
-                formData.append('Peran', document.getElementById('peran').value || '');
-                formData.append('Bidang Keahlian', document.getElementById('bidang_keahlian').value || '');
-                formData.append('Nama Aplikasi', document.getElementById('nama_aplikasi').value || '');
-                formData.append('Tanggal Mulai', document.getElementById('tanggal_mulai').value || '');
-                formData.append('Tanggal Selesai', document.getElementById('tanggal_selesai').value || '');
+                let formData = new URLSearchParams();
+                formData.append('sheetName', 'data_aktivitas');
 
-                // Bagian A
-                const bagianA = { a1:document.getElementById('a1')?.value, a2:document.getElementById('a2')?.value, a3:document.getElementById('a3')?.value, a4:document.getElementById('a4')?.value, a5:document.getElementById('a5')?.value, bacaMateri1:document.getElementById('bacaMateri1')?.checked, bacaMateri2:document.getElementById('bacaMateri2')?.checked, tanggalBaca:document.getElementById('tanggalBaca')?.value };
-                formData.append('Data Bagian A', JSON.stringify(bagianA));
+                // ===== BUAT TIMESTAMP =====
+                const timestamp = getFormattedTimestamp();
 
-                // Bagian B
-                const bagianB = { sql_database: document.getElementById('sql_database')?.value, db_screenshot: document.getElementById('db_screenshot')?.value, sql_seeding: document.getElementById('sql_seeding')?.value };
-                formData.append('Data Bagian B', JSON.stringify(bagianB));
+                // ===== STRUKTUR JSON DENGAN SPASI =====
+                let data = {
+                    "timestamp": timestamp,
+                    "identitas": {
+                        "kelas": kelas,
+                        "nama": nama,
+                        "kelompok": getValue('kelompok'),
+                        "peran": getValue('peran'),
+                        "bidang keahlian": getValue('bidang_keahlian'),
+                        "nama aplikasi": getValue('nama_aplikasi'),
+                        "tanggal mulai": getValue('tanggal_mulai'),
+                        "tanggal selesai": getValue('tanggal_selesai')
+                    },
+                    "jenis database": getRadioValue('db_type'),
+                    "jenis aplikasi uji": getRadioValue('jenis_aplikasi_uji'),
+                    "bagian a pemahaman materi": [
+                        { "pertanyaan": "Apa yang dimaksud dengan version control?", "jawaban": getValue('definisi_git') },
+                        { "pertanyaan": "Sebutkan 3 langkah deployment!", "jawaban": getValue('langkah_deploy') },
+                        { "pertanyaan": "Apa pentingnya pengujian?", "jawaban": getValue('penting_testing') },
+                        { "pertanyaan": "Sebutkan 3 jenis pengujian!", "jawaban": getValue('jenis_testing') }
+                    ],
+                    "bagian b implementasi database": {
+                        "sql": {
+                            "database": getValue('sql_database'),
+                            "seeding": getValue('sql_seeding'),
+                            "link screenshot": getValue('link_db_sql')
+                        },
+                        "google sheets": {
+                            "link sheets": getValue('link_google_sheets'),
+                            "link apps script": getValue('link_apps_script'),
+                            "sheet 1": { "nama": getValue('sheet1_nama'), "kolom": getValue('sheet1_kolom'), "fungsi": getValue('sheet1_fungsi') },
+                            "sheet 2": { "nama": getValue('sheet2_nama'), "kolom": getValue('sheet2_kolom'), "fungsi": getValue('sheet2_fungsi') },
+                            "sheet 3": { "nama": getValue('sheet3_nama'), "kolom": getValue('sheet3_kolom'), "fungsi": getValue('sheet3_fungsi') },
+                            "apps script code": getValue('apps_script_code'),
+                            "link screenshot": getValue('link_db_sheets')
+                        }
+                    },
+                    "bagian c implementasi backend": {
+                        "struktur proyek": getValue('struktur_proyek'),
+                        "koneksi database": getValue('koneksi_db'),
+                        "fitur 1": { "nama": getValue('fitur1_nama'), "kode": getValue('fitur1_kode') },
+                        "fitur 2": { "nama": getValue('fitur2_nama'), "kode": getValue('fitur2_kode') },
+                        "fitur 3": { "nama": getValue('fitur3_nama'), "kode": getValue('fitur3_kode') },
+                        "link kode program": getValue('link_kode')
+                    },
+                    "bagian d implementasi frontend": {
+                        "html": getValue('frontend_html'),
+                        "css": getValue('frontend_css'),
+                        "js": getValue('frontend_js'),
+                        "link screenshot ui": getValue('link_ui')
+                    },
+                    "bagian e pengujian dan debugging": {
+                        "uji fungsional": ambilDataUji(),
+                        "uji keamanan": [
+                            { "jenis": "SQL Injection", "hasil": getValue('keamanan1'), "tindak lanjut": getValue('keamanan1_tindak') },
+                            { "jenis": "XSS", "hasil": getValue('keamanan2'), "tindak lanjut": getValue('keamanan2_tindak') },
+                            { "jenis": "Autentikasi", "hasil": getValue('keamanan3'), "tindak lanjut": getValue('keamanan3_tindak') },
+                            { "jenis": "API Endpoint", "hasil": getValue('keamanan4'), "tindak lanjut": getValue('keamanan4_tindak') }
+                        ],
+                        "debugging": [
+                            { "bug": getValue('bug1'), "penyebab": getValue('bug1_penyebab'), "solusi": getValue('bug1_solusi'), "status": getValue('bug1_status') },
+                            { "bug": getValue('bug2'), "penyebab": getValue('bug2_penyebab'), "solusi": getValue('bug2_solusi'), "status": getValue('bug2_status') },
+                            { "bug": getValue('bug3'), "penyebab": getValue('bug3_penyebab'), "solusi": getValue('bug3_solusi'), "status": getValue('bug3_status') },
+                            { "bug": getValue('bug4'), "penyebab": getValue('bug4_penyebab'), "solusi": getValue('bug4_solusi'), "status": getValue('bug4_status') },
+                            { "bug": getValue('bug5'), "penyebab": getValue('bug5_penyebab'), "solusi": getValue('bug5_solusi'), "status": getValue('bug5_status') }
+                        ],
+                        "uat": ambilDataUAT()
+                    },
+                    "bagian f deployment": {
+                        "persiapan": [
+                            { "item": "File siap diupload", "status": getValue('deploy1'), "keterangan": getValue('deploy1_ket') },
+                            { "item": "Konfigurasi database/API", "status": getValue('deploy2'), "keterangan": getValue('deploy2_ket') },
+                            { "item": "Testing lokal", "status": getValue('deploy3'), "keterangan": getValue('deploy3_ket') }
+                        ],
+                        "link deploy": getValue('deploy_link'),
+                        "screenshot deploy": getValue('link_deploy')
+                    },
+                    "bagian g prompt engineering": [
+                        { "prompt": getValue('gen_prompt1'), "output": getValue('gen_output1'), "adopsi": getValue('gen_adopsi1') },
+                        { "prompt": getValue('gen_prompt2'), "output": getValue('gen_output2'), "adopsi": getValue('gen_adopsi2') },
+                        { "prompt": getValue('gen_prompt3'), "output": getValue('gen_output3'), "adopsi": getValue('gen_adopsi3') }
+                    ],
+                    "link screenshot prompt": getValue('link_prompt'),
+                    "bagian h etika dan keamanan data": [
+                        { "aspek": "Keamanan Data Pengguna", "evaluasi": getValue('etika1'), "tindak lanjut": getValue('etika1_tindak') },
+                        { "aspek": "Transparansi Kebijakan Privasi", "evaluasi": getValue('etika2'), "tindak lanjut": getValue('etika2_tindak') },
+                        { "aspek": "Kepatuhan Regulasi (UU PDP)", "evaluasi": getValue('etika3'), "tindak lanjut": getValue('etika3_tindak') },
+                        { "aspek": "Dampak Sosial Positif", "evaluasi": getValue('etika4'), "tindak lanjut": getValue('etika4_tindak') },
+                        { "aspek": "Dampak Sosial Negatif", "evaluasi": getValue('etika5'), "tindak lanjut": getValue('etika5_tindak') }
+                    ],
+                    "bagian i refleksi": [
+                        { "pertanyaan": "Apakah sudah bisa mengimplementasikan algoritma? (TP 3.1)", "jawaban": getValue('refleksi1') },
+                        { "pertanyaan": "Apakah sudah bisa mengimplementasikan database? (TP 4.1)", "jawaban": getValue('refleksi2') },
+                        { "pertanyaan": "Komitmen untuk tahap selanjutnya?", "jawaban": getValue('refleksi3') }
+                    ],
+                    "checklist": {
+                        "sudah baca materi": document.getElementById('final_check1')?.checked || false,
+                        "sudah implementasi database": document.getElementById('final_check2')?.checked || false,
+                        "sudah implementasi fitur": document.getElementById('final_check3')?.checked || false,
+                        "sudah uji debug": document.getElementById('final_check4')?.checked || false,
+                        "sudah deploy": document.getElementById('final_check5')?.checked || false,
+                        "sudah pertimbangkan etika": document.getElementById('final_check6')?.checked || false
+                    }
+                };
 
-                // Bagian C
-                const bagianC = { struktur_proyek: document.getElementById('struktur_proyek')?.value, koneksi_db: document.getElementById('koneksi_db')?.value, fitur1: {nama: document.getElementById('fitur1_nama')?.value, kode: document.getElementById('fitur1_kode')?.value}, fitur2: {nama: document.getElementById('fitur2_nama')?.value, kode: document.getElementById('fitur2_kode')?.value}, fitur3: {nama: document.getElementById('fitur3_nama')?.value, kode: document.getElementById('fitur3_kode')?.value} };
-                formData.append('Data Bagian C', JSON.stringify(bagianC));
+                formData.append('data', JSON.stringify(data));
+                formData.append('kelas', kelas);
+                formData.append('nama', nama);
+                const aktivitas = "AKTIVITAS 4 - PENGEMBANGAN PRODUK";
+                formData.append('aktivitas', aktivitas);
+                formData.append('key', `${kelas}_${nama}_${aktivitas}_AKTIF`);
 
-                // Bagian D
-                const bagianD = { html: document.getElementById('frontend_html')?.value, css: document.getElementById('frontend_css')?.value, js: document.getElementById('frontend_js')?.value };
-                formData.append('Data Bagian D', JSON.stringify(bagianD));
+                // ===== KIRIM DATA =====
+                await fetch(URL_PEREKAPAN, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: formData 
+                });
 
-                // Bagian E
-                const ujiFungsional = [];
-                for(let i=1; i<=5; i++) {
-                    ujiFungsional.push({
-                        fitur: document.getElementById(`uji${i}_fitur`)?.value,
-                        skenario: document.getElementById(`uji${i}_skenario`)?.value,
-                        input: document.getElementById(`uji${i}_input`)?.value,
-                        output_harap: document.getElementById(`uji${i}_output_harap`)?.value,
-                        output_aktual: document.getElementById(`uji${i}_output_aktual`)?.value,
-                        status: document.getElementById(`uji${i}_status`)?.value
-                    });
-                }
-                const keamanan = [];
-                for(let i=1; i<=4; i++) {
-                    keamanan.push({
-                        hasil: document.getElementById(`keamanan${i}`)?.value,
-                        tindak: document.getElementById(`keamanan${i}_tindak`)?.value
-                    });
-                }
-                const bugs = [];
-                for(let i=1; i<=3; i++) {
-                    bugs.push({
-                        bug: document.getElementById(`bug${i}`)?.value,
-                        penyebab: document.getElementById(`bug${i}_penyebab`)?.value,
-                        solusi: document.getElementById(`bug${i}_solusi`)?.value,
-                        status: document.getElementById(`bug${i}_status`)?.value
-                    });
-                }
-                const uat = [];
-                for(let i=1; i<=3; i++) {
-                    uat.push({
-                        nama: document.getElementById(`uat${i}_nama`)?.value,
-                        fitur: document.getElementById(`uat${i}_fitur`)?.value,
-                        feedback: document.getElementById(`uat${i}_feedback`)?.value,
-                        saran: document.getElementById(`uat${i}_saran`)?.value
-                    });
-                }
-                const bagianE = { uji_fungsional: ujiFungsional, keamanan: keamanan, bugs: bugs, uat: uat };
-                formData.append('Data Bagian E', JSON.stringify(bagianE));
-
-                // Bagian F
-                const persiapanDeploy = [];
-                for(let i=1; i<=5; i++) {
-                    persiapanDeploy.push({
-                        status: document.getElementById(`deploy${i}`)?.value,
-                        ket: document.getElementById(`deploy${i}_ket`)?.value
-                    });
-                }
-                const prosesDeploy = [];
-                for(let i=1; i<=5; i++) {
-                    prosesDeploy.push({
-                        hasil: document.getElementById(`deploy_step${i}`)?.value,
-                        catatan: document.getElementById(`deploy_step${i}_ket`)?.value
-                    });
-                }
-                const bagianF = { persiapan: persiapanDeploy, proses: prosesDeploy, link: document.getElementById('deploy_link')?.value };
-                formData.append('Data Bagian F', JSON.stringify(bagianF));
-
-                // Bagian G
-                const genPrompts = [];
-                for(let i=1; i<=3; i++) {
-                    genPrompts.push({
-                        prompt: document.getElementById(`gen_prompt${i}`)?.value,
-                        output: document.getElementById(`gen_output${i}`)?.value,
-                        adopsi: document.getElementById(`gen_adopsi${i}`)?.value
-                    });
-                }
-                const bagianG = { prompts: genPrompts };
-                formData.append('Data Bagian G', JSON.stringify(bagianG));
-
-                // Bagian H
-                const etika = [];
-                for(let i=1; i<=6; i++) {
-                    etika.push({
-                        evaluasi: document.getElementById(`etika${i}`)?.value,
-                        tindak: document.getElementById(`etika${i}_tindak`)?.value
-                    });
-                }
-                const bagianH = { etika: etika };
-                formData.append('Data Bagian H', JSON.stringify(bagianH));
-
-                // Bagian I
-                const bagianI = { nama: document.getElementById('ref_nama')?.value, kelas: document.getElementById('ref_kelas')?.value, kelompok: document.getElementById('ref_kelompok')?.value, ref1: document.getElementById('ref1')?.value, ref2: document.getElementById('ref2')?.value, ref3: document.getElementById('ref3')?.value, ref4: document.getElementById('ref4')?.value, ref5: document.getElementById('ref5')?.value, ref6: document.getElementById('ref6')?.value, final_check1: document.getElementById('final_check1')?.checked, final_check2: document.getElementById('final_check2')?.checked, final_check3: document.getElementById('final_check3')?.checked, final_check4: document.getElementById('final_check4')?.checked, final_check5: document.getElementById('final_check5')?.checked, final_check6: document.getElementById('final_check6')?.checked };
-                formData.append('Data Bagian I', JSON.stringify(bagianI));
-
-                formData.append('Timestamp', new Date().toISOString());
-
-                await fetch(URL_PEREKAPAN, { method: 'POST', mode: 'no-cors', body: formData });
                 document.getElementById('successMessage').style.display = 'block';
-                clearLocalStorage();
-                setTimeout(() => { document.getElementById('successMessage').style.display = 'none'; }, 5000);
-                if (confirm('Data terkirim! Ingin mereset form?')) location.reload();
-            } catch (error) {
-                alert('Error: ' + error.message);
-                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
-                document.getElementById('errorMessage').style.display = 'block';
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan Lembar Aktivitas';
+                localStorage.removeItem(STORAGE_KEY);
+                
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 5000);
+
+                if(confirm('✅ Data berhasil dikirim!\n\nIngin mereset form untuk mengisi ulang?')) {
+                    location.reload();
+                }
+
+            } catch(e) { 
+                alert('❌ Gagal mengirim data: ' + e.message); 
+            } finally { 
+                submitBtn.disabled = false; 
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kumpulkan Lembar Aktivitas'; 
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            window.addEventListener('online', updateConnectionStatus);
-            window.addEventListener('offline', updateConnectionStatus);
-            updateConnectionStatus();
+        // ===== EVENT LISTENER =====
+        document.getElementById('kelas').addEventListener('change', updateNamaDropdown);
+
+        window.addEventListener('online', () => {
+            document.getElementById('statusIndicator').classList.remove('offline');
+            document.getElementById('connectionStatus').textContent = 'Online';
             loadDataFromGoogleSheets();
-            document.getElementById('kelas').addEventListener('change', updateNamaDropdown);
-            document.querySelectorAll('input, select, textarea').forEach(el => {
-                el.addEventListener('input', triggerAutoSave);
-                el.addEventListener('change', triggerAutoSave);
-            });
-            const hamburger = document.getElementById('hamburger');
-            const navMenu = document.getElementById('nav-menu');
-            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
         });
+
+        window.addEventListener('offline', () => {
+            document.getElementById('statusIndicator').classList.add('offline');
+            document.getElementById('connectionStatus').textContent = 'Offline';
+        });
+
+        window.addEventListener('load', () => {
+            loadDataFromGoogleSheets();
+            renderSemuaTabel();
+        });
+
+        window.refreshPage = () => location.reload();
     </script>
 </body>
 </html>

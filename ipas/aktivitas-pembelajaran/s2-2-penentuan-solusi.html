@@ -23,8 +23,6 @@
         .lembar-aktivitas { background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 5px 25px rgba(0,0,0,0.05); border: 1px solid var(--ipas-light); margin: 2rem 0; }
         .lembar-aktivitas h2 { font-size: 1.3rem; color: var(--ipas-dark); background: var(--ipas-light); padding: 0.5rem 1rem; border-radius: 10px; margin: 1.5rem 0 1rem 0; }
         .lembar-aktivitas h2 i { margin-right: 10px; color: var(--ipas-primary); }
-        .progress-container { margin: 20px 0 30px 0; background: #f0f0f0; border-radius: 25px; padding: 3px; }
-        .progress-bar { height: 25px; border-radius: 25px; background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary)); transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9rem; font-weight: 600; }
         .connection-status { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; padding: 10px; border-radius: 10px; background: #f8f9fa; }
         .status-indicator { width: 12px; height: 12px; border-radius: 50%; background: #28a745; animation: pulse 2s infinite; }
         .status-indicator.offline { background: #dc3545; animation: none; }
@@ -60,7 +58,6 @@
         th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
         th { background: var(--ipas-primary); color: white; }
         .produk-box { background: #fff3e0; border-left: 4px solid var(--ipas-orange); padding: 12px; border-radius: 12px; margin: 10px 0; text-align: justify; }
-        .disabled-section { opacity: 0.6; pointer-events: none; }
         .list-rapi { margin-left: 20px; list-style: none; }
         .list-rapi li { margin-bottom: 8px; position: relative; padding-left: 20px; text-align: justify; }
         .list-rapi li::before { content: "•"; position: absolute; left: 0; color: var(--ipas-accent); font-weight: bold; }
@@ -74,6 +71,42 @@
         .btn-materi { display: inline-block; background: var(--ipas-accent); color: white; padding: 8px 20px; border-radius: 30px; text-decoration: none; margin-top: 10px; font-size: 0.9rem; }
         .btn-materi:hover { background: #2980b9; }
         .soal-cek { background: #fff8e1; padding: 12px; border-radius: 10px; margin-top: 10px; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-content i { font-size: 4rem; color: var(--ipas-primary); margin-bottom: 1rem; }
+        .modal-content h3 { margin-bottom: 1rem; color: var(--ipas-dark); }
+        .modal-content p { margin-bottom: 1.5rem; color: #666; }
+        .modal-buttons { display: flex; gap: 1rem; justify-content: center; }
+        .modal-btn { padding: 0.7rem 1.5rem; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .modal-btn.yes { background: var(--ipas-primary); color: white; }
+        .modal-btn.yes:hover { background: var(--ipas-secondary); transform: translateY(-2px); }
+        .modal-btn.no { background: #6c757d; color: white; }
+        .modal-btn.no:hover { background: #5a6268; transform: translateY(-2px); }
         @media (max-width: 768px) {
             .activity-detail-container { padding: 1rem; }
             .lembar-aktivitas { padding: 1.2rem; }
@@ -125,10 +158,6 @@
             <i class="fas fa-spinner fa-spin"></i> Memuat data murid...
         </div>
         
-        <div id="loadingDataAktivitas1" class="loading-message" style="display:none; background:#e3f2fd;">
-            <i class="fas fa-spinner fa-spin"></i> Mengambil data masalah dari Aktivitas 1...
-        </div>
-        
         <div id="errorMessage" class="error-message" style="display: none;">
             <i class="fas fa-exclamation-triangle"></i> 
             <span id="errorText">Gagal terhubung ke server.</span>
@@ -141,10 +170,8 @@
         <div class="lembar-aktivitas" id="worksheetForm">
             <div class="info-hijau">
                 <i class="fas fa-lightbulb"></i> <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
-                Selamat datang di Aktivitas 2! Minggu lalu kalian sudah memilih SATU masalah yang akan dipecahkan. Sekarang saatnya mencari SOLUSI nya. Fokus kita hari ini adalah mencari ide PRODUK yang bisa dibuat untuk menyelesaikan masalah kelompok.
+                Selamat datang di Aktivitas 2! Sekarang saatnya mencari SOLUSI untuk masalah yang akan dipecahkan. Fokus kita hari ini adalah mencari ide PRODUK yang bisa dibuat untuk menyelesaikan masalah kelompok.
             </div>
-
-            <div class="progress-container"><div class="progress-bar" id="progressBar" style="width: 0%">0%</div></div>
 
             <!-- BAGIAN A: IDENTITAS -->
             <h2><i class="fas fa-id-card"></i> A. IDENTITAS</h2>
@@ -157,17 +184,17 @@
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-user"></i> Nama (Pengisi)</label>
-                    <select id="nama" onchange="cekDataAktivitas1(); updateProgress();">
+                    <select id="nama" onchange="saveUserDataToLocalStorage();">
                         <option value="">-- Pilih Nama --</option>
                     </select>
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-users"></i> Kelompok</label>
-                    <input type="text" id="kelompok" placeholder="Akan terisi otomatis" readonly style="background:#f5f5f5;">
+                    <input type="text" id="kelompok" placeholder="Contoh: Kelompok 1" oninput="saveUserDataToLocalStorage();">
                 </div>
                 <div class="identitas-item">
                     <label><i class="fas fa-tasks"></i> Tugas/Peran</label>
-                    <textarea id="tugas" rows="1" placeholder="Contoh: Ketua Kelompok" oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
+                    <textarea id="tugas" rows="1" placeholder="Contoh: Ketua Kelompok" oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
                 </div>
             </div>
 
@@ -180,191 +207,177 @@
                 <div class="soal-cek">
                     <p><strong><i class="fas fa-question-circle"></i> Cek Pemahaman (WAJIB DIISI):</strong></p>
                     <p style="margin-top:10px;"><strong>1. Menurut kamu apa yang dimaksud dengan "solusi"?</strong></p>
-                    <textarea id="cek_materi1" rows="2" placeholder="Jawabanmu..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
+                    <textarea id="cek_materi1" rows="2" placeholder="Jawabanmu..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
                     
                     <p style="margin-top:10px;"><strong>2. Sebutkan minimal 3 metode yang bisa digunakan untuk mencari ide solusi!</strong></p>
-                    <textarea id="cek_materi2" rows="2" placeholder="Jawabanmu..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
+                    <textarea id="cek_materi2" rows="2" placeholder="Jawabanmu..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
                     
                     <p style="margin-top:10px;"><strong>3. Sebutkan contoh Kriteria Solusi Hebat?</strong></p>
-                    <textarea id="cek_materi3" rows="2" placeholder="Jawabanmu..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
+                    <textarea id="cek_materi3" rows="2" placeholder="Jawabanmu..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
                     
                     <p style="margin-top:10px;"><strong>4. Sebutkan aktivitas menemukan Solusi Hebatmu?</strong></p>
-                    <textarea id="cek_materi4" rows="2" placeholder="Jawabanmu..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
+                    <textarea id="cek_materi4" rows="2" placeholder="Jawabanmu..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
                 </div>
             </div>
 
-            <!-- BAGIAN C: DATA MASALAH DARI AKTIVITAS 1 -->
-            <h2><i class="fas fa-history"></i> C. DATA MASALAH DARI AKTIVITAS 1</h2>
-            <div id="dataAktivitas1Box" class="info-box" style="display:none;">
-                <i class="fas fa-check-circle" style="color: var(--ipas-primary);"></i> <strong>Data Masalah dari Aktivitas 1:</strong><br>
-                <span id="tampilan_tema"></span><br>
-                <span id="tampilan_masalah"></span>
+            <!-- BAGIAN C: MASALAH YANG AKAN DIKERJAKAN -->
+            <h2><i class="fas fa-bullseye"></i> C. MASALAH YANG AKAN DIKERJAKAN</h2>
+            <div class="info-biru">
+                <strong>📝 PETUNJUK:</strong> Tuliskan masalah yang sudah kalian pilih dari Aktivitas 1 di bawah ini.
             </div>
-            
-            <div id="dataTidakDitemukan" class="info-box" style="display:none; background:#ffe0b2; border-left-color:#ff9800;">
-                <i class="fas fa-exclamation-triangle" style="color:#ff9800;"></i> <strong>⚠️ Data Belum Ditemukan</strong><br>
-                Anda belum mengerjakan atau mengirim Aktivitas 1. Silakan selesaikan Aktivitas 1 terlebih dahulu.<br>
-                <strong>Semua form di bawah ini akan dinonaktifkan sampai data Aktivitas 1 tersedia.</strong>
+            <div class="kotak-checklist">
+                <label><strong>Masalah yang akan diselesaikan:</strong></label>
+                <textarea id="masalah_utama" rows="2" placeholder="Tulis masalah yang sudah dipilih..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
             </div>
 
             <!-- BAGIAN D: CARI PENYEBAB MASALAH -->
-            <div id="sectionD">
-                <h2><i class="fas fa-search"></i> D. CARI TAHU PENYEBAB MASALAH</h2>
-                <div class="info-biru">
-                    <strong>📝 PENJELASAN:</strong> Sebelum mencari solusi, kita harus tahu dulu APA PENYEBAB masalahnya.
-                </div>
-
-                <h4>D1. JAWAB 6 PERTANYAAN INI (5W+1H)</h4>
-                <table>
-                    <thead>
-                        <tr><th style="width:80px">No.</th><th style="width:250px">Pertanyaan</th><th>Jawaban Kelompok</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>1</td><td><strong>APA</strong> masalahnya?</td><td><textarea id="apa_masalah" rows="2" readonly style="background:#f5f5f5;"></textarea></td></tr>
-                        <tr><td>2</td><td><strong>SIAPA</strong> yang merasakan dampak?</td><td><input type="text" id="siapa_dampak" placeholder="..." oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>3</td><td><strong>DI MANA</strong> sering terjadi?</td><td><input type="text" id="dimana_lokasi" placeholder="..." oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>4</td><td><strong>KAPAN</strong> biasanya muncul?</td><td><input type="text" id="kapan_waktu" placeholder="..." oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>5</td><td><strong>MENGAPA</strong> bisa terjadi? (Sebutkan 2-3 penyebab)</td><td><textarea id="mengapa_penyebab" rows="2" placeholder="Sebutkan 2-3 penyebab..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea></td></tr>
-                        <tr><td>6</td><td><strong>BAGAIMANA</strong> dampaknya jika dibiarkan?</td><td><textarea id="bagaimana_dampak" rows="2" placeholder="..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea></td></tr>
-                    </tbody>
-                </table>
-
-                <h4>D2. DIAGRAM "CARI PENYEBAB" (PETA SEBAB-AKIBAT)</h4>
-                <div class="info-biru">
-                    <strong>📝 CARA ISI:</strong> Tulis MASALAH di kotak di bawah. Lalu cari penyebab dari 4 sisi:
-                    <ul class="list-rapi" style="margin-top: 10px;">
-                        <li><strong>Perilaku / Kebiasaan Orang:</strong> Apakah karena ulah seseorang? (contoh: siswa malas, petugas jarang membersihkan)</li>
-                        <li><strong>Cara kerja / Aturan:</strong> Apakah karena prosedur atau aturan yang kurang tepat? (contoh: tidak ada jadwal piket, tidak ada aturan denda)</li>
-                        <li><strong>Alat / Bahan:</strong> Apakah karena kurang alat atau bahan rusak? (contoh: tempat sampah kurang, alat kebersihan tidak lengkap)</li>
-                        <li><strong>Kondisi sekitar:</strong> Apakah karena cuaca, lokasi, atau suasana? (contoh: angin kencang, lokasi kantin dekat kelas, area becek)</li>
-                    </ul>
-                </div>
-                
-                <p><strong>MASALAH KAMI:</strong> <input type="text" id="masalah_fishbone" style="width:80%" readonly placeholder="Masalah akan terisi otomatis"></p>
-                
-                <table class="fishbone-table">
-                    <tr><th style="width:30%">Kategori Penyebab</th><th>Apa saja penyebabnya? (isi sebanyak mungkin)</th></tr>
-                    <tr><td><strong>🙋 Perilaku / Kebiasaan Orang</strong><br><small>(ulah siswa, guru, petugas, dll)</small></td>
-                        <td><textarea id="penyebab_manusia" rows="2" placeholder="Contoh: Siswa malas buang sampah, petugas jarang membersihkan..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea></td></tr>
-                    <tr><td><strong>📋 Cara kerja / Aturan</strong><br><small>(prosedur, jadwal, tata tertib)</small></td>
-                        <td><textarea id="penyebab_metode" rows="2" placeholder="Contoh: Tidak ada jadwal piket, tidak ada aturan denda..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea></td></tr>
-                    <tr><td><strong>🔧 Alat / Bahan yang tersedia</strong><br><small>(sarana, perlengkapan, fasilitas)</small></td>
-                        <td><textarea id="penyebab_material" rows="2" placeholder="Contoh: Tempat sampah kurang, alat kebersihan tidak lengkap..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea></td></tr>
-                    <tr><td><strong>🌤️ Kondisi sekitar / Suasana</strong><br><small>(cuaca, lokasi, situasi sosial)</small></td>
-                        <td><textarea id="penyebab_lingkungan" rows="2" placeholder="Contoh: Angin kencang, lokasi kantin dekat kelas, area becek..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea></td></tr>
-                </table>
+            <h2><i class="fas fa-search"></i> D. CARI TAHU PENYEBAB MASALAH</h2>
+            <div class="info-biru">
+                <strong>📝 PENJELASAN:</strong> Sebelum mencari solusi, kita harus tahu dulu APA PENYEBAB masalahnya.
             </div>
+
+            <h4>D1. JAWAB 6 PERTANYAAN INI (5W+1H)</h4>
+            <table>
+                <thead>
+                    <tr><th style="width:80px">No.</th><th style="width:250px">Pertanyaan</th><th>Jawaban Kelompok</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td><strong>APA</strong> masalahnya?</td><td><textarea id="apa_masalah" rows="2" placeholder="Tulis masalah..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea></td></tr>
+                    <tr><td>2</td><td><strong>SIAPA</strong> yang merasakan dampak?</td><td><input type="text" id="siapa_dampak" placeholder="..." oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>3</td><td><strong>DI MANA</strong> sering terjadi?</td><td><input type="text" id="dimana_lokasi" placeholder="..." oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>4</td><td><strong>KAPAN</strong> biasanya muncul?</td><td><input type="text" id="kapan_waktu" placeholder="..." oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>5</td><td><strong>MENGAPA</strong> bisa terjadi? (Sebutkan 2-3 penyebab)</td><td><textarea id="mengapa_penyebab" rows="2" placeholder="Sebutkan 2-3 penyebab..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea></td></tr>
+                    <tr><td>6</td><td><strong>BAGAIMANA</strong> dampaknya jika dibiarkan?</td><td><textarea id="bagaimana_dampak" rows="2" placeholder="..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea></td></tr>
+                </tbody>
+            </table>
+
+            <h4>D2. DIAGRAM "CARI PENYEBAB" (PETA SEBAB-AKIBAT)</h4>
+            <div class="info-biru">
+                <strong>📝 CARA ISI:</strong> Tulis MASALAH di kotak di bawah. Lalu cari penyebab dari 4 sisi:
+                <ul class="list-rapi" style="margin-top: 10px;">
+                    <li><strong>Perilaku / Kebiasaan Orang:</strong> Apakah karena ulah seseorang? (contoh: siswa malas, petugas jarang membersihkan)</li>
+                    <li><strong>Cara kerja / Aturan:</strong> Apakah karena prosedur atau aturan yang kurang tepat? (contoh: tidak ada jadwal piket, tidak ada aturan denda)</li>
+                    <li><strong>Alat / Bahan:</strong> Apakah karena kurang alat atau bahan rusak? (contoh: tempat sampah kurang, alat kebersihan tidak lengkap)</li>
+                    <li><strong>Kondisi sekitar:</strong> Apakah karena cuaca, lokasi, atau suasana? (contoh: angin kencang, lokasi kantin dekat kelas, area becek)</li>
+                </ul>
+            </div>
+            
+            <p><strong>MASALAH KAMI:</strong> <input type="text" id="masalah_fishbone" placeholder="Tulis masalah di sini..." oninput="saveUserDataToLocalStorage();"></p>
+            
+            <table class="fishbone-table">
+                <tr><th style="width:30%">Kategori Penyebab</th><th>Apa saja penyebabnya? (isi sebanyak mungkin)</th></tr>
+                <tr><td><strong>🙋 Perilaku / Kebiasaan Orang</strong><br><small>(ulah siswa, guru, petugas, dll)</small></td>
+                    <td><textarea id="penyebab_manusia" rows="2" placeholder="Contoh: Siswa malas buang sampah, petugas jarang membersihkan..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea></td></tr>
+                <tr><td><strong>📋 Cara kerja / Aturan</strong><br><small>(prosedur, jadwal, tata tertib)</small></td>
+                    <td><textarea id="penyebab_metode" rows="2" placeholder="Contoh: Tidak ada jadwal piket, tidak ada aturan denda..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea></td></tr>
+                <tr><td><strong>🔧 Alat / Bahan yang tersedia</strong><br><small>(sarana, perlengkapan, fasilitas)</small></td>
+                    <td><textarea id="penyebab_material" rows="2" placeholder="Contoh: Tempat sampah kurang, alat kebersihan tidak lengkap..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea></td></tr>
+                <tr><td><strong>🌤️ Kondisi sekitar / Suasana</strong><br><small>(cuaca, lokasi, situasi sosial)</small></td>
+                    <td><textarea id="penyebab_lingkungan" rows="2" placeholder="Contoh: Angin kencang, lokasi kantin dekat kelas, area becek..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea></td></tr>
+            </table>
 
             <!-- BAGIAN E: IDE PRODUK SEBAGAI SOLUSI -->
-            <div id="sectionE">
-                <h2><i class="fas fa-lightbulb"></i> E. MENCARI IDE PRODUK SEBAGAI SOLUSI</h2>
-                <div class="info-biru">
-                    <strong>📝 PETUNJUK:</strong> Fokus kita mencari PRODUK yang bisa dibuat untuk menyelesaikan masalah.<br>
-                    <strong>Aturan:</strong> Tulis 6 ide produk. Jangan dipilih dulu. Ide "liar" atau "aneh" pun boleh ditulis.
-                </div>
-                
-                <div class="produk-box">
-                    <i class="fas fa-box-open"></i> <strong>CONTOH IDE PRODUK:</strong><br>
-                    • Tempat sampah dari jerigen bekas<br>
-                    • Rak sepatu dari kardus bekas<br>
-                    • Alat penyiram tanaman dari botol aqua
-                </div>
-                
-                <table>
-                    <thead><tr><th>No.</th><th>IDE PRODUK YANG BISA KAMI BUAT</th><th>PENYEBAB YANG INGIN DIATASI</th></tr></thead>
-                    <tbody>
-                        <tr><td>1</td><td><input type="text" id="solusi1_ide" placeholder="Contoh: Tempat sampah dari botol bekas" oninput="updateProdukDropdown(); saveUserDataToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi1_penyebab" placeholder="Contoh: Kurang tempat sampah" oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>2</td><td><input type="text" id="solusi2_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi2_penyebab" oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>3</td><td><input type="text" id="solusi3_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi3_penyebab" oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>4</td><td><input type="text" id="solusi4_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi4_penyebab" oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>5</td><td><input type="text" id="solusi5_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi5_penyebab" oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>6</td><td><input type="text" id="solusi6_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage(); updateProgress();"></td><td><input type="text" id="solusi6_penyebab" oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                    </tbody>
-                </table>
-
-                <h4>E1. PILIH 3 PRODUK TERBAIK</h4>
-                <div class="info-biru" style="margin-bottom: 10px;">
-                    <strong>📝 PETUNJUK:</strong> Dari 6 ide di atas, pilih 3 produk yang paling mungkin kalian buat.
-                </div>
-                <table>
-                    <thead><tr><th>Peringkat</th><th>Produk Terbaik (pilih dari dropdown)</th><th>Kenapa produk ini dipilih?</th></tr></thead>
-                    <tbody>
-                        <tr><td>Produk 1</td><td><select id="solusi_terbaik1" onchange="updateAlasanOtomatis(); updateProdukUtamaDropdown(); saveUserDataToLocalStorage(); updateProgress();"><option value="">-- Pilih Produk --</option></select></td><td><input type="text" id="solusi_terbaik1_alasan" placeholder="Alasan memilih..." oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>Produk 2</td><td><select id="solusi_terbaik2" onchange="updateAlasanOtomatis(); updateProdukUtamaDropdown(); saveUserDataToLocalStorage(); updateProgress();"><option value="">-- Pilih Produk --</option></select></td><td><input type="text" id="solusi_terbaik2_alasan" placeholder="Alasan memilih..." oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                        <tr><td>Produk 3</td><td><select id="solusi_terbaik3" onchange="updateAlasanOtomatis(); updateProdukUtamaDropdown(); saveUserDataToLocalStorage(); updateProgress();"><option value="">-- Pilih Produk --</option></select></td><td><input type="text" id="solusi_terbaik3_alasan" placeholder="Alasan memilih..." oninput="saveUserDataToLocalStorage(); updateProgress();"></td></tr>
-                    </tbody>
-                </table>
+            <h2><i class="fas fa-lightbulb"></i> E. MENCARI IDE PRODUK SEBAGAI SOLUSI</h2>
+            <div class="info-biru">
+                <strong>📝 PETUNJUK:</strong> Fokus kita mencari PRODUK yang bisa dibuat untuk menyelesaikan masalah.<br>
+                <strong>Aturan:</strong> Tulis 6 ide produk. Jangan dipilih dulu. Ide "liar" atau "aneh" pun boleh ditulis.
             </div>
+            
+            <div class="produk-box">
+                <i class="fas fa-box-open"></i> <strong>CONTOH IDE PRODUK:</strong><br>
+                • Tempat sampah dari jerigen bekas<br>
+                • Rak sepatu dari kardus bekas<br>
+                • Alat penyiram tanaman dari botol aqua
+            </div>
+            
+            <table>
+                <thead><tr><th>No.</th><th>IDE PRODUK YANG BISA KAMI BUAT</th><th>PENYEBAB YANG INGIN DIATASI</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td><input type="text" id="solusi1_ide" placeholder="Contoh: Tempat sampah dari botol bekas" oninput="updateProdukDropdown(); saveUserDataToLocalStorage();"></td><td><input type="text" id="solusi1_penyebab" placeholder="Contoh: Kurang tempat sampah" oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>2</td><td><input type="text" id="solusi2_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage();"></td><td><input type="text" id="solusi2_penyebab" oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>3</td><td><input type="text" id="solusi3_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage();"></td><td><input type="text" id="solusi3_penyebab" oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>4</td><td><input type="text" id="solusi4_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage();"></td><td><input type="text" id="solusi4_penyebab" oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>5</td><td><input type="text" id="solusi5_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage();"></td><td><input type="text" id="solusi5_penyebab" oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>6</td><td><input type="text" id="solusi6_ide" oninput="updateProdukDropdown(); saveUserDataToLocalStorage();"></td><td><input type="text" id="solusi6_penyebab" oninput="saveUserDataToLocalStorage();"></td></tr>
+                </tbody>
+            </table>
+
+            <h4>E1. PILIH 3 PRODUK TERBAIK</h4>
+            <div class="info-biru" style="margin-bottom: 10px;">
+                <strong>📝 PETUNJUK:</strong> Dari 6 ide di atas, pilih 3 produk yang paling mungkin kalian buat.
+            </div>
+            <table>
+                <thead><tr><th>Peringkat</th><th>Produk Terbaik (pilih dari dropdown)</th><th>Kenapa produk ini dipilih?</th></tr></thead>
+                <tbody>
+                    <tr><td>Produk 1</td><td><select id="solusi_terbaik1" onchange="updateAlasanOtomatis(); updateProdukUtamaDropdown(); saveUserDataToLocalStorage();"><option value="">-- Pilih Produk --</option></select></td><td><input type="text" id="solusi_terbaik1_alasan" placeholder="Alasan memilih..." oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>Produk 2</td><td><select id="solusi_terbaik2" onchange="updateAlasanOtomatis(); updateProdukUtamaDropdown(); saveUserDataToLocalStorage();"><option value="">-- Pilih Produk --</option></select></td><td><input type="text" id="solusi_terbaik2_alasan" placeholder="Alasan memilih..." oninput="saveUserDataToLocalStorage();"></td></tr>
+                    <tr><td>Produk 3</td><td><select id="solusi_terbaik3" onchange="updateAlasanOtomatis(); updateProdukUtamaDropdown(); saveUserDataToLocalStorage();"><option value="">-- Pilih Produk --</option></select></td><td><input type="text" id="solusi_terbaik3_alasan" placeholder="Alasan memilih..." oninput="saveUserDataToLocalStorage();"></td></tr>
+                </tbody>
+            </table>
 
             <!-- BAGIAN F: PERSIAPAN PRESENTASI -->
-            <div id="sectionF">
-                <h2><i class="fas fa-presentation"></i> F. PERSIAPAN PRESENTASI</h2>
-                <div class="info-biru">
-                    <strong>📝 PETUNJUK:</strong> Tentukan siapa yang akan presentasi. Presentasikan 3 produk terbaik kalian ke kelompok lain.
+            <h2><i class="fas fa-presentation"></i> F. PERSIAPAN PRESENTASI</h2>
+            <div class="info-biru">
+                <strong>📝 PETUNJUK:</strong> Tentukan siapa yang akan presentasi. Presentasikan 3 produk terbaik kalian ke kelompok lain.
+            </div>
+            
+            <div class="presentasi-item">
+                <label><i class="fas fa-user-tie"></i> Presenter Utama</label>
+                <select id="presenter_utama" onchange="saveUserDataToLocalStorage();">
+                    <option value="">-- Pilih Presenter --</option>
+                </select>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <label><i class="fas fa-users"></i> Anggota Kelompok</label>
+                <div class="anggota-grid">
+                    <div class="anggota-item"><label>Anggota 1</label><select id="anggota1" onchange="saveUserDataToLocalStorage();"><option value="">-- Pilih Anggota --</option></select></div>
+                    <div class="anggota-item"><label>Anggota 2</label><select id="anggota2" onchange="saveUserDataToLocalStorage();"><option value="">-- Pilih Anggota --</option></select></div>
+                    <div class="anggota-item"><label>Anggota 3</label><select id="anggota3" onchange="saveUserDataToLocalStorage();"><option value="">-- Pilih Anggota --</option></select></div>
+                    <div class="anggota-item"><label>Anggota 4</label><select id="anggota4" onchange="saveUserDataToLocalStorage();"><option value="">-- Pilih Anggota --</option></select></div>
                 </div>
-                
-                <div class="presentasi-item">
-                    <label><i class="fas fa-user-tie"></i> Presenter Utama</label>
-                    <select id="presenter_utama" onchange="saveUserDataToLocalStorage(); updateProgress();">
-                        <option value="">-- Pilih Presenter --</option>
-                    </select>
-                </div>
-                
-                <div style="margin-top: 15px;">
-                    <label><i class="fas fa-users"></i> Anggota Kelompok</label>
-                    <div class="anggota-grid">
-                        <div class="anggota-item"><label>Anggota 1</label><select id="anggota1" onchange="saveUserDataToLocalStorage(); updateProgress();"><option value="">-- Pilih Anggota --</option></select></div>
-                        <div class="anggota-item"><label>Anggota 2</label><select id="anggota2" onchange="saveUserDataToLocalStorage(); updateProgress();"><option value="">-- Pilih Anggota --</option></select></div>
-                        <div class="anggota-item"><label>Anggota 3</label><select id="anggota3" onchange="saveUserDataToLocalStorage(); updateProgress();"><option value="">-- Pilih Anggota --</option></select></div>
-                        <div class="anggota-item"><label>Anggota 4</label><select id="anggota4" onchange="saveUserDataToLocalStorage(); updateProgress();"><option value="">-- Pilih Anggota --</option></select></div>
-                    </div>
-                </div>
-                
-                <div class="presentasi-item" style="margin-top: 15px;">
-                    <label><i class="fas fa-comment-dots"></i> Masukan dari kelompok lain</label>
-                    <textarea id="feedback" rows="3" placeholder="Tulis masukan/saran dari kelompok lain..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
-                </div>
-                
-                <div class="presentasi-item" style="margin-top: 10px;">
-                    <label><i class="fas fa-star"></i> Masukan PALING BERGUNA yang kami terima</label>
-                    <textarea id="feedback_terbaik" rows="2" oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
-                </div>
+            </div>
+            
+            <div class="presentasi-item" style="margin-top: 15px;">
+                <label><i class="fas fa-comment-dots"></i> Masukan dari kelompok lain</label>
+                <textarea id="feedback" rows="3" placeholder="Tulis masukan/saran dari kelompok lain..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
+            </div>
+            
+            <div class="presentasi-item" style="margin-top: 10px;">
+                <label><i class="fas fa-star"></i> Masukan PALING BERGUNA yang kami terima</label>
+                <textarea id="feedback_terbaik" rows="2" oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
             </div>
 
             <!-- BAGIAN G: PRODUK UTAMA -->
-            <div id="sectionG">
-                <h2><i class="fas fa-check-circle"></i> G. TETAPKAN 1 PRODUK UTAMA</h2>
-                <div class="info-biru">
-                    <strong>📝 PETUNJUK:</strong> Setelah dengar masukan dari kelompok lain, diskusikan lagi. Pilih 1 produk yang paling cocok.
-                </div>
-                <p><strong>PRODUK UTAMA KAMI (pilih dari 3 produk terbaik di atas):</strong></p>
-                <select id="solusi_utama" onchange="updateAlasanOtomatis(); saveUserDataToLocalStorage(); updateProgress();"><option value="">-- Pilih Produk Utama --</option></select>
-                <p style="margin-top:15px;"><strong>ALASAN MEMILIH PRODUK INI:</strong></p>
-                <textarea id="alasan_solusi" rows="3" placeholder="Alasan akan terisi otomatis..." readonly style="background:#f5f5f5;"></textarea>
-
-                <h4>G1. PERTANYAAN PENELITIAN KAMI</h4>
-                <div class="info-biru"><strong>📝 PETUNJUK:</strong> Buatlah pertanyaan penelitian yang akan menjawab: "Apakah produk yang kami buat benar-benar bisa menyelesaikan masalah?"</div>
-                <textarea id="pertanyaan_penelitian" rows="2" placeholder="Contoh: Apakah penggunaan tempat sampah dari botol bekas dapat mengurangi sampah berserakan di kelas?" oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
-
-                <h4>G2. HIPOTESIS (Dugaan Sementara)</h4>
-                <div class="info-biru">
-                    <strong>📝 CONTOH HIPOTESIS:</strong><br>
-                    • <strong>JIKA</strong> kami membuat tempat sampah dari botol bekas<br>
-                    • <strong>MAKA</strong> sampah yang berserakan akan berkurang<br>
-                    • <strong>KARENA</strong> siswa jadi lebih mudah membuang sampah
-                </div>
-                <textarea id="hipotesis_jika" rows="2" placeholder="JIKA kami membuat produk ini..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
-                <textarea id="hipotesis_maka" rows="2" placeholder="MAKA (dampak yang kami harapkan)..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
-                <textarea id="hipotesis_karena" rows="2" placeholder="KARENA (alasan logisnya)..." oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
+            <h2><i class="fas fa-check-circle"></i> G. TETAPKAN 1 PRODUK UTAMA</h2>
+            <div class="info-biru">
+                <strong>📝 PETUNJUK:</strong> Setelah dengar masukan dari kelompok lain, diskusikan lagi. Pilih 1 produk yang paling cocok.
             </div>
+            <p><strong>PRODUK UTAMA KAMI (pilih dari 3 produk terbaik di atas):</strong></p>
+            <select id="solusi_utama" onchange="updateAlasanOtomatis(); saveUserDataToLocalStorage();"><option value="">-- Pilih Produk Utama --</option></select>
+            <p style="margin-top:15px;"><strong>ALASAN MEMILIH PRODUK INI:</strong></p>
+            <textarea id="alasan_solusi" rows="3" placeholder="Alasan akan terisi otomatis..." readonly style="background:#f5f5f5;"></textarea>
+
+            <h4>G1. PERTANYAAN PENELITIAN KAMI</h4>
+            <div class="info-biru"><strong>📝 PETUNJUK:</strong> Buatlah pertanyaan penelitian yang akan menjawab: "Apakah produk yang kami buat benar-benar bisa menyelesaikan masalah?"</div>
+            <textarea id="pertanyaan_penelitian" rows="2" placeholder="Contoh: Apakah penggunaan tempat sampah dari botol bekas dapat mengurangi sampah berserakan di kelas?" oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
+
+            <h4>G2. HIPOTESIS (Dugaan Sementara)</h4>
+            <div class="info-biru">
+                <strong>📝 CONTOH HIPOTESIS:</strong><br>
+                • <strong>JIKA</strong> kami membuat tempat sampah dari botol bekas<br>
+                • <strong>MAKA</strong> sampah yang berserakan akan berkurang<br>
+                • <strong>KARENA</strong> siswa jadi lebih mudah membuang sampah
+            </div>
+            <textarea id="hipotesis_jika" rows="2" placeholder="JIKA kami membuat produk ini..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
+            <textarea id="hipotesis_maka" rows="2" placeholder="MAKA (dampak yang kami harapkan)..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
+            <textarea id="hipotesis_karena" rows="2" placeholder="KARENA (alasan logisnya)..." oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
 
             <!-- BAGIAN H: REFLEKSI -->
-            <div id="sectionH">
-                <h2><i class="fas fa-clipboard-list"></i> H. REFLEKSI KELOMPOK</h2>
-                <div class="info-biru"><strong>📝 PETUNJUK:</strong> Luangkan waktu untuk merenung sejenak. Apa yang kalian pelajari hari ini?</div>
-                <textarea id="pembelajaran" rows="3" placeholder="Apa pelajaran paling berharga yang kalian dapatkan?" oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
-                <textarea id="rencana" rows="3" placeholder="Rencana untuk pertemuan selanjutnya (membuat produk):" oninput="autoResize(this); saveUserDataToLocalStorage(); updateProgress();"></textarea>
-            </div>
+            <h2><i class="fas fa-clipboard-list"></i> H. REFLEKSI KELOMPOK</h2>
+            <div class="info-biru"><strong>📝 PETUNJUK:</strong> Luangkan waktu untuk merenung sejenak. Apa yang kalian pelajari hari ini?</div>
+            <textarea id="pembelajaran" rows="3" placeholder="Apa pelajaran paling berharga yang kalian dapatkan?" oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
+            <textarea id="rencana" rows="3" placeholder="Rencana untuk pertemuan selanjutnya (membuat produk):" oninput="autoResize(this); saveUserDataToLocalStorage();"></textarea>
 
             <button class="submit-button" id="submitBtn" onclick="cekDanSubmit()">
                 <i class="fas fa-paper-plane"></i> Kirim Data Aktivitas 2
@@ -380,22 +393,48 @@
         </div>
     </section>
 
+    <!-- Modal Konfirmasi Reset -->
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-paper-plane"></i>
+            <h3>Data Berhasil Dikirim!</h3>
+            <p>Apakah Anda ingin mereset semua kolom isian?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn yes" onclick="confirmReset()">Ya, Reset</button>
+                <button class="modal-btn no" onclick="closeModal()">Tidak</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==================== KONFIGURASI ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyq2G4viOZ04k1b5nl27IYZ7HD9XUZdgBkhYj-46njXvLLVcjqNBqVElHU-BcpOVhOa/exec';
-        
-        const URL_AKTIVITAS1 = URL_PEREKAP_AKTIVITAS;
+        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
 
+        // ==================== KONFIGURASI FORM ====================
         const FORM_CONFIG = {
-            sheetName: "AKTIVITAS 2 - MENCARI SOLUSI",
-            headers: ["Timestamp", "Bagian_A", "Bagian_B", "Bagian_C", "Bagian_D", "Bagian_E", "Bagian_F", "Bagian_G", "Bagian_H"]
+            sheetName: "S2-A2",
+            headers: [
+                "Timestamp",
+                "Kelas",
+                "Nama",
+                "Kelompok",
+                "Tugas",
+                "Status",
+                "Key",
+                "Bagian_B",
+                "Bagian_C",
+                "Bagian_D",
+                "Bagian_E",
+                "Bagian_F",
+                "Bagian_G",
+                "Bagian_H"
+            ]
         };
 
         // ==================== VARIABEL ====================
         let dataKelas = [], dataSiswa = {};
         let isLoading = true, isOnline = true, autoSaveTimeout;
-        let dataDitemukan = false;
         let currentSiswaList = [];
 
         // ==================== AUTO RESIZE ====================
@@ -405,7 +444,10 @@
         }
 
         function initAutoResize() {
-            document.querySelectorAll('textarea').forEach(ta => { autoResize(ta); ta.addEventListener('input', function() { autoResize(this); }); });
+            document.querySelectorAll('textarea').forEach(ta => {
+                autoResize(ta);
+                ta.addEventListener('input', function() { autoResize(this); });
+            });
         }
 
         // ==================== KONEKSI ====================
@@ -460,36 +502,45 @@
             updateNamaDropdown();
             updateSiswaDropdowns();
             saveUserDataToLocalStorage();
-            updateProgress();
         }
 
-        // ==================== SET FORM ENABLED/DISABLED ====================
-        function setFormEnabled(enabled) {
-            const sections = ['sectionD', 'sectionE', 'sectionF', 'sectionG', 'sectionH'];
-            sections.forEach(sectionId => {
-                const section = document.getElementById(sectionId);
-                if (section) {
-                    if (enabled) section.classList.remove('disabled-section');
-                    else section.classList.add('disabled-section');
+        // ==================== LOAD DATA SISWA ====================
+        function loadDataFromGoogleSheets() {
+            checkConnection();
+            if (!navigator.onLine) { return; }
+            document.getElementById('loadingMessage').style.display = 'block';
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(result) {
+                document.querySelector(`script[src*="${callbackName}"]`)?.remove();
+                delete window[callbackName];
+                if (result?.success) {
+                    dataKelas = result.kelasList || [];
+                    dataSiswa = result.siswaPerKelas || {};
+                    const kelasSelect = document.getElementById('kelas');
+                    kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                    dataKelas.forEach(kelas => { if (kelas?.trim()) kelasSelect.appendChild(new Option(kelas, kelas)); });
+                    loadUserDataFromLocalStorage();
+                } else {
+                    document.getElementById('errorMessage').style.display = 'block';
                 }
-            });
-            document.getElementById('submitBtn').disabled = !enabled;
-            if (enabled) {
-                document.getElementById('presenter_utama').disabled = false;
-                ['anggota1','anggota2','anggota3','anggota4'].forEach(id => document.getElementById(id).disabled = false);
-            } else {
-                document.getElementById('presenter_utama').disabled = true;
-                ['anggota1','anggota2','anggota3','anggota4'].forEach(id => document.getElementById(id).disabled = true);
-            }
+                document.getElementById('loadingMessage').style.display = 'none';
+                isLoading = false;
+            };
+            let script = document.createElement('script');
+            script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+            script.onerror = () => { document.getElementById('errorMessage').style.display = 'block'; };
+            document.head.appendChild(script);
         }
-        
-        function resetSpreadsheetData() {
-            document.getElementById('kelompok').value = '';
-            document.getElementById('tampilan_tema').innerHTML = '';
-            document.getElementById('tampilan_masalah').innerHTML = '';
-            document.getElementById('apa_masalah').value = '';
-            document.getElementById('masalah_fishbone').value = '';
-            dataDitemukan = false;
+
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas').value;
+            const namaSelect = document.getElementById('nama');
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            [...(dataSiswa[kelas] || [])].sort().forEach(nama => { if (nama?.trim()) namaSelect.appendChild(new Option(nama, nama)); });
         }
 
         // ==================== UPDATE DROPDOWN PRODUK ====================
@@ -545,108 +596,6 @@
             autoResize(document.getElementById('alasan_solusi'));
         }
 
-        // ==================== LOAD DATA SISWA ====================
-        function loadDataFromGoogleSheets() {
-            checkConnection();
-            if (!navigator.onLine) { return; }
-            document.getElementById('loadingMessage').style.display = 'block';
-            const callbackName = 'jsonp_callback_' + Date.now();
-            window[callbackName] = function(result) {
-                document.querySelector(`script[src*="${callbackName}"]`)?.remove();
-                delete window[callbackName];
-                if (result?.success) {
-                    dataKelas = result.kelasList || [];
-                    dataSiswa = result.siswaPerKelas || {};
-                    const kelasSelect = document.getElementById('kelas');
-                    kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-                    dataKelas.forEach(kelas => { if (kelas?.trim()) kelasSelect.appendChild(new Option(kelas, kelas)); });
-                    loadUserDataFromLocalStorage();
-                } else {
-                    document.getElementById('errorMessage').style.display = 'block';
-                }
-                document.getElementById('loadingMessage').style.display = 'none';
-                isLoading = false;
-            };
-            let script = document.createElement('script');
-            script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-            script.onerror = () => { document.getElementById('errorMessage').style.display = 'block'; };
-            document.head.appendChild(script);
-        }
-
-        function updateNamaDropdown() {
-            const kelas = document.getElementById('kelas').value;
-            const namaSelect = document.getElementById('nama');
-            if (!kelas || !dataSiswa[kelas]) {
-                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-                return;
-            }
-            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            [...(dataSiswa[kelas] || [])].sort().forEach(nama => { if (nama?.trim()) namaSelect.appendChild(new Option(nama, nama)); });
-        }
-
-        // ==================== CEK DATA DARI AKTIVITAS 1 ====================
-        async function cekDataAktivitas1() {
-            const kelas = document.getElementById('kelas').value;
-            const nama = document.getElementById('nama').value;
-            
-            resetSpreadsheetData();
-            
-            if (!kelas || !nama) {
-                document.getElementById('dataAktivitas1Box').style.display = 'none';
-                document.getElementById('dataTidakDitemukan').style.display = 'block';
-                setFormEnabled(false);
-                return;
-            }
-            
-            const loadingDiv = document.getElementById('loadingDataAktivitas1');
-            loadingDiv.style.display = 'block';
-            document.getElementById('dataAktivitas1Box').style.display = 'none';
-            document.getElementById('dataTidakDitemukan').style.display = 'none';
-            
-            try {
-                const url = `${URL_AKTIVITAS1}?action=getData&sheetName=AKTIVITAS%201%20-%20MENEMUKAN%20MASALAH%20PROYEK&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}`;
-                const response = await fetch(url);
-                const result = await response.json();
-                
-                if (result && result.success && result.data && result.data.length > 0) {
-                    const matchedRow = result.data[0];
-                    let bagianC = {}, bagianA = {};
-                    try { bagianC = JSON.parse(matchedRow.Bagian_C || '{}'); } catch(e) {}
-                    try { bagianA = JSON.parse(matchedRow.Bagian_A || '{}'); } catch(e) {}
-                    
-                    const tema = bagianC.tema || '-';
-                    const masalah = bagianC.masalah || '-';
-                    const kelompok = bagianA.kelompok || '';
-                    
-                    document.getElementById('tampilan_tema').innerHTML = `<strong>Tema:</strong> ${tema}`;
-                    document.getElementById('tampilan_masalah').innerHTML = `<strong>Masalah:</strong> ${masalah}`;
-                    document.getElementById('dataAktivitas1Box').style.display = 'block';
-                    document.getElementById('dataTidakDitemukan').style.display = 'none';
-                    document.getElementById('apa_masalah').value = masalah;
-                    document.getElementById('masalah_fishbone').value = masalah;
-                    document.getElementById('kelompok').value = kelompok;
-                    
-                    autoResize(document.getElementById('apa_masalah'));
-                    autoResize(document.getElementById('masalah_fishbone'));
-                    
-                    dataDitemukan = true;
-                    setFormEnabled(true);
-                    updateProgress();
-                } else {
-                    document.getElementById('dataAktivitas1Box').style.display = 'none';
-                    document.getElementById('dataTidakDitemukan').style.display = 'block';
-                    setFormEnabled(false);
-                }
-            } catch (error) {
-                console.error('Gagal cek data dari Aktivitas 1:', error);
-                document.getElementById('dataAktivitas1Box').style.display = 'none';
-                document.getElementById('dataTidakDitemukan').style.display = 'block';
-                setFormEnabled(false);
-            } finally {
-                loadingDiv.style.display = 'none';
-            }
-        }
-
         // ==================== LOCAL STORAGE ====================
         function saveUserDataToLocalStorage() {
             if (!isOnline) return;
@@ -667,6 +616,11 @@
             }
         }
 
+        function clearUserLocalStorage() {
+            localStorage.removeItem('ipas_aktivitas2_user_data');
+        }
+
+        // ==================== COLLECT USER DATA ====================
         function collectUserData() {
             return {
                 tugas: document.getElementById('tugas')?.value || '',
@@ -674,11 +628,14 @@
                 cek_materi2: document.getElementById('cek_materi2')?.value || '',
                 cek_materi3: document.getElementById('cek_materi3')?.value || '',
                 cek_materi4: document.getElementById('cek_materi4')?.value || '',
+                masalah_utama: document.getElementById('masalah_utama')?.value || '',
+                apa_masalah: document.getElementById('apa_masalah')?.value || '',
                 siapa_dampak: document.getElementById('siapa_dampak')?.value || '',
                 dimana_lokasi: document.getElementById('dimana_lokasi')?.value || '',
                 kapan_waktu: document.getElementById('kapan_waktu')?.value || '',
                 mengapa_penyebab: document.getElementById('mengapa_penyebab')?.value || '',
                 bagaimana_dampak: document.getElementById('bagaimana_dampak')?.value || '',
+                masalah_fishbone: document.getElementById('masalah_fishbone')?.value || '',
                 penyebab_manusia: document.getElementById('penyebab_manusia')?.value || '',
                 penyebab_metode: document.getElementById('penyebab_metode')?.value || '',
                 penyebab_material: document.getElementById('penyebab_material')?.value || '',
@@ -713,17 +670,21 @@
             };
         }
 
+        // ==================== POPULATE USER DATA ====================
         function populateUserData(userData) {
             if (userData.tugas) document.getElementById('tugas').value = userData.tugas;
             if (userData.cek_materi1) document.getElementById('cek_materi1').value = userData.cek_materi1;
             if (userData.cek_materi2) document.getElementById('cek_materi2').value = userData.cek_materi2;
             if (userData.cek_materi3) document.getElementById('cek_materi3').value = userData.cek_materi3;
             if (userData.cek_materi4) document.getElementById('cek_materi4').value = userData.cek_materi4;
+            if (userData.masalah_utama) document.getElementById('masalah_utama').value = userData.masalah_utama;
+            if (userData.apa_masalah) document.getElementById('apa_masalah').value = userData.apa_masalah;
             if (userData.siapa_dampak) document.getElementById('siapa_dampak').value = userData.siapa_dampak;
             if (userData.dimana_lokasi) document.getElementById('dimana_lokasi').value = userData.dimana_lokasi;
             if (userData.kapan_waktu) document.getElementById('kapan_waktu').value = userData.kapan_waktu;
             if (userData.mengapa_penyebab) document.getElementById('mengapa_penyebab').value = userData.mengapa_penyebab;
             if (userData.bagaimana_dampak) document.getElementById('bagaimana_dampak').value = userData.bagaimana_dampak;
+            if (userData.masalah_fishbone) document.getElementById('masalah_fishbone').value = userData.masalah_fishbone;
             if (userData.penyebab_manusia) document.getElementById('penyebab_manusia').value = userData.penyebab_manusia;
             if (userData.penyebab_metode) document.getElementById('penyebab_metode').value = userData.penyebab_metode;
             if (userData.penyebab_material) document.getElementById('penyebab_material').value = userData.penyebab_material;
@@ -759,12 +720,41 @@
             setTimeout(() => {
                 updateProdukDropdown();
                 document.querySelectorAll('textarea').forEach(ta => autoResize(ta));
-                updateProgress();
             }, 100);
         }
 
-        function clearUserLocalStorage() {
-            localStorage.removeItem('ipas_aktivitas2_user_data');
+        // ==================== FUNGSI MODAL ====================
+        function showModal() {
+            document.getElementById('resetModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('resetModal').style.display = 'none';
+        }
+
+        function confirmReset() {
+            closeModal();
+            resetAllForm();
+            alert('Form berhasil direset!');
+        }
+
+        function resetAllForm() {
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.type === 'checkbox') el.checked = false;
+                else if (el.type === 'radio') el.checked = false;
+                else if (el.type === 'number') el.value = '3';
+                else el.value = '';
+            });
+            document.getElementById('kelas').value = '';
+            document.getElementById('nama').innerHTML = '<option value="">-- Pilih Nama --</option>';
+            document.getElementById('kelompok').value = '';
+            document.getElementById('tugas').value = '';
+            document.getElementById('presenter_utama').innerHTML = '<option value="">-- Pilih Presenter --</option>';
+            document.getElementById('anggota1').innerHTML = '<option value="">-- Pilih Anggota --</option>';
+            document.getElementById('anggota2').innerHTML = '<option value="">-- Pilih Anggota --</option>';
+            document.getElementById('anggota3').innerHTML = '<option value="">-- Pilih Anggota --</option>';
+            document.getElementById('anggota4').innerHTML = '<option value="">-- Pilih Anggota --</option>';
+            clearUserLocalStorage();
         }
 
         // ==================== CEK DAN SUBMIT ====================
@@ -775,10 +765,6 @@
             }
             if (isLoading) {
                 alert('Data masih dimuat. Silakan tunggu beberapa saat.');
-                return;
-            }
-            if (!dataDitemukan) {
-                alert('Data Aktivitas 1 belum ditemukan. Silakan isi Aktivitas 1 terlebih dahulu.');
                 return;
             }
             if (!document.getElementById('kelas').value) {
@@ -831,7 +817,12 @@
                 formData.append('sheetName', FORM_CONFIG.sheetName);
                 formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
                 formData.append('Timestamp', new Date().toISOString());
-                formData.append('Bagian_A', JSON.stringify(allData.identitas));
+                formData.append('Kelas', kelas);
+                formData.append('Nama', nama);
+                formData.append('Kelompok', document.getElementById('kelompok').value || '');
+                formData.append('Tugas', document.getElementById('tugas').value || '');
+                formData.append('Status', 'AKTIF');
+                formData.append('Key', `${kelas}|${nama}|${Date.now()}`);
                 formData.append('Bagian_B', JSON.stringify(allData.bagian_b));
                 formData.append('Bagian_C', JSON.stringify(allData.bagian_c));
                 formData.append('Bagian_D', JSON.stringify(allData.bagian_d));
@@ -852,100 +843,88 @@
                 
                 clearUserLocalStorage();
                 document.getElementById('successMessage').style.display = 'block';
-                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
-                alert('✅ Data berhasil dikirim!');
-                if (confirm('Data terkirim! Ingin reset form?')) location.reload();
+                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 3000);
+                showModal();
             } catch (err) {
                 console.error(err);
                 alert('✅ Data berhasil dikirim (walaupun ada warning teknis). Silakan cek spreadsheet.');
                 clearUserLocalStorage();
-                if (confirm('Refresh halaman?')) location.reload();
+                showModal();
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
             }
         }
 
-        // ==================== COLLECT ALL FORM DATA ====================
+        // ==================== COLLECT ALL FORM DATA (JSON dengan nama lengkap) ====================
         function collectAllFormData() {
+            // Kumpulkan solusi
+            const solusiList = [];
+            for (let i = 1; i <= 6; i++) {
+                solusiList.push({
+                    [`Ide Produk ${i}`]: document.getElementById(`solusi${i}_ide`)?.value || '',
+                    [`Penyebab yang Ingin Diatasi ${i}`]: document.getElementById(`solusi${i}_penyebab`)?.value || ''
+                });
+            }
+
+            // Kumpulkan 3 produk terbaik
+            const terbaikList = [];
+            for (let i = 1; i <= 3; i++) {
+                terbaikList.push({
+                    [`Produk Terbaik ${i}`]: document.getElementById(`solusi_terbaik${i}`)?.value || '',
+                    [`Alasan Produk ${i}`]: document.getElementById(`solusi_terbaik${i}_alasan`)?.value || ''
+                });
+            }
+
             return {
-                identitas: {
-                    kelas: document.getElementById('kelas')?.value || '',
-                    nama: document.getElementById('nama')?.value || '',
-                    kelompok: document.getElementById('kelompok')?.value || '',
-                    tugas: document.getElementById('tugas')?.value || ''
-                },
                 bagian_b: {
-                    soal1: document.getElementById('cek_materi1')?.value || '',
-                    soal2: document.getElementById('cek_materi2')?.value || '',
-                    soal3: document.getElementById('cek_materi3')?.value || '',
-                    soal4: document.getElementById('cek_materi4')?.value || ''
+                    "Menurut kamu apa yang dimaksud dengan solusi": document.getElementById('cek_materi1')?.value || '',
+                    "Sebutkan minimal 3 metode yang bisa digunakan untuk mencari ide solusi": document.getElementById('cek_materi2')?.value || '',
+                    "Sebutkan contoh Kriteria Solusi Hebat": document.getElementById('cek_materi3')?.value || '',
+                    "Sebutkan aktivitas menemukan Solusi Hebatmu": document.getElementById('cek_materi4')?.value || ''
                 },
-                bagian_c: { masalah_utama: document.getElementById('apa_masalah')?.value || '' },
+                bagian_c: {
+                    "Masalah yang akan diselesaikan": document.getElementById('masalah_utama')?.value || ''
+                },
                 bagian_d: {
-                    apa_masalah: document.getElementById('apa_masalah')?.value || '',
-                    siapa_dampak: document.getElementById('siapa_dampak')?.value || '',
-                    dimana_lokasi: document.getElementById('dimana_lokasi')?.value || '',
-                    kapan_waktu: document.getElementById('kapan_waktu')?.value || '',
-                    mengapa_penyebab: document.getElementById('mengapa_penyebab')?.value || '',
-                    bagaimana_dampak: document.getElementById('bagaimana_dampak')?.value || '',
-                    masalah_fishbone: document.getElementById('masalah_fishbone')?.value || '',
-                    penyebab_manusia: document.getElementById('penyebab_manusia')?.value || '',
-                    penyebab_metode: document.getElementById('penyebab_metode')?.value || '',
-                    penyebab_material: document.getElementById('penyebab_material')?.value || '',
-                    penyebab_lingkungan: document.getElementById('penyebab_lingkungan')?.value || ''
+                    "APA masalahnya": document.getElementById('apa_masalah')?.value || '',
+                    "SIAPA yang merasakan dampak": document.getElementById('siapa_dampak')?.value || '',
+                    "DI MANA sering terjadi": document.getElementById('dimana_lokasi')?.value || '',
+                    "KAPAN biasanya muncul": document.getElementById('kapan_waktu')?.value || '',
+                    "MENGAPA bisa terjadi": document.getElementById('mengapa_penyebab')?.value || '',
+                    "BAGAIMANA dampaknya jika dibiarkan": document.getElementById('bagaimana_dampak')?.value || '',
+                    "Masalah Fishbone": document.getElementById('masalah_fishbone')?.value || '',
+                    "Penyebab Perilaku/Kebiasaan Orang": document.getElementById('penyebab_manusia')?.value || '',
+                    "Penyebab Cara kerja/Aturan": document.getElementById('penyebab_metode')?.value || '',
+                    "Penyebab Alat/Bahan": document.getElementById('penyebab_material')?.value || '',
+                    "Penyebab Kondisi sekitar": document.getElementById('penyebab_lingkungan')?.value || ''
                 },
                 bagian_e: {
-                    solusi: [
-                        { ide: document.getElementById('solusi1_ide')?.value || '', penyebab: document.getElementById('solusi1_penyebab')?.value || '' },
-                        { ide: document.getElementById('solusi2_ide')?.value || '', penyebab: document.getElementById('solusi2_penyebab')?.value || '' },
-                        { ide: document.getElementById('solusi3_ide')?.value || '', penyebab: document.getElementById('solusi3_penyebab')?.value || '' },
-                        { ide: document.getElementById('solusi4_ide')?.value || '', penyebab: document.getElementById('solusi4_penyebab')?.value || '' },
-                        { ide: document.getElementById('solusi5_ide')?.value || '', penyebab: document.getElementById('solusi5_penyebab')?.value || '' },
-                        { ide: document.getElementById('solusi6_ide')?.value || '', penyebab: document.getElementById('solusi6_penyebab')?.value || '' }
-                    ],
-                    terbaik: [
-                        { solusi: document.getElementById('solusi_terbaik1')?.value || '', alasan: document.getElementById('solusi_terbaik1_alasan')?.value || '' },
-                        { solusi: document.getElementById('solusi_terbaik2')?.value || '', alasan: document.getElementById('solusi_terbaik2_alasan')?.value || '' },
-                        { solusi: document.getElementById('solusi_terbaik3')?.value || '', alasan: document.getElementById('solusi_terbaik3_alasan')?.value || '' }
-                    ]
+                    "Daftar Ide Produk": solusiList,
+                    "3 Produk Terbaik": terbaikList
                 },
                 bagian_f: {
-                    presenter_utama: document.getElementById('presenter_utama')?.value || '',
-                    anggota1: document.getElementById('anggota1')?.value || '',
-                    anggota2: document.getElementById('anggota2')?.value || '',
-                    anggota3: document.getElementById('anggota3')?.value || '',
-                    anggota4: document.getElementById('anggota4')?.value || '',
-                    feedback: document.getElementById('feedback')?.value || '',
-                    feedback_terbaik: document.getElementById('feedback_terbaik')?.value || ''
+                    "Presenter Utama": document.getElementById('presenter_utama')?.value || '',
+                    "Anggota 1": document.getElementById('anggota1')?.value || '',
+                    "Anggota 2": document.getElementById('anggota2')?.value || '',
+                    "Anggota 3": document.getElementById('anggota3')?.value || '',
+                    "Anggota 4": document.getElementById('anggota4')?.value || '',
+                    "Masukan dari kelompok lain": document.getElementById('feedback')?.value || '',
+                    "Masukan PALING BERGUNA": document.getElementById('feedback_terbaik')?.value || ''
                 },
                 bagian_g: {
-                    solusi_utama: document.getElementById('solusi_utama')?.value || '',
-                    alasan_solusi: document.getElementById('alasan_solusi')?.value || '',
-                    pertanyaan_penelitian: document.getElementById('pertanyaan_penelitian')?.value || '',
-                    hipotesis_jika: document.getElementById('hipotesis_jika')?.value || '',
-                    hipotesis_maka: document.getElementById('hipotesis_maka')?.value || '',
-                    hipotesis_karena: document.getElementById('hipotesis_karena')?.value || ''
+                    "Produk Utama": document.getElementById('solusi_utama')?.value || '',
+                    "Alasan Memilih Produk Ini": document.getElementById('alasan_solusi')?.value || '',
+                    "Pertanyaan Penelitian": document.getElementById('pertanyaan_penelitian')?.value || '',
+                    "Hipotesis JIKA": document.getElementById('hipotesis_jika')?.value || '',
+                    "Hipotesis MAKA": document.getElementById('hipotesis_maka')?.value || '',
+                    "Hipotesis KARENA": document.getElementById('hipotesis_karena')?.value || ''
                 },
                 bagian_h: {
-                    pembelajaran: document.getElementById('pembelajaran')?.value || '',
-                    rencana: document.getElementById('rencana')?.value || ''
+                    "Pelajaran paling berharga": document.getElementById('pembelajaran')?.value || '',
+                    "Rencana untuk pertemuan selanjutnya": document.getElementById('rencana')?.value || ''
                 }
             };
-        }
-
-        // ==================== PROGRESS BAR ====================
-        function updateProgress() {
-            let total = 0, filled = 0;
-            document.querySelectorAll('input[type="text"], select, textarea').forEach(inp => {
-                if (inp.id !== 'progressBar' && inp.style.display !== 'none' && !inp.readOnly) {
-                    total++;
-                    if (inp.value && inp.value.trim() !== '') filled++;
-                }
-            });
-            let percent = total > 0 ? Math.round((filled / total) * 100) : 0;
-            let bar = document.getElementById('progressBar');
-            if (bar) { bar.style.width = percent + '%'; bar.innerHTML = percent + '%'; }
         }
 
         // ==================== INIT ====================
@@ -957,7 +936,6 @@
             loadDataFromGoogleSheets();
             setInterval(checkConnection, 5000);
             initAutoResize();
-            setFormEnabled(false);
         });
     </script>
 </body>

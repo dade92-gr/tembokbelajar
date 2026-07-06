@@ -12,6 +12,9 @@
             --info-secondary: #2980b9;
             --info-light: #d6eaf8;
             --info-dark: #1f618d;
+            --status-belum: #95a5a6;
+            --status-kumpul: #f39c12;
+            --status-dinilai: #27ae60;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -246,7 +249,7 @@
         .rekap-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             min-width: 600px;
         }
         
@@ -259,6 +262,7 @@
             border: 1px solid #ddd;
             position: sticky;
             top: 0;
+            z-index: 5;
         }
         
         .rekap-table td {
@@ -274,11 +278,42 @@
             background: #f8f9fa;
             position: sticky;
             left: 0;
+            z-index: 2;
+        }
+        
+        .rekap-table td:nth-child(3) { 
+            text-align: left; 
+            font-weight: 500;
         }
         
         .rekap-table tr:hover { background: #f8f9fa; }
         
-        .status-sudah {
+        /* ===== STATUS 3 WARNA ===== */
+        .status-belum-kumpul {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #ecf0f1;
+            color: #7f8c8d;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        .status-sudah-kumpul {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fdebd0;
+            color: #e67e22;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        .status-sudah-dinilai {
             display: inline-flex;
             align-items: center;
             gap: 5px;
@@ -286,19 +321,7 @@
             color: #27ae60;
             padding: 4px 10px;
             border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        
-        .status-belum {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #fadbd8;
-            color: #e74c3c;
-            padding: 4px 10px;
-            border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
         }
         
@@ -312,8 +335,12 @@
             transition: all 0.3s ease;
         }
         .preview-btn:hover {
-            background: #e3f2fd;
+            background: var(--info-light);
             transform: scale(1.1);
+        }
+        .preview-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
         
         .nilai-baik { color: #27ae60; font-weight: 700; }
@@ -392,9 +419,12 @@
             margin: 0 auto 1rem auto;
         }
         
+        .loading-card p { color: var(--info-dark); font-weight: 600; }
+        .loading-card .loading-text { font-size: 0.8rem; color: #888; margin-top: 0.5rem; }
+        
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* Modal Preview */
+        /* ===== MODAL PREVIEW ===== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -426,6 +456,7 @@
             background: linear-gradient(135deg, var(--info-primary), var(--info-secondary));
             color: white;
         }
+        .modal-header h3 { font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
         .modal-close {
             background: none;
             border: none;
@@ -438,6 +469,19 @@
             overflow-y: auto;
             flex: 1;
         }
+        .modal-info {
+            background: var(--info-light);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem 2rem;
+            font-size: 0.85rem;
+        }
+        .modal-info p { margin: 0; }
+        .modal-info strong { color: var(--info-dark); }
+        
         .preview-content-wrapper {
             background: #f8f9fa;
             border-radius: 12px;
@@ -445,6 +489,7 @@
             max-height: 55vh;
             overflow-y: auto;
         }
+        
         .preview-field {
             margin-bottom: 1rem;
             background: white;
@@ -465,14 +510,145 @@
             white-space: pre-wrap;
             word-break: break-word;
         }
+        .preview-empty { color: #999; font-style: italic; }
+        
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .preview-table th {
+            background: var(--info-light);
+            color: var(--info-dark);
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .preview-table td {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .preview-list {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+        
+        /* ===== EXPAND - VERTICAL LIST ===== */
+        .expand-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            color: var(--info-primary);
+            font-size: 0.7rem;
+        }
+        .expand-btn:hover {
+            background: var(--info-light);
+            transform: scale(1.1);
+        }
+        .expand-btn.rotated {
+            transform: rotate(90deg);
+        }
+        
+        .detail-row {
+            display: none;
+            background: #f8f9fa;
+        }
+        .detail-row.expanded {
+            display: table-row;
+        }
+        .detail-row td {
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+        }
+        
+        .detail-container {
+            padding: 0.5rem 0;
+        }
+        .detail-title {
+            font-weight: 600;
+            color: var(--info-dark);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--info-light);
+        }
+        .detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 10px;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid var(--info-primary);
+            font-size: 0.7rem;
+        }
+        .detail-item .aktivitas {
+            font-weight: 500;
+            color: var(--info-dark);
+        }
+        .detail-item .nilai-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .detail-item .nilai {
+            font-weight: 600;
+            color: #333;
+        }
+        .detail-item .predikat {
+            font-size: 0.6rem;
+            padding: 2px 10px;
+            border-radius: 12px;
+            color: white;
+        }
+        .predikat-mahir { background: #2980b9; }
+        .predikat-cakap { background: #27ae60; }
+        .predikat-berkembang { background: #f39c12; }
+        .predikat-perlu-bimbingan { background: #e74c3c; }
+        
+        .detail-rata {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            background: var(--info-light);
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            margin-top: 4px;
+            border-left: 3px solid var(--info-dark);
+        }
+        .detail-rata .nilai {
+            font-weight: 700;
+            color: var(--info-dark);
+        }
+        
+        .detail-empty {
+            color: #999;
+            font-style: italic;
+            font-size: 0.7rem;
+            padding: 0.5rem 0;
+        }
         
         @media (max-width: 768px) {
             .activities-container { padding: 1rem; }
             .filter-form { flex-direction: column; }
             .btn-cek { width: 100%; justify-content: center; }
-            .rekap-table th, .rekap-table td { padding: 0.4rem; font-size: 0.7rem; }
+            .rekap-table th, .rekap-table td { padding: 0.4rem; font-size: 0.65rem; }
             .info-panel-header { flex-direction: column; align-items: flex-start; }
             .profile-section { margin-left: 0; }
+            .modal-container { width: 95%; max-height: 90vh; }
+            .detail-item { flex-wrap: wrap; gap: 4px; }
         }
     </style>
 </head>
@@ -489,7 +665,7 @@
                     <li><a href="../index-informatika.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda Informatika</a></li>
                     <li><a href="../aktivitas-pembelajaran/index-aktifitas-informatika.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
                     <li><a href="../materi-pembelajaran/index-materi-informatika.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
-                    <li><a href="index-penilaian-inform.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                    <li><a href="index-penilaian-informatika.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
                 </ul>
                 <div class="hamburger" id="hamburger">
                     <span class="bar"></span>
@@ -534,8 +710,8 @@
                         <label><i class="fas fa-calendar-alt"></i> Semester</label>
                         <select id="filterSemester">
                             <option value="">-- Pilih Semester --</option>
-                            <option value="Ganjil">Semester Ganjil</option>
-                            <option value="Genap">Semester Genap</option>
+                            <option value="ganjil" selected>Semester Ganjil</option>
+                            <option value="genap">Semester Genap</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -585,7 +761,9 @@
                 </div>
                 <div class="summary-stats" id="aktivitasStats" style="display: none;">
                     <div class="stat-card"><div class="number" id="totalSiswaAktivitas">0</div><div class="label">Total Siswa</div></div>
-                    <div class="stat-card"><div class="number" id="rataPengumpulan">0%</div><div class="label">Rata-rata Pengumpulan</div></div>
+                    <div class="stat-card"><div class="number" id="totalSudahKumpul">0</div><div class="label">Sudah Kumpul</div></div>
+                    <div class="stat-card"><div class="number" id="totalSudahDinilai">0</div><div class="label">Sudah Dinilai</div></div>
+                    <div class="stat-card"><div class="number" id="totalBelumKumpul">0</div><div class="label">Belum Kumpul</div></div>
                 </div>
             </div>
 
@@ -654,11 +832,38 @@
         let dataSiswaPerKelas = {};
         let currentKelas = '';
         let currentSemester = '';
+        let aktivitasHeaders = [];
+        let aktivitasKodes = [];
+        let aktivitasNamaAsli = [];
+        let siswaData = [];
         
-        // Cache data
-        let aktivitasHeaders = []; // nama aktivitas (P4-A1, P4-A2, dll)
-        let nilaiHeaders = [];     // kode TP (TP 1.6, TP 1.7, dll)
-        let siswaData = [];        // [{nama, kelas, status: {aktivitas: nilai}, nilai: {tp: nilai}}]
+        // ==================== DESKRIPSI TP ====================
+        const DESKRIPSI_TP = {
+            'TP 1.1': 'Memahami dan menerapkan konsep algoritma dan struktur data dalam menyelesaikan masalah sehari-hari',
+            'TP 1.2': 'Menganalisis dan merepresentasikan data menggunakan struktur data yang tepat',
+            'TP 1.3': 'Menerapkan pemecahan masalah dengan pendekatan komputasi secara mandiri dan kolaboratif',
+            'TP 1.4': 'Membuat program sederhana menggunakan HTML dan JavaScript',
+            'TP 1.5': 'Mengimplementasikan kondisi dan perulangan dalam program sederhana',
+            'TP 1.6': 'Memahami model IPO (Input-Process-Output) dan arsitektur Von Neumann',
+            'TP 1.7': 'Memahami fungsi dan peran sistem operasi dalam komputer',
+            'TP 2.1': 'Mengidentifikasi dan menggunakan perangkat lunak pengolah dokumen, lembar kerja, dan presentasi',
+            'TP 2.2': 'Menerapkan prosedur keamanan dasar pada perangkat dan akun digital',
+            'TP 2.3': 'Menganalisis kasus keamanan digital dan memberikan solusi yang tepat',
+            'TP 2.4': 'Memahami dan menggunakan fitur kolaborasi pada Google Workspace',
+            'TP 2.5': 'Membuat portofolio digital yang aman dan terorganisir',
+            'TP 2.6': 'Memahami konsep digitalisasi budaya dan manfaatnya',
+            'TP 2.7': 'Memahami hak kekayaan intelektual dan pengelolaan jejak digital',
+            'TP 2.8': 'Mengidentifikasi profesi di bidang informatika dan perannya',
+            'TP 2.9': 'Membuat konten promosi budaya digital',
+            'TP 2.10': 'Mempresentasikan dan merefleksikan hasil proyek literasi informasi',
+            'TP 2.11': 'Menerapkan praktik keamanan akun digital (kata sandi kuat)',
+            'TP 2.12': 'Menerapkan autentikasi dua langkah (2FA) pada akun digital',
+            'TP 2.13': 'Membuat video edukasi tentang keamanan dan jejak digital'
+        };
+        
+        function getDeskripsiTP(tpKode) {
+            return DESKRIPSI_TP[tpKode] || '';
+        }
         
         // ==================== LOAD DATA SISWA ====================
         function loadDataSiswa() {
@@ -698,19 +903,74 @@
             });
         }
         
-        // ==================== AMBIL DATA DARI SHEET ====================
+        // ==================== AMBIL DATA REKAP ====================
         async function fetchRekapData(semester, kelas) {
-            const url = getAppsScriptUrl();
             try {
-                const response = await fetch(`${url}?action=getRekapKelas&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&_=${Date.now()}`);
+                const url = `${APPS_SCRIPT_URL}?action=getRekapKelas&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&_=${Date.now()}`;
+                const response = await fetch(url);
                 const result = await response.json();
-                if (result && result.success) {
-                    return result;
-                }
-                return null;
+                console.log('fetchRekapData result:', result);
+                return result;
             } catch (error) {
-                console.error('Gagal mengambil data rekap:', error);
-                return null;
+                console.error('Error fetchRekapData:', error);
+                throw error;
+            }
+        }
+        
+        // ==================== LOAD DAN RENDER ====================
+        async function loadAndRenderData() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            loadingOverlay.style.display = 'flex';
+            errorMsg.style.display = 'none';
+            document.getElementById('aktivitasCard').style.display = 'none';
+            document.getElementById('nilaiCard').style.display = 'none';
+            document.getElementById('infoPanel').style.display = 'none';
+            
+            const btnCek = document.getElementById('btnCek');
+            btnCek.disabled = true;
+            btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+            
+            try {
+                document.getElementById('loadingText').innerHTML = 'Mengambil data rekap...';
+                const result = await fetchRekapData(currentSemester, currentKelas);
+                
+                console.log('Result:', result);
+                
+                if (result && result.success && result.data) {
+                    const data = result.data;
+                    
+                    if (!data.aktivitasHeaders || data.aktivitasHeaders.length === 0) {
+                        console.warn('Tidak ada aktivitas untuk semester ini');
+                        document.getElementById('errorText').innerHTML = `Tidak ada aktivitas untuk semester ${currentSemester}. Pastikan data di sheet Rekap_aktivitas sudah benar.`;
+                        errorMsg.style.display = 'block';
+                        return;
+                    }
+                    
+                    aktivitasHeaders = data.aktivitasHeaders || [];
+                    aktivitasKodes = data.aktivitasKodes || [];
+                    aktivitasNamaAsli = data.aktivitasNamaAsli || [];
+                    siswaData = data.siswaData || [];
+                    
+                    document.getElementById('infoSemester').innerText = currentSemester === 'ganjil' ? 'Ganjil' : 'Genap';
+                    document.getElementById('infoKelas').innerText = currentKelas;
+                    document.getElementById('infoTotalSiswa').innerText = siswaData.length;
+                    document.getElementById('infoPanel').style.display = 'flex';
+                    
+                    renderAktivitasTable();
+                    renderNilaiTable();
+                } else {
+                    throw new Error(result?.error || 'Gagal memuat data');
+                }
+            } catch (error) {
+                console.error(error);
+                errorMsg.style.display = 'block';
+                document.getElementById('errorText').innerHTML = error.message || 'Gagal memuat data. Silakan coba lagi.';
+            } finally {
+                loadingOverlay.style.display = 'none';
+                btnCek.disabled = false;
+                btnCek.innerHTML = '<i class="fas fa-search"></i> Tampilkan Rekap';
             }
         }
         
@@ -728,40 +988,58 @@
                 return;
             }
             
-            // Build header: NO, KELAS, NAMA, lalu semua aktivitas
+            // Build header
             let headerHtml = '<tr><th>NO</th><th>KELAS</th><th>NAMA</th>';
-            for (const aktivitas of aktivitasHeaders) {
-                headerHtml += `<th>${escapeHtml(aktivitas)}</th>`;
+            for (const header of aktivitasHeaders) {
+                headerHtml += `<th>${escapeHtml(header)}</th>`;
             }
             headerHtml += '</tr>';
             thead.innerHTML = headerHtml;
             
             // Build body
             let html = '';
-            let totalStatus = 0;
-            let totalSudah = 0;
-            let no = 1;
+            let totalSudahKumpul = 0;
+            let totalSudahDinilai = 0;
+            let totalBelumKumpul = 0;
             
             for (const siswa of siswaData) {
                 html += `<tr>
-                    <td>${no++}</td>
+                    <td>${siswa.no}</td>
                     <td>${escapeHtml(siswa.kelas)}</td>
                     <td style="text-align:left;">${escapeHtml(siswa.nama)}</td>`;
                 
-                for (const aktivitas of aktivitasHeaders) {
-                    const status = siswa.status[aktivitas] || '❌';
-                    if (status === '✅') totalSudah++;
-                    totalStatus++;
+                for (let i = 0; i < aktivitasHeaders.length; i++) {
+                    const namaAsli = aktivitasNamaAsli[i] || aktivitasHeaders[i];
+                    const kodeAktivitas = aktivitasKodes[i] || '';
                     
-                    const isCompleted = (status === '✅');
-                    const previewHtml = isCompleted
-                        ? `<button class="preview-btn" onclick="previewJawaban('${escapeHtml(aktivitas)}', '${escapeHtml(siswa.nama)}')">
+                    const statusAktivitas = siswa.aktivitas[namaAsli] || { status: 'belum', dinilai: false, kode: '' };
+                    const isSudahKumpul = statusAktivitas.status === 'sudah';
+                    const isSudahDinilai = statusAktivitas.dinilai === true;
+                    
+                    let statusHtml = '';
+                    let previewDisabled = true;
+                    
+                    if (!isSudahKumpul) {
+                        statusHtml = '<span class="status-belum-kumpul"><i class="fas fa-clock"></i> Belum Kumpul</span>';
+                        totalBelumKumpul++;
+                    } else if (isSudahKumpul && !isSudahDinilai) {
+                        statusHtml = '<span class="status-sudah-kumpul"><i class="fas fa-upload"></i> Sudah Kumpul</span>';
+                        totalSudahKumpul++;
+                        previewDisabled = false;
+                    } else if (isSudahKumpul && isSudahDinilai) {
+                        statusHtml = `<span class="status-sudah-dinilai"><i class="fas fa-check-circle"></i> Sudah Dinilai</span>`;
+                        totalSudahDinilai++;
+                        previewDisabled = false;
+                    }
+                    
+                    const previewHtml = !previewDisabled
+                        ? `<button class="preview-btn" onclick="previewJawaban('${escapeHtml(kodeAktivitas)}', '${escapeHtml(siswa.nama)}', '${escapeHtml(namaAsli)}')">
                             <i class="fas fa-eye" style="color: #3498db; font-size: 0.8rem;"></i>
                            </button>`
-                        : '';
+                        : `<button class="preview-btn" disabled><i class="fas fa-eye" style="color: #ccc; font-size: 0.8rem;"></i></button>`;
                     
                     html += `<td style="text-align:center;">
-                        ${status === '✅' ? '<span style="color:#27ae60;">✔</span>' : '<span style="color:#e74c3c;">✖</span>'}
+                        ${statusHtml}
                         ${previewHtml}
                     </td>`;
                 }
@@ -772,9 +1050,10 @@
             aktivitasCard.style.display = 'block';
             aktivitasStats.style.display = 'flex';
             
-            const persen = totalStatus > 0 ? Math.round((totalSudah / totalStatus) * 100) : 0;
             document.getElementById('totalSiswaAktivitas').innerText = siswaData.length;
-            document.getElementById('rataPengumpulan').innerText = persen + '%';
+            document.getElementById('totalSudahKumpul').innerText = totalSudahKumpul;
+            document.getElementById('totalSudahDinilai').innerText = totalSudahDinilai;
+            document.getElementById('totalBelumKumpul').innerText = totalBelumKumpul;
         }
         
         // ==================== RENDER TABEL NILAI ====================
@@ -784,60 +1063,131 @@
             const nilaiCard = document.getElementById('nilaiCard');
             const nilaiStats = document.getElementById('nilaiStats');
             
-            if (!siswaData || siswaData.length === 0 || !nilaiHeaders || nilaiHeaders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:2rem;">Tidak ada data nilai TP</td></tr>';
+            // Ambil semua TP yang tersedia dari data siswa
+            const tpSet = new Set();
+            for (const siswa of siswaData) {
+                if (siswa.nilaiTP) {
+                    for (const tp of Object.keys(siswa.nilaiTP)) {
+                        tpSet.add(tp);
+                    }
+                }
+            }
+            const tpHeaders = Array.from(tpSet).sort();
+            
+            if (!siswaData || siswaData.length === 0 || tpHeaders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:2rem;">Tidak ada data nilai TP untuk semester ini</td></tr>';
                 nilaiCard.style.display = 'block';
                 nilaiStats.style.display = 'none';
                 return;
             }
             
-            // Build header: NO, KELAS, NAMA, lalu semua TP, TOTAL NILAI
+            // Build header
             let headerHtml = '<tr><th>NO</th><th>KELAS</th><th>NAMA</th>';
-            for (const tp of nilaiHeaders) {
+            for (const tp of tpHeaders) {
                 headerHtml += `<th>${escapeHtml(tp)}</th>`;
             }
-            headerHtml += `<th>TOTAL NILAI</th>`;
             headerHtml += '</tr>';
             thead.innerHTML = headerHtml;
             
             // Build body
             let html = '';
             let semuaNilai = [];
-            let no = 1;
             
             for (const siswa of siswaData) {
-                let totalNilai = 0;
-                let jumlahNilai = 0;
+                html += `<tr id="row-${siswa.no}">`;
+                html += `<td>${siswa.no}</td>`;
+                html += `<td>${escapeHtml(siswa.kelas)}</td>`;
+                html += `<td style="text-align:left;">${escapeHtml(siswa.nama)}</td>`;
                 
-                html += `<tr>
-                    <td>${no++}</td>
-                    <td>${escapeHtml(siswa.kelas)}</td>
-                    <td style="text-align:left;">${escapeHtml(siswa.nama)}</td>`;
-                
-                for (const tp of nilaiHeaders) {
-                    const nilai = siswa.nilai[tp] || '-';
-                    if (nilai !== '-' && !isNaN(parseFloat(nilai))) {
-                        const num = parseFloat(nilai);
-                        totalNilai += num;
-                        jumlahNilai++;
-                        semuaNilai.push(num);
+                for (const tp of tpHeaders) {
+                    const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined ? siswa.nilaiTP[tp] : '-';
+                    const isNilaiValid = nilai !== '-' && !isNaN(parseFloat(nilai));
+                    const nilaiNum = isNilaiValid ? parseFloat(nilai) : null;
+                    
+                    if (isNilaiValid) {
+                        semuaNilai.push(nilaiNum);
                     }
                     
                     let nilaiClass = '';
-                    if (nilai !== '-' && !isNaN(parseFloat(nilai))) {
-                        const num = parseFloat(nilai);
-                        if (num >= 86) nilaiClass = 'nilai-baik';
-                        else if (num >= 71) nilaiClass = 'nilai-baik';
-                        else if (num >= 51) nilaiClass = 'nilai-cukup';
+                    if (isNilaiValid) {
+                        if (nilaiNum >= 86) nilaiClass = 'nilai-baik';
+                        else if (nilaiNum >= 71) nilaiClass = 'nilai-baik';
+                        else if (nilaiNum >= 51) nilaiClass = 'nilai-cukup';
                         else nilaiClass = 'nilai-kurang';
                     }
                     
-                    html += `<td class="${nilaiClass}">${escapeHtml(String(nilai))}</td>`;
+                    const cellId = `cell-${siswa.no}-${safeId(tp)}`;
+                    const detailId = `detail-${siswa.no}-${safeId(tp)}`;
+                    
+                    const detailData = siswa.detailTP && siswa.detailTP[tp] ? siswa.detailTP[tp] : [];
+                    const hasDetail = detailData.length > 0;
+                    
+                    html += `<td id="${cellId}" style="cursor:pointer;">
+                        <div style="display:flex; align-items:center; justify-content:center; gap:4px;">
+                            <span class="${nilaiClass}" style="font-weight:700;">${escapeHtml(String(nilai))}</span>
+                            ${isNilaiValid && hasDetail ? `<button class="expand-btn" onclick="toggleExpand('${cellId}', '${detailId}')" title="Lihat detail per aktivitas">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>` : ''}
+                        </div>
+                    </td>`;
                 }
-                
-                const rataNilai = jumlahNilai > 0 ? Math.round(totalNilai / jumlahNilai) : 0;
-                html += `<td><strong>${rataNilai}</strong></td>`;
                 html += '</tr>';
+                
+                // Baris detail
+                for (const tp of tpHeaders) {
+                    const detailId = `detail-${siswa.no}-${safeId(tp)}`;
+                    const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined ? siswa.nilaiTP[tp] : '-';
+                    const isNilaiValid = nilai !== '-' && !isNaN(parseFloat(nilai));
+                    
+                    const detailData = siswa.detailTP && siswa.detailTP[tp] ? siswa.detailTP[tp] : [];
+                    
+                    html += `<tr class="detail-row" id="${detailId}">`;
+                    html += `<td colspan="${3 + tpHeaders.length}" style="padding:0.5rem 1rem; background:#f8f9fa;">`;
+                    
+                    if (isNilaiValid && detailData.length > 0) {
+                        html += `<div class="detail-container">`;
+                        html += `<div class="detail-title">
+                            <i class="fas fa-info-circle"></i> Detail Nilai ${escapeHtml(tp)} - ${escapeHtml(siswa.nama)}
+                            <span style="font-weight:400; font-size:0.7rem; color:#666; margin-left:8px;">${escapeHtml(getDeskripsiTP(tp))}</span>
+                        </div>`;
+                        html += `<div class="detail-list">`;
+                        
+                        const predikat = getPredikat(parseFloat(nilai));
+                        
+                        for (let i = 0; i < aktivitasHeaders.length; i++) {
+                            const headerLabel = aktivitasHeaders[i];
+                            const namaAsli = aktivitasNamaAsli[i] || headerLabel;
+                            
+                            const item = detailData.find(d => d.aktivitas === namaAsli);
+                            const nilaiAktivitas = item ? item.nilai : null;
+                            const isAdaNilai = nilaiAktivitas !== null && !isNaN(nilaiAktivitas);
+                            
+                            const predikatAktivitas = isAdaNilai ? getPredikat(nilaiAktivitas) : { teks: 'Belum', kelas: '' };
+                            
+                            html += `<div class="detail-item">
+                                <span class="aktivitas">${escapeHtml(headerLabel)}</span>
+                                <div class="nilai-info">
+                                    <span class="nilai">${isAdaNilai ? nilaiAktivitas : '-'}</span>
+                                    ${isAdaNilai ? `<span class="predikat ${predikatAktivitas.kelas}">${predikatAktivitas.teks}</span>` : ''}
+                                </div>
+                            </div>`;
+                        }
+                        
+                        html += `<div class="detail-rata">
+                            <span>Rata-rata</span>
+                            <div>
+                                <span class="nilai">${nilai}</span>
+                                <span class="predikat ${predikat.kelas}" style="margin-left:8px; padding:2px 10px; border-radius:12px; color:white; font-size:0.6rem;">${predikat.teks}</span>
+                            </div>
+                        </div>`;
+                        
+                        html += `</div></div>`;
+                    } else {
+                        html += `<div class="detail-empty">Tidak ada detail nilai untuk TP ini</div>`;
+                    }
+                    
+                    html += `</td></tr>`;
+                }
             }
             
             tbody.innerHTML = html;
@@ -858,8 +1208,49 @@
             }
         }
         
+        // ==================== TOGGLE EXPAND ====================
+        function toggleExpand(cellId, detailId) {
+            const detailRow = document.getElementById(detailId);
+            const btn = document.querySelector(`#${cellId} .expand-btn i`);
+            
+            if (detailRow) {
+                document.querySelectorAll('.detail-row').forEach(row => {
+                    if (row.id !== detailId) {
+                        row.classList.remove('expanded');
+                        const otherBtn = document.querySelector(`#${row.id.replace('detail-', 'cell-')} .expand-btn i`);
+                        if (otherBtn) otherBtn.classList.remove('rotated');
+                    }
+                });
+                
+                detailRow.classList.toggle('expanded');
+                if (btn) {
+                    btn.classList.toggle('rotated');
+                }
+            }
+        }
+        
+        // ==================== PREDIKAT ====================
+        function getPredikat(nilai) {
+            if (nilai === null || nilai === undefined || isNaN(nilai)) {
+                return { teks: 'Belum', kelas: '', warna: '#95a5a6' };
+            }
+            if (nilai >= 90) {
+                return { teks: 'Mahir', kelas: 'predikat-mahir', warna: '#2980b9' };
+            } else if (nilai >= 75) {
+                return { teks: 'Cakap', kelas: 'predikat-cakap', warna: '#27ae60' };
+            } else if (nilai >= 60) {
+                return { teks: 'Berkembang', kelas: 'predikat-berkembang', warna: '#f39c12' };
+            } else {
+                return { teks: 'Perlu Bimbingan', kelas: 'predikat-perlu-bimbingan', warna: '#e74c3c' };
+            }
+        }
+        
+        function safeId(str) {
+            return str.replace(/\./g, '_').replace(/\s+/g, '_').replace(/\(/g, '_').replace(/\)/g, '_');
+        }
+        
         // ==================== PREVIEW JAWABAN ====================
-        async function previewJawaban(aktivitas, namaSiswa) {
+        async function previewJawaban(kodeAktivitas, namaSiswa, namaAktivitas) {
             const modalHtml = `
                 <div id="previewModal" class="modal-overlay" onclick="if(event.target===this) closePreviewModal()">
                     <div class="modal-container">
@@ -868,8 +1259,8 @@
                             <button class="modal-close" onclick="closePreviewModal()">&times;</button>
                         </div>
                         <div class="modal-body">
-                            <div style="margin-bottom:1rem;">
-                                <p><strong>Aktivitas:</strong> ${escapeHtml(aktivitas)}</p>
+                            <div class="modal-info">
+                                <p><strong>Aktivitas:</strong> ${escapeHtml(kodeAktivitas)}</p>
                                 <p><strong>Siswa:</strong> ${escapeHtml(namaSiswa)}</p>
                                 <p><strong>Kelas:</strong> ${escapeHtml(currentKelas)}</p>
                             </div>
@@ -887,290 +1278,170 @@
             if (existingModal) existingModal.remove();
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             
-            // Cari sheet name dari aktivitas
-            const sheetName = await getSheetNameFromAktivitas(aktivitas);
-            
-            if (sheetName) {
+            try {
+                const previewWrapper = document.getElementById('previewContentWrapper');
                 const url = getAppsScriptUrl();
-                try {
-                    const response = await fetch(`${url}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(currentKelas)}&nama=${encodeURIComponent(namaSiswa)}&status=AKTIF&_=${Date.now()}`);
-                    const result = await response.json();
-                    const previewWrapper = document.getElementById('previewContentWrapper');
+                
+                // Ambil data dari sheet sesuai kode aktivitas
+                const response = await fetch(`${url}?action=getData&sheetName=${encodeURIComponent(kodeAktivitas)}&kelas=${encodeURIComponent(currentKelas)}&nama=${encodeURIComponent(namaSiswa)}&_=${Date.now()}`);
+                const result = await response.json();
+                
+                console.log('Preview result:', result);
+                
+                if (result && result.success && result.data && result.data.length > 0) {
+                    const jawabanData = result.data[0];
+                    let contentHtml = '';
                     
-                    if (result && result.success && result.data && result.data.length > 0) {
-                        const jawabanData = result.data[0];
-                        let contentHtml = '';
+                    const excludeKeys = ['Key', 'key', '_key', 'Kelas', 'kelas', 'Nama', 'nama', 'Semester', 'semester', 'Status', 'status', 'No', 'no'];
+                    
+                    const keys = Object.keys(jawabanData).filter(key => {
+                        if (key.startsWith('_')) return false;
+                        if (excludeKeys.includes(key)) return false;
+                        if (excludeKeys.includes(key.toLowerCase())) return false;
+                        return true;
+                    });
+                    
+                    keys.sort((a, b) => {
+                        const aIsBagian = a.startsWith('Bagian_');
+                        const bIsBagian = b.startsWith('Bagian_');
+                        if (aIsBagian && !bIsBagian) return -1;
+                        if (!aIsBagian && bIsBagian) return 1;
+                        return a.localeCompare(b);
+                    });
+                    
+                    for (const key of keys) {
+                        let value = jawabanData[key];
                         
-                        for (const [key, value] of Object.entries(jawabanData)) {
-                            if (key === 'Timestamp' || key === 'Status' || key === '_timestamp' || key === '_status' || key === 'Key' || key === 'Kelas' || key === 'Nama') continue;
-                            
-                            let displayValue = value;
-                            if (typeof value === 'object') {
-                                displayValue = JSON.stringify(value, null, 2);
-                            } else if (value === '' || value === null || value === undefined) {
-                                displayValue = '-';
-                            }
-                            
-                            contentHtml += `
-                                <div class="preview-field">
-                                    <div class="preview-field-header">
-                                        <i class="fas fa-angle-right"></i> ${escapeHtml(formatLabel(key))}
-                                    </div>
-                                    <div class="preview-field-value">
-                                        ${escapeHtml(String(displayValue))}
-                                    </div>
-                                </div>
-                            `;
+                        if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+                            try {
+                                value = JSON.parse(value);
+                            } catch(e) {}
                         }
                         
-                        previewWrapper.innerHTML = contentHtml || '<div style="text-align:center; color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data</div>';
-                    } else {
-                        previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban tidak ditemukan.</div>';
+                        let icon = 'fa-file-alt';
+                        if (key.startsWith('Bagian_')) icon = 'fa-folder';
+                        else if (key.toLowerCase().includes('jawaban')) icon = 'fa-edit';
+                        else if (key.toLowerCase().includes('nilai')) icon = 'fa-star';
+                        else if (key.toLowerCase().includes('link')) icon = 'fa-link';
+                        else if (key.toLowerCase().includes('status')) icon = 'fa-check-circle';
+                        
+                        contentHtml += `
+                            <div class="preview-field">
+                                <div class="preview-field-header">
+                                    <i class="fas ${icon}"></i> ${escapeHtml(formatLabel(key))}
+                                </div>
+                                <div class="preview-field-value">
+                                    ${renderPreviewValue(value)}
+                                </div>
+                            </div>
+                        `;
                     }
-                } catch (error) {
-                    console.error('Error preview jawaban:', error);
-                    document.getElementById('previewContentWrapper').innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data jawaban.</div>';
-                }
-            } else {
-                document.getElementById('previewContentWrapper').innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Tidak dapat menemukan sheet untuk aktivitas ini.</div>';
-            }
-        }
-        
-// ==================== FUNGSI PREVIEW JAWABAN ====================
-async function getSheetNameFromAktivitas(aktivitasKode) {
-    // Mapping dari kode aktivitas (P4-A1, P2-A1, dll) ke sheet name
-    // Karena di sheet DAFTAR_AKTIVITAS, kolom B adalah NAMA SHEET, kolom D adalah NAMA AKTIVITAS
-    const url = getAppsScriptUrl();
-    try {
-        const response = await fetch(`${url}?action=getSheetNameFromKode&kode=${encodeURIComponent(aktivitasKode)}&_=${Date.now()}`);
-        const result = await response.json();
-        if (result && result.success) {
-            return result.sheetName;
-        }
-    } catch (error) {
-        console.error('Error getting sheet name:', error);
-    }
-    
-    // Fallback: jika tidak ditemukan, coba cari dengan mapping sederhana
-    // Format P4-A1 -> sheet "P4-A1"
-    if (aktivitasKode && aktivitasKode.match(/^P\d+-A\d+$/)) {
-        return aktivitasKode;
-    }
-    return null;
-}
-
-function closePreviewModal() {
-    const modal = document.getElementById('previewModal');
-    if (modal) modal.remove();
-}
-
-function renderPreviewValue(value) {
-    if (value === null || value === undefined || value === '') {
-        return '<span class="preview-empty">-</span>';
-    }
-    
-    // Handle Array
-    if (Array.isArray(value)) {
-        if (value.length === 0) return '<span class="preview-empty">(Kosong)</span>';
-        
-        // Cek apakah array berisi object (bukan string/primitive)
-        const allObjects = value.every(item => typeof item === 'object' && item !== null);
-        
-        if (allObjects && value.length > 0) {
-            // ========== TAMPILKAN SEBAGAI TABEL YANG RAPI ==========
-            // Kumpulkan semua key yang ada di semua object
-            const allKeys = new Set();
-            value.forEach(item => {
-                Object.keys(item).forEach(key => allKeys.add(key));
-            });
-            const headers = Array.from(allKeys);
-            
-            // Buat tabel HTML
-            let tableHtml = '<table class="preview-table" style="width:100%; border-collapse:collapse; font-size:0.8rem;">';
-            tableHtml += '<thead><tr style="background:#d6eaf8;">';
-            headers.forEach(header => {
-                tableHtml += `<th style="padding:0.5rem; border:1px solid #ddd; text-align:left;">${escapeHtml(formatLabel(header))}</th>`;
-            });
-            tableHtml += '</tr></thead><tbody>';
-            
-            value.forEach(item => {
-                tableHtml += '<tr>';
-                headers.forEach(header => {
-                    let cellValue = item[header];
-                    if (cellValue === undefined || cellValue === null) cellValue = '-';
-                    if (typeof cellValue === 'object') cellValue = JSON.stringify(cellValue);
-                    tableHtml += `<td style="padding:0.5rem; border:1px solid #ddd;">${escapeHtml(String(cellValue))}</td>`;
-                });
-                tableHtml += '</tr>';
-            });
-            tableHtml += '</tbody></table>';
-            return tableHtml;
-        } else {
-            // Array berisi nilai sederhana (string/angka)
-            let listHtml = '<ul class="preview-list" style="margin:0; padding-left:1.2rem;">';
-            value.forEach((item) => {
-                if (item === '' || item === null || item === undefined) {
-                    listHtml += `<li><em>kosong</em></li>`;
+                    
+                    if (contentHtml === '') {
+                        contentHtml = '<div style="text-align:center; color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data untuk ditampilkan</div>';
+                    }
+                    
+                    previewWrapper.innerHTML = contentHtml;
                 } else {
-                    listHtml += `<li>${escapeHtml(String(item))}</li>`;
+                    previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban tidak ditemukan. Pastikan siswa sudah mengerjakan aktivitas ini.</div>';
                 }
-            });
-            listHtml += '</ul>';
-            return listHtml;
-        }
-    }
-    
-    // Handle Object (non-array)
-    if (typeof value === 'object') {
-        if (Object.keys(value).length === 0) return '<span class="preview-empty">(Kosong)</span>';
-        
-        let objectHtml = '<div style="margin:0;">';
-        for (const [objKey, objValue] of Object.entries(value)) {
-            const keyLabel = formatLabel(objKey);
-            
-            // Jika value adalah array of objects, tampilkan sebagai tabel
-            if (Array.isArray(objValue) && objValue.length > 0 && objValue.every(item => typeof item === 'object' && item !== null)) {
-                objectHtml += `<div style="margin-bottom:0.8rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
-            }
-            // Jika value adalah object biasa, rekursif
-            else if (typeof objValue === 'object' && objValue !== null && !Array.isArray(objValue)) {
-                objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
-            }
-            // Jika value adalah array biasa
-            else if (Array.isArray(objValue)) {
-                objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
-            }
-            // Value biasa (string/angka/boolean)
-            else {
-                let displayValue = objValue;
-                if (displayValue === '' || displayValue === null || displayValue === undefined) {
-                    displayValue = '-';
-                } else if (typeof displayValue === 'boolean') {
-                    displayValue = displayValue ? '✅ Ya' : '❌ Tidak';
+            } catch (error) {
+                console.error('Error preview jawaban:', error);
+                const previewWrapper = document.getElementById('previewContentWrapper');
+                if (previewWrapper) {
+                    previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data jawaban.</div>';
                 }
-                objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> <span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">${escapeHtml(String(displayValue))}</span></div>`;
             }
         }
-        objectHtml += '</div>';
-        return objectHtml;
-    }
-    
-    // Handle Boolean
-    if (typeof value === 'boolean') {
-        return value ? '✅ Ya' : '❌ Tidak';
-    }
-    
-    // Handle string/number biasa
-    const displayValue = (value === null || value === undefined || value === '') ? '-' : String(value);
-    return `<span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">${escapeHtml(displayValue)}</span>`;
-}
-
-async function previewJawaban(aktivitasKode, namaSiswa) {
-    // Tampilkan modal
-    const modalHtml = `
-        <div id="previewModal" class="modal-overlay" onclick="if(event.target===this) closePreviewModal()">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h3><i class="fas fa-eye"></i> Preview Jawaban Siswa</h3>
-                    <button class="modal-close" onclick="closePreviewModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="modal-info">
-                        <p><strong>Aktivitas:</strong> ${escapeHtml(aktivitasKode)}</p>
-                        <p><strong>Siswa:</strong> ${escapeHtml(namaSiswa)}</p>
-                        <p><strong>Kelas:</strong> ${escapeHtml(currentKelas)}</p>
-                    </div>
-                    <div id="previewContentWrapper" class="preview-content-wrapper">
-                        <div style="text-align: center; padding: 2rem;">
-                            <i class="fas fa-spinner fa-spin"></i> Memuat data jawaban...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    const existingModal = document.getElementById('previewModal');
-    if (existingModal) existingModal.remove();
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
-    try {
-        // Cari sheet name dari kode aktivitas
-        const sheetName = await getSheetNameFromAktivitas(aktivitasKode);
-        const previewWrapper = document.getElementById('previewContentWrapper');
-        
-        if (sheetName) {
-            const url = getAppsScriptUrl();
-            const response = await fetch(`${url}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(currentKelas)}&nama=${encodeURIComponent(namaSiswa)}&status=AKTIF&_=${Date.now()}`);
-            const result = await response.json();
-            
-            if (result && result.success && result.data && result.data.length > 0) {
-                const jawabanData = result.data[0];
-                let contentHtml = '';
-                
-                // Urutkan keys: Bagian_ dulu
-                const keys = Object.keys(jawabanData).filter(key => {
-                    return key !== '_timestamp' && key !== '_status' && key !== 'Key' && key !== 'Status' && key !== 'Timestamp';
-                });
-                
-                keys.sort((a, b) => {
-                    const aIsBagian = a.startsWith('Bagian_');
-                    const bIsBagian = b.startsWith('Bagian_');
-                    if (aIsBagian && !bIsBagian) return -1;
-                    if (!aIsBagian && bIsBagian) return 1;
-                    return a.localeCompare(b);
-                });
-                
-                for (const key of keys) {
-                    let value = jawabanData[key];
-                    
-                    // Parse JSON jika string JSON
-                    if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
-                        try {
-                            value = JSON.parse(value);
-                        } catch(e) {}
-                    }
-                    
-                    let icon = 'fa-file-alt';
-                    if (key.startsWith('Bagian_')) icon = 'fa-folder';
-                    else if (key.toLowerCase().includes('jawaban')) icon = 'fa-edit';
-                    else if (key.toLowerCase().includes('nilai')) icon = 'fa-star';
-                    
-                    contentHtml += `
-                        <div class="preview-field">
-                            <div class="preview-field-header">
-                                <i class="fas ${icon}"></i> ${escapeHtml(formatLabel(key))}
-                            </div>
-                            <div class="preview-field-value">
-                                ${renderPreviewValue(value)}
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                if (contentHtml === '') {
-                    contentHtml = '<div style="text-align:center; color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data untuk ditampilkan</div>';
-                }
-                
-                previewWrapper.innerHTML = contentHtml;
-            } else {
-                previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban tidak ditemukan. Pastikan siswa sudah mengerjakan aktivitas ini.</div>';
-            }
-        } else {
-            previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Tidak dapat menemukan sheet untuk aktivitas ini.</div>';
-        }
-    } catch (error) {
-        console.error('Error preview jawaban:', error);
-        const previewWrapper = document.getElementById('previewContentWrapper');
-        if (previewWrapper) {
-            previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data jawaban.</div>';
-        }
-    }
-}
         
         function closePreviewModal() {
             const modal = document.getElementById('previewModal');
             if (modal) modal.remove();
+        }
+        
+        function renderPreviewValue(value) {
+            if (value === null || value === undefined || value === '') {
+                return '<span class="preview-empty">-</span>';
+            }
+            
+            if (Array.isArray(value)) {
+                if (value.length === 0) return '<span class="preview-empty">(Kosong)</span>';
+                
+                const allObjects = value.every(item => typeof item === 'object' && item !== null);
+                
+                if (allObjects && value.length > 0) {
+                    const allKeys = new Set();
+                    value.forEach(item => {
+                        Object.keys(item).forEach(key => allKeys.add(key));
+                    });
+                    const headers = Array.from(allKeys);
+                    
+                    let tableHtml = '<table class="preview-table">';
+                    tableHtml += '<thead><tr>';
+                    headers.forEach(header => {
+                        tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`;
+                    });
+                    tableHtml += '</tr></thead><tbody>';
+                    
+                    value.forEach(item => {
+                        tableHtml += '<tr>';
+                        headers.forEach(header => {
+                            let cellValue = item[header];
+                            if (cellValue === undefined || cellValue === null) cellValue = '-';
+                            if (typeof cellValue === 'object') cellValue = JSON.stringify(cellValue);
+                            tableHtml += `<td>${escapeHtml(String(cellValue))}</td>`;
+                        });
+                        tableHtml += '</tr>';
+                    });
+                    tableHtml += '</tbody></table>';
+                    return tableHtml;
+                } else {
+                    let listHtml = '<ul class="preview-list">';
+                    value.forEach((item) => {
+                        if (item === '' || item === null || item === undefined) {
+                            listHtml += `<li><em>kosong</em></li>`;
+                        } else {
+                            listHtml += `<li>${escapeHtml(String(item))}</li>`;
+                        }
+                    });
+                    listHtml += '</ul>';
+                    return listHtml;
+                }
+            }
+            
+            if (typeof value === 'object') {
+                if (Object.keys(value).length === 0) return '<span class="preview-empty">(Kosong)</span>';
+                
+                let objectHtml = '<div>';
+                for (const [objKey, objValue] of Object.entries(value)) {
+                    const keyLabel = formatLabel(objKey);
+                    
+                    if (Array.isArray(objValue) && objValue.length > 0 && objValue.every(item => typeof item === 'object' && item !== null)) {
+                        objectHtml += `<div style="margin-bottom:0.8rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
+                    } else if (typeof objValue === 'object' && objValue !== null && !Array.isArray(objValue)) {
+                        objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
+                    } else if (Array.isArray(objValue)) {
+                        objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
+                    } else {
+                        let displayValue = objValue;
+                        if (displayValue === '' || displayValue === null || displayValue === undefined) {
+                            displayValue = '-';
+                        } else if (typeof displayValue === 'boolean') {
+                            displayValue = displayValue ? '✅ Ya' : '❌ Tidak';
+                        }
+                        objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> <span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">${escapeHtml(String(displayValue))}</span></div>`;
+                    }
+                }
+                objectHtml += '</div>';
+                return objectHtml;
+            }
+            
+            if (typeof value === 'boolean') {
+                return value ? '✅ Ya' : '❌ Tidak';
+            }
+            
+            const displayValue = (value === null || value === undefined || value === '') ? '-' : String(value);
+            return `<span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">${escapeHtml(displayValue)}</span>`;
         }
         
         function escapeHtml(text) {
@@ -1182,52 +1453,6 @@ async function previewJawaban(aktivitasKode, namaSiswa) {
         
         function formatLabel(key) {
             return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
-        }
-        
-        // ==================== LOAD DAN RENDER SEMUA DATA ====================
-        async function loadAndRenderData() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const errorMsg = document.getElementById('errorMessage');
-            
-            loadingOverlay.style.display = 'flex';
-            errorMsg.style.display = 'none';
-            document.getElementById('aktivitasCard').style.display = 'none';
-            document.getElementById('nilaiCard').style.display = 'none';
-            document.getElementById('infoPanel').style.display = 'none';
-            
-            const btnCek = document.getElementById('btnCek');
-            btnCek.disabled = true;
-            btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
-            
-            try {
-                document.getElementById('loadingText').innerHTML = 'Mengambil data dari server...';
-                const result = await fetchRekapData(currentSemester, currentKelas);
-                
-                if (result && result.success) {
-                    // Simpan data ke variabel global
-                    aktivitasHeaders = result.aktivitasHeaders || [];
-                    nilaiHeaders = result.nilaiHeaders || [];
-                    siswaData = result.siswaData || [];
-                    
-                    document.getElementById('infoSemester').innerText = currentSemester;
-                    document.getElementById('infoKelas').innerText = currentKelas;
-                    document.getElementById('infoTotalSiswa').innerText = siswaData.length;
-                    document.getElementById('infoPanel').style.display = 'flex';
-                    
-                    renderAktivitasTable();
-                    renderNilaiTable();
-                } else {
-                    throw new Error(result?.error || 'Gagal memuat data');
-                }
-            } catch (error) {
-                console.error(error);
-                errorMsg.style.display = 'block';
-                document.getElementById('errorText').innerHTML = error.message || 'Gagal memuat data. Silakan coba lagi.';
-            } finally {
-                loadingOverlay.style.display = 'none';
-                btnCek.disabled = false;
-                btnCek.innerHTML = '<i class="fas fa-search"></i> Tampilkan Rekap';
-            }
         }
         
         // ==================== CEK DATA ====================

@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Aktivitas & Nilai - Informatika Kelas X</title>
+    <title>Monitoring Aktivitas & Nilai - KKA Kelas X</title>
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --info-primary: #3498db;
-            --info-secondary: #2980b9;
-            --info-light: #d6eaf8;
-            --info-dark: #1f618d;
-            --remedial-total: #e74c3c;
-            --remedial-sebagian: #f39c12;
-            --tuntas: #27ae60;
-            --pengayaan: #2980b9;
+            --info-primary: #2c3e50;
+            --info-secondary: #1a252f;
+            --info-light: #ecf0f1;
+            --info-dark: #1a252f;
+            --kka-primary: #3498db;
+            --kka-secondary: #2980b9;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,14 +24,14 @@
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.1);
+            box-shadow: 0 10px 30px rgba(44, 62, 80, 0.1);
             border-left: 5px solid var(--info-primary);
             margin-bottom: 2rem;
         }
         .info-content-card h2 { color: var(--info-dark); font-size: 1.8rem; margin-bottom: 0.5rem; padding-bottom: 10px; display: inline-block; position: relative; }
         .info-content-card h2::after { content: ''; position: absolute; bottom: 0; left: 0; width: 60px; height: 4px; background: linear-gradient(90deg, var(--info-primary), var(--info-secondary)); border-radius: 2px; }
         .info-content-card p { color: #666; margin-top: 0.5rem; }
-        .simple-card { background: white; border-radius: 20px; padding: 1.8rem; margin-bottom: 2rem; border: 1px solid rgba(52, 152, 219, 0.1); }
+        .simple-card { background: white; border-radius: 20px; padding: 1.8rem; margin-bottom: 2rem; border: 1px solid rgba(44, 62, 80, 0.1); }
         .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 2px solid var(--info-light); }
         .section-title i { width: 40px; height: 40px; background: var(--info-light); color: var(--info-primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
         .section-title h3 { font-size: 1.2rem; color: var(--info-dark); font-weight: 600; }
@@ -43,35 +41,181 @@
         .filter-group select { width: 100%; padding: 0.7rem 1rem; border: 1px solid #ddd; border-radius: 12px; font-size: 0.9rem; background: white; cursor: pointer; }
         .filter-group select:disabled { background: #f5f5f5; cursor: not-allowed; }
         .btn-cek { background: linear-gradient(135deg, var(--info-primary), var(--info-secondary)); color: white; border: none; padding: 0.7rem 2rem; border-radius: 40px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; }
-        .btn-cek:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52,152,219,0.3); }
+        .btn-cek:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(44,62,80,0.3); }
         .info-panel { background: var(--info-light); border-radius: 16px; padding: 0.8rem 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; font-size: 0.85rem; }
         .table-wrapper { overflow-x: auto; border-radius: 16px; border: 1px solid #eee; margin-bottom: 2rem; }
         .monitoring-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .monitoring-table th { background: var(--info-light); color: var(--info-dark); padding: 0.8rem; text-align: left; font-weight: 600; }
         .monitoring-table td { padding: 0.7rem 0.8rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+        
+        /* ===== TABLE NILAI TP ===== */
+        .nilai-wrapper { overflow-x: auto; border-radius: 16px; border: 1px solid #eee; margin-bottom: 1rem; }
+        .nilai-wrapper::-webkit-scrollbar { height: 8px; }
+        .nilai-wrapper::-webkit-scrollbar-thumb { background: var(--kka-primary); border-radius: 6px; }
+        .nilai-wrapper::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 6px; }
+        
         .nilai-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        .nilai-table th { background: linear-gradient(135deg, var(--info-primary), var(--info-secondary)); color: white; padding: 0.8rem; text-align: left; font-weight: 600; }
-        .nilai-table td { padding: 0.7rem 0.8rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
-        .nilai-table td:first-child { text-align: center; font-weight: 700; background: #f8f9fa; width: 8%; }
-        .nilai-table td:nth-child(2) { text-align: left; width: 37%; }
-        .nilai-table td:nth-child(3) { text-align: center; width: 8%; }
-        .nilai-table td:nth-child(4) { text-align: center; width: 12%; }
-        .nilai-table td:nth-child(5) { text-align: left; width: 35%; }
-        .status-sudah { display: inline-flex; align-items: center; gap: 5px; background: #d5f4e6; color: #27ae60; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
-        .status-belum { display: inline-flex; align-items: center; gap: 5px; background: #fadbd8; color: #e74c3c; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
-        .predikat-sangat-baik { background: #2980b9; color: white; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
-        .predikat-baik { background: #27ae60; color: white; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
-        .predikat-cukup { background: #f39c12; color: white; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
-        .predikat-kurang { background: #e74c3c; color: white; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
-        .nilai-baik { color: #27ae60; font-weight: 700; }
-        .nilai-cukup { color: #f39c12; font-weight: 700; }
-        .nilai-kurang { color: #e74c3c; font-weight: 700; }
+        .nilai-table th { 
+            background: linear-gradient(135deg, var(--info-primary), var(--info-secondary)); 
+            color: white; 
+            padding: 0.8rem 0.5rem; 
+            text-align: center; 
+            font-weight: 600; 
+            border-bottom: 2px solid var(--info-dark);
+            font-size: 0.75rem;
+        }
+        .nilai-table td { 
+            padding: 0.7rem 0.5rem; 
+            border-bottom: 1px solid #f0f0f0; 
+            vertical-align: middle; 
+        }
+        .nilai-table td:first-child { 
+            text-align: center; 
+            font-weight: 700; 
+            background: #f8f9fa; 
+            width: 8%; 
+        }
+        .nilai-table td:nth-child(2) { 
+            text-align: left; 
+            width: 20%; 
+            font-size: 0.8rem; 
+        }
+        .nilai-table td:nth-child(3) { 
+            text-align: left; 
+            width: 30%; 
+            font-size: 0.75rem; 
+            line-height: 1.4; 
+        }
+        .nilai-table td:nth-child(4) { 
+            text-align: center; 
+            width: 10%; 
+            font-weight: 700; 
+            font-size: 1.1rem; 
+        }
+        .nilai-table td:nth-child(5) { 
+            text-align: left; 
+            width: 32%; 
+        }
+        .nilai-table tr:hover { background: #f8f9fa; }
+        .nilai-table .no-data { text-align: center; color: #999; padding: 2rem; }
+        
+        /* ===== NILAI PER AKTIVITAS ===== */
+        .nilai-per-aktivitas {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            font-size: 0.7rem;
+            line-height: 1.3;
+        }
+        .nilai-per-aktivitas .item {
+            padding: 3px 6px;
+            border-radius: 4px;
+            background: #f8f9fa;
+            border-left: 3px solid var(--kka-primary);
+        }
+        .nilai-per-aktivitas .item .aktivitas {
+            font-weight: 600;
+            color: var(--info-dark);
+        }
+        .nilai-per-aktivitas .item .nilai {
+            font-weight: 700;
+            color: #333;
+        }
+        
+        /* ===== PREDIKAT ===== */
+        .predikat-mahir {
+            background: #2980b9;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .predikat-cakap {
+            background: #27ae60;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .predikat-berkembang {
+            background: #f39c12;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .predikat-belum-berkembang {
+            background: #e74c3c;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .predikat-belum-nilai {
+            background: #95a5a6;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .nilai-mahir { color: #2980b9; font-weight: 700; }
+        .nilai-cakap { color: #27ae60; font-weight: 700; }
+        .nilai-berkembang { color: #f39c12; font-weight: 700; }
+        .nilai-belum-berkembang { color: #e74c3c; font-weight: 700; }
+        .nilai-belum-nilai { color: #95a5a6; font-weight: 700; }
+        
+        .tindak-lanjut {
+            font-size: 0.7rem;
+            color: #555;
+            margin-top: 4px;
+            padding: 4px 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            line-height: 1.4;
+        }
+        .tindak-lanjut i {
+            color: var(--kka-primary);
+            margin-right: 4px;
+        }
+        
         .summary-stats { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
         .stat-card { background: #f8f9fa; border-radius: 12px; padding: 0.6rem 1rem; flex: 1; min-width: 100px; text-align: center; }
         .stat-card .number { font-size: 1.3rem; font-weight: 700; color: var(--info-primary); }
-        .legend-box { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; padding: 0.8rem; background: #f8f9fa; border-radius: 12px; font-size: 0.7rem; }
-        .legend-item { display: flex; align-items: center; gap: 6px; }
-        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+        .stat-card .label { font-size: 0.7rem; color: #666; }
+        
+        /* ===== LEGEND ===== */
+        .legend-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
         .loading-message, .error-message { padding: 2rem; text-align: center; border-radius: 16px; display: none; }
         .loading-message { background: #fff3cd; color: #856404; }
         .error-message { background: #f8d7da; color: #721c24; }
@@ -90,17 +234,8 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-        .preview-btn:hover {
-            background: #e3f2fd;
-            transform: scale(1.1);
-        }
-        .preview-btn-disabled {
-            background: none;
-            border: none;
-            cursor: not-allowed;
-            padding: 5px 10px;
-            border-radius: 8px;
-        }
+        .preview-btn:hover { background: #e3f2fd; transform: scale(1.1); }
+        .preview-btn-disabled { background: none; border: none; cursor: not-allowed; padding: 5px 10px; border-radius: 8px; }
         
         /* Modal Preview Styles */
         .modal-overlay {
@@ -134,89 +269,61 @@
             background: linear-gradient(135deg, var(--info-primary), var(--info-secondary));
             color: white;
         }
-        .modal-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
+        .modal-header h3 { margin: 0; font-size: 1.2rem; }
+        .modal-close { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; transition: all 0.3s ease; }
+        .modal-close:hover { transform: scale(1.1); opacity: 0.8; }
+        .modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; }
+        .modal-info { background: var(--info-light); border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1rem; font-size: 0.85rem; }
+        .modal-info p { margin: 0.3rem 0; }
+        .preview-content-wrapper { background: #f8f9fa; border-radius: 12px; padding: 1rem; max-height: 55vh; overflow-y: auto; }
+        .preview-field { margin-bottom: 1rem; background: white; border-radius: 8px; border: 1px solid #eee; overflow: hidden; }
+        .preview-field-header { background: var(--info-light); padding: 0.5rem 1rem; font-weight: 600; color: var(--info-dark); border-bottom: 1px solid #ddd; }
+        .preview-field-value { padding: 0.8rem 1rem; font-size: 0.85rem; white-space: pre-wrap; word-break: break-word; }
+        .preview-empty { color: #95a5a6; font-style: italic; }
+        .preview-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .preview-table th { background: var(--info-light); padding: 0.3rem; border: 1px solid #ddd; text-align: left; }
+        .preview-table td { padding: 0.3rem; border: 1px solid #ddd; }
+        .preview-list { margin: 0; padding-left: 1.2rem; }
+        .preview-list li { margin: 0.2rem 0; }
+
+        /* ===== STATUS 2 BARIS ===== */
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            align-items: flex-start;
         }
-        .modal-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .modal-close:hover {
-            transform: scale(1.1);
-            opacity: 0.8;
-        }
-        .modal-body {
-            padding: 1.5rem;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .modal-info {
-            background: var(--info-light);
-            border-radius: 12px;
-            padding: 0.8rem 1.2rem;
-            margin-bottom: 1rem;
-            font-size: 0.85rem;
-        }
-        .modal-info p {
-            margin: 0.3rem 0;
-        }
-        .preview-content-wrapper {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 1rem;
-            max-height: 55vh;
-            overflow-y: auto;
-        }
-        .preview-field {
-            margin-bottom: 1rem;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            overflow: hidden;
-        }
-        .preview-field-header {
-            background: var(--info-light);
-            padding: 0.5rem 1rem;
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
             font-weight: 600;
-            color: var(--info-dark);
-            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
         }
-        .preview-field-value {
-            padding: 0.8rem 1rem;
-            font-size: 0.85rem;
-            white-space: pre-wrap;
-            word-break: break-word;
+
+        .status-kumpul-sudah {
+            background: #d5f4e6;
+            color: #27ae60;
         }
-        .preview-empty {
-            color: #95a5a6;
-            font-style: italic;
+        .status-kumpul-belum {
+            background: #fadbd8;
+            color: #e74c3c;
         }
-        .preview-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
+        .status-nilai-sudah {
+            background: #d5f4e6;
+            color: #27ae60;
         }
-        .preview-table th {
-            background: var(--info-light);
-            padding: 0.3rem;
-            border: 1px solid #ddd;
-            text-align: left;
+        .status-nilai-belum {
+            background: #fef3c7;
+            color: #d97706;
         }
-        .preview-table td {
-            padding: 0.3rem;
-            border: 1px solid #ddd;
-        }
-        .preview-list {
-            margin: 0;
-            padding-left: 1.2rem;
-        }
-        .preview-list li {
-            margin: 0.2rem 0;
+        .status-nilai-tidak-ada {
+            background: #e5e7eb;
+            color: #6b7280;
         }
     </style>
 </head>
@@ -226,14 +333,14 @@
             <div class="nav-container">
                 <div class="logo">
                     <img src="../../assets/images/logo.png" alt="Logo Sekolah">
-                    <h1>TEMBOK BELAJAR - PROJEK INFORMATIKA</h1>
+                    <h1>TEMBOK BELAJAR - PROJEK KKA</h1>
                 </div>
                 <ul class="nav-menu" id="nav-menu">
                     <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="../index-informatika.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda Informatika</a></li>
-                    <li><a href="../aktivitas-pembelajaran/index-aktivitas-informatika.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
-                    <li><a href="../materi-pembelajaran/index-materi-informatika.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
-                    <li><a href="index-penilaian-inform.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                    <li><a href="../index-kka.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda KKA</a></li>
+                    <li><a href="../aktivitas-pembelajaran/index-aktivitas-kka.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-kka.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="index-penilaian-kka.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
                 </ul>
                 <div class="hamburger" id="hamburger">
                     <span class="bar"></span>
@@ -246,7 +353,7 @@
 
     <section class="activities-container">
         <div class="info-content-card">
-            <h2><i class="fas fa-chart-simple"></i> Monitoring Aktivitas & Nilai Informatika</h2>
+            <h2><i class="fas fa-chart-simple"></i> Monitoring Aktivitas & Nilai KKA</h2>
             <p>Pantau status pengumpulan tugas dan nilai capaian Tujuan Pembelajaran (TP) siswa</p>
         </div>
 
@@ -268,13 +375,13 @@
                 <div class="filter-group">
                     <label><i class="fas fa-building"></i> Kelas</label>
                     <select id="filterKelas" disabled>
-                        <option value="">-- Pilih Semester Dulu --</option>
+                        <option value="">-- Pilih Kelas Dulu --</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label><i class="fas fa-user"></i> Nama Siswa</label>
                     <select id="filterNama" disabled>
-                        <option value="">-- Pilih Kelas Dulu --</option>
+                        <option value="">-- Pilih Nama Dulu --</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -308,9 +415,9 @@
             </div>
             <div class="table-wrapper">
                 <table class="monitoring-table">
-                    <thead><tr><th>No</th><th>Proyek</th><th>Nama Aktivitas</th><th>Status</th><th>Waktu Pengumpulan</th><th>Preview</th></tr></thead>
+                    <thead><tr><th>No</th><th>Nama Aktivitas</th><th>Status</th><th>Waktu Pengumpulan</th><th>Preview</th></tr></thead>
                     <tbody id="aktivitasBody">
-                        <tr><td colspan="6" style="text-align:center;">Belum ada data</td></tr>
+                        <tr><td colspan="5" style="text-align:center;">Belum ada data</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -325,42 +432,41 @@
         <div class="simple-card" id="nilaiCard" style="display: none;">
             <div class="section-title">
                 <i class="fas fa-star"></i>
-                <h3>Hasil Penilaian Tujuan Pembelajaran (TP)</h3>
+                <h3>Hasil Penilaian Tujuan Pembelajaran (TP) - KKA</h3>
             </div>
-            <div class="table-wrapper">
+            <div class="nilai-wrapper">
                 <table class="nilai-table">
                     <thead>
                         <tr>
                             <th>Kode TP</th>
-                            <th>Tujuan Pembelajaran</th>
-                            <th>Nilai</th>
-                            <th>Predikat</th>
-                            <th>Keterangan</th>
+                            <th>Deskripsi TP</th>
+                            <th>Nilai per Aktivitas</th>
+                            <th>Rata-rata</th>
+                            <th>Predikat &amp; Tindak Lanjut</th>
                         </tr>
                     </thead>
                     <tbody id="nilaiBody">
-                        <tr><td colspan="5" style="text-align:center;">Belum ada data</td></tr>
+                        <tr><td colspan="5" class="no-data">Silakan pilih filter dan klik Tampilkan</td></tr>
                     </tbody>
                 </table>
             </div>
-            
+
             <div class="legend-box">
-                <div class="legend-item"><div class="legend-color" style="background: #e74c3c;"></div><span>0-50 : Kurang (Remedial Total)</span></div>
-                <div class="legend-item"><div class="legend-color" style="background: #f39c12;"></div><span>51-70 : Cukup (Remedial Sebagian)</span></div>
-                <div class="legend-item"><div class="legend-color" style="background: #27ae60;"></div><span>71-85 : Baik</span></div>
-                <div class="legend-item"><div class="legend-color" style="background: #2980b9;"></div><span>86-100 : Sangat Baik (Pengayaan)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: #2980b9;"></div><span>≥ 90 : Mahir (Pengayaan)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: #27ae60;"></div><span>75 - 89 : Cakap (Mencapai TP)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: #f39c12;"></div><span>60 - 74 : Berkembang (Perlu Bimbingan)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: #e74c3c;"></div><span>&lt; 60 : Belum Berkembang (Remedial)</span></div>
             </div>
-            
+
             <div class="summary-stats" id="nilaiStats" style="display: none;">
                 <div class="stat-card"><div class="number" id="rataRataTP">0</div><div class="label">Rata-rata Nilai</div></div>
                 <div class="stat-card"><div class="number" id="nilaiTertinggi">0</div><div class="label">Nilai Tertinggi</div></div>
                 <div class="stat-card"><div class="number" id="nilaiTerendah">0</div><div class="label">Nilai Terendah</div></div>
-                <div class="stat-card"><div class="number" id="totalTP">0</div><div class="label">Total TP Dinilai</div></div>
             </div>
         </div>
 
         <div class="back-nav-simple">
-            <a href="index-penilaian-inform.html" class="back-btn-simple">
+            <a href="index-penilaian-kka.html" class="back-btn-simple">
                 <i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian
             </a>
         </div>
@@ -368,112 +474,110 @@
 
     <script>
         // ==================== KONFIGURASI ====================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwRlLJQQ5ypD1jzsHICPZH6kfrSFHKHGXo0hPKjzwtHH04EDrAid7dqtDv7q6TCbDRj/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycRj2MQDC0JNM0jY2hI1UWwwZ7XK-bgULuMSOKzUU8QwhZ_QVCkRRcGPH3_RMnBUPT/exec';
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         
         function getAppsScriptUrl() { return APPS_SCRIPT_URL; }
         
+        // ===== DATA SISWA (dari URL_DATA_SISWA) =====
         let dataKelas = [];
         let dataSiswa = {};
-        let currentKelas = '';
-        let currentNama = '';
         
-        // ==================== MAPPING NAMA AKTIVITAS KE NAMA SHEET ====================
-        const AKTIVITAS_TO_SHEET_MAPPING = {
-            // Proyek 1
-            "AKTIVITAS 1 - PENGANTAR LITERASI INFORMASI": "P1-A1",
-            "AKTIVITAS 2 - STRATEGI MENCARI INFORMASI": "P1-A2",
-            "AKTIVITAS 3 - ANALISIS FAKTA & CEK KEBENARAN": "P1-A3",
-            "AKTIVITAS 4 - MERANCANG POSTER EDUKATIF": "P1-A4",
-            "AKTIVITAS 5 - PRESENTASI & REFLEKSI": "P1-A5",
-            
-            // Proyek 2
-            "AKTIVITAS 1 - ALGORITMA & STRUKTUR DATA": "P2-A1",
-            "AKTIVITAS 2 - REPRESENTASI DATA": "P2-A2",
-            "AKTIVITAS 3 - PEMECAHAN MASALAH": "P2-A3",
-            "AKTIVITAS 4 - HTML DASAR": "P2-A4",
-            "AKTIVITAS 5 - KONDISI & PERULANGAN": "P2-A5",
-            "AKTIVITAS 6 - PRESENTASI PROYEK 2": "P2-A6",
-            
-            // Proyek 3
-            "AKTIVITAS 1 - HAK DIGITAL": "P3-A1",
-            "AKTIVITAS 2 - KELOLA AKUN": "P3-A2",
-            "AKTIVITAS 3 - PRAKTIK 2FA": "P3-A3",
-            "AKTIVITAS 4 - EDUKASI JEJAK DIGITAL": "P3-A4",
-            
-            // Proyek 4
-            "AKTIVITAS 1 - IPO": "P4-A1",
-            "AKTIVITAS 2 - SIMULASI IPO": "P4-A2",
-            "AKTIVITAS 3 - SISTEM OPERASI": "P4-A3",
-            "AKTIVITAS 4 - RANCANG UJI": "P4-A4",
-            "AKTIVITAS 5 - PRESENTASI": "P4-A5",
-            
-            // Proyek 5
-            "AKTIVITAS 1 - DIGITALISASI BUDAYA": "P5-A1",
-            "AKTIVITAS 2 - PROFESI DIGITAL": "P5-A2",
-            "AKTIVITAS 3 - PRODUKSI KONTEN": "P5-A3",
-            
-            // Proyek 6
-            "AKTIVITAS 1 - PRODUKTIVITAS": "P6-A1",
-            "AKTIVITAS 2 - PENGAMANAN": "P6-A2",
-            "AKTIVITAS 3 - PORTOFOLIO": "P6-A3"
+        // ===== DATA TERPILIH (dihitung di HTML) =====
+        let selectedKelas = {
+            nama: '',
+            posisi: -1,      // posisi kolom di sheet (0-based)
+            jumlah: 0        // jumlah siswa di kelas tersebut
         };
         
+        let selectedSiswa = {
+            nama: '',
+            posisi: -1       // posisi siswa dalam kelas (1-based)
+        };
+        
+        let currentSemester = '';
+        let cacheAktivitasData = [];
+        
+        // ===== CONSTANTA (akan diisi dari metadata APPS_SCRIPT_URL) =====
+        let METADATA = {
+            barisPerKelas: 50,
+            headerRows: 2,
+            kolomAktivitas: {
+                ganjil: { start: 4, end: 9 },
+                genap: { start: 10, end: 15 }
+            },
+            kolomNilai: {
+                perAktivitas: {
+                    ganjil: { start: 4, end: 9 },
+                    genap: { start: 10, end: 15 }
+                },
+                rataTP: {
+                    ganjil: { start: 16, end: 21 },
+                    genap: { start: 22, end: 27 }
+                }
+            },
+            daftarTP: ['TP 1.1', 'TP 2.1', 'TP 3.1', 'TP 4.1', 'TP 5.1', 'TP 6.1']
+        };
+        
+        // ==================== TUJUAN PEMBELAJARAN KKA ====================
+        const TP_KKA = [
+            { kode: 'TP 1.1', deskripsi: 'Menerapkan konsep berpikir komputasional (dekomposisi, pengenalan pola, abstraksi, dan algoritma) untuk memecahkan permasalahan yang relevan dengan bidang keahlian.' },
+            { kode: 'TP 2.1', deskripsi: 'Memproduksi dan menyebarkan konten digital dalam bentuk multimedia secara kreatif, etis, aman, dan bertanggung jawab sesuai dengan bidang keahlian.' },
+            { kode: 'TP 3.1', deskripsi: 'Membandingkan beberapa algoritma, lalu menerapkannya dalam bentuk program/aplikasi sederhana sesuai dengan kebutuhan di bidang keahlian.' },
+            { kode: 'TP 4.1', deskripsi: 'Memahami konsep dasar basis data serta menerapkan pengolahan data (menginput, mengolah, menganalisis, dan menyajikan) untuk mendukung pengambilan keputusan.' },
+            { kode: 'TP 5.1', deskripsi: 'Memahami prinsip kerja teknologi kecerdasan artifisial secara tepat guna serta menerapkannya secara bertanggung jawab.' },
+            { kode: 'TP 6.1', deskripsi: 'Menerapkan prompt engineering pada aplikasi KA generatif untuk merancang, mengevaluasi, dan mengembangkan produk berupa barang/jasa.' }
+        ];
+        
+        // ==================== FUNGSI LOAD DATA SISWA ====================
         function loadDataSiswa() {
             return new Promise((resolve, reject) => {
                 const callbackName = 'jsonp_callback_' + Date.now();
                 window[callbackName] = function(result) {
-                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    const script = document.querySelector('script[src*="' + callbackName + '"]');
                     if (script) document.head.removeChild(script);
                     delete window[callbackName];
+                    
                     if (result && result.success) {
+                        // ===== SIMPAN DATA MENTAH =====
                         dataKelas = result.kelasList || [];
                         dataSiswa = result.siswaPerKelas || {};
                         resolve();
                     } else {
-                        reject(new Error('Gagal memuat data siswa'));
+                        reject(new Error(result?.message || 'Gagal memuat data siswa'));
                     }
                 };
+                
                 const script = document.createElement('script');
                 script.src = URL_DATA_SISWA + '?callback=' + callbackName;
-                script.onerror = () => reject(new Error('Gagal terhubung ke server data siswa'));
+                script.onerror = function() {
+                    reject(new Error('Gagal terhubung ke server data siswa'));
+                };
                 document.head.appendChild(script);
             });
         }
         
-        async function fetchMonitoringData(semester, kelas, nama) {
+        // ==================== FUNGSI FETCH DATA DENGAN POSISI ====================
+        async function fetchDataByPosition(semester, noBar, startCol, endCol) {
             const url = getAppsScriptUrl();
             try {
-                const response = await fetch(`${url}?action=getMonitoringData&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&_=${Date.now()}`);
+                const response = await fetch(url + '?action=getDataByPosition&semester=' + encodeURIComponent(semester) + '&nobar=' + noBar + '&startCol=' + startCol + '&endCol=' + endCol + '&_=' + Date.now());
                 const result = await response.json();
                 if (result && result.success) {
-                    return { aktivitas: result.aktivitas || [], nilai: result.nilai || [] };
+                    // ===== SIMPAN METADATA DARI SERVER =====
+                    if (result.metadata) {
+                        METADATA = result.metadata;
+                    }
+                    return result;
                 }
-                return { aktivitas: [], nilai: [] };
+                return null;
             } catch (error) {
-                console.error('Gagal mengambil data monitoring:', error);
-                return { aktivitas: [], nilai: [] };
+                console.error('Gagal mengambil data:', error);
+                return null;
             }
         }
         
-        function getPredikat(nilai) {
-            if (nilai === null || nilai === undefined || isNaN(nilai) || nilai === 0) {
-                return { teks: 'Belum Dinilai', kelas: '' };
-            }
-            if (nilai >= 86) return { teks: 'Sangat Baik', kelas: 'predikat-sangat-baik' };
-            if (nilai >= 71) return { teks: 'Baik', kelas: 'predikat-baik' };
-            if (nilai >= 51) return { teks: 'Cukup', kelas: 'predikat-cukup' };
-            return { teks: 'Kurang', kelas: 'predikat-kurang' };
-        }
-        
-        function getNilaiClass(nilai) {
-            if (!nilai && nilai !== 0) return '';
-            if (nilai >= 86) return 'nilai-baik';
-            if (nilai >= 71) return 'nilai-baik';
-            if (nilai >= 51) return 'nilai-cukup';
-            return 'nilai-kurang';
-        }
-        
+        // ==================== FUNGSI UTILITY ====================
         function escapeHtml(text) {
             if (!text && text !== 0) return '';
             const div = document.createElement('div');
@@ -482,34 +586,59 @@
         }
         
         function formatLabel(key) {
-            return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+            return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, function(str) { return str.toUpperCase(); }).trim();
         }
         
-        function formatTanggalLengkap(timestamp) {
-            if (!timestamp) return '-';
-            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            try {
-                let date = new Date(timestamp);
-                if (!isNaN(date.getTime())) {
-                    const dayName = days[date.getDay()];
-                    const day = date.getDate().toString().padStart(2, '0');
-                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    const hours = date.getHours().toString().padStart(2, '0');
-                    const minutes = date.getMinutes().toString().padStart(2, '0');
-                    const seconds = date.getSeconds().toString().padStart(2, '0');
-                    return `${dayName}, ${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-                }
-            } catch(e) {}
-            return String(timestamp);
+        // ==================== FUNGSI PREDIKAT ====================
+        function getPredikat(nilai) {
+            if (nilai === null || nilai === undefined || isNaN(nilai)) {
+                return { 
+                    teks: 'Belum Ada Nilai', 
+                    kelas: 'predikat-belum-nilai',
+                    nilaiKelas: 'nilai-belum-nilai',
+                    tindakLanjut: 'Belum ada data nilai untuk TP ini.'
+                };
+            }
+            if (nilai >= 90) {
+                return { 
+                    teks: 'Mahir', 
+                    kelas: 'predikat-mahir',
+                    nilaiKelas: 'nilai-mahir',
+                    tindakLanjut: 'Siswa telah mencapai penguasaan materi dengan sangat baik. Diberikan pengayaan dan tantangan tambahan untuk mengembangkan kemampuan lebih lanjut.'
+                };
+            } else if (nilai >= 75) {
+                return { 
+                    teks: 'Cakap', 
+                    kelas: 'predikat-cakap',
+                    nilaiKelas: 'nilai-cakap',
+                    tindakLanjut: 'Siswa telah mencapai Tujuan Pembelajaran dengan baik. Lanjutkan ke materi berikutnya dengan tetap mempertahankan kualitas belajar.'
+                };
+            } else if (nilai >= 60) {
+                return { 
+                    teks: 'Berkembang', 
+                    kelas: 'predikat-berkembang',
+                    nilaiKelas: 'nilai-berkembang',
+                    tindakLanjut: 'Siswa masih memerlukan bimbingan pada bagian-bagian tertentu dari materi. Berikan pendampingan intensif dan latihan tambahan untuk mencapai ketuntasan.'
+                };
+            } else {
+                return { 
+                    teks: 'Belum Berkembang', 
+                    kelas: 'predikat-belum-berkembang',
+                    nilaiKelas: 'nilai-belum-berkembang',
+                    tindakLanjut: 'Siswa harus mengikuti program remedial seluruh materi pembelajaran untuk mencapai kompetensi minimum yang ditetapkan.'
+                };
+            }
         }
         
+        // ==================== RENDER AKTIVITAS TABLE ====================
         function renderAktivitasTable(data) {
             const tbody = document.getElementById('aktivitasBody');
             const aktivitasCard = document.getElementById('aktivitasCard');
             
+            cacheAktivitasData = data;
+            
             if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Tidak ada data aktivitas</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tidak ada data aktivitas</td></tr>';
                 aktivitasCard.style.display = 'block';
                 document.getElementById('totalAktivitas').innerText = '0';
                 document.getElementById('sudahDikumpulkan').innerText = '0';
@@ -519,29 +648,56 @@
             
             let sudahCount = 0;
             let html = '';
-            data.forEach(item => {
-                const isSudah = item.Status === 'Sudah';
+            data.forEach(function(item) {
+                var isSudah = item.Status && (item.Status.includes('Sudah Mengumpulkan') || item.Status === 'Sudah');
                 if (isSudah) sudahCount++;
-                const statusHtml = isSudah 
-                    ? '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>'
-                    : '<span class="status-belum"><i class="fas fa-clock"></i> Belum</span>';
                 
-                const previewHtml = isSudah
-                    ? `<button class="preview-btn" onclick="previewJawaban('${escapeHtml(item.Proyek)}', '${escapeHtml(item.Aktivitas)}')">
-                        <i class="fas fa-eye" style="color: #3498db; font-size: 1.2rem;"></i>
-                       </button>`
-                    : `<button class="preview-btn-disabled" disabled>
-                        <i class="fas fa-eye" style="color: #bdc3c7; font-size: 1.2rem;"></i>
-                       </button>`;
+                var statusKumpulText = '';
+                var statusKumpulClass = '';
+                var statusNilaiText = '';
+                var statusNilaiClass = '';
                 
-                html += `<tr>
-                    <td>${escapeHtml(item.No || '-')}</td>
-                    <td>${escapeHtml(item.Proyek || '-')}</td>
-                    <td>${escapeHtml(item.Aktivitas || '-')}</td>
-                    <td>${statusHtml}</td>
-                    <td>${escapeHtml(item.Waktu_Pengumpulan || '-')}</td>
-                    <td style="text-align: center;">${previewHtml}</td>
-                </tr>`;
+                var statusText = item.Status || 'Belum Mengumpulkan, Belum Dinilai';
+                
+                if (statusText.includes('Sudah Mengumpulkan')) {
+                    statusKumpulText = '✅ Sudah Mengumpulkan';
+                    statusKumpulClass = 'status-kumpul-sudah';
+                } else {
+                    statusKumpulText = '❌ Belum Mengumpulkan';
+                    statusKumpulClass = 'status-kumpul-belum';
+                }
+                
+                if (statusText.includes('Sudah Dinilai')) {
+                    statusNilaiText = '⭐ Sudah Dinilai';
+                    statusNilaiClass = 'status-nilai-sudah';
+                } else if (statusText.includes('Belum Dinilai') && statusText.includes('Sudah Mengumpulkan')) {
+                    statusNilaiText = '⏳ Belum Dinilai';
+                    statusNilaiClass = 'status-nilai-belum';
+                } else {
+                    statusNilaiText = '⏳ Belum Dinilai';
+                    statusNilaiClass = 'status-nilai-tidak-ada';
+                }
+                
+                var statusHtml = '<div class="status-container">' +
+                    '<span class="status-badge ' + statusKumpulClass + '">' + statusKumpulText + '</span>' +
+                    '<span class="status-badge ' + statusNilaiClass + '">' + statusNilaiText + '</span>' +
+                    '</div>';
+                
+                var previewHtml = isSudah
+                    ? '<button class="preview-btn" onclick="previewJawaban(\'' + escapeHtml(item.Nama_Aktivitas || '') + '\')">' +
+                        '<i class="fas fa-eye" style="color: #2c3e50; font-size: 1.2rem;"></i>' +
+                       '</button>'
+                    : '<button class="preview-btn-disabled" disabled>' +
+                        '<i class="fas fa-eye" style="color: #bdc3c7; font-size: 1.2rem;"></i>' +
+                       '</button>';
+                
+                html += '<tr>' +
+                    '<td>' + escapeHtml(item.No || '-') + '</td>' +
+                    '<td>' + escapeHtml(item.Nama_Aktivitas || '-') + '</td>' +
+                    '<td>' + statusHtml + '</td>' +
+                    '<td>' + escapeHtml(item.Waktu_Pengumpulan || '-') + '</td>' +
+                    '<td style="text-align: center;">' + previewHtml + '</td>' +
+                    '</tr>';
             });
             
             tbody.innerHTML = html;
@@ -551,100 +707,171 @@
             document.getElementById('belumDikumpulkan').innerText = data.length - sudahCount;
         }
         
-        function renderNilaiTable(data) {
-            const tbody = document.getElementById('nilaiBody');
-            const nilaiCard = document.getElementById('nilaiCard');
-            const nilaiStats = document.getElementById('nilaiStats');
+        // ==================== RENDER NILAI TP ====================
+        function renderNilaiTable(rataTP, perTP) {
+            var tbody = document.getElementById('nilaiBody');
+            var nilaiCard = document.getElementById('nilaiCard');
+            var nilaiStats = document.getElementById('nilaiStats');
             
-            if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tidak ada data nilai TP</td></tr>';
+            if (!rataTP || Object.keys(rataTP).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">Tidak ada data nilai TP</td></tr>';
                 nilaiCard.style.display = 'block';
                 nilaiStats.style.display = 'none';
                 return;
             }
             
-            let html = '';
-            let nilaiList = [];
-            let totalTP = 0;
+            var html = '';
+            var nilaiList = [];
             
-            for (const item of data) {
-                const nilai = item.Nilai;
-                const nilaiValid = (nilai !== null && !isNaN(nilai) && nilai !== 0 && nilai !== '');
-                const nilaiTampil = nilaiValid ? nilai : '-';
-                const nilaiClass = nilaiValid ? getNilaiClass(nilai) : '';
+            for (var i = 0; i < TP_KKA.length; i++) {
+                var tp = TP_KKA[i];
+                var tpKode = tp.kode;
+                var tpDeskripsi = tp.deskripsi;
                 
-                let predikatTeks = item.Predikat || 'Belum Dinilai';
-                let predikatKelas = '';
-                if (predikatTeks === 'Sangat Baik') predikatKelas = 'predikat-sangat-baik';
-                else if (predikatTeks === 'Baik') predikatKelas = 'predikat-baik';
-                else if (predikatTeks === 'Cukup') predikatKelas = 'predikat-cukup';
-                else if (predikatTeks === 'Kurang') predikatKelas = 'predikat-kurang';
+                var rataNilai = rataTP[tpKode] || null;
+                var nilaiValid = (rataNilai !== null && !isNaN(rataNilai));
+                var nilaiTampil = nilaiValid ? rataNilai : '-';
                 
-                if (nilaiValid) {
-                    nilaiList.push(nilai);
-                    totalTP++;
+                var perAktivitas = (perTP && perTP[tpKode]) || [];
+                var perAktivitasHtml = '';
+                
+                if (perAktivitas.length > 0) {
+                    var sortedItems = perAktivitas.sort(function(a, b) {
+                        return a.aktivitas.localeCompare(b.aktivitas);
+                    });
+                    var items = sortedItems.map(function(item) {
+                        return '<div class="item"><span class="aktivitas">' + escapeHtml(item.aktivitas) + '</span>: <span class="nilai">' + item.nilai + '</span></div>';
+                    });
+                    perAktivitasHtml = '<div class="nilai-per-aktivitas">' + items.join('') + '</div>';
+                } else {
+                    perAktivitasHtml = '<span style="color:#999;font-size:0.7rem;">-</span>';
                 }
                 
-                const predikatHtml = `<span class="${predikatKelas}">${predikatTeks}</span>`;
+                var predikatHtml = '';
+                if (nilaiValid) {
+                    var predikat = getPredikat(rataNilai);
+                    var icon = predikat.teks === 'Mahir' ? 'fa-trophy' :
+                               predikat.teks === 'Cakap' ? 'fa-check-circle' :
+                               predikat.teks === 'Berkembang' ? 'fa-chart-line' : 'fa-exclamation-triangle';
+                    
+                    predikatHtml = '<span class="' + predikat.kelas + '"><i class="fas ' + icon + '"></i> ' + predikat.teks + '</span>' +
+                        '<div class="tindak-lanjut"><i class="fas fa-info-circle"></i> ' + predikat.tindakLanjut + '</div>';
+                    nilaiList.push(rataNilai);
+                } else {
+                    predikatHtml = '<span class="predikat-belum-nilai"><i class="fas fa-minus-circle"></i> Belum Ada Nilai</span>' +
+                        '<div class="tindak-lanjut"><i class="fas fa-info-circle"></i> Belum ada data nilai untuk TP ini.</div>';
+                }
                 
-                html += `<tr>
-                    <td><strong>${escapeHtml(item.Kode_TP || '-')}</strong></td>
-                    <td>${escapeHtml(item.Tujuan_Pembelajaran || '-')}</td>
-                    <td class="${nilaiClass}" style="font-weight:700; text-align:center;">${nilaiTampil}</td>
-                    <td style="text-align:center;">${predikatHtml}</td>
-                    <td>${escapeHtml(item.Keterangan || '-')}</td>
-                </tr>`;
+                var nilaiClass = nilaiValid ? getPredikat(rataNilai).nilaiKelas : 'nilai-belum-nilai';
+                
+                html += '<tr>' +
+                    '<td><strong>' + tpKode + '</strong></td>' +
+                    '<td>' + escapeHtml(tpDeskripsi) + '</td>' +
+                    '<td>' + perAktivitasHtml + '</td>' +
+                    '<td class="' + nilaiClass + '" style="font-weight:700; font-size:1.1rem;">' + nilaiTampil + '</td>' +
+                    '<td>' + predikatHtml + '</td>' +
+                    '</tr>';
             }
             
             tbody.innerHTML = html;
             nilaiCard.style.display = 'block';
             
             if (nilaiList.length > 0) {
-                const rataRata = (nilaiList.reduce((a, b) => a + b, 0) / nilaiList.length).toFixed(2);
-                const tertinggi = Math.max(...nilaiList);
-                const terendah = Math.min(...nilaiList);
+                var total = 0;
+                for (var j = 0; j < nilaiList.length; j++) {
+                    total += nilaiList[j];
+                }
+                var rataRata = (total / nilaiList.length).toFixed(2);
+                var tertinggi = Math.max.apply(null, nilaiList);
+                var terendah = Math.min.apply(null, nilaiList);
                 document.getElementById('rataRataTP').innerText = rataRata;
                 document.getElementById('nilaiTertinggi').innerText = tertinggi;
                 document.getElementById('nilaiTerendah').innerText = terendah;
-                document.getElementById('totalTP').innerText = totalTP;
                 nilaiStats.style.display = 'flex';
             } else {
                 nilaiStats.style.display = 'none';
             }
         }
         
+        // ==================== DROPDOWN FUNCTIONS ====================
         function updateKelasDropdown() {
-            const kelasSelect = document.getElementById('filterKelas');
+            var kelasSelect = document.getElementById('filterKelas');
             kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-            dataKelas.forEach(kelas => {
+            for (var i = 0; i < dataKelas.length; i++) {
+                var kelas = dataKelas[i];
                 if (kelas && kelas.trim()) {
-                    const option = document.createElement('option');
+                    var option = document.createElement('option');
                     option.value = kelas;
                     option.textContent = kelas;
                     kelasSelect.appendChild(option);
                 }
-            });
+            }
             kelasSelect.disabled = false;
         }
         
         function updateNamaDropdown() {
-            const kelas = document.getElementById('filterKelas').value;
-            const namaSelect = document.getElementById('filterNama');
+            var kelas = document.getElementById('filterKelas').value;
+            var namaSelect = document.getElementById('filterNama');
+            
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
                 namaSelect.disabled = true;
                 return;
             }
+            
+            // ===== HITUNG POSISI KELAS DI HTML! =====
+            var posisiKelas = dataKelas.indexOf(kelas);
+            var jumlahSiswa = dataSiswa[kelas].length;
+            
+            // ===== SIMPAN DATA KELAS TERPILIH =====
+            selectedKelas = {
+                nama: kelas,
+                posisi: posisiKelas,
+                jumlah: jumlahSiswa
+            };
+            
+            console.log('📊 Kelas Terpilih:', selectedKelas);
+            
+            // Isi dropdown siswa
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            (dataSiswa[kelas] || []).sort().forEach(nama => {
+            var siswaList = dataSiswa[kelas] || [];
+            siswaList.sort().forEach(function(nama) {
                 if (nama && nama.trim()) {
-                    const option = document.createElement('option');
+                    var option = document.createElement('option');
                     option.value = nama;
                     option.textContent = nama;
                     namaSelect.appendChild(option);
                 }
             });
             namaSelect.disabled = false;
+            
+            // Reset selected siswa
+            selectedSiswa = { nama: '', posisi: -1 };
+            document.getElementById('btnCek').disabled = true;
+        }
+        
+        function onSiswaSelected() {
+            var nama = document.getElementById('filterNama').value;
+            var kelas = document.getElementById('filterKelas').value;
+            
+            if (!nama || !kelas) {
+                selectedSiswa = { nama: '', posisi: -1 };
+                document.getElementById('btnCek').disabled = true;
+                return;
+            }
+            
+            // ===== HITUNG POSISI SISWA DI HTML! =====
+            var siswaList = dataSiswa[kelas] || [];
+            var posisiSiswa = siswaList.indexOf(nama) + 1; // 1-based
+            
+            selectedSiswa = {
+                nama: nama,
+                posisi: posisiSiswa
+            };
+            
+            console.log('👤 Siswa Terpilih:', selectedSiswa);
+            
+            document.getElementById('btnCek').disabled = false;
         }
         
         function resetFilters() {
@@ -656,37 +883,79 @@
             document.getElementById('aktivitasCard').style.display = 'none';
             document.getElementById('nilaiCard').style.display = 'none';
             document.getElementById('infoPanel').style.display = 'none';
+            cacheAktivitasData = [];
+            selectedKelas = { nama: '', posisi: -1, jumlah: 0 };
+            selectedSiswa = { nama: '', posisi: -1 };
         }
         
+        // ==================== CEK DATA (RUMUS DI HTML!) ====================
         async function cekData() {
-            const semester = document.getElementById('filterSemester').value;
-            currentKelas = document.getElementById('filterKelas').value;
-            currentNama = document.getElementById('filterNama').value;
+            var semester = document.getElementById('filterSemester').value;
+            var kelas = document.getElementById('filterKelas').value;
+            var nama = document.getElementById('filterNama').value;
             
             if (!semester) { alert('Pilih semester terlebih dahulu'); return; }
-            if (!currentKelas) { alert('Pilih kelas terlebih dahulu'); return; }
-            if (!currentNama) { alert('Pilih nama siswa terlebih dahulu'); return; }
+            if (!kelas) { alert('Pilih kelas terlebih dahulu'); return; }
+            if (!nama) { alert('Pilih nama siswa terlebih dahulu'); return; }
             
+            currentSemester = semester;
+            
+            // ===== RUMUS ADA DI HTML! =====
+            // noBar = (posisiKelas × barisPerKelas) + posisiSiswa + headerRows
+            var noBar = (selectedKelas.posisi * METADATA.barisPerKelas) + 
+                        selectedSiswa.posisi + 
+                        METADATA.headerRows;
+            
+            // Tentukan kolom berdasarkan semester
+            var startCol, endCol;
+            if (semester === 'Ganjil') {
+                startCol = METADATA.kolomAktivitas.ganjil.start;
+                endCol = METADATA.kolomAktivitas.ganjil.end;
+            } else {
+                startCol = METADATA.kolomAktivitas.genap.start;
+                endCol = METADATA.kolomAktivitas.genap.end;
+            }
+            
+            console.log('📐 Rumus:', {
+                posisiKelas: selectedKelas.posisi,
+                barisPerKelas: METADATA.barisPerKelas,
+                posisiSiswa: selectedSiswa.posisi,
+                headerRows: METADATA.headerRows,
+                noBar: noBar,
+                kolom: startCol + '-' + endCol
+            });
+            
+            // Tampilkan info panel
             document.getElementById('infoPanel').style.display = 'flex';
-            document.getElementById('infoNama').innerText = currentNama;
-            document.getElementById('infoKelas').innerText = currentKelas;
+            document.getElementById('infoNama').innerText = nama;
+            document.getElementById('infoKelas').innerText = kelas;
             document.getElementById('infoSemester').innerText = semester;
             
-            const loadingMsg = document.getElementById('loadingMessage');
-            const errorMsg = document.getElementById('errorMessage');
+            var loadingMsg = document.getElementById('loadingMessage');
+            var errorMsg = document.getElementById('errorMessage');
             loadingMsg.style.display = 'block';
             errorMsg.style.display = 'none';
             document.getElementById('aktivitasCard').style.display = 'none';
             document.getElementById('nilaiCard').style.display = 'none';
             
-            const btnCek = document.getElementById('btnCek');
+            var btnCek = document.getElementById('btnCek');
             btnCek.disabled = true;
             btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
             
             try {
-                const { aktivitas, nilai } = await fetchMonitoringData(semester, currentKelas, currentNama);
-                renderAktivitasTable(aktivitas);
-                renderNilaiTable(nilai);
+                // ===== FETCH DATA DENGAN POSISI =====
+                var result = await fetchDataByPosition(semester, noBar, startCol, endCol);
+                
+                if (result && result.success) {
+                    // Render aktivitas
+                    renderAktivitasTable(result.aktivitas || []);
+                    
+                    // Render nilai TP
+                    renderNilaiTable(result.rataTP || {}, result.perTP || {});
+                } else {
+                    throw new Error(result?.error || 'Gagal memuat data');
+                }
+                
             } catch (error) {
                 console.error(error);
                 errorMsg.style.display = 'block';
@@ -698,8 +967,10 @@
             }
         }
         
-        // ==================== FUNGSI RENDER VALUE UNTUK PREVIEW ====================
-        function renderPreviewValue(value) {
+        // ==================== RENDER PREVIEW VALUE ====================
+        function renderPreviewValue(value, depth) {
+            depth = depth || 0;
+            
             if (value === null || value === undefined || value === '') {
                 return '<span class="preview-empty">-</span>';
             }
@@ -707,37 +978,39 @@
             if (Array.isArray(value)) {
                 if (value.length === 0) return '<span class="preview-empty">(Kosong)</span>';
                 
-                const allObjects = value.every(item => typeof item === 'object' && item !== null);
+                var allObjects = value.every(function(item) { return typeof item === 'object' && item !== null; });
                 if (allObjects && value.length > 0) {
-                    const allKeys = new Set();
-                    value.forEach(item => {
-                        Object.keys(item).forEach(key => allKeys.add(key));
+                    var allKeys = new Set();
+                    value.forEach(function(item) {
+                        Object.keys(item).forEach(function(key) { allKeys.add(key); });
                     });
-                    const headers = Array.from(allKeys);
-                    let tableHtml = '<table class="preview-table"><thead><tr>';
-                    headers.forEach(header => {
-                        tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`;
+                    var headers = Array.from(allKeys);
+                    var tableHtml = '<table class="preview-table"><thead><tr>';
+                    headers.forEach(function(header) {
+                        tableHtml += '<th>' + escapeHtml(formatLabel(header)) + '</th>';
                     });
                     tableHtml += '</tr></thead><tbody>';
-                    value.forEach(item => {
+                    value.forEach(function(item) {
                         tableHtml += '<tr>';
-                        headers.forEach(header => {
-                            let cellValue = item[header];
+                        headers.forEach(function(header) {
+                            var cellValue = item[header];
                             if (cellValue === undefined || cellValue === null) cellValue = '-';
                             if (typeof cellValue === 'object') cellValue = JSON.stringify(cellValue);
-                            tableHtml += `<td>${escapeHtml(String(cellValue))}</td>`;
+                            tableHtml += '<td>' + escapeHtml(String(cellValue)) + '</td>';
                         });
                         tableHtml += '</tr>';
                     });
                     tableHtml += '</tbody></table>';
                     return tableHtml;
                 } else {
-                    let listHtml = '<ul class="preview-list">';
-                    value.forEach((item, idx) => {
+                    var listHtml = '<ul class="preview-list">';
+                    value.forEach(function(item, idx) {
                         if (item === '' || item === null || item === undefined) {
-                            listHtml += `<li><em>kosong</em></li>`;
+                            listHtml += '<li><em>kosong</em></li>';
+                        } else if (typeof item === 'object') {
+                            listHtml += '<li>' + renderPreviewValue(item, depth + 1) + '</li>';
                         } else {
-                            listHtml += `<li>${escapeHtml(String(item))}</li>`;
+                            listHtml += '<li>' + escapeHtml(String(item)) + '</li>';
                         }
                     });
                     listHtml += '</ul>';
@@ -748,24 +1021,25 @@
             if (typeof value === 'object') {
                 if (Object.keys(value).length === 0) return '<span class="preview-empty">(Kosong)</span>';
                 
-                let objectHtml = '<div style="margin:0;">';
-                for (const [objKey, objValue] of Object.entries(value)) {
-                    const keyLabel = formatLabel(objKey);
-                    
-                    if (Array.isArray(objValue)) {
-                        objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
-                    } 
-                    else if (typeof objValue === 'object' && objValue !== null) {
-                        objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
-                    }
-                    else {
-                        let displayValue = objValue;
-                        if (displayValue === '' || displayValue === null || displayValue === undefined) {
-                            displayValue = '-';
-                        } else if (typeof displayValue === 'boolean') {
-                            displayValue = displayValue ? '✅ Ya' : '❌ Tidak';
+                var objectHtml = '<div style="margin:0;">';
+                for (var objKey in value) {
+                    if (value.hasOwnProperty(objKey)) {
+                        var objValue = value[objKey];
+                        var keyLabel = formatLabel(objKey);
+                        
+                        if (Array.isArray(objValue)) {
+                            objectHtml += '<div style="margin-bottom:0.5rem;"><strong>' + escapeHtml(keyLabel) + ':</strong> ' + renderPreviewValue(objValue, depth + 1) + '</div>';
+                        } else if (typeof objValue === 'object' && objValue !== null) {
+                            objectHtml += '<div style="margin-bottom:0.5rem;"><strong>' + escapeHtml(keyLabel) + ':</strong> ' + renderPreviewValue(objValue, depth + 1) + '</div>';
+                        } else {
+                            var displayValue = objValue;
+                            if (displayValue === '' || displayValue === null || displayValue === undefined) {
+                                displayValue = '-';
+                            } else if (typeof displayValue === 'boolean') {
+                                displayValue = displayValue ? '✅ Ya' : '❌ Tidak';
+                            }
+                            objectHtml += '<div style="margin-bottom:0.3rem;"><strong>' + escapeHtml(keyLabel) + ':</strong> <span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">' + escapeHtml(String(displayValue)) + '</span></div>';
                         }
-                        objectHtml += `<div style="margin-bottom:0.3rem;"><strong>${escapeHtml(keyLabel)}:</strong> <span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">${escapeHtml(String(displayValue))}</span></div>`;
                     }
                 }
                 objectHtml += '</div>';
@@ -776,188 +1050,178 @@
                 return value ? '✅ Ya' : '❌ Tidak';
             }
             
-            const displayValue = (value === null || value === undefined || value === '') ? '-' : String(value);
-            return `<span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">${escapeHtml(displayValue)}</span>`;
+            var displayValue = (value === null || value === undefined || value === '') ? '-' : String(value);
+            return '<span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">' + escapeHtml(displayValue) + '</span>';
         }
         
-        // ==================== FUNGSI PREVIEW MODAL (DIPERBAIKI) ====================
-        
-        // Fungsi untuk mendapatkan nama sheet berdasarkan nama aktivitas (menggunakan mapping lokal)
-        function getSheetNameFromAktivitas(proyek, aktivitas) {
-            // Gunakan mapping lokal yang sudah didefinisikan di atas
-            if (AKTIVITAS_TO_SHEET_MAPPING[aktivitas]) {
-                console.log(`Mapping ditemukan: ${aktivitas} -> ${AKTIVITAS_TO_SHEET_MAPPING[aktivitas]}`);
-                return Promise.resolve(AKTIVITAS_TO_SHEET_MAPPING[aktivitas]);
-            }
-            
-            // Fallback: coba dari server menggunakan action getSheetNameFromKode
-            const url = getAppsScriptUrl();
-            return fetch(`${url}?action=getSheetNameFromKode&kode=${encodeURIComponent(aktivitas)}&_=${Date.now()}`)
-                .then(response => response.json())
-                .then(result => {
-                    if (result && result.success && result.sheetName) {
-                        console.log(`Mapping dari server: ${aktivitas} -> ${result.sheetName}`);
-                        return result.sheetName;
-                    }
-                    console.error('Sheet tidak ditemukan untuk aktivitas:', aktivitas);
-                    return null;
-                })
-                .catch(error => {
-                    console.error('Error getting sheet name:', error);
-                    return null;
-                });
-        }
-        
+        // ==================== PREVIEW JAWABAN ====================
         function closePreviewModal() {
-            const modal = document.getElementById('previewModal');
+            var modal = document.getElementById('previewModal');
             if (modal) modal.remove();
         }
         
-        async function previewJawaban(proyek, aktivitas) {
-            // Tampilkan modal
-            const modalHtml = `
-                <div id="previewModal" class="modal-overlay" onclick="if(event.target===this) closePreviewModal()">
-                    <div class="modal-container">
-                        <div class="modal-header">
-                            <h3><i class="fas fa-eye"></i> Preview Jawaban Siswa</h3>
-                            <button class="modal-close" onclick="closePreviewModal()">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="modal-info">
-                                <p><strong>Proyek:</strong> ${escapeHtml(proyek)}</p>
-                                <p><strong>Aktivitas:</strong> ${escapeHtml(aktivitas)}</p>
-                                <p><strong>Siswa:</strong> ${escapeHtml(currentNama)}</p>
-                                <p><strong>Kelas:</strong> ${escapeHtml(currentKelas)}</p>
-                            </div>
-                            <div id="previewContentWrapper" class="preview-content-wrapper">
-                                <div style="text-align: center; padding: 2rem;">
-                                    <i class="fas fa-spinner fa-spin"></i> Memuat data jawaban...
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        async function previewJawaban(aktivitas) {
+            if (!aktivitas) {
+                alert('Tidak ada data untuk aktivitas ini');
+                return;
+            }
             
-            const existingModal = document.getElementById('previewModal');
+            var aktivitasData = cacheAktivitasData.find(function(item) {
+                return item.Nama_Aktivitas === aktivitas;
+            });
+            
+            if (!aktivitasData || !aktivitasData.Data_JSON) {
+                alert('Data jawaban tidak ditemukan untuk aktivitas: ' + aktivitas);
+                return;
+            }
+            
+            var modalHtml = '<div id="previewModal" class="modal-overlay" onclick="if(event.target===this) closePreviewModal()">' +
+                '<div class="modal-container">' +
+                    '<div class="modal-header">' +
+                        '<h3><i class="fas fa-eye"></i> Preview Jawaban Siswa</h3>' +
+                        '<button class="modal-close" onclick="closePreviewModal()">&times;</button>' +
+                    '</div>' +
+                    '<div class="modal-body">' +
+                        '<div class="modal-info">' +
+                            '<p><strong>Aktivitas:</strong> ' + escapeHtml(aktivitas) + '</p>' +
+                            '<p><strong>Siswa:</strong> ' + escapeHtml(selectedSiswa.nama) + '</p>' +
+                            '<p><strong>Kelas:</strong> ' + escapeHtml(selectedKelas.nama) + '</p>' +
+                            '<p><strong>Semester:</strong> ' + escapeHtml(currentSemester) + '</p>' +
+                        '</div>' +
+                        '<div id="previewContentWrapper" class="preview-content-wrapper">' +
+                            '<div style="text-align: center; padding: 2rem;">' +
+                                '<i class="fas fa-spinner fa-spin"></i> Memuat data jawaban...' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+            
+            var existingModal = document.getElementById('previewModal');
             if (existingModal) existingModal.remove();
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             
             try {
-                // Dapatkan sheet name dari mapping
-                const sheetName = await getSheetNameFromAktivitas(proyek, aktivitas);
-                const previewWrapper = document.getElementById('previewContentWrapper');
+                var previewWrapper = document.getElementById('previewContentWrapper');
+                var jawabanData = aktivitasData.Data_JSON;
                 
-                console.log(`Mencari sheet untuk proyek=${proyek}, aktivitas=${aktivitas} -> sheetName=${sheetName}`);
+                var contentHtml = '';
+                var keys = Object.keys(jawabanData);
                 
-                if (sheetName) {
-                    const url = getAppsScriptUrl();
-                    const response = await fetch(`${url}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(currentKelas)}&nama=${encodeURIComponent(currentNama)}&status=AKTIF&_=${Date.now()}`);
-                    const result = await response.json();
+                keys.sort(function(a, b) {
+                    var aIsBagian = a.startsWith('Bagian_') || a.startsWith('bagian_');
+                    var bIsBagian = b.startsWith('Bagian_') || b.startsWith('bagian_');
+                    if (aIsBagian && !bIsBagian) return -1;
+                    if (!aIsBagian && bIsBagian) return 1;
+                    return a.localeCompare(b);
+                });
+                
+                for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+                    var value = jawabanData[key];
                     
-                    console.log('Response getData:', result);
-                    
-                    if (result && result.success && result.data && result.data.length > 0) {
-                        const jawabanData = result.data[0];
-                        let contentHtml = '';
-                        
-                        // Urutkan keys: Bagian_ dulu
-                        const keys = Object.keys(jawabanData).filter(key => {
-                            return key !== '_timestamp' && key !== '_status' && key !== 'Key' && key !== 'Status' && key !== 'Timestamp';
-                        });
-                        
-                        keys.sort((a, b) => {
-                            const aIsBagian = a.startsWith('Bagian_');
-                            const bIsBagian = b.startsWith('Bagian_');
-                            if (aIsBagian && !bIsBagian) return -1;
-                            if (!aIsBagian && bIsBagian) return 1;
-                            return a.localeCompare(b);
-                        });
-                        
-                        for (const key of keys) {
-                            let value = jawabanData[key];
-                            
-                            if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
-                                try {
-                                    value = JSON.parse(value);
-                                } catch(e) {}
-                            }
-                            
-                            let icon = 'fa-file-alt';
-                            if (key.startsWith('Bagian_')) icon = 'fa-folder';
-                            else if (key.toLowerCase().includes('jawaban')) icon = 'fa-edit';
-                            else if (key.toLowerCase().includes('nilai')) icon = 'fa-star';
-                            
-                            contentHtml += `
-                                <div class="preview-field">
-                                    <div class="preview-field-header">
-                                        <i class="fas ${icon}"></i> ${escapeHtml(formatLabel(key))}
-                                    </div>
-                                    <div class="preview-field-value">
-                                        ${renderPreviewValue(value)}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                        
-                        if (contentHtml === '') {
-                            contentHtml = '<div style="text-align:center; color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data untuk ditampilkan</div>';
-                        }
-                        
-                        previewWrapper.innerHTML = contentHtml;
-                    } else {
-                        previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban tidak ditemukan. Pastikan siswa sudah mengerjakan aktivitas ini.</div>';
+                    if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+                        try {
+                            value = JSON.parse(value);
+                        } catch(e) {}
                     }
-                } else {
-                    previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Tidak dapat menemukan sheet untuk aktivitas ini. Periksa mapping aktivitas ke sheet name.</div>';
+                    
+                    var icon = 'fa-file-alt';
+                    if (key.startsWith('Bagian_') || key.startsWith('bagian_')) icon = 'fa-folder';
+                    else if (key.toLowerCase().includes('jawaban')) icon = 'fa-edit';
+                    else if (key.toLowerCase().includes('nilai')) icon = 'fa-star';
+                    else if (key.toLowerCase().includes('refleksi')) icon = 'fa-pen-fancy';
+                    else if (key.toLowerCase().includes('evaluasi')) icon = 'fa-clipboard-check';
+                    else if (key.toLowerCase().includes('program')) icon = 'fa-code';
+                    else if (key.toLowerCase().includes('pseudocode')) icon = 'fa-list-ol';
+                    else if (key.toLowerCase().includes('flowchart')) icon = 'fa-project-diagram';
+                    else if (key.toLowerCase().includes('dokumentasi')) icon = 'fa-file-alt';
+                    else if (key.toLowerCase().includes('perbandingan')) icon = 'fa-balance-scale';
+                    else if (key.toLowerCase().includes('pilihan')) icon = 'fa-check-circle';
+                    else if (key.toLowerCase().includes('pemahaman')) icon = 'fa-brain';
+                    else if (key.toLowerCase().includes('pemecahan')) icon = 'fa-puzzle-piece';
+                    else if (key.toLowerCase().includes('koneksi')) icon = 'fa-link';
+                    else if (key.toLowerCase().includes('produk')) icon = 'fa-laptop';
+                    else if (key.toLowerCase().includes('identitas')) icon = 'fa-user';
+                    else if (key.toLowerCase().includes('timestamp')) icon = 'fa-clock';
+                    else if (key.toLowerCase().includes('checklist')) icon = 'fa-check-square';
+                    else if (key.toLowerCase().includes('aktivitas')) icon = 'fa-tasks';
+                    
+                    contentHtml += '<div class="preview-field">' +
+                        '<div class="preview-field-header">' +
+                            '<i class="fas ' + icon + '"></i> ' + escapeHtml(formatLabel(key)) +
+                        '</div>' +
+                        '<div class="preview-field-value">' +
+                            renderPreviewValue(value) +
+                        '</div>' +
+                    '</div>';
                 }
+                
+                if (contentHtml === '') {
+                    contentHtml = '<div style="text-align:center; color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data untuk ditampilkan</div>';
+                }
+                
+                previewWrapper.innerHTML = contentHtml;
+                
             } catch (error) {
                 console.error('Error preview jawaban:', error);
-                const previewWrapper = document.getElementById('previewContentWrapper');
+                var previewWrapper = document.getElementById('previewContentWrapper');
                 if (previewWrapper) {
                     previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data jawaban: ' + error.message + '</div>';
                 }
             }
         }
         
+        // ==================== INIT ====================
         async function init() {
-            const hamburger = document.getElementById('hamburger');
-            const navMenu = document.getElementById('nav-menu');
-            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            var hamburger = document.getElementById('hamburger');
+            var navMenu = document.getElementById('nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
             
-            const loadingMsg = document.getElementById('loadingMessage');
+            var loadingMsg = document.getElementById('loadingMessage');
             loadingMsg.style.display = 'block';
             loadingMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data siswa...';
             
             try {
                 await loadDataSiswa();
                 
-                const filterSemester = document.getElementById('filterSemester');
-                const filterKelas = document.getElementById('filterKelas');
-                const filterNama = document.getElementById('filterNama');
-                const btnCek = document.getElementById('btnCek');
+                var filterSemester = document.getElementById('filterSemester');
+                var filterKelas = document.getElementById('filterKelas');
+                var filterNama = document.getElementById('filterNama');
+                var btnCek = document.getElementById('btnCek');
                 
-                filterSemester.addEventListener('change', () => {
+                filterSemester.addEventListener('change', function() {
                     resetFilters();
                     if (dataKelas.length > 0) updateKelasDropdown();
                 });
-                filterKelas.addEventListener('change', () => {
+                
+                filterKelas.addEventListener('change', function() {
                     updateNamaDropdown();
                     document.getElementById('aktivitasCard').style.display = 'none';
                     document.getElementById('nilaiCard').style.display = 'none';
                     document.getElementById('btnCek').disabled = true;
                 });
-                filterNama.addEventListener('change', () => {
-                    if (filterNama.value) btnCek.disabled = false;
-                });
+                
+                filterNama.addEventListener('change', onSiswaSelected);
+                
                 btnCek.addEventListener('click', cekData);
                 
+                // Initial load
+                if (dataKelas.length > 0) {
+                    updateKelasDropdown();
+                }
+                
                 loadingMsg.style.display = 'none';
+                
             } catch (error) {
                 loadingMsg.style.display = 'none';
-                const errorMsg = document.getElementById('errorMessage');
+                var errorMsg = document.getElementById('errorMessage');
                 errorMsg.style.display = 'block';
-                document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                document.getElementById('errorText').innerHTML = error.message || 'Gagal memuat data siswa. Silakan refresh halaman.';
             }
         }
         
