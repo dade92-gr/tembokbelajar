@@ -85,6 +85,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
         
         .ipas-content-card .subtitle i { color: var(--ipas-primary); }
@@ -112,6 +113,8 @@
             font-size: 1.2rem;
             margin: 1.5rem 0 1rem 0;
             font-weight: 600;
+            border-left: 5px solid var(--ipas-accent);
+            padding-left: 15px;
         }
         
         .identitas-box {
@@ -427,6 +430,8 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         
         .nav-btn {
@@ -466,6 +471,7 @@
             pointer-events: none;
         }
         
+        /* ============ MODAL YANG DIPERBAIKI ============ */
         .modal {
             display: none;
             position: fixed;
@@ -476,6 +482,8 @@
             height: 100%;
             background-color: rgba(0,0,0,0.5);
             animation: fadeIn 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
         }
         
         @keyframes fadeIn {
@@ -485,14 +493,15 @@
         
         .modal-content {
             background-color: white;
-            margin: 15% auto;
+            margin: 5% auto;
             padding: 2rem;
             border-radius: 20px;
             width: 90%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             animation: slideDown 0.3s ease;
+            position: relative;
         }
         
         @keyframes slideDown {
@@ -500,36 +509,67 @@
             to { transform: translateY(0); opacity: 1; }
         }
         
-        .modal-content i {
+        .modal-content .modal-icon {
             font-size: 4rem;
-            color: var(--ipas-primary);
             margin-bottom: 1rem;
+        }
+        
+        .modal-content .icon-success {
+            color: var(--ipas-primary);
+        }
+        
+        .modal-content .icon-warning {
+            color: var(--ipas-orange);
+        }
+        
+        .modal-content .icon-danger {
+            color: var(--ipas-red);
         }
         
         .modal-content h3 {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             color: var(--ipas-dark);
+            font-size: 1.4rem;
         }
         
-        .modal-content p {
+        .modal-content .sub-text {
             margin-bottom: 1.5rem;
             color: #666;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .modal-content .sub-text strong {
+            color: var(--ipas-dark);
+            word-break: break-word;
         }
         
         .modal-buttons {
             display: flex;
             gap: 1rem;
             justify-content: center;
+            flex-wrap: wrap;
         }
         
         .modal-btn {
-            padding: 0.7rem 1.5rem;
+            padding: 0.8rem 1.5rem;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+            flex: 1;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         .modal-btn.yes {
@@ -539,7 +579,22 @@
         
         .modal-btn.yes:hover {
             background: var(--ipas-secondary);
-            transform: translateY(-2px);
+        }
+        
+        .modal-btn.danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .modal-btn.danger:hover {
+            background: #c0392b;
+        }
+        
+        .modal-btn.danger:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
         .modal-btn.no {
@@ -549,7 +604,15 @@
         
         .modal-btn.no:hover {
             background: #5a6268;
-            transform: translateY(-2px);
+        }
+        
+        .modal-btn.secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .modal-btn.secondary:hover {
+            background: #5a6268;
         }
         
         @media (max-width: 768px) {
@@ -562,6 +625,45 @@
             .checkbox-group, .radio-group { flex-direction: column; gap: 8px; }
             .table-actions { flex-direction: column; }
             .link-input-group { flex-direction: column; align-items: stretch; }
+            
+            .modal-content {
+                margin: 10% auto;
+                padding: 1.5rem;
+                width: 95%;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .modal-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.8rem;
+                flex: none;
+                min-width: unset;
+            }
+            
+            .submit-button {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem;
+            }
+            
+            .ipas-content-card h2 { font-size: 1.6rem; }
+            .ipas-content-card { padding: 1.5rem; }
+            .worksheet-subtitle { font-size: 1.1rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .activity-detail-container { padding: 0.5rem; }
+            .worksheet-container { padding: 1rem; }
+            .ipas-content-card { padding: 1rem; }
+            .modal-content { padding: 1.2rem; margin: 15% auto; }
+            .modal-content .sub-text { font-size: 0.85rem; }
+            .modal-btn { font-size: 0.9rem; padding: 0.7rem; }
+            .submit-button { font-size: 1rem; padding: 0.8rem; }
         }
     </style>
 </head>
@@ -1036,12 +1138,14 @@
                 Ini untuk refleksi, bukan untuk dihakimi.
             </div>
             
-            <table class="self-assessment">
-                <thead><tr><th>No</th><th>Aspek yang Dinilai</th><th>Nilai</th></tr></thead>
+            <table class="self-assessment" style="width:100%; border-collapse: collapse; margin: 1.5rem 0; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); background: white;">
+                <thead style="background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary)); color: white;">
+                    <tr><th style="padding: 15px 12px; text-align: left; font-weight: 600; font-size: 1rem;">No</th><th style="padding: 15px 12px; text-align: left; font-weight: 600; font-size: 1rem;">Aspek yang Dinilai</th><th style="padding: 15px 12px; text-align: left; font-weight: 600; font-size: 1rem;">Nilai</th></tr>
+                </thead>
                 <tbody>
-                    <tr><td>1</td><td>Semua anggota ikut observasi</td><td><select id="nilai1" onchange="saveToLocalStorage();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
-                    <tr><td>2</td><td>Semua anggota ikut diskusi</td><td><select id="nilai2" onchange="saveToLocalStorage();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
-                    <tr><td>3</td><td>Selesai tepat waktu</td><td><select id="nilai3" onchange="saveToLocalStorage();"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                    <tr><td style="padding: 15px 12px; border-bottom: 1px solid #e9ecef; vertical-align: middle; font-weight: 600; color: var(--ipas-dark); width: 50px; text-align: center;">1</td><td style="padding: 15px 12px; border-bottom: 1px solid #e9ecef; vertical-align: middle; font-weight: 500;">Semua anggota ikut observasi</td><td style="padding: 15px 12px; border-bottom: 1px solid #e9ecef; vertical-align: middle; width: 150px;"><select id="nilai1" onchange="saveToLocalStorage();" style="width:100%; padding: 10px 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 0.95rem; font-weight: 500; background: white; cursor: pointer; transition: all 0.3s ease;"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                    <tr><td style="padding: 15px 12px; border-bottom: 1px solid #e9ecef; vertical-align: middle; font-weight: 600; color: var(--ipas-dark); width: 50px; text-align: center;">2</td><td style="padding: 15px 12px; border-bottom: 1px solid #e9ecef; vertical-align: middle; font-weight: 500;">Semua anggota ikut diskusi</td><td style="padding: 15px 12px; border-bottom: 1px solid #e9ecef; vertical-align: middle; width: 150px;"><select id="nilai2" onchange="saveToLocalStorage();" style="width:100%; padding: 10px 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 0.95rem; font-weight: 500; background: white; cursor: pointer; transition: all 0.3s ease;"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
+                    <tr><td style="padding: 15px 12px; border-bottom: none; vertical-align: middle; font-weight: 600; color: var(--ipas-dark); width: 50px; text-align: center;">3</td><td style="padding: 15px 12px; border-bottom: none; vertical-align: middle; font-weight: 500;">Selesai tepat waktu</td><td style="padding: 15px 12px; border-bottom: none; vertical-align: middle; width: 150px;"><select id="nilai3" onchange="saveToLocalStorage();" style="width:100%; padding: 10px 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 0.95rem; font-weight: 500; background: white; cursor: pointer; transition: all 0.3s ease;"><option value="">-- Pilih --</option><option value="1">1 - Kurang</option><option value="2">2 - Cukup</option><option value="3" selected>3 - Baik</option><option value="4">4 - Sangat Baik</option></select></td></tr>
                 </tbody>
             </table>
 
@@ -1065,42 +1169,56 @@
         </div>
     </section>
 
-    <!-- Modal Konfirmasi Reset -->
+    <!-- ===== MODAL KONFIRMASI RESET (SUKSES) ===== -->
     <div id="resetModal" class="modal">
         <div class="modal-content">
-            <i class="fas fa-paper-plane"></i>
-            <h3>Data Berhasil Dikirim!</h3>
-            <p>Apakah Anda ingin mereset semua kolom isian?</p>
+            <div class="modal-icon icon-success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>✅ Data Berhasil Dikirim!</h3>
+            <p class="sub-text">Data Anda telah berhasil disimpan di Google Spreadsheet.</p>
             <div class="modal-buttons">
-                <button class="modal-btn yes" onclick="confirmReset()">Ya, Reset</button>
-                <button class="modal-btn no" onclick="closeModal()">Tidak</button>
+                <button class="modal-btn yes" onclick="confirmReset()">
+                    <i class="fas fa-undo"></i> Ya, Reset Form
+                </button>
+                <button class="modal-btn secondary" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL KONFIRMASI GANTI TUGAS ===== -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon icon-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>⚠️ Data Sudah Ada!</h3>
+            <p class="sub-text">
+                Data dengan kombinasi <br>
+                <strong id="confirmKeyDisplay"></strong> <br>
+                sudah ada di spreadsheet.<br><br>
+                Apakah Anda yakin ingin <strong>mengganti</strong> tugas yang lama dengan data yang baru?
+            </p>
+            <div class="modal-buttons">
+                <button class="modal-btn danger" id="confirmGantiBtn" onclick="confirmGantiTugas()">
+                    <i class="fas fa-exchange-alt"></i> Ya, Ganti Data
+                </button>
+                <button class="modal-btn secondary" onclick="closeConfirmModal()">
+                    <i class="fas fa-times"></i> Tidak, Batal
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== KONFIGURASI URL ====================
+        // ==================== KONFIGURASI ====================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
-        const URL_PEREKAP_AKTIVITAS = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
-
-        // ==================== KONFIGURASI FORM ====================
-        const FORM_CONFIG = {
-            sheetName: "S1-A2",
-            headers: [
-                "Timestamp",
-                "Kelas",
-                "Nama",
-                "Kelompok",
-                "Tugas",
-                "Status",
-                "Key",
-                "Bagian_B",
-                "Bagian_C",
-                "Bagian_D",
-                "Bagian_E",
-                "Bagian_F"
-            ]
-        };
+        const URL_PEREKAPAN = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
+        const STORAGE_KEY = 'ipas_aktivitas2_draft';
+        const AKTIVITAS_NAMA = 'AKTIVITAS 2 - EKSPLORASI MAKHLUK HIDUP';
+        const SHEET_NAME = 'data_aktivitas';
 
         // ==================== DATA DEFINISI ====================
         const PERTANYAAN_LITERASI = [
@@ -1127,6 +1245,8 @@
         let isLoading = true;
         let isOnline = true;
         let autoSaveTimeout;
+        let isSubmitting = false;
+        let pendingSubmitData = null;
 
         // ==================== CEK KONEKSI ====================
         function checkConnection() {
@@ -1238,6 +1358,24 @@
             }
         }
 
+        // ==================== FORMAT TIMESTAMP ====================
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                           'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            
+            const hariName = hari[now.getDay()];
+            const tanggal = now.getDate().toString().padStart(2, '0');
+            const bulanName = bulan[now.getMonth()];
+            const tahun = now.getFullYear();
+            const jam = now.getHours().toString().padStart(2, '0');
+            const menit = now.getMinutes().toString().padStart(2, '0');
+            const detik = now.getSeconds().toString().padStart(2, '0');
+            
+            return `${hariName}, ${tanggal} ${bulanName} ${tahun} - ${jam}:${menit}:${detik}`;
+        }
+
         // ==================== LOCALSTORAGE AUTO-SAVE ====================
         function saveToLocalStorage() {
             if (!isOnline) return;
@@ -1246,80 +1384,90 @@
             
             autoSaveTimeout = setTimeout(() => {
                 const formData = collectAllFormData();
-                localStorage.setItem('ipas_aktivitas2_draft', JSON.stringify(formData));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
                 console.log('Data tersimpan otomatis', new Date().toLocaleTimeString());
             }, 1000);
         }
 
         function loadFromLocalStorage() {
-            const savedData = localStorage.getItem('ipas_aktivitas2_draft');
+            const savedData = localStorage.getItem(STORAGE_KEY);
             if (savedData) {
                 try {
                     const data = JSON.parse(savedData);
                     populateFormData(data);
                 } catch (e) {
                     console.error('Error loading saved data:', e);
-                    // Jika error, buat tabel default 1 baris
                     initTablesWithOneRow();
                 }
             } else {
-                // Tidak ada data di localStorage, buat 1 baris default
                 initTablesWithOneRow();
             }
         }
 
         function clearLocalStorage() {
-            localStorage.removeItem('ipas_aktivitas2_draft');
+            localStorage.removeItem(STORAGE_KEY);
         }
 
         // ==================== INIT TABLES WITH ONE ROW ====================
         function initTablesWithOneRow() {
             // Interaksi: 1 baris
             const interaksiBody = document.getElementById('interaksiBody');
-            interaksiBody.innerHTML = '';
-            interaksiBody.innerHTML = `
-                <tr>
-                    <td>1</td>
-                    <td><input type="text" id="interaksi1_nama" placeholder="Contoh: Semut mengangkut daun" oninput="saveToLocalStorage();"></td>
-                    <td><input type="text" id="interaksi1_makhluk" placeholder="Contoh: Semut" oninput="saveToLocalStorage();"></td>
-                    <td><input type="text" id="interaksi1_lingkungan" placeholder="Contoh: Tanah, daun kering" oninput="saveToLocalStorage();"></td>
-                    <td><textarea id="interaksi1_deskripsi" rows="2" placeholder="Deskripsi..." oninput="saveToLocalStorage();"></textarea></td>
-                </tr>
-            `;
-            document.getElementById('hapusInteraksiBtn').disabled = true;
+            if (interaksiBody) {
+                interaksiBody.innerHTML = '';
+                interaksiBody.innerHTML = `
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" id="interaksi1_nama" placeholder="Contoh: Semut mengangkut daun" oninput="saveToLocalStorage();"></td>
+                        <td><input type="text" id="interaksi1_makhluk" placeholder="Contoh: Semut" oninput="saveToLocalStorage();"></td>
+                        <td><input type="text" id="interaksi1_lingkungan" placeholder="Contoh: Tanah, daun kering" oninput="saveToLocalStorage();"></td>
+                        <td><textarea id="interaksi1_deskripsi" rows="2" placeholder="Deskripsi..." oninput="saveToLocalStorage();"></textarea></td>
+                    </tr>
+                `;
+                const hapusBtn = document.getElementById('hapusInteraksiBtn');
+                if (hapusBtn) hapusBtn.disabled = true;
+            }
 
             // Observasi: 1 baris
             const observasiBody = document.getElementById('observasiBody');
-            observasiBody.innerHTML = '';
-            observasiBody.innerHTML = `
-                <tr>
-                    <td><input type="text" id="obs_waktu1" placeholder="Contoh: 0, 5, 10, 15..." oninput="saveToLocalStorage();"></td>
-                    <td><input type="text" id="obs_kejadian1" placeholder="Apa yang terjadi?" oninput="saveToLocalStorage();"></td>
-                    <td><input type="text" id="obs_kondisi1" placeholder="Kondisi lingkungan..." oninput="saveToLocalStorage();"></td>
-                </tr>
-            `;
-            document.getElementById('hapusObservasiBtn').disabled = true;
+            if (observasiBody) {
+                observasiBody.innerHTML = '';
+                observasiBody.innerHTML = `
+                    <tr>
+                        <td><input type="text" id="obs_waktu1" placeholder="Contoh: 0, 5, 10, 15..." oninput="saveToLocalStorage();"></td>
+                        <td><input type="text" id="obs_kejadian1" placeholder="Apa yang terjadi?" oninput="saveToLocalStorage();"></td>
+                        <td><input type="text" id="obs_kondisi1" placeholder="Kondisi lingkungan..." oninput="saveToLocalStorage();"></td>
+                    </tr>
+                `;
+                const hapusBtn = document.getElementById('hapusObservasiBtn');
+                if (hapusBtn) hapusBtn.disabled = true;
+            }
 
             // Langkah: 1 baris
             const langkahBody = document.getElementById('langkahBody');
-            langkahBody.innerHTML = '';
-            langkahBody.innerHTML = `
-                <tr>
-                    <td>1. <input type="text" id="langkah1" style="width:100%" oninput="saveToLocalStorage();"></td>
-                </tr>
-            `;
-            document.getElementById('hapusLangkahBtn').disabled = true;
+            if (langkahBody) {
+                langkahBody.innerHTML = '';
+                langkahBody.innerHTML = `
+                    <tr>
+                        <td>1. <input type="text" id="langkah1" style="width:100%" oninput="saveToLocalStorage();"></td>
+                    </tr>
+                `;
+                const hapusBtn = document.getElementById('hapusLangkahBtn');
+                if (hapusBtn) hapusBtn.disabled = true;
+            }
 
             // Hasil: 1 baris
             const hasilBody = document.getElementById('hasilBody');
-            hasilBody.innerHTML = '';
-            hasilBody.innerHTML = `
-                <tr>
-                    <td><input type="text" id="hasil_waktu1" placeholder="Contoh: Menit ke-5" oninput="saveToLocalStorage();"></td>
-                    <td><textarea id="hasil_isi1" rows="2" oninput="saveToLocalStorage();"></textarea></td>
-                </tr>
-            `;
-            document.getElementById('hapusHasilBtn').disabled = true;
+            if (hasilBody) {
+                hasilBody.innerHTML = '';
+                hasilBody.innerHTML = `
+                    <tr>
+                        <td><input type="text" id="hasil_waktu1" placeholder="Contoh: Menit ke-5" oninput="saveToLocalStorage();"></td>
+                        <td><textarea id="hasil_isi1" rows="2" oninput="saveToLocalStorage();"></textarea></td>
+                    </tr>
+                `;
+                const hapusBtn = document.getElementById('hapusHasilBtn');
+                if (hapusBtn) hapusBtn.disabled = true;
+            }
         }
 
         // ==================== UPDATE HAPUS BUTTON ====================
@@ -1329,19 +1477,23 @@
             switch(tableType) {
                 case 'interaksi':
                     btn = document.getElementById('hapusInteraksiBtn');
-                    rowCount = document.getElementById('interaksiBody').querySelectorAll('tr').length;
+                    const interaksiBody = document.getElementById('interaksiBody');
+                    rowCount = interaksiBody ? interaksiBody.querySelectorAll('tr').length : 0;
                     break;
                 case 'observasi':
                     btn = document.getElementById('hapusObservasiBtn');
-                    rowCount = document.getElementById('observasiBody').querySelectorAll('tr').length;
+                    const observasiBody = document.getElementById('observasiBody');
+                    rowCount = observasiBody ? observasiBody.querySelectorAll('tr').length : 0;
                     break;
                 case 'langkah':
                     btn = document.getElementById('hapusLangkahBtn');
-                    rowCount = document.getElementById('langkahBody').querySelectorAll('tr').length;
+                    const langkahBody = document.getElementById('langkahBody');
+                    rowCount = langkahBody ? langkahBody.querySelectorAll('tr').length : 0;
                     break;
                 case 'hasil':
                     btn = document.getElementById('hapusHasilBtn');
-                    rowCount = document.getElementById('hasilBody').querySelectorAll('tr').length;
+                    const hasilBody = document.getElementById('hasilBody');
+                    rowCount = hasilBody ? hasilBody.querySelectorAll('tr').length : 0;
                     break;
                 default:
                     return;
@@ -1355,67 +1507,64 @@
         // ==================== RENUMBER BARIS ====================
         function renumberRowsInteraksi() {
             const tbody = document.getElementById('interaksiBody');
+            if (!tbody) return;
             const rows = tbody.querySelectorAll('tr');
             rows.forEach((row, index) => {
                 const num = index + 1;
                 const td = row.querySelector('td:first-child');
-                if (td) {
-                    td.textContent = num;
-                    // Update ID elemen di dalam baris
-                    const inputs = row.querySelectorAll('input, textarea');
-                    if (inputs.length >= 3) {
-                        inputs[0].id = `interaksi${num}_nama`;
-                        inputs[1].id = `interaksi${num}_makhluk`;
-                        inputs[2].id = `interaksi${num}_lingkungan`;
-                        if (inputs[3]) inputs[3].id = `interaksi${num}_deskripsi`;
-                    }
+                if (td) td.textContent = num;
+                const inputs = row.querySelectorAll('input, textarea');
+                if (inputs.length >= 4) {
+                    if (inputs[0]) inputs[0].id = `interaksi${num}_nama`;
+                    if (inputs[1]) inputs[1].id = `interaksi${num}_makhluk`;
+                    if (inputs[2]) inputs[2].id = `interaksi${num}_lingkungan`;
+                    if (inputs[3]) inputs[3].id = `interaksi${num}_deskripsi`;
                 }
             });
         }
 
         function renumberRowsObservasi() {
             const tbody = document.getElementById('observasiBody');
+            if (!tbody) return;
             const rows = tbody.querySelectorAll('tr');
             rows.forEach((row, index) => {
                 const num = index + 1;
                 const inputs = row.querySelectorAll('input');
                 if (inputs.length >= 3) {
-                    inputs[0].id = `obs_waktu${num}`;
-                    inputs[1].id = `obs_kejadian${num}`;
-                    inputs[2].id = `obs_kondisi${num}`;
+                    if (inputs[0]) inputs[0].id = `obs_waktu${num}`;
+                    if (inputs[1]) inputs[1].id = `obs_kejadian${num}`;
+                    if (inputs[2]) inputs[2].id = `obs_kondisi${num}`;
                 }
             });
         }
 
         function renumberRowsLangkah() {
             const tbody = document.getElementById('langkahBody');
+            if (!tbody) return;
             const rows = tbody.querySelectorAll('tr');
             rows.forEach((row, index) => {
                 const num = index + 1;
                 const td = row.querySelector('td');
                 if (td) {
                     const input = td.querySelector('input');
-                    if (input) {
-                        const value = input.value;
-                        td.innerHTML = `${num}. <input type="text" id="langkah${num}" style="width:100%" oninput="saveToLocalStorage();">`;
-                        const newInput = td.querySelector('input');
-                        if (newInput) {
-                            newInput.value = value;
-                        }
-                    }
+                    const value = input ? input.value : '';
+                    td.innerHTML = `${num}. <input type="text" id="langkah${num}" style="width:100%" oninput="saveToLocalStorage();">`;
+                    const newInput = td.querySelector('input');
+                    if (newInput) newInput.value = value;
                 }
             });
         }
 
         function renumberRowsHasil() {
             const tbody = document.getElementById('hasilBody');
+            if (!tbody) return;
             const rows = tbody.querySelectorAll('tr');
             rows.forEach((row, index) => {
                 const num = index + 1;
                 const inputs = row.querySelectorAll('input, textarea');
                 if (inputs.length >= 2) {
-                    inputs[0].id = `hasil_waktu${num}`;
-                    inputs[1].id = `hasil_isi${num}`;
+                    if (inputs[0]) inputs[0].id = `hasil_waktu${num}`;
+                    if (inputs[1]) inputs[1].id = `hasil_isi${num}`;
                 }
             });
         }
@@ -1423,6 +1572,7 @@
         // ==================== TAMBAH BARIS ====================
         function tambahBarisInteraksi() {
             const tbody = document.getElementById('interaksiBody');
+            if (!tbody) return;
             const currentCount = tbody.querySelectorAll('tr').length;
             const num = currentCount + 1;
             
@@ -1441,6 +1591,7 @@
 
         function tambahBarisObservasi() {
             const tbody = document.getElementById('observasiBody');
+            if (!tbody) return;
             const currentCount = tbody.querySelectorAll('tr').length;
             const num = currentCount + 1;
             
@@ -1457,6 +1608,7 @@
 
         function tambahBarisLangkah() {
             const tbody = document.getElementById('langkahBody');
+            if (!tbody) return;
             const currentCount = tbody.querySelectorAll('tr').length;
             const num = currentCount + 1;
             
@@ -1471,6 +1623,7 @@
 
         function tambahBarisHasil() {
             const tbody = document.getElementById('hasilBody');
+            if (!tbody) return;
             const currentCount = tbody.querySelectorAll('tr').length;
             const num = currentCount + 1;
             
@@ -1487,6 +1640,7 @@
         // ==================== HAPUS BARIS ====================
         function hapusBarisInteraksi() {
             const tbody = document.getElementById('interaksiBody');
+            if (!tbody) return;
             const rows = tbody.querySelectorAll('tr');
             if (rows.length > 1) {
                 tbody.removeChild(rows[rows.length - 1]);
@@ -1498,6 +1652,7 @@
 
         function hapusBarisObservasi() {
             const tbody = document.getElementById('observasiBody');
+            if (!tbody) return;
             const rows = tbody.querySelectorAll('tr');
             if (rows.length > 1) {
                 tbody.removeChild(rows[rows.length - 1]);
@@ -1509,6 +1664,7 @@
 
         function hapusBarisLangkah() {
             const tbody = document.getElementById('langkahBody');
+            if (!tbody) return;
             const rows = tbody.querySelectorAll('tr');
             if (rows.length > 1) {
                 tbody.removeChild(rows[rows.length - 1]);
@@ -1520,6 +1676,7 @@
 
         function hapusBarisHasil() {
             const tbody = document.getElementById('hasilBody');
+            if (!tbody) return;
             const rows = tbody.querySelectorAll('tr');
             if (rows.length > 1) {
                 tbody.removeChild(rows[rows.length - 1]);
@@ -1529,52 +1686,52 @@
             }
         }
 
-        // ==================== COLLECT FORM DATA ====================
+        // ==================== COLLECT ALL FORM DATA ====================
         function collectAllFormData() {
-            const interaksiData = collectInteraksiData();
-            const observasiData = collectObservasiData();
-            const langkahData = collectLangkahData();
-            const hasilData = collectHasilPembuktianData();
+            const timestamp = getFormattedTimestamp();
             
             return {
-                bagian_b: collectBagianB(),
-                bagian_c: collectBagianC(interaksiData, observasiData),
-                bagian_d: collectBagianD(langkahData, hasilData),
-                bagian_e: collectBagianE(),
-                bagian_f: collectBagianF(),
-                _metadata: {
-                    interaksiCount: interaksiData.length,
-                    observasiCount: observasiData.length,
-                    langkahCount: langkahData.length,
-                    hasilCount: hasilData.length
-                }
+                "timestamp": timestamp,
+                "identitas": {
+                    "kelas": document.getElementById('kelas').value || '',
+                    "nama": document.getElementById('nama').value || '',
+                    "kelompok": document.getElementById('kelompok').value || '',
+                    "tugas": document.getElementById('tugas').value || ''
+                },
+                "bagian_b": collectBagianB(),
+                "bagian_c": collectBagianC(),
+                "bagian_d": collectBagianD(),
+                "bagian_e": collectBagianE(),
+                "bagian_f": collectBagianF()
             };
         }
 
         function collectBagianB() {
             const data = {};
-            PERTANYAAN_LITERASI.forEach((pertanyaan, index) => {
-                const num = index + 1;
-                if (index === 1) {
-                    data[pertanyaan] = {
-                        a: document.getElementById(`literasi2a`)?.value || '',
-                        b: document.getElementById(`literasi2b`)?.value || '',
-                        c: document.getElementById(`literasi2c`)?.value || ''
-                    };
-                } else {
-                    data[pertanyaan] = document.getElementById(`literasi${num}`)?.value || '';
-                }
-            });
+            data[PERTANYAAN_LITERASI[0]] = document.getElementById('literasi1')?.value || '';
+            data[PERTANYAAN_LITERASI[1]] = {
+                a: document.getElementById('literasi2a')?.value || '',
+                b: document.getElementById('literasi2b')?.value || '',
+                c: document.getElementById('literasi2c')?.value || ''
+            };
+            data[PERTANYAAN_LITERASI[2]] = document.getElementById('literasi3')?.value || '';
             return data;
         }
 
-        function collectBagianC(interaksiData, observasiData) {
+        function collectBagianC() {
             return {
-                interaksi: interaksiData,
+                interaksi: collectInteraksiData(),
                 pilihan_interaksi: document.getElementById('pilihan_interaksi')?.value || '',
                 penjelasan_ilmiah: document.getElementById('penjelasan_ilmiah')?.value || '',
-                istilah: collectIstilahData(),
-                observasi_detail: observasiData,
+                istilah: {
+                    'Ekosistem': document.getElementById('istilah_ekosistem')?.checked || false,
+                    'Habitat': document.getElementById('istilah_habitat')?.checked || false,
+                    'Rantai makanan': document.getElementById('istilah_rantai')?.checked || false,
+                    'Populasi': document.getElementById('istilah_populasi')?.checked || false,
+                    'Komunitas': document.getElementById('istilah_komunitas')?.checked || false,
+                    'Lainnya': document.getElementById('istilah_lainnya')?.value || ''
+                },
+                observasi_detail: collectObservasiData(),
                 link_observasi: document.getElementById('link_observasi')?.value || '',
                 pola: document.getElementById('pola')?.value || '',
                 prediksi1: {
@@ -1594,48 +1751,41 @@
         function collectInteraksiData() {
             const data = [];
             const tbody = document.getElementById('interaksiBody');
+            if (!tbody) return data;
             const rows = tbody.querySelectorAll('tr');
-            rows.forEach((row, index) => {
+            rows.forEach((row) => {
                 const inputs = row.querySelectorAll('input, textarea');
                 if (inputs.length >= 4) {
-                    const nama = inputs[0]?.value || '';
-                    const makhluk = inputs[1]?.value || '';
-                    const lingkungan = inputs[2]?.value || '';
-                    const deskripsi = inputs[3]?.value || '';
-                    data.push({ nama, makhluk, lingkungan, deskripsi });
+                    data.push({
+                        nama: inputs[0]?.value || '',
+                        makhluk: inputs[1]?.value || '',
+                        lingkungan: inputs[2]?.value || '',
+                        deskripsi: inputs[3]?.value || ''
+                    });
                 }
             });
             return data;
-        }
-
-        function collectIstilahData() {
-            return {
-                'Ekosistem': document.getElementById('istilah_ekosistem')?.checked || false,
-                'Habitat': document.getElementById('istilah_habitat')?.checked || false,
-                'Rantai makanan': document.getElementById('istilah_rantai')?.checked || false,
-                'Populasi': document.getElementById('istilah_populasi')?.checked || false,
-                'Komunitas': document.getElementById('istilah_komunitas')?.checked || false,
-                'Lainnya': document.getElementById('istilah_lainnya')?.value || ''
-            };
         }
 
         function collectObservasiData() {
             const data = [];
             const tbody = document.getElementById('observasiBody');
+            if (!tbody) return data;
             const rows = tbody.querySelectorAll('tr');
             rows.forEach((row) => {
                 const inputs = row.querySelectorAll('input');
                 if (inputs.length >= 3) {
-                    const waktu = inputs[0]?.value || '';
-                    const kejadian = inputs[1]?.value || '';
-                    const kondisi = inputs[2]?.value || '';
-                    data.push({ waktu, kejadian, kondisi });
+                    data.push({
+                        waktu: inputs[0]?.value || '',
+                        kejadian: inputs[1]?.value || '',
+                        kondisi: inputs[2]?.value || ''
+                    });
                 }
             });
             return data;
         }
 
-        function collectBagianD(langkahData, hasilData) {
+        function collectBagianD() {
             return {
                 fenomena: {
                     tipe: document.querySelector('input[name="tipe_fenomena"]:checked')?.value || '',
@@ -1645,12 +1795,35 @@
                 },
                 pilihan_prediksi: document.querySelector('input[name="pilihan_prediksi"]:checked')?.value || '',
                 prediksi_terpilih: document.getElementById('prediksi_terpilih')?.value || '',
-                cara_pembuktian: collectCaraPembuktianData(),
-                langkah: langkahData,
-                alat: collectAlatData(),
+                cara_pembuktian: {
+                    cara1: {
+                        waktu_sama: document.getElementById('cara1_waktu_sama')?.checked || false,
+                        waktu_beda: document.getElementById('cara1_waktu_beda')?.checked || false,
+                        lokasi_beda: document.getElementById('cara1_lokasi_beda')?.checked || false,
+                        bandingkan: document.getElementById('cara1_bandingkan')?.value || ''
+                    },
+                    cara2: {
+                        fisik: document.getElementById('cara2_fisik')?.checked || false,
+                        objek: document.getElementById('cara2_objek')?.checked || false,
+                        langsung: document.getElementById('cara2_langsung')?.checked || false,
+                        perubahan: document.getElementById('cara2_perubahan')?.value || ''
+                    }
+                },
+                langkah: collectLangkahData(),
+                alat: {
+                    tidak: document.getElementById('alat_tidak')?.checked || false,
+                    tulis: document.getElementById('alat_tulis')?.checked || false,
+                    lain: document.getElementById('alat_lain')?.checked || false,
+                    lain_isi: document.getElementById('alat_lain_isi')?.value || ''
+                },
                 link_pembuktian: document.getElementById('link_pembuktian')?.value || '',
-                etika: collectEtikaData(),
-                hasil_pembuktian: hasilData,
+                etika: {
+                    etik1: document.getElementById('etik1')?.checked || false,
+                    etik2: document.getElementById('etik2')?.checked || false,
+                    etik3: document.getElementById('etik3')?.checked || false,
+                    etik4: document.getElementById('etik4')?.checked || false
+                },
+                hasil_pembuktian: collectHasilPembuktianData(),
                 analisis: {
                     kesesuaian: document.querySelector('input[name="kesesuaian"]:checked')?.value || '',
                     penjelasan: document.getElementById('analisis_penjelasan')?.value || '',
@@ -1674,65 +1847,30 @@
             };
         }
 
-        function collectCaraPembuktianData() {
-            return {
-                cara1: {
-                    waktu_sama: document.getElementById('cara1_waktu_sama')?.checked || false,
-                    waktu_beda: document.getElementById('cara1_waktu_beda')?.checked || false,
-                    lokasi_beda: document.getElementById('cara1_lokasi_beda')?.checked || false,
-                    bandingkan: document.getElementById('cara1_bandingkan')?.value || ''
-                },
-                cara2: {
-                    fisik: document.getElementById('cara2_fisik')?.checked || false,
-                    objek: document.getElementById('cara2_objek')?.checked || false,
-                    langsung: document.getElementById('cara2_langsung')?.checked || false,
-                    perubahan: document.getElementById('cara2_perubahan')?.value || ''
-                }
-            };
-        }
-
         function collectLangkahData() {
             const data = [];
             const tbody = document.getElementById('langkahBody');
+            if (!tbody) return data;
             const rows = tbody.querySelectorAll('tr');
             rows.forEach((row) => {
                 const input = row.querySelector('input');
-                if (input) {
-                    const value = input.value || '';
-                    data.push(value);
-                }
+                if (input) data.push(input.value || '');
             });
             return data;
-        }
-
-        function collectAlatData() {
-            return {
-                tidak: document.getElementById('alat_tidak')?.checked || false,
-                tulis: document.getElementById('alat_tulis')?.checked || false,
-                lain: document.getElementById('alat_lain')?.checked || false,
-                lain_isi: document.getElementById('alat_lain_isi')?.value || ''
-            };
-        }
-
-        function collectEtikaData() {
-            return {
-                etik1: document.getElementById('etik1')?.checked || false,
-                etik2: document.getElementById('etik2')?.checked || false,
-                etik3: document.getElementById('etik3')?.checked || false,
-                etik4: document.getElementById('etik4')?.checked || false
-            };
         }
 
         function collectHasilPembuktianData() {
             const data = [];
             const tbody = document.getElementById('hasilBody');
+            if (!tbody) return data;
             const rows = tbody.querySelectorAll('tr');
             rows.forEach((row) => {
                 const inputs = row.querySelectorAll('input, textarea');
                 if (inputs.length >= 2) {
-                    const waktu = inputs[0]?.value || '';
-                    const isi = inputs[1]?.value || '';
-                    data.push({ waktu, isi });
+                    data.push({
+                        waktu: inputs[0]?.value || '',
+                        isi: inputs[1]?.value || ''
+                    });
                 }
             });
             return data;
@@ -1758,93 +1896,136 @@
 
         // ==================== POPULATE FORM DATA ====================
         function populateFormData(savedData) {
+            if (!savedData) return;
+            
+            // Identitas
+            if (savedData.identitas) {
+                const kelasEl = document.getElementById('kelas');
+                const namaEl = document.getElementById('nama');
+                const kelompokEl = document.getElementById('kelompok');
+                const tugasEl = document.getElementById('tugas');
+                if (kelasEl) {
+                    for (let option of kelasEl.options) {
+                        if (option.value === savedData.identitas.kelas) {
+                            option.selected = true;
+                            break;
+                        }
+                    }
+                    updateNamaDropdown();
+                }
+                if (namaEl) {
+                    for (let option of namaEl.options) {
+                        if (option.value === savedData.identitas.nama) {
+                            option.selected = true;
+                            break;
+                        }
+                    }
+                }
+                if (kelompokEl) kelompokEl.value = savedData.identitas.kelompok || '';
+                if (tugasEl) tugasEl.value = savedData.identitas.tugas || '';
+            }
+
             // Bagian B
             if (savedData.bagian_b) {
                 const b = savedData.bagian_b;
-                PERTANYAAN_LITERASI.forEach((pertanyaan, index) => {
-                    const num = index + 1;
-                    if (index === 1) {
-                        if (b[pertanyaan]) {
-                            document.getElementById('literasi2a').value = b[pertanyaan].a || '';
-                            document.getElementById('literasi2b').value = b[pertanyaan].b || '';
-                            document.getElementById('literasi2c').value = b[pertanyaan].c || '';
-                        }
-                    } else {
-                        document.getElementById(`literasi${num}`).value = b[pertanyaan] || '';
+                const keys = Object.keys(b);
+                if (keys.length >= 3) {
+                    const el1 = document.getElementById('literasi1');
+                    if (el1) el1.value = b[keys[0]] || '';
+                    if (b[keys[1]] && typeof b[keys[1]] === 'object') {
+                        const el2a = document.getElementById('literasi2a');
+                        const el2b = document.getElementById('literasi2b');
+                        const el2c = document.getElementById('literasi2c');
+                        if (el2a) el2a.value = b[keys[1]].a || '';
+                        if (el2b) el2b.value = b[keys[1]].b || '';
+                        if (el2c) el2c.value = b[keys[1]].c || '';
                     }
-                });
+                    const el3 = document.getElementById('literasi3');
+                    if (el3) el3.value = b[keys[2]] || '';
+                }
             }
 
             // Bagian C
             if (savedData.bagian_c) {
                 const c = savedData.bagian_c;
                 
-                // Interaksi - ARRAY
+                // Interaksi
                 if (c.interaksi && c.interaksi.length > 0) {
                     const tbody = document.getElementById('interaksiBody');
-                    tbody.innerHTML = '';
-                    c.interaksi.forEach((item, index) => {
-                        const num = index + 1;
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${num}</td>
-                                <td><input type="text" id="interaksi${num}_nama" value="${item.nama || ''}" placeholder="Contoh: Semut mengangkut daun" oninput="saveToLocalStorage();"></td>
-                                <td><input type="text" id="interaksi${num}_makhluk" value="${item.makhluk || ''}" placeholder="Contoh: Semut" oninput="saveToLocalStorage();"></td>
-                                <td><input type="text" id="interaksi${num}_lingkungan" value="${item.lingkungan || ''}" placeholder="Contoh: Tanah, daun kering" oninput="saveToLocalStorage();"></td>
-                                <td><textarea id="interaksi${num}_deskripsi" rows="2" placeholder="Deskripsi..." oninput="saveToLocalStorage();">${item.deskripsi || ''}</textarea></td>
-                            </tr>
-                        `;
-                    });
-                    updateHapusButton('interaksi');
-                } else {
-                    // Jika tidak ada data, buat 1 baris
-                    initTablesWithOneRow();
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        c.interaksi.forEach((item, index) => {
+                            const num = index + 1;
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td>${num}</td>
+                                    <td><input type="text" id="interaksi${num}_nama" value="${item.nama || ''}" placeholder="Contoh: Semut mengangkut daun" oninput="saveToLocalStorage();"></td>
+                                    <td><input type="text" id="interaksi${num}_makhluk" value="${item.makhluk || ''}" placeholder="Contoh: Semut" oninput="saveToLocalStorage();"></td>
+                                    <td><input type="text" id="interaksi${num}_lingkungan" value="${item.lingkungan || ''}" placeholder="Contoh: Tanah, daun kering" oninput="saveToLocalStorage();"></td>
+                                    <td><textarea id="interaksi${num}_deskripsi" rows="2" placeholder="Deskripsi..." oninput="saveToLocalStorage();">${item.deskripsi || ''}</textarea></td>
+                                </tr>
+                            `;
+                        });
+                        updateHapusButton('interaksi');
+                    }
                 }
                 
-                document.getElementById('pilihan_interaksi').value = c.pilihan_interaksi || '';
-                document.getElementById('penjelasan_ilmiah').value = c.penjelasan_ilmiah || '';
+                const pilihanInteraksi = document.getElementById('pilihan_interaksi');
+                const penjelasanIlmiah = document.getElementById('penjelasan_ilmiah');
+                if (pilihanInteraksi) pilihanInteraksi.value = c.pilihan_interaksi || '';
+                if (penjelasanIlmiah) penjelasanIlmiah.value = c.penjelasan_ilmiah || '';
                 
                 if (c.istilah) {
-                    document.getElementById('istilah_ekosistem').checked = c.istilah['Ekosistem'] || false;
-                    document.getElementById('istilah_habitat').checked = c.istilah['Habitat'] || false;
-                    document.getElementById('istilah_rantai').checked = c.istilah['Rantai makanan'] || false;
-                    document.getElementById('istilah_populasi').checked = c.istilah['Populasi'] || false;
-                    document.getElementById('istilah_komunitas').checked = c.istilah['Komunitas'] || false;
-                    document.getElementById('istilah_lainnya').value = c.istilah['Lainnya'] || '';
+                    const checkboxes = ['ekosistem', 'habitat', 'rantai', 'populasi', 'komunitas'];
+                    checkboxes.forEach(id => {
+                        const el = document.getElementById(`istilah_${id}`);
+                        if (el) el.checked = c.istilah[id === 'rantai' ? 'Rantai makanan' : id.charAt(0).toUpperCase() + id.slice(1)] || false;
+                    });
+                    const el = document.getElementById('istilah_lainnya');
+                    if (el) el.value = c.istilah['Lainnya'] || '';
                 }
                 
-                // Observasi - ARRAY
+                // Observasi
                 if (c.observasi_detail && c.observasi_detail.length > 0) {
                     const tbody = document.getElementById('observasiBody');
-                    tbody.innerHTML = '';
-                    c.observasi_detail.forEach((item, index) => {
-                        const num = index + 1;
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><input type="text" id="obs_waktu${num}" value="${item.waktu || ''}" placeholder="Contoh: 0, 5, 10, 15..." oninput="saveToLocalStorage();"></td>
-                                <td><input type="text" id="obs_kejadian${num}" value="${item.kejadian || ''}" placeholder="Apa yang terjadi?" oninput="saveToLocalStorage();"></td>
-                                <td><input type="text" id="obs_kondisi${num}" value="${item.kondisi || ''}" placeholder="Kondisi lingkungan..." oninput="saveToLocalStorage();"></td>
-                            </tr>
-                        `;
-                    });
-                    updateHapusButton('observasi');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        c.observasi_detail.forEach((item, index) => {
+                            const num = index + 1;
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td><input type="text" id="obs_waktu${num}" value="${item.waktu || ''}" placeholder="Contoh: 0, 5, 10, 15..." oninput="saveToLocalStorage();"></td>
+                                    <td><input type="text" id="obs_kejadian${num}" value="${item.kejadian || ''}" placeholder="Apa yang terjadi?" oninput="saveToLocalStorage();"></td>
+                                    <td><input type="text" id="obs_kondisi${num}" value="${item.kondisi || ''}" placeholder="Kondisi lingkungan..." oninput="saveToLocalStorage();"></td>
+                                </tr>
+                            `;
+                        });
+                        updateHapusButton('observasi');
+                    }
                 }
                 
-                document.getElementById('link_observasi').value = c.link_observasi || '';
-                document.getElementById('pola').value = c.pola || '';
+                const linkObservasi = document.getElementById('link_observasi');
+                const pola = document.getElementById('pola');
+                if (linkObservasi) linkObservasi.value = c.link_observasi || '';
+                if (pola) pola.value = c.pola || '';
                 
                 if (c.prediksi1) {
                     const radios = document.getElementsByName('prediksi1_opsi');
                     radios.forEach(r => { if (r.value === c.prediksi1.opsi) r.checked = true; });
-                    document.getElementById('prediksi1_perubahan').value = c.prediksi1.perubahan || '';
-                    document.getElementById('prediksi1_alasan').value = c.prediksi1.alasan || '';
+                    const el1 = document.getElementById('prediksi1_perubahan');
+                    const el2 = document.getElementById('prediksi1_alasan');
+                    if (el1) el1.value = c.prediksi1.perubahan || '';
+                    if (el2) el2.value = c.prediksi1.alasan || '';
                 }
                 if (c.prediksi2) {
                     const radios = document.getElementsByName('prediksi2_skenario');
                     radios.forEach(r => { if (r.value === c.prediksi2.skenario) r.checked = true; });
-                    document.getElementById('prediksi2_skenario_lain').value = c.prediksi2.skenario_lain || '';
-                    document.getElementById('prediksi2_hasil').value = c.prediksi2.hasil || '';
-                    document.getElementById('prediksi2_alasan').value = c.prediksi2.alasan || '';
+                    const el1 = document.getElementById('prediksi2_skenario_lain');
+                    const el2 = document.getElementById('prediksi2_hasil');
+                    const el3 = document.getElementById('prediksi2_alasan');
+                    if (el1) el1.value = c.prediksi2.skenario_lain || '';
+                    if (el2) el2.value = c.prediksi2.hasil || '';
+                    if (el3) el3.value = c.prediksi2.alasan || '';
                 }
             }
 
@@ -1854,97 +2035,126 @@
                 if (d.fenomena) {
                     const radios = document.getElementsByName('tipe_fenomena');
                     radios.forEach(r => { if (r.value === d.fenomena.tipe) r.checked = true; });
-                    document.getElementById('komponen_pusat').value = d.fenomena.pusat || '';
-                    document.getElementById('komponen_kegiatan').value = d.fenomena.kegiatan || '';
-                    document.getElementById('komponen_lingkungan').value = d.fenomena.lingkungan || '';
+                    const el1 = document.getElementById('komponen_pusat');
+                    const el2 = document.getElementById('komponen_kegiatan');
+                    const el3 = document.getElementById('komponen_lingkungan');
+                    if (el1) el1.value = d.fenomena.pusat || '';
+                    if (el2) el2.value = d.fenomena.kegiatan || '';
+                    if (el3) el3.value = d.fenomena.lingkungan || '';
                 }
                 const radiosPred = document.getElementsByName('pilihan_prediksi');
                 radiosPred.forEach(r => { if (r.value === d.pilihan_prediksi) r.checked = true; });
-                document.getElementById('prediksi_terpilih').value = d.prediksi_terpilih || '';
+                const predTerpilih = document.getElementById('prediksi_terpilih');
+                if (predTerpilih) predTerpilih.value = d.prediksi_terpilih || '';
                 
                 if (d.cara_pembuktian) {
                     const cp = d.cara_pembuktian;
                     if (cp.cara1) {
-                        document.getElementById('cara1_waktu_sama').checked = cp.cara1.waktu_sama || false;
-                        document.getElementById('cara1_waktu_beda').checked = cp.cara1.waktu_beda || false;
-                        document.getElementById('cara1_lokasi_beda').checked = cp.cara1.lokasi_beda || false;
-                        document.getElementById('cara1_bandingkan').value = cp.cara1.bandingkan || '';
+                        const checkboxes = ['cara1_waktu_sama', 'cara1_waktu_beda', 'cara1_lokasi_beda'];
+                        checkboxes.forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.checked = cp.cara1[id.replace('cara1_', '')] || false;
+                        });
+                        const el = document.getElementById('cara1_bandingkan');
+                        if (el) el.value = cp.cara1.bandingkan || '';
                     }
                     if (cp.cara2) {
-                        document.getElementById('cara2_fisik').checked = cp.cara2.fisik || false;
-                        document.getElementById('cara2_objek').checked = cp.cara2.objek || false;
-                        document.getElementById('cara2_langsung').checked = cp.cara2.langsung || false;
-                        document.getElementById('cara2_perubahan').value = cp.cara2.perubahan || '';
+                        const checkboxes = ['cara2_fisik', 'cara2_objek', 'cara2_langsung'];
+                        checkboxes.forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.checked = cp.cara2[id.replace('cara2_', '')] || false;
+                        });
+                        const el = document.getElementById('cara2_perubahan');
+                        if (el) el.value = cp.cara2.perubahan || '';
                     }
                 }
                 
-                // Langkah - ARRAY
+                // Langkah
                 if (d.langkah && d.langkah.length > 0) {
                     const tbody = document.getElementById('langkahBody');
-                    tbody.innerHTML = '';
-                    d.langkah.forEach((item, index) => {
-                        const num = index + 1;
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${num}. <input type="text" id="langkah${num}" value="${item || ''}" style="width:100%" oninput="saveToLocalStorage();"></td>
-                            </tr>
-                        `;
-                    });
-                    updateHapusButton('langkah');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        d.langkah.forEach((item, index) => {
+                            const num = index + 1;
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td>${num}. <input type="text" id="langkah${num}" value="${item || ''}" style="width:100%" oninput="saveToLocalStorage();"></td>
+                                </tr>
+                            `;
+                        });
+                        updateHapusButton('langkah');
+                    }
                 }
                 
                 if (d.alat) {
-                    document.getElementById('alat_tidak').checked = d.alat.tidak || false;
-                    document.getElementById('alat_tulis').checked = d.alat.tulis || false;
-                    document.getElementById('alat_lain').checked = d.alat.lain || false;
-                    document.getElementById('alat_lain_isi').value = d.alat.lain_isi || '';
+                    const checkboxes = ['alat_tidak', 'alat_tulis', 'alat_lain'];
+                    checkboxes.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.checked = d.alat[id.replace('alat_', '')] || false;
+                    });
+                    const el = document.getElementById('alat_lain_isi');
+                    if (el) el.value = d.alat.lain_isi || '';
                 }
-                document.getElementById('link_pembuktian').value = d.link_pembuktian || '';
+                const linkPembuktian = document.getElementById('link_pembuktian');
+                if (linkPembuktian) linkPembuktian.value = d.link_pembuktian || '';
                 
                 if (d.etika) {
-                    document.getElementById('etik1').checked = d.etika.etik1 || false;
-                    document.getElementById('etik2').checked = d.etika.etik2 || false;
-                    document.getElementById('etik3').checked = d.etika.etik3 || false;
-                    document.getElementById('etik4').checked = d.etika.etik4 || false;
+                    const checkboxes = ['etik1', 'etik2', 'etik3', 'etik4'];
+                    checkboxes.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.checked = d.etika[id] || false;
+                    });
                 }
                 
-                // Hasil Pembuktian - ARRAY
+                // Hasil Pembuktian
                 if (d.hasil_pembuktian && d.hasil_pembuktian.length > 0) {
                     const tbody = document.getElementById('hasilBody');
-                    tbody.innerHTML = '';
-                    d.hasil_pembuktian.forEach((item, index) => {
-                        const num = index + 1;
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><input type="text" id="hasil_waktu${num}" value="${item.waktu || ''}" placeholder="Contoh: Menit ke-5" oninput="saveToLocalStorage();"></td>
-                                <td><textarea id="hasil_isi${num}" rows="2" oninput="saveToLocalStorage();">${item.isi || ''}</textarea></td>
-                            </tr>
-                        `;
-                    });
-                    updateHapusButton('hasil');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        d.hasil_pembuktian.forEach((item, index) => {
+                            const num = index + 1;
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td><input type="text" id="hasil_waktu${num}" value="${item.waktu || ''}" placeholder="Contoh: Menit ke-5" oninput="saveToLocalStorage();"></td>
+                                    <td><textarea id="hasil_isi${num}" rows="2" oninput="saveToLocalStorage();">${item.isi || ''}</textarea></td>
+                                </tr>
+                            `;
+                        });
+                        updateHapusButton('hasil');
+                    }
                 }
                 
                 if (d.analisis) {
                     const radios = document.getElementsByName('kesesuaian');
                     radios.forEach(r => { if (r.value === d.analisis.kesesuaian) r.checked = true; });
-                    document.getElementById('analisis_penjelasan').value = d.analisis.penjelasan || '';
-                    document.getElementById('kesimpulan').value = d.analisis.kesimpulan || '';
+                    const el1 = document.getElementById('analisis_penjelasan');
+                    const el2 = document.getElementById('kesimpulan');
+                    if (el1) el1.value = d.analisis.penjelasan || '';
+                    if (el2) el2.value = d.analisis.kesimpulan || '';
                 }
                 if (d.jurusan) {
                     const radios = document.getElementsByName('jurusan');
                     radios.forEach(r => { if (r.value === d.jurusan.pilihan) r.checked = true; });
-                    document.getElementById('jurusan_lain').value = d.jurusan.lain || '';
+                    const el = document.getElementById('jurusan_lain');
+                    if (el) el.value = d.jurusan.lain || '';
                 }
                 if (d.aspek_jurusan) {
-                    document.getElementById('aspek_bahan').value = d.aspek_jurusan.bahan || '';
-                    document.getElementById('aspek_proses').value = d.aspek_jurusan.proses || '';
-                    document.getElementById('aspek_limbah').value = d.aspek_jurusan.limbah || '';
-                    document.getElementById('aspek_produk').value = d.aspek_jurusan.produk || '';
+                    const el1 = document.getElementById('aspek_bahan');
+                    const el2 = document.getElementById('aspek_proses');
+                    const el3 = document.getElementById('aspek_limbah');
+                    const el4 = document.getElementById('aspek_produk');
+                    if (el1) el1.value = d.aspek_jurusan.bahan || '';
+                    if (el2) el2.value = d.aspek_jurusan.proses || '';
+                    if (el3) el3.value = d.aspek_jurusan.limbah || '';
+                    if (el4) el4.value = d.aspek_jurusan.produk || '';
                 }
                 if (d.solusi) {
-                    document.getElementById('solusi_masalah').value = d.solusi.masalah || '';
-                    document.getElementById('solusi_ide').value = d.solusi.ide || '';
-                    document.getElementById('solusi_cara').value = d.solusi.cara || '';
+                    const el1 = document.getElementById('solusi_masalah');
+                    const el2 = document.getElementById('solusi_ide');
+                    const el3 = document.getElementById('solusi_cara');
+                    if (el1) el1.value = d.solusi.masalah || '';
+                    if (el2) el2.value = d.solusi.ide || '';
+                    if (el3) el3.value = d.solusi.cara || '';
                 }
             }
 
@@ -1953,7 +2163,8 @@
                 const e = savedData.bagian_e;
                 PERTANYAAN_REFLEKSI.forEach((pertanyaan, index) => {
                     const num = index + 1;
-                    document.getElementById(`refleksi${num}`).value = e[pertanyaan] || '';
+                    const el = document.getElementById(`refleksi${num}`);
+                    if (el) el.value = e[pertanyaan] || '';
                 });
             }
 
@@ -1962,7 +2173,8 @@
                 const f = savedData.bagian_f;
                 ASPEK_PENILAIAN.forEach((aspek, index) => {
                     const num = index + 1;
-                    document.getElementById(`nilai${num}`).value = f[aspek] || '3';
+                    const el = document.getElementById(`nilai${num}`);
+                    if (el) el.value = f[aspek] || '3';
                 });
             }
         }
@@ -1975,50 +2187,85 @@
                 else if (el.tagName === 'SELECT') el.selectedIndex = 0;
                 else el.value = '';
             });
-            document.getElementById('kelas').value = '';
-            document.getElementById('nama').innerHTML = '<option value="">-- Pilih Nama --</option>';
-            document.getElementById('kelompok').value = '';
-            document.getElementById('tugas').value = '';
-            document.getElementById('nilai1').value = '3';
-            document.getElementById('nilai2').value = '3';
-            document.getElementById('nilai3').value = '3';
+            const kelasEl = document.getElementById('kelas');
+            const namaEl = document.getElementById('nama');
+            const kelompokEl = document.getElementById('kelompok');
+            const tugasEl = document.getElementById('tugas');
+            if (kelasEl) kelasEl.value = '';
+            if (namaEl) namaEl.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            if (kelompokEl) kelompokEl.value = '';
+            if (tugasEl) tugasEl.value = '';
+            for (let i = 1; i <= 3; i++) {
+                const el = document.getElementById(`nilai${i}`);
+                if (el) el.value = '3';
+            }
             
-            // Reset ke 1 baris
             initTablesWithOneRow();
             clearLocalStorage();
         }
 
         // ==================== MODAL FUNCTIONS ====================
-        function showModal() { document.getElementById('resetModal').style.display = 'block'; }
-        function closeModal() { document.getElementById('resetModal').style.display = 'none'; }
-        function confirmReset() { closeModal(); resetAllForm(); alert('Form berhasil direset!'); }
+        function showModal() {
+            document.getElementById('resetModal').style.display = 'block';
+        }
 
-        // ==================== INIT ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            const hamburger = document.getElementById('hamburger');
-            const navMenu = document.getElementById('nav-menu');
-            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
-            checkConnection();
-            loadDataFromGoogleSheets();
-            setInterval(checkConnection, 5000);
-        });
+        function closeModal() {
+            document.getElementById('resetModal').style.display = 'none';
+        }
 
-        function updateNamaDropdown() {
-            const kelas = document.getElementById('kelas').value;
-            const namaSelect = document.getElementById('nama');
-            if (!kelas || !dataSiswa[kelas]) {
-                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-                return;
+        function confirmReset() {
+            closeModal();
+            resetAllForm();
+            const successMsg = document.getElementById('successMessage');
+            successMsg.style.display = 'block';
+            successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Form berhasil direset! Anda dapat mengisi ulang data.';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+                successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Data berhasil dikirim ke Google Spreadsheet';
+            }, 3000);
+        }
+
+        function showConfirmModal(key) {
+            document.getElementById('confirmKeyDisplay').textContent = key;
+            document.getElementById('confirmModal').style.display = 'block';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            pendingSubmitData = null;
+        }
+
+        function confirmGantiTugas() {
+            const confirmBtn = document.getElementById('confirmGantiBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            
+            if (pendingSubmitData) {
+                doSubmit(pendingSubmitData, true);
             }
-            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            (dataSiswa[kelas] || []).sort().forEach(nama => {
-                if (nama && nama.trim()) {
-                    const option = document.createElement('option');
-                    option.value = nama;
-                    option.textContent = nama;
-                    namaSelect.appendChild(option);
+        }
+
+        // ==================== CEK DATA DI SPREADSHEET ====================
+        async function cekDataDiSpreadsheet(kelas, nama, aktivitas) {
+            try {
+                const url = `${URL_PEREKAPAN}?action=getDataSiswa&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&aktivitas=${encodeURIComponent(aktivitas)}`;
+                
+                const response = await fetch(url);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    return {
+                        found: true,
+                        key: `${kelas}_${nama}_${aktivitas}_AKTIF`,
+                        data: result.data
+                    };
                 }
-            });
+                
+                return { found: false };
+            } catch (error) {
+                console.error('Error cek data:', error);
+                return { found: false, error: error.message };
+            }
         }
 
         // ==================== SUBMIT DATA ====================
@@ -2029,6 +2276,10 @@
             }
             if (isLoading) {
                 alert('Data masih dimuat. Silakan tunggu beberapa saat.');
+                return;
+            }
+            if (isSubmitting) {
+                alert('Proses pengiriman sedang berlangsung. Mohon tunggu...');
                 return;
             }
             
@@ -2052,52 +2303,138 @@
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memeriksa data...';
 
             try {
                 const allData = collectAllFormData();
+                pendingSubmitData = {
+                    allData: allData,
+                    kelas: kelas,
+                    nama: nama,
+                    kelompok: kelompok,
+                    tugas: tugas
+                };
+
+                const result = await cekDataDiSpreadsheet(kelas, nama, AKTIVITAS_NAMA);
+                
+                if (result.found) {
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data';
+                    submitBtn.disabled = false;
+                    showConfirmModal(result.key);
+                    return;
+                }
+                
+                await doSubmit(pendingSubmitData, false);
+                
+            } catch (error) {
+                alert('❌ Gagal memeriksa data: ' + error.message);
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data';
+                submitBtn.disabled = false;
+                pendingSubmitData = null;
+            }
+        }
+
+        async function doSubmit(data, isReplace = false) {
+            isSubmitting = true;
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (isReplace ? 'Mengganti data...' : 'Mengirim...');
+
+            try {
+                const { allData, kelas, nama } = data;
                 
                 const formData = new URLSearchParams();
                 
-                formData.append('sheetName', FORM_CONFIG.sheetName);
-                formData.append('headers', JSON.stringify(FORM_CONFIG.headers));
-                
-                formData.append('Kelas', kelas);
-                formData.append('Nama', nama);
-                formData.append('Kelompok', kelompok);
-                formData.append('Tugas', tugas);
-                
-                formData.append('Bagian_B', JSON.stringify(allData.bagian_b));
-                formData.append('Bagian_C', JSON.stringify(allData.bagian_c));
-                formData.append('Bagian_D', JSON.stringify(allData.bagian_d));
-                formData.append('Bagian_E', JSON.stringify(allData.bagian_e));
-                formData.append('Bagian_F', JSON.stringify(allData.bagian_f));
-                
-                formData.append('Timestamp', new Date().toISOString());
+                formData.append('sheetName', SHEET_NAME);
+                formData.append('data', JSON.stringify(allData));
+                formData.append('kelas', kelas);
+                formData.append('nama', nama);
+                formData.append('aktivitas', AKTIVITAS_NAMA);
+                if (isReplace) {
+                    formData.append('replace', 'true');
+                }
 
-                await fetch(URL_PEREKAP_AKTIVITAS, {
+                const response = await fetch(URL_PEREKAPAN, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    redirect: 'follow',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
                     body: formData
                 });
 
-                clearLocalStorage();
-                document.getElementById('successMessage').style.display = 'block';
-                setTimeout(() => document.getElementById('successMessage').style.display = 'none', 3000);
-                showModal();
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('confirmGantiBtn').disabled = false;
+                    document.getElementById('confirmGantiBtn').innerHTML = '<i class="fas fa-exchange-alt"></i> Ya, Ganti Data';
+                    
+                    const successMsg = document.getElementById('successMessage');
+                    successMsg.style.display = 'block';
+                    successMsg.innerHTML = '<i class="fas fa-check-circle"></i> ✅ Data berhasil ' + (isReplace ? 'diganti' : 'dikirim') + '!<br>' +
+                        'Key: ' + result.key + '<br>' +
+                        'Status: ' + (result.status || 'Berhasil');
+                    
+                    clearLocalStorage();
+                    
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                        successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Data berhasil dikirim ke Google Spreadsheet';
+                    }, 5000);
+
+                    closeConfirmModal();
+                    showModal();
+                } else {
+                    alert('❌ Gagal ' + (isReplace ? 'mengganti' : 'mengirim') + ': ' + (result.error || 'Terjadi kesalahan pada server.'));
+                }
 
             } catch (error) {
-                alert('Terjadi kesalahan: ' + error.message);
-                document.getElementById('errorText').innerHTML = 'Gagal mengirim: ' + error.message;
+                alert('❌ Terjadi kesalahan: ' + error.message);
+                document.getElementById('errorText').innerHTML = 'Gagal ' + (isReplace ? 'mengganti' : 'mengirim') + ': ' + error.message;
                 document.getElementById('errorMessage').style.display = 'block';
-                setTimeout(() => document.getElementById('errorMessage').style.display = 'none', 5000);
+                setTimeout(() => {
+                    document.getElementById('errorMessage').style.display = 'none';
+                }, 5000);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data';
+                isSubmitting = false;
+                pendingSubmitData = null;
+                
+                document.getElementById('confirmGantiBtn').disabled = false;
+                document.getElementById('confirmGantiBtn').innerHTML = '<i class="fas fa-exchange-alt"></i> Ya, Ganti Data';
             }
         }
+
+        // ==================== UPDATE NAMA DROPDOWN ====================
+        function updateNamaDropdown() {
+            const kelas = document.getElementById('kelas')?.value;
+            const namaSelect = document.getElementById('nama');
+            if (!namaSelect) return;
+            if (!kelas || !dataSiswa[kelas]) {
+                namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                return;
+            }
+            namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            (dataSiswa[kelas] || []).sort().forEach(nama => {
+                if (nama && nama.trim()) {
+                    const option = document.createElement('option');
+                    option.value = nama;
+                    option.textContent = nama;
+                    namaSelect.appendChild(option);
+                }
+            });
+        }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            checkConnection();
+            loadDataFromGoogleSheets();
+            setInterval(checkConnection, 5000);
+        });
     </script>
 </body>
 </html>
