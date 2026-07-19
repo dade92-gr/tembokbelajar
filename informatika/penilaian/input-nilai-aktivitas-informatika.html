@@ -19,9 +19,6 @@
             --border-radius: 16px;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-            --belum-bg: #fef9e7;
-            --belum-border: #f39c12;
-            --belum-text: #e67e22;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -208,6 +205,30 @@
             box-shadow: 0 5px 15px rgba(52,152,219,0.3);
         }
         
+        .btn-kirim {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-kirim:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52,152,219,0.3);
+        }
+        .btn-kirim:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
         .two-column-layout {
             display: flex;
             gap: 1.5rem;
@@ -241,7 +262,7 @@
             padding: 1.2rem;
             box-shadow: var(--shadow-sm);
             flex-shrink: 0;
-            max-height: 35vh;
+            max-height: 30vh;
             display: flex;
             flex-direction: column;
         }
@@ -353,7 +374,7 @@
             transition: all 0.3s ease;
             white-space: nowrap;
         }
-        .btn-lihat:hover {
+        .btn-lihat:hover:not(:disabled) {
             background: var(--info-secondary);
             transform: scale(1.05);
         }
@@ -361,20 +382,10 @@
             background: #e67e22;
         }
         .btn-lihat:disabled {
-            opacity: 0.6;
+            opacity: 0.4;
             cursor: not-allowed;
             transform: none;
-            background: #bdc3c7;
-        }
-        .btn-lihat.belum {
-            background: var(--belum-bg);
-            color: var(--belum-text);
-            border: 1px solid var(--belum-border);
-            cursor: default;
-        }
-        .btn-lihat.belum:hover {
-            transform: none;
-            background: var(--belum-bg);
+            background: #95a5a6;
         }
         
         .tp-cell {
@@ -742,8 +753,12 @@
         .hidden { display: none !important; }
         
         @media (max-width: 1024px) {
-            .two-column-layout { flex-direction: column; }
-            .column-left, .column-right { max-height: none; }
+            .two-column-layout {
+                flex-direction: column;
+            }
+            .column-left, .column-right {
+                max-height: none;
+            }
             .siswa-card { max-height: 35vh; }
             .rubrik-card { min-height: 300px; }
             .jawaban-content { max-height: 60vh; }
@@ -799,8 +814,8 @@
             <div class="info-content-card">
                 <div class="info-panel-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
                     <div>
-                        <h2><i class="fas fa-file-alt"></i> Penilaian Aktivitas Siswa - Informatika</h2>
-                        <p>Pilih semester, proyek, aktivitas, dan kelas untuk menilai siswa</p>
+                        <h2><i class="fas fa-file-alt"></i> Penilaian Aktivitas Siswa</h2>
+                        <p>Pilih semester, aktivitas, dan kelas untuk menilai siswa</p>
                     </div>
                     <div id="profileContainer" style="display: none;">
                         <div class="profile-section">
@@ -817,6 +832,7 @@
                 </div>
             </div>
 
+            <!-- FILTER -->
             <div class="simple-card">
                 <div class="section-title">
                     <i class="fas fa-filter"></i>
@@ -827,20 +843,14 @@
                         <label><i class="fas fa-calendar"></i> Semester</label>
                         <select id="filterSemester">
                             <option value="">-- Pilih Semester --</option>
-                            <option value="ganjil">Semester Ganjil</option>
-                            <option value="genap">Semester Genap</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label><i class="fas fa-project-diagram"></i> Proyek</label>
-                        <select id="filterProyek" disabled>
-                            <option value="">-- Pilih Semester Dulu --</option>
+                            <option value="Ganjil">Semester Ganjil</option>
+                            <option value="Genap">Semester Genap</option>
                         </select>
                     </div>
                     <div class="filter-group">
                         <label><i class="fas fa-tasks"></i> Aktivitas</label>
                         <select id="filterAktivitas" disabled>
-                            <option value="">-- Pilih Proyek Dulu --</option>
+                            <option value="">-- Pilih Semester Dulu --</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -857,13 +867,16 @@
                 </div>
             </div>
 
+            <!-- PREVIEW AREA -->
             <div id="previewArea">
                 <div id="loadingMessage" class="loading-message"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
                 <div id="errorMessage" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span id="errorText">Terjadi kesalahan</span></div>
-                <div id="emptyMessage" class="empty-message"><i class="fas fa-info-circle"></i> Silakan pilih semester, proyek, aktivitas, dan kelas</div>
+                <div id="emptyMessage" class="empty-message"><i class="fas fa-info-circle"></i> Silakan pilih semester, aktivitas, dan kelas</div>
                 
                 <div id="twoColumnLayout" class="two-column-layout" style="display: none;">
+                    <!-- KOLOM KIRI -->
                     <div class="column-left">
+                        <!-- DAFTAR SISWA -->
                         <div class="siswa-card">
                             <div class="siswa-header">
                                 <h3><i class="fas fa-user-graduate"></i> Daftar Siswa</h3>
@@ -881,7 +894,7 @@
                                         <tr>
                                             <th style="width:28px;">No</th>
                                             <th style="min-width:90px;">Nama</th>
-                                            <th style="min-width:75px;">Status</th>
+                                            <th style="min-width:45px;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="siswaTableBody"></tbody>
@@ -889,6 +902,7 @@
                             </div>
                         </div>
                         
+                        <!-- RUBRIK PENILAIAN -->
                         <div class="rubrik-card">
                             <div class="rubrik-header">
                                 <span class="rubrik-title"><i class="fas fa-star"></i> Rubrik Penilaian</span>
@@ -907,6 +921,7 @@
                         </div>
                     </div>
                     
+                    <!-- KOLOM KANAN - JAWABAN SISWA -->
                     <div class="column-right" style="display:flex;flex-direction:column;">
                         <div class="jawaban-header">
                             <h3><i class="fas fa-file-alt"></i> Jawaban Siswa</h3>
@@ -953,22 +968,100 @@
         })();
         
         // ==================== KONFIGURASI ====================
+        // Gunakan URL IPAS karena data_mapel sama
         const BASE_URL = 'https://script.google.com/macros/s/AKfycbwRlLJQQ5ypD1jzsHICPZH6kfrSFHKHGXo0hPKjzwtHH04EDrAid7dqtDv7q6TCbDRj/exec';
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         
+        // ==================== METADATA INFORMATIKA ====================
+        const METADATA_INFORMATIKA = {
+            barisPerKelas: 50,
+            headerRows: 2,
+            daftarTP: {
+                ganjil: ['TP 2.1', 'TP 2.2', 'TP 2.3', 'TP 2.4', 'TP 2.5', 'TP 2.6', 'TP 2.7', 'TP 2.8', 'TP 2.9', 'TP 2.10', 'TP 2.11', 'TP 2.12', 'TP 2.13'],
+                genap: ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4', 'TP 1.5', 'TP 1.6', 'TP 1.7']
+            }
+        };
+        
+        // ==================== MAP AKTIVITAS → TP INFORMATIKA ====================
+        const MAP_AKTIVITAS_TP_INFORMATIKA = {
+            // ===== SEMESTER GANJIL (15 Aktivitas) =====
+            // Proyek 1: Saya Siap Jadi Kreator Digital (3 aktivitas)
+            'AKTIVITAS 1 - Pengenalan Google Workspace & Keamanan Akun': ['TP 2.4', 'TP 2.5'],
+            'AKTIVITAS 2 - Praktik Produktivitas & Kolaborasi': ['TP 2.4'],
+            'AKTIVITAS 3 - Pengamanan & Portofolio Digital': ['TP 2.5'],
+            
+            // Proyek 2: Budaya Kita di Dunia Digital (3 aktivitas)
+            'AKTIVITAS 1 - Mengenal Budaya & Dunia Digital': ['TP 2.9'],
+            'AKTIVITAS 2 - Profesi Digital & Peran Informatika': ['TP 2.8'],
+            'AKTIVITAS 3 - Produksi Konten Budaya Digital': ['TP 2.6'],
+            
+            // Proyek 3: Jejak Digital Aman (4 aktivitas)
+            'AKTIVITAS 1 - Hak Digital & Jejak Digital': ['TP 2.7'],
+            'AKTIVITAS 2 - Kelola Akun & Keamanan Digital': ['TP 2.11', 'TP 2.13'],
+            'AKTIVITAS 3 - Praktik Pengamanan Digital (2FA)': ['TP 2.12'],
+            'AKTIVITAS 4 - Edukasi Publik tentang Jejak Digital': ['TP 2.7', 'TP 2.11', 'TP 2.12', 'TP 2.13'],
+            
+            // Proyek 4: Fakta atau Hoaks? (5 aktivitas)
+            'AKTIVITAS 1 - Pengantar Literasi Informasi': ['TP 2.1'],
+            'AKTIVITAS 2 - Strategi Mencari Informasi': ['TP 2.1'],
+            'AKTIVITAS 3 - Analisis Fakta & Cek Kebenaran': ['TP 2.2', 'TP 2.3'],
+            'AKTIVITAS 4 - Merancang Poster Edukatif': ['TP 2.3'],
+            'AKTIVITAS 5 - Presentasi & Refleksi': ['TP 2.10'],
+            
+            // ===== SEMESTER GENAP (11 Aktivitas) =====
+            // Proyek 5: Rancang Mesin Pintar Mini (5 aktivitas)
+            'AKTIVITAS 1 - Mengenal Alur Komputasi & IPO': ['TP 1.6'],
+            'AKTIVITAS 2 - Simulasi Model IPO': ['TP 1.6'],
+            'AKTIVITAS 3 - Sistem Operasi & Model Von Neumann': ['TP 1.7'],
+            'AKTIVITAS 4 - Rancang & Uji Solusi': ['TP 1.4', 'TP 1.5'],
+            'AKTIVITAS 5 - Presentasi Mesin Pintar Mini': ['TP 1.4', 'TP 1.5', 'TP 1.6', 'TP 1.7'],
+            
+            // Proyek 6: Bisa Bikin Program? Bisa! (6 aktivitas)
+            'AKTIVITAS 1 - Mengenal Algoritma & Struktur Data': ['TP 1.1'],
+            'AKTIVITAS 2 - Representasi Data & Logika Dasar': ['TP 1.1'],
+            'AKTIVITAS 3 - Pemecahan Masalah dengan Komputasi': ['TP 1.2', 'TP 1.3'],
+            'AKTIVITAS 4 - HTML Dasar dengan HTML Editor': ['TP 1.4', 'TP 1.5'],
+            'AKTIVITAS 5 - Kondisi & Perulangan Dasar': ['TP 1.4'],
+            'AKTIVITAS 6 - Presentasi Program Sederhana': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4', 'TP 1.5']
+        };
+        
+        // ==================== DESKRIPSI TP INFORMATIKA ====================
+        const DESKRIPSI_TP_INFORMATIKA = {
+            // Ganjil (TP 2.x)
+            'TP 2.1': 'Memahami cara penggunaan mesin pencari dengan variabel pencarian yang kompleks',
+            'TP 2.2': 'Mengetahui dan menerapkan ekosistem periksa fakta untuk memilah fakta dan hoaks',
+            'TP 2.3': 'Menggunakan strategi membaca lateral untuk mengevaluasi informasi digital',
+            'TP 2.4': 'Menggunakan perangkat teknologi untuk mengolah dokumen, lembar kerja, dan presentasi',
+            'TP 2.5': 'Memahami dan menerapkan konfigurasi keamanan dasar untuk konektivitas jaringan lokal dan internet',
+            'TP 2.6': 'Menggunakan media digital untuk produksi konten, partisipasi aktif, dan kolaborasi daring',
+            'TP 2.7': 'Menunjukkan sikap menghargai hak atas kekayaan intelektual dalam dunia digital',
+            'TP 2.8': 'Mengenal berbagai profesi di bidang informatika dan kontribusinya dalam pelestarian budaya',
+            'TP 2.9': 'Memahami dan memberikan contoh penerapan digitalisasi budaya Indonesia',
+            'TP 2.10': 'Menyaring dan menghindari konten negatif di dunia digital',
+            'TP 2.11': 'Mengelola kata sandi secara aman menggunakan manajer kata sandi',
+            'TP 2.12': 'Menerapkan autentikasi dua langkah untuk meningkatkan keamanan akun digital',
+            'TP 2.13': 'Menerapkan pengaturan privasi dan keamanan akun di berbagai platform digital',
+            
+            // Genap (TP 1.x)
+            'TP 1.1': 'Memahami konsep dasar struktur data dan algoritma standar',
+            'TP 1.2': 'Menerapkan proses komputasi sederhana secara mandiri untuk mendapatkan data berkualitas',
+            'TP 1.3': 'Menerapkan proses komputasi kolaboratif untuk menghasilkan data yang berkualitas',
+            'TP 1.4': 'Menggunakan algoritma dan struktur data standar untuk menyelesaikan berbagai persoalan nyata',
+            'TP 1.5': 'Menuliskan rancangan solusi program sederhana dalam bentuk pseudocode',
+            'TP 1.6': 'Memahami dan menyimulasikan model Input–Process–Output (IPO) dalam komputer Von Neumann',
+            'TP 1.7': 'Menjelaskan fungsi dan peran sistem operasi dalam proses komputasi'
+        };
+        
         let dataKelas = [];
         let dataSiswa = {};
-        let proyekMap = {};
         let aktivitasMap = {};
         
         let currentSemester = '';
-        let currentProyek = '';
         let currentAktivitasKode = '';
         let currentAktivitasNama = '';
         let currentKelas = '';
         
         let cacheRubrik = null;
-        let cacheTPDescriptions = {};
         let rubrikTPKeys = [];
         
         let siswaJawabanData = {};
@@ -987,7 +1080,6 @@
                     if (result && result.success) {
                         dataKelas = result.kelasList || [];
                         dataSiswa = result.siswaPerKelas || {};
-                        console.log('✅ Data siswa loaded:', dataSiswa);
                         resolve();
                     } else {
                         reject(new Error('Gagal memuat data siswa'));
@@ -1000,96 +1092,50 @@
             });
         }
         
-        // ==================== LOAD DAFTAR PROYEK & AKTIVITAS ====================
+        // ==================== LOAD DAFTAR AKTIVITAS DARI DATA_MAPEL ====================
         async function loadDaftarAktivitas() {
             const semester = document.getElementById('filterSemester').value;
             if (!semester) {
-                const proyekSelect = document.getElementById('filterProyek');
-                proyekSelect.innerHTML = '<option value="">-- Pilih Semester Dulu --</option>';
-                proyekSelect.disabled = true;
                 const aktivitasSelect = document.getElementById('filterAktivitas');
-                aktivitasSelect.innerHTML = '<option value="">-- Pilih Proyek Dulu --</option>';
+                aktivitasSelect.innerHTML = '<option value="">-- Pilih Semester Dulu --</option>';
                 aktivitasSelect.disabled = true;
                 return;
             }
             
-            const proyekSelect = document.getElementById('filterProyek');
-            proyekSelect.innerHTML = '<option value="">-- Memuat... --</option>';
-            proyekSelect.disabled = true;
+            const aktivitasSelect = document.getElementById('filterAktivitas');
+            aktivitasSelect.innerHTML = '<option value="">-- Memuat... --</option>';
+            aktivitasSelect.disabled = true;
             
             try {
-                const url = `${BASE_URL}?action=getDaftarAktivitas&semester=${semester}&_=${Date.now()}`;
+                const url = `${BASE_URL}?action=getDaftarAktivitas&semester=${encodeURIComponent(semester)}&_=${Date.now()}`;
                 const response = await fetch(url);
                 const result = await response.json();
                 
                 if (result && result.success && result.aktivitas && result.aktivitas.length > 0) {
-                    const proyekSet = new Set();
-                    const proyekMapData = {};
-                    
+                    aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
+                    aktivitasMap = {};
                     result.aktivitas.forEach(item => {
-                        const proyek = item.proyek || 'Proyek Lain';
-                        if (!proyekSet.has(proyek)) {
-                            proyekSet.add(proyek);
-                            proyekMapData[proyek] = [];
-                        }
-                        proyekMapData[proyek].push(item);
-                    });
-                    
-                    proyekMap = proyekMapData;
-                    
-                    proyekSelect.innerHTML = '<option value="">-- Pilih Proyek --</option>';
-                    const sortedProyek = Array.from(proyekSet).sort();
-                    sortedProyek.forEach(proyek => {
                         const option = document.createElement('option');
-                        option.value = proyek;
-                        option.textContent = proyek;
-                        proyekSelect.appendChild(option);
+                        option.value = item.nama;
+                        option.textContent = item.nama;
+                        option.dataset.nama = item.nama;
+                        option.dataset.kode = item.kode;
+                        aktivitasSelect.appendChild(option);
+                        aktivitasMap[item.nama] = {
+                            nama: item.nama,
+                            kode: item.kode
+                        };
                     });
-                    proyekSelect.disabled = false;
-                    
-                    const aktivitasSelect = document.getElementById('filterAktivitas');
-                    aktivitasSelect.innerHTML = '<option value="">-- Pilih Proyek Dulu --</option>';
-                    aktivitasSelect.disabled = true;
-                    
+                    aktivitasSelect.disabled = false;
                 } else {
-                    proyekSelect.innerHTML = '<option value="">-- Tidak ada proyek --</option>';
-                    proyekSelect.disabled = true;
+                    aktivitasSelect.innerHTML = '<option value="">-- Tidak ada aktivitas --</option>';
+                    aktivitasSelect.disabled = true;
                 }
             } catch (error) {
                 console.error('Gagal load daftar aktivitas:', error);
-                proyekSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
-                proyekSelect.disabled = true;
-            }
-        }
-        
-        function updateAktivitasDropdown() {
-            const proyek = document.getElementById('filterProyek').value;
-            const aktivitasSelect = document.getElementById('filterAktivitas');
-            
-            if (!proyek || !proyekMap[proyek]) {
-                aktivitasSelect.innerHTML = '<option value="">-- Pilih Proyek Dulu --</option>';
+                aktivitasSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
                 aktivitasSelect.disabled = true;
-                return;
             }
-            
-            aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
-            aktivitasMap = {};
-            
-            const aktivitasList = proyekMap[proyek];
-            aktivitasList.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.kode;
-                option.textContent = item.nama;
-                option.dataset.nama = item.nama;
-                option.dataset.kode = item.kode;
-                option.dataset.proyek = item.proyek;
-                aktivitasSelect.appendChild(option);
-                aktivitasMap[item.kode] = {
-                    nama: item.nama,
-                    proyek: item.proyek
-                };
-            });
-            aktivitasSelect.disabled = false;
         }
         
         function updateKelasDropdown() {
@@ -1106,16 +1152,31 @@
             kelasSelect.disabled = false;
         }
         
-        // ==================== AMBIL DATA DARI REKAP_AKTIVITAS ====================
+        // ==================== AMBIL DATA SISWA ====================
         async function fetchSiswaData(semester, aktivitasNama, kelas) {
-            const url = `${BASE_URL}?action=getData&sheetName=Rekap_aktivitas&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
-            console.log('📤 Fetch URL (dari Rekap_aktivitas):', url);
+            const url = `${BASE_URL}?action=getSiswaByKelas&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
             try {
                 const response = await fetch(url);
                 const result = await response.json();
-                console.log('📥 Response dari Rekap_aktivitas:', result);
+                console.log('📊 Result getSiswaByKelas:', result);
+                
                 if (result && result.success && result.data) {
-                    return result.data;
+                    const siswaList = [];
+                    result.data.forEach(item => {
+                        if (item.data) {
+                            siswaList.push({
+                                Nama: item.nama,
+                                Kelas: item.kelas,
+                                ...item.data
+                            });
+                        } else {
+                            siswaList.push({
+                                Nama: item.nama,
+                                Kelas: item.kelas
+                            });
+                        }
+                    });
+                    return siswaList;
                 }
                 return [];
             } catch (error) {
@@ -1129,10 +1190,7 @@
                 const url = `${BASE_URL}?action=getRubrik&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
                 const response = await fetch(url);
                 const result = await response.json();
-                console.log('📋 Response rubrik:', result);
                 if (result && result.success && result.rubrik) {
-                    // Simpan deskripsi TP
-                    cacheTPDescriptions = result.tpDescriptions || {};
                     return result.rubrik;
                 }
                 return null;
@@ -1142,9 +1200,9 @@
             }
         }
         
-        async function loadNilaiInpen(semester, kelas, aktivitasNama, proyek) {
+        async function loadNilaiInpen(semester, kelas, aktivitasNama) {
             try {
-                const url = `${BASE_URL}?action=getPenilaianBySiswa&semester=${semester}&kelas=${encodeURIComponent(kelas)}&proyek=${encodeURIComponent(proyek)}&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
+                const url = `${BASE_URL}?action=getPenilaianBySiswa&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
                 const response = await fetch(url);
                 const result = await response.json();
                 if (result && result.success && result.data && result.data.nilai) {
@@ -1306,128 +1364,113 @@
         }
         
         // ==================== RENDER RUBRIK ====================
-        // ==================== RENDER RUBRIK ====================
-function renderRubrik(rubrikData, savedScores) {
-    if (!rubrikData || typeof rubrikData !== 'object') {
-        return `<div class="empty-message" style="display:block;"><i class="fas fa-info-circle"></i> Rubrik tidak tersedia</div>`;
-    }
-    
-    selectedScores = savedScores || {};
-    rubrikTPKeys = [];
-    
-    let html = '';
-    const tpKeys = Object.keys(rubrikData);
-    const sortedKeys = sortTPKeys(tpKeys);
-    
-    updateRubrikSummary(sortedKeys, savedScores || {});
-    
-    for (const tpKode of sortedKeys) {
-        const tpData = rubrikData[tpKode];
-        if (!tpData || !tpData.kriteria || tpData.kriteria.length === 0) continue;
-        
-        rubrikTPKeys.push(tpKode);
-        
-        // ===== AMBIL DESKRIPSI TP =====
-        // Coba cari deskripsi dengan berbagai format
-        let tpDesc = cacheTPDescriptions[tpKode] || ''; // "TP 2.4"
-        if (!tpDesc) {
-            // Coba tanpa "TP " (misal: "2.4")
-            const kodeTanpaTP = tpKode.replace(/^TP\s+/, '');
-            tpDesc = cacheTPDescriptions[kodeTanpaTP] || '';
-        }
-        if (!tpDesc) {
-            // Coba dengan "TP " (misal: "TP 2.4")
-            tpDesc = cacheTPDescriptions[`TP ${tpKode}`] || '';
-        }
-        
-        const tpDisplay = tpDesc ? `${tpKode}: ${tpDesc}` : tpKode;
-        
-        html += `<div class="rubrik-tp-card">
-            <div class="rubrik-tp-title">
-                <span><i class="fas fa-clipboard-list"></i> ${escapeHtml(tpDisplay)}</span>
-            </div>
-            <table class="rubrik-tabel">
-                <thead>
-                    <tr>
-                        <th>Kriteria</th>
-                        <th>Skor 4</th>
-                        <th>Skor 3</th>
-                        <th>Skor 2</th>
-                        <th>Skor 1</th>
-                        <th>Skor</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-        
-        tpData.kriteria.forEach((kriteria) => {
-            const kriteriaId = `${tpKode}_${kriteria.nama}`;
-            const savedSkor = selectedScores[kriteriaId] ? selectedScores[kriteriaId].skor : '';
+        function renderRubrik(rubrikData, savedScores) {
+            if (!rubrikData || typeof rubrikData !== 'object') {
+                return `<div class="empty-message" style="display:block;"><i class="fas fa-info-circle"></i> Rubrik tidak tersedia</div>`;
+            }
             
-            html += `
-                <tr>
-                    <td><strong>${escapeHtml(kriteria.nama)}</strong></td>
-                    <td class="skor-cell" data-id="${kriteriaId}" data-skor="4" onclick="selectScore('${kriteriaId}', 4, '${tpKode}')">
-                        <div class="skor-value">4</div>
-                        <div class="skor-deskripsi">${escapeHtml(kriteria['4'] || '-')}</div>
-                    </td>
-                    <td class="skor-cell" data-id="${kriteriaId}" data-skor="3" onclick="selectScore('${kriteriaId}', 3, '${tpKode}')">
-                        <div class="skor-value">3</div>
-                        <div class="skor-deskripsi">${escapeHtml(kriteria['3'] || '-')}</div>
-                    </td>
-                    <td class="skor-cell" data-id="${kriteriaId}" data-skor="2" onclick="selectScore('${kriteriaId}', 2, '${tpKode}')">
-                        <div class="skor-value">2</div>
-                        <div class="skor-deskripsi">${escapeHtml(kriteria['2'] || '-')}</div>
-                    </td>
-                    <td class="skor-cell" data-id="${kriteriaId}" data-skor="1" onclick="selectScore('${kriteriaId}', 1, '${tpKode}')">
-                        <div class="skor-value">1</div>
-                        <div class="skor-deskripsi">${escapeHtml(kriteria['1'] || '-')}</div>
-                    </td>
-                    <td class="nilai-display" id="nilai_${safeId(kriteriaId)}">${savedSkor || '-'}</td>
-                </tr>`;
-        });
-        
-        html += `</tbody>
-            </table>
-        </div>`;
-    }
-    
-    setTimeout(() => {
-        applyHighlights();
-        updateAllDisplays();
-    }, 100);
-    
-    return html;
-}
+            selectedScores = savedScores || {};
+            rubrikTPKeys = [];
+            
+            let html = '';
+            const tpKeys = Object.keys(rubrikData);
+            const sortedKeys = sortTPKeys(tpKeys);
+            
+            updateRubrikSummary(sortedKeys, savedScores || {});
+            
+            for (const tpKode of sortedKeys) {
+                const tpData = rubrikData[tpKode];
+                if (!tpData || !tpData.kriteria || tpData.kriteria.length === 0) continue;
+                
+                rubrikTPKeys.push(tpKode);
+                
+                const tpDesc = DESKRIPSI_TP_INFORMATIKA[tpKode] || '';
+                const tpDisplay = tpDesc ? `${tpKode}: ${tpDesc}` : tpKode;
+                
+                html += `<div class="rubrik-tp-card">
+                    <div class="rubrik-tp-title">
+                        <span><i class="fas fa-clipboard-list"></i> ${escapeHtml(tpDisplay)}</span>
+                    </div>
+                    <table class="rubrik-tabel">
+                        <thead>
+                            <tr>
+                                <th>Kriteria</th>
+                                <th>Skor 4</th>
+                                <th>Skor 3</th>
+                                <th>Skor 2</th>
+                                <th>Skor 1</th>
+                                <th>Skor</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                
+                tpData.kriteria.forEach((kriteria) => {
+                    const kriteriaId = `${tpKode}_${kriteria.nama}`;
+                    const savedSkor = selectedScores[kriteriaId] ? selectedScores[kriteriaId].skor : '';
+                    
+                    html += `
+                        <tr>
+                            <td><strong>${escapeHtml(kriteria.nama)}</strong></td>
+                            <td class="skor-cell" data-id="${kriteriaId}" data-skor="4" onclick="selectScore('${kriteriaId}', 4, '${tpKode}')">
+                                <div class="skor-value">4</div>
+                                <div class="skor-deskripsi">${escapeHtml(kriteria['4'] || '-')}</div>
+                            </td>
+                            <td class="skor-cell" data-id="${kriteriaId}" data-skor="3" onclick="selectScore('${kriteriaId}', 3, '${tpKode}')">
+                                <div class="skor-value">3</div>
+                                <div class="skor-deskripsi">${escapeHtml(kriteria['3'] || '-')}</div>
+                            </td>
+                            <td class="skor-cell" data-id="${kriteriaId}" data-skor="2" onclick="selectScore('${kriteriaId}', 2, '${tpKode}')">
+                                <div class="skor-value">2</div>
+                                <div class="skor-deskripsi">${escapeHtml(kriteria['2'] || '-')}</div>
+                            </td>
+                            <td class="skor-cell" data-id="${kriteriaId}" data-skor="1" onclick="selectScore('${kriteriaId}', 1, '${tpKode}')">
+                                <div class="skor-value">1</div>
+                                <div class="skor-deskripsi">${escapeHtml(kriteria['1'] || '-')}</div>
+                            </td>
+                            <td class="nilai-display" id="nilai_${safeId(kriteriaId)}">${savedSkor || '-'}</td>
+                        </tr>`;
+                });
+                
+                html += `</tbody>
+                    </table>
+                </div>`;
+            }
+            
+            setTimeout(() => {
+                applyHighlights();
+                updateAllDisplays();
+            }, 100);
+            
+            return html;
+        }
         
         function updateRubrikSummary(tpKeys, savedScores) {
-    const summaryEl = document.getElementById('rubrikSummary');
-    if (!tpKeys || tpKeys.length === 0) {
-        summaryEl.innerHTML = '';
-        return;
-    }
-    let html = '';
-    tpKeys.forEach(tp => {
-        let totalSkor = 0;
-        let maxSkor = 0;
-        if (cacheRubrik && cacheRubrik[tp]) {
-            const tpData = cacheRubrik[tp];
-            if (tpData && tpData.kriteria) {
-                maxSkor = tpData.kriteria.length * 4;
-                tpData.kriteria.forEach(kriteria => {
-                    const kriteriaId = `${tp}_${kriteria.nama}`;
-                    if (savedScores[kriteriaId]) {
-                        totalSkor += savedScores[kriteriaId].skor;
-                    }
-                });
+            const summaryEl = document.getElementById('rubrikSummary');
+            if (!tpKeys || tpKeys.length === 0) {
+                summaryEl.innerHTML = '';
+                return;
             }
+            let html = '';
+            tpKeys.forEach(tp => {
+                let totalSkor = 0;
+                let maxSkor = 0;
+                if (cacheRubrik && cacheRubrik[tp]) {
+                    const tpData = cacheRubrik[tp];
+                    if (tpData && tpData.kriteria) {
+                        maxSkor = tpData.kriteria.length * 4;
+                        tpData.kriteria.forEach(kriteria => {
+                            const kriteriaId = `${tp}_${kriteria.nama}`;
+                            if (savedScores[kriteriaId]) {
+                                totalSkor += savedScores[kriteriaId].skor;
+                            }
+                        });
+                    }
+                }
+                const nilai = maxSkor > 0 ? Math.round((totalSkor / maxSkor) * 100) : 0;
+                html += `<span class="tp-summary-item"><strong>${escapeHtml(tp)}</strong>: ${nilai}</span>`;
+            });
+            summaryEl.innerHTML = html;
         }
-        const nilai = maxSkor > 0 ? Math.round((totalSkor / maxSkor) * 100) : 0;
-        
-        // ✅ HANYA TAMPILKAN KODE TP (tanpa deskripsi) di summary
-        html += `<span class="tp-summary-item"><strong>${escapeHtml(tp)}</strong>: ${nilai}</span>`;
-    });
-    summaryEl.innerHTML = html;
-}
         
         function sortTPKeys(keys) {
             const prioritas = ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4', 'TP 1.5', 'TP 1.6', 'TP 1.7', 'TP 2.1', 'TP 2.2', 'TP 2.3', 'TP 2.4', 'TP 2.5', 'TP 2.6', 'TP 2.7', 'TP 2.8', 'TP 2.9', 'TP 2.10', 'TP 2.11', 'TP 2.12', 'TP 2.13'];
@@ -1466,7 +1509,6 @@ function renderRubrik(rubrikData, savedScores) {
             });
             
             updateAllDisplays();
-            
             document.getElementById('btnKirim').style.display = 'inline-flex';
         };
         
@@ -1537,59 +1579,32 @@ function renderRubrik(rubrikData, savedScores) {
             let totalSiswa = siswaList.length;
             let hasDataCount = 0;
             
-            const sortedSiswa = [...siswaList].sort((a, b) => a.nama.localeCompare(b.nama));
-            
-            sortedSiswa.forEach((siswa, index) => {
+            siswaList.forEach((siswa, index) => {
                 const tr = document.createElement('tr');
-                tr.dataset.nama = siswa.nama;
+                const nama = siswa.Nama || siswa.nama || '';
+                tr.dataset.nama = nama;
                 tr.id = `siswa-row-${index}`;
                 
-                const data = siswaJawabanData[siswa.nama] || {};
-                const dataKeys = Object.keys(data);
-                
-                const identitasKeys = ['Nama', 'nama', 'Kelas', 'kelas', '_nama', '_kelas', 'Semester', 'semester', 'Status', 'status', 'Key', 'key'];
-                const dataKeysNonIdentitas = dataKeys.filter(k => !identitasKeys.includes(k));
-                
-                let hasRealData = false;
-                for (const key of dataKeysNonIdentitas) {
-                    const value = data[key];
-                    if (value !== undefined && value !== null && value !== '') {
-                        if (typeof value === 'string' && value.trim() !== '') {
-                            hasRealData = true;
-                            break;
-                        }
-                        if (typeof value === 'object' && Object.keys(value).length > 0) {
-                            hasRealData = true;
-                            break;
-                        }
-                        if (typeof value === 'number' || typeof value === 'boolean') {
-                            hasRealData = true;
-                            break;
-                        }
-                    }
-                }
-                
-                const hasData = hasRealData;
-                
+                const hasData = siswaJawabanData[nama] && Object.keys(siswaJawabanData[nama]).length > 1;
                 if (hasData) hasDataCount++;
                 
-                const btnDisabled = hasData ? '' : 'disabled';
-                const btnClass = hasData ? 'btn-lihat' : 'btn-lihat belum';
-                const btnIcon = hasData ? 'fa-eye' : 'fa-clock';
-                const btnText = hasData ? 'Lihat' : 'Belum Mengerjakan';
+                const isActive = currentSiswa === nama;
                 
                 let tdHtml = `
                     <td>${index + 1}</td>
-                    <td class="nama-siswa">${escapeHtml(siswa.nama)}</td>
+                    <td class="nama-siswa">${escapeHtml(nama)}</td>
                     <td>
-                        <button class="${btnClass}" data-nama="${escapeHtml(siswa.nama)}" onclick="toggleJawaban('${escapeHtml(siswa.nama)}')" ${btnDisabled}>
-                            <i class="fas ${btnIcon}"></i> ${btnText}
+                        <button class="btn-lihat ${isActive ? 'active' : ''}" 
+                                data-nama="${escapeHtml(nama)}" 
+                                onclick="toggleJawaban('${escapeHtml(nama)}')"
+                                ${!hasData ? 'disabled' : ''}>
+                            <i class="fas fa-eye"></i> ${hasData ? (isActive ? 'Tutup' : 'Lihat') : 'Kosong'}
                         </button>
                     </td>
                 `;
                 
                 if (tpKeys && tpKeys.length > 0) {
-                    const nilaiSiswa = siswaNilaiInpen[siswa.nama] || {};
+                    const nilaiSiswa = siswaNilaiInpen[nama] || {};
                     tpKeys.forEach(tp => {
                         const value = nilaiSiswa[tp];
                         const hasValue = value !== undefined && value !== null && value !== '';
@@ -1617,51 +1632,8 @@ function renderRubrik(rubrikData, savedScores) {
         
         // ==================== TOGGLE JAWABAN ====================
         function toggleJawaban(nama) {
-            const data = siswaJawabanData[nama] || {};
-            const dataKeys = Object.keys(data);
-            const identitasKeys = ['Nama', 'nama', 'Kelas', 'kelas', '_nama', '_kelas', 'Semester', 'semester', 'Status', 'status', 'Key', 'key'];
-            const dataKeysNonIdentitas = dataKeys.filter(k => !identitasKeys.includes(k));
-            
-            let hasRealData = false;
-            for (const key of dataKeysNonIdentitas) {
-                const value = data[key];
-                if (value !== undefined && value !== null && value !== '') {
-                    if (typeof value === 'string' && value.trim() !== '') {
-                        hasRealData = true;
-                        break;
-                    }
-                    if (typeof value === 'object' && Object.keys(value).length > 0) {
-                        hasRealData = true;
-                        break;
-                    }
-                    if (typeof value === 'number' || typeof value === 'boolean') {
-                        hasRealData = true;
-                        break;
-                    }
-                }
-            }
-            
-            const hasData = hasRealData;
-            
+            const hasData = siswaJawabanData[nama] && Object.keys(siswaJawabanData[nama]).length > 1;
             if (!hasData) {
-                document.getElementById('jawabanContent').innerHTML = `
-                    <div class="empty-message" style="display:block;">
-                        <i class="fas fa-info-circle"></i> 
-                        <strong>${escapeHtml(nama)}</strong> belum mengerjakan aktivitas ini.<br>
-                        Silakan minta siswa untuk mengerjakan terlebih dahulu.
-                    </div>
-                `;
-                document.getElementById('jawabanSiswaNama').textContent = `👤 ${nama} (Belum Mengerjakan)`;
-                document.getElementById('siswaAktifDisplay').textContent = `👤 ${nama}`;
-                
-                document.querySelectorAll('#siswaTableBody tr').forEach(row => {
-                    row.classList.remove('active-row');
-                    if (row.dataset.nama === nama) {
-                        row.classList.add('active-row');
-                    }
-                });
-                
-                resetRubrik();
                 return;
             }
             
@@ -1674,11 +1646,14 @@ function renderRubrik(rubrikData, savedScores) {
                         <i class="fas fa-info-circle"></i> Klik tombol "Lihat" pada daftar siswa untuk melihat jawaban
                     </div>
                 `;
-                
                 resetRubrik();
-                
                 document.querySelectorAll('#siswaTableBody tr').forEach(row => {
                     row.classList.remove('active-row');
+                    const btn = row.querySelector('.btn-lihat');
+                    if (btn) {
+                        btn.innerHTML = '<i class="fas fa-eye"></i> Lihat';
+                        btn.classList.remove('active');
+                    }
                 });
                 return;
             }
@@ -1689,14 +1664,23 @@ function renderRubrik(rubrikData, savedScores) {
             
             document.querySelectorAll('#siswaTableBody tr').forEach(row => {
                 row.classList.remove('active-row');
-                if (row.dataset.nama === nama) {
-                    row.classList.add('active-row');
+                const btn = row.querySelector('.btn-lihat');
+                if (btn) {
+                    if (row.dataset.nama === nama) {
+                        row.classList.add('active-row');
+                        btn.innerHTML = '<i class="fas fa-eye"></i> Tutup';
+                        btn.classList.add('active');
+                    } else {
+                        btn.innerHTML = '<i class="fas fa-eye"></i> Lihat';
+                        btn.classList.remove('active');
+                    }
                 }
             });
             
             resetRubrik();
             
-            if (data && dataKeysNonIdentitas.length > 0) {
+            const data = siswaJawabanData[nama];
+            if (data && Object.keys(data).length > 1) {
                 document.getElementById('jawabanContent').innerHTML = renderJawaban(data);
             } else {
                 document.getElementById('jawabanContent').innerHTML = `
@@ -1788,7 +1772,6 @@ function renderRubrik(rubrikData, savedScores) {
                 const dataToSend = {
                     semester: currentSemester,
                     kelas: currentKelas,
-                    proyek: currentProyek,
                     aktivitas: currentAktivitasNama,
                     nama: currentSiswa,
                     nilai: tpValues,
@@ -1807,7 +1790,7 @@ function renderRubrik(rubrikData, savedScores) {
                     siswaNilaiInpen[currentSiswa] = tpValues;
                     
                     const tpKeys = rubrikTPKeys;
-                    const siswaList = Object.keys(siswaJawabanData).map(nama => ({ nama }));
+                    const siswaList = Object.keys(siswaJawabanData).map(nama => ({ Nama: nama }));
                     renderSiswaTable(siswaList, tpKeys);
                     
                     resetRubrik();
@@ -1840,27 +1823,15 @@ function renderRubrik(rubrikData, savedScores) {
         // ==================== TAMPILKAN DATA ====================
         async function tampilkanData() {
             currentSemester = document.getElementById('filterSemester').value;
-            currentProyek = document.getElementById('filterProyek').value;
-            currentAktivitasKode = document.getElementById('filterAktivitas').value;
+            currentAktivitasNama = document.getElementById('filterAktivitas').value;
             currentKelas = document.getElementById('filterKelas').value;
             
             if (!currentSemester) { alert('Pilih semester terlebih dahulu'); return; }
-            if (!currentProyek) { alert('Pilih proyek terlebih dahulu'); return; }
-            if (!currentAktivitasKode) { alert('Pilih aktivitas terlebih dahulu'); return; }
+            if (!currentAktivitasNama) { alert('Pilih aktivitas terlebih dahulu'); return; }
             if (!currentKelas) { alert('Pilih kelas terlebih dahulu'); return; }
-            
-            const aktivitasInfo = aktivitasMap[currentAktivitasKode];
-            if (!aktivitasInfo) {
-                alert('Data aktivitas tidak ditemukan');
-                return;
-            }
-            
-            currentAktivitasNama = aktivitasInfo.nama;
-            currentProyek = aktivitasInfo.proyek;
             
             console.log('=== TAMPILKAN DATA ===');
             console.log('Semester:', currentSemester);
-            console.log('Proyek:', currentProyek);
             console.log('Aktivitas:', currentAktivitasNama);
             console.log('Kelas:', currentKelas);
             
@@ -1876,67 +1847,73 @@ function renderRubrik(rubrikData, savedScores) {
             document.getElementById('twoColumnLayout').style.display = 'none';
             
             try {
-                // STEP 1: Ambil data dari Rekap_aktivitas
+                // 1. Ambil data siswa dari getSiswaByKelas
                 const siswaData = await fetchSiswaData(currentSemester, currentAktivitasNama, currentKelas);
-                console.log('📊 Data dari Rekap_aktivitas:', siswaData);
+                console.log('📊 Data siswa:', siswaData);
                 
-                // STEP 2: Ambil daftar siswa dari sheet "daftar siswa"
-                const semuaSiswa = dataSiswa[currentKelas] || [];
-                console.log('📋 Semua siswa dari daftar siswa:', semuaSiswa);
-                
-                if (semuaSiswa.length === 0) {
+                if (!siswaData || siswaData.length === 0) {
                     document.getElementById('loadingMessage').style.display = 'none';
                     document.getElementById('emptyMessage').style.display = 'block';
-                    document.getElementById('emptyMessage').innerHTML = '<i class="fas fa-info-circle"></i> Tidak ada siswa untuk kelas ' + currentKelas + ' di sheet daftar siswa';
+                    document.getElementById('emptyMessage').innerHTML = '<i class="fas fa-info-circle"></i> Tidak ada data siswa untuk kelas ini';
                     return;
                 }
                 
-                // STEP 3: Gabungkan data siswa dengan data jawaban
-                const siswaList = [];
-                semuaSiswa.forEach(nama => {
-                    let jawaban = null;
-                    if (siswaData && siswaData.length > 0) {
-                        jawaban = siswaData.find(item => {
-                            return item.Nama === nama || item.nama === nama || item._nama === nama;
-                        });
-                    }
-                    
-                    if (jawaban) {
-                        siswaJawabanData[nama] = jawaban;
-                        console.log(`✅ ${nama}: Ada data jawaban`);
-                    } else {
-                        siswaJawabanData[nama] = { Nama: nama, Kelas: currentKelas };
-                        console.log(`❌ ${nama}: Belum mengerjakan`);
-                    }
-                    
-                    siswaList.push({ nama: nama });
-                });
-                
-                console.log('✅ Total siswa (termasuk belum mengerjakan):', siswaList.length);
-                
-                // STEP 4: Load rubrik (dengan deskripsi TP)
+                // 2. Ambil rubrik
                 const rubrik = await loadRubrik(currentAktivitasNama);
                 cacheRubrik = rubrik;
                 console.log('📋 Rubrik:', rubrik);
-                console.log('📋 TP Descriptions:', cacheTPDescriptions);
                 
-                // STEP 5: Load nilai inpen
-                const nilaiInpen = await loadNilaiInpen(currentSemester, currentKelas, currentAktivitasNama, currentProyek);
+                // 3. Ambil nilai inpen
+                const nilaiInpen = await loadNilaiInpen(currentSemester, currentKelas, currentAktivitasNama);
                 siswaNilaiInpen = nilaiInpen;
                 console.log('📊 Nilai inpen:', nilaiInpen);
                 
-                // STEP 6: Render rubrik (dengan deskripsi TP)
+                // 4. Proses data siswa
+                const siswaList = [];
+                siswaData.forEach(item => {
+                    const nama = item.Nama || item.nama || '';
+                    if (nama) {
+                        // Simpan data jawaban (hapus properti identitas)
+                        const itemCopy = {...item};
+                        delete itemCopy.Nama;
+                        delete itemCopy.nama;
+                        delete itemCopy.Kelas;
+                        delete itemCopy.kelas;
+                        delete itemCopy.Semester;
+                        delete itemCopy.semester;
+                        
+                        // Cek apakah ada data selain properti yang dihapus
+                        const hasData = Object.keys(itemCopy).some(key => {
+                            const val = item[key];
+                            return val !== undefined && val !== null && val !== '';
+                        });
+                        
+                        if (hasData) {
+                            siswaJawabanData[nama] = item;
+                            console.log(`✅ ${nama} memiliki data jawaban`);
+                        } else {
+                            siswaJawabanData[nama] = { Nama: nama };
+                            console.log(`❌ ${nama} TIDAK memiliki data jawaban`);
+                        }
+                        
+                        siswaList.push({ Nama: nama });
+                    }
+                });
+                
+                console.log('📋 Total siswa:', siswaList.length);
+                console.log('📋 Siswa dengan data:', Object.keys(siswaJawabanData).filter(n => Object.keys(siswaJawabanData[n]).length > 1).length);
+                
+                // 5. Render rubrik
                 if (rubrik) {
                     document.getElementById('rubrikContent').innerHTML = renderRubrik(rubrik, {});
                 } else {
-                    document.getElementById('rubrikContent').innerHTML = `<div class="empty-message" style="display:block;"><i class="fas fa-info-circle"></i> Rubrik tidak ditemukan</div>`;
+                    document.getElementById('rubrikContent').innerHTML = `<div class="empty-message" style="display:block;"><i class="fas fa-info-circle"></i> Rubrik tidak ditemukan untuk aktivitas ini</div>`;
                 }
                 
                 const tpKeys = rubrikTPKeys;
                 console.log('🔑 TP Keys:', tpKeys);
                 
-                // STEP 7: Render tabel siswa
-                document.getElementById('infoKelasPanel').textContent = `${currentKelas} | ${siswaList.length} siswa | ${currentProyek}`;
+                document.getElementById('infoKelasPanel').textContent = `${currentKelas} | ${siswaList.length} siswa`;
                 document.getElementById('siswaAktifDisplay').textContent = '';
                 document.getElementById('jawabanSiswaNama').textContent = '';
                 document.getElementById('jawabanContent').innerHTML = `
@@ -1975,20 +1952,11 @@ function renderRubrik(rubrikData, savedScores) {
             
             try {
                 await loadDataSiswa();
-                console.log('✅ Data siswa loaded:', dataSiswa);
                 await loadDaftarAktivitas();
                 
                 document.getElementById('filterSemester').addEventListener('change', () => {
                     resetAll();
                     loadDaftarAktivitas();
-                    document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
-                    document.getElementById('filterKelas').disabled = true;
-                    document.getElementById('twoColumnLayout').style.display = 'none';
-                });
-                
-                document.getElementById('filterProyek').addEventListener('change', () => {
-                    resetAll();
-                    updateAktivitasDropdown();
                     document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Aktivitas Dulu --</option>';
                     document.getElementById('filterKelas').disabled = true;
                     document.getElementById('twoColumnLayout').style.display = 'none';
@@ -2023,7 +1991,6 @@ function renderRubrik(rubrikData, savedScores) {
             selectedScores = {};
             rubrikTPKeys = [];
             cacheRubrik = null;
-            cacheTPDescriptions = {};
             document.getElementById('twoColumnLayout').style.display = 'none';
             document.getElementById('btnKirim').style.display = 'none';
             document.getElementById('saveStatus').innerHTML = '';

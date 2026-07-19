@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* === STYLE SAMA SEPERTI SEBELUMNYA === */
-        /* (Saya tidak tulis ulang karena panjang, tapi strukturnya sama) */
         :root {
             --ipas-primary: #2ecc71;
             --ipas-secondary: #27ae60;
@@ -30,7 +28,6 @@
             line-height: 1.6;
         }
         
-        /* ===== NAVBAR ===== */
         .profile-section {
             display: flex;
             align-items: center;
@@ -67,7 +64,6 @@
         }
         .logout-btn:hover { transform: scale(1.1); color: #c0392b; }
         
-        /* ===== MAIN LAYOUT ===== */
         .preview-container {
             padding: 1.5rem;
             max-width: 1400px;
@@ -96,6 +92,7 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             border: 1px solid rgba(46, 204, 113, 0.1);
+            box-shadow: var(--shadow-sm);
         }
         
         .section-title {
@@ -121,7 +118,6 @@
             color: var(--ipas-dark);
         }
         
-        /* ===== FILTER ===== */
         .filter-form {
             display: flex;
             flex-wrap: wrap;
@@ -138,6 +134,8 @@
             font-weight: 600;
             color: var(--ipas-dark);
             margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .filter-group select {
             width: 100%;
@@ -147,10 +145,22 @@
             font-size: 0.85rem;
             background: white;
             cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 35px;
+        }
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--ipas-primary);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
         }
         .filter-group select:disabled {
             background: #f5f5f5;
             cursor: not-allowed;
+            opacity: 0.7;
         }
         
         .btn-cek {
@@ -166,8 +176,9 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
-        .btn-cek:hover {
+        .btn-cek:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
         }
@@ -177,7 +188,6 @@
             transform: none;
         }
         
-        /* ===== INFO PANEL ===== */
         .info-panel {
             background: var(--ipas-light);
             border-radius: 12px;
@@ -191,8 +201,8 @@
         }
         .info-panel span { color: #555; }
         .info-panel strong { color: var(--ipas-dark); }
+        .info-panel i { color: var(--ipas-primary); width: 18px; }
         
-        /* ===== TABLE ===== */
         .table-wrapper {
             overflow-x: auto;
             border-radius: var(--border-radius);
@@ -222,35 +232,53 @@
             text-align: left;
             font-weight: 600;
             border-bottom: 2px solid var(--ipas-primary);
+            font-size: 0.8rem;
         }
         .monitoring-table td {
             padding: 0.7rem 0.8rem;
             border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
         }
         .monitoring-table tr:hover { background: #f8f9fa; }
         .monitoring-table .no-data { text-align: center; color: #999; padding: 2rem; }
         
-        .status-sudah {
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            align-items: flex-start;
+        }
+
+        .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-kumpul-sudah {
             background: #d5f4e6;
             color: #27ae60;
-            padding: 3px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
         }
-        .status-belum {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+        .status-kumpul-belum {
             background: #fadbd8;
             color: #e74c3c;
-            padding: 3px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
+        }
+        .status-nilai-sudah {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+        .status-nilai-belum {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .status-nilai-tidak-ada {
+            background: #e5e7eb;
+            color: #6b7280;
         }
         
         .btn-preview {
@@ -277,7 +305,6 @@
             transform: none;
         }
         
-        /* ===== NILAI TP TABLE ===== */
         .nilai-wrapper {
             overflow-x: auto;
             border-radius: var(--border-radius);
@@ -335,7 +362,7 @@
             line-height: 1.2;
         }
         .nilai-per-aktivitas .item {
-            padding: 2px 4px;
+            padding: 2px 6px;
             border-radius: 4px;
             background: #f8f9fa;
             border-left: 3px solid var(--ipas-primary);
@@ -349,7 +376,6 @@
             color: #333;
         }
         
-        /* ===== PREDIKAT ===== */
         .predikat-mahir {
             background: #2980b9;
             color: white;
@@ -386,19 +412,32 @@
             font-weight: 600;
             display: inline-block;
         }
+        .predikat-belum-nilai {
+            background: #95a5a6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
         
         .nilai-mahir { color: #2980b9; font-weight: 700; }
         .nilai-cakap { color: #27ae60; font-weight: 700; }
         .nilai-berkembang { color: #f39c12; font-weight: 700; }
         .nilai-perlu-bimbingan { color: #e74c3c; font-weight: 700; }
+        .nilai-belum-nilai { color: #95a5a6; font-weight: 700; }
         
         .tindak-lanjut {
             font-size: 0.7rem;
             color: #666;
             margin-top: 4px;
+            padding: 4px 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
         }
+        .tindak-lanjut i { color: var(--ipas-primary); margin-right: 4px; }
         
-        /* ===== LEGEND ===== */
         .legend-box {
             display: flex;
             flex-wrap: wrap;
@@ -418,9 +457,9 @@
             width: 16px;
             height: 16px;
             border-radius: 4px;
+            flex-shrink: 0;
         }
         
-        /* ===== STATS ===== */
         .summary-stats {
             display: flex;
             gap: 1rem;
@@ -434,6 +473,7 @@
             flex: 1;
             min-width: 100px;
             text-align: center;
+            border: 1px solid #eee;
         }
         .stat-card .number {
             font-size: 1.3rem;
@@ -445,7 +485,6 @@
             color: #666;
         }
         
-        /* ===== LOADING / ERROR / EMPTY ===== */
         .loading-message,
         .error-message,
         .empty-message {
@@ -458,7 +497,6 @@
         .error-message { background: #f8d7da; color: #721c24; }
         .empty-message { background: #e2e3e5; color: #383d41; }
         
-        /* ===== POPUP / MODAL ===== */
         .popup-overlay {
             position: fixed;
             top: 0;
@@ -471,6 +509,7 @@
             justify-content: center;
             align-items: center;
             padding: 2rem;
+            backdrop-filter: blur(4px);
         }
         .popup-overlay.active {
             display: flex;
@@ -497,6 +536,8 @@
             padding: 1rem 1.5rem;
             border-bottom: 2px solid var(--ipas-light);
             flex-shrink: 0;
+            background: var(--ipas-light);
+            border-radius: 20px 20px 0 0;
         }
         .popup-header h3 {
             color: var(--ipas-dark);
@@ -540,7 +581,6 @@
             border-radius: 6px;
         }
         
-        /* ===== POPUP JAWABAN ===== */
         .popup-jawaban-info {
             background: var(--ipas-light);
             padding: 0.5rem 1rem;
@@ -618,7 +658,6 @@
             padding: 2rem;
         }
         
-        /* ===== BACK NAV ===== */
         .back-nav-simple {
             text-align: center;
             margin-top: 1.5rem;
@@ -639,9 +678,9 @@
         .back-btn-simple:hover {
             background: var(--ipas-primary);
             color: white;
+            transform: translateX(-5px);
         }
         
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .nilai-table td:nth-child(3) { width: 25%; }
             .nilai-table td:nth-child(5) { width: 27%; }
@@ -650,6 +689,7 @@
         @media (max-width: 768px) {
             .preview-container { padding: 0.8rem; }
             .filter-form { flex-direction: column; }
+            .filter-group { min-width: 100%; }
             .btn-cek { width: 100%; justify-content: center; }
             .ipas-content-card,
             .simple-card { padding: 1rem; }
@@ -662,6 +702,7 @@
             .popup-body { padding: 0.8rem; }
             .popup-header h3 { font-size: 0.9rem; flex-wrap: wrap; }
             .nilai-per-aktivitas .item { font-size: 0.6rem; }
+            .info-panel { gap: 0.5rem 1rem; font-size: 0.75rem; }
         }
         
         @media print {
@@ -703,15 +744,14 @@
     <div id="mainContent">
         <section class="preview-container">
             <div class="ipas-content-card">
-                <div class="info-panel-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
                     <div>
-                        <h2><i class="fas fa-chart-simple"></i> Monitoring Aktivitas & Nilai IPAS</h2>
+                        <h2><i class="fas fa-chart-simple"></i> Monitoring Aktivitas &amp; Nilai IPAS</h2>
                         <p>Pantau status pengumpulan tugas dan nilai capaian TP siswa</p>
                     </div>
                 </div>
             </div>
 
-            <!-- FILTER -->
             <div class="simple-card">
                 <div class="section-title">
                     <i class="fas fa-filter"></i>
@@ -723,8 +763,8 @@
                         <label><i class="fas fa-calendar-alt"></i> Semester</label>
                         <select id="filterSemester">
                             <option value="">-- Pilih Semester --</option>
-                            <option value="ganjil" selected>Semester Ganjil</option>
-                            <option value="genap">Semester Genap</option>
+                            <option value="Ganjil" selected>Semester Ganjil</option>
+                            <option value="Genap">Semester Genap</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -753,7 +793,6 @@
                 </div>
             </div>
 
-            <!-- LOADING / ERROR -->
             <div id="loadingMessage" class="loading-message">
                 <i class="fas fa-spinner fa-spin"></i> Sedang memuat data...
             </div>
@@ -762,7 +801,6 @@
                 <span id="errorText">Gagal memuat data. Silakan coba lagi.</span>
             </div>
 
-            <!-- HASIL MONITORING AKTIVITAS -->
             <div class="simple-card" id="aktivitasCard" style="display: none;">
                 <div class="section-title">
                     <i class="fas fa-table-list"></i>
@@ -774,7 +812,7 @@
                             <tr>
                                 <th style="width:50px;">No</th>
                                 <th>Nama Aktivitas</th>
-                                <th style="width:120px;">Status</th>
+                                <th style="width:160px;">Status</th>
                                 <th style="width:180px;">Tanggal</th>
                                 <th style="width:100px;">Aksi</th>
                             </tr>
@@ -791,7 +829,6 @@
                 </div>
             </div>
 
-            <!-- HASIL NILAI TP -->
             <div class="simple-card" id="nilaiCard" style="display: none;">
                 <div class="section-title">
                     <i class="fas fa-star"></i>
@@ -836,7 +873,6 @@
         </section>
     </div>
 
-    <!-- POPUP PREVIEW JAWABAN -->
     <div class="popup-overlay" id="popupOverlay">
         <div class="popup-container">
             <div class="popup-header">
@@ -856,15 +892,84 @@
     </div>
 
     <script>
-        // ==================== KONFIGURASI ====================
+        // ================================================================
+        // ==================== KONFIGURASI IPAS ====================
+        // ================================================================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
 
-        // ==================== CACHE ====================
-        const cacheData = {};
-        const cacheNilai = {};
+        // ================================================================
+        // ==================== METADATA IPAS ====================
+        // ================================================================
+        const METADATA_IPAS = {
+            rekapAktivitas: {
+                sheetName: 'rekap_aktivitas',
+                headerRows: 2,
+                kolom: {
+                    ganjil: { start: 4, end: 11 },
+                    genap: { start: 12, end: 17 }
+                }
+            },
+            rekapNilai: {
+                sheetName: 'rekap_nilai',
+                headerRows: 2,
+                kolomNilai: {
+                    ganjil: { start: 4, end: 11 },
+                    genap: { start: 12, end: 17 }
+                }
+            },
+            barisPerKelas: 50,
+            daftarTP: {
+                ganjil: ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                genap: ['TP 2.1', 'TP 2.2', 'TP 2.3', 'TP 3.1', 'TP 3.2', 'TP 3.3', 'TP 3.4', 'TP 3.5']
+            }
+        };
 
+        // ================================================================
+        // ==================== JUMLAH AKTIVITAS PER TP ====================
+        // ================================================================
+        const JUMLAH_AKTIVITAS_PER_TP = {
+            'TP 1.1': 8,
+            'TP 1.2': 6,
+            'TP 1.3': 6,
+            'TP 1.4': 6,
+            'TP 2.1': 3,
+            'TP 2.2': 1,
+            'TP 2.3': 1,
+            'TP 3.1': 2,
+            'TP 3.2': 1,
+            'TP 3.3': 1,
+            'TP 3.4': 2,
+            'TP 3.5': 5
+        };
+
+        // ================================================================
+        // ==================== MAPPING AKTIVITAS → TP ====================
+        // ================================================================
+        const MAP_AKTIVITAS_TP = {
+            ganjil: {
+                'AKTIVITAS 1 - PERKENALAN IPAS': ['TP 1.1'],
+                'AKTIVITAS 2 - EKSPLORASI MAKHLUK HIDUP': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                'AKTIVITAS 3 - EKSPLORASI ZAT': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                'AKTIVITAS 4 - EKSPLORASI ENERGI': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                'AKTIVITAS 5 - EKSPLORASI KERUANGAN': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                'AKTIVITAS 6 - INTERAKSI SOSIAL': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                'AKTIVITAS 7 - PERILAKU EKONOMI': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                'AKTIVITAS 8 - REVIEW MATERI': ['TP 1.1']
+            },
+            genap: {
+                'AKTIVITAS 1 - MENEMUKAN MASALAH PROYEK': ['TP 2.1', 'TP 3.5'],
+                'AKTIVITAS 2 - MENCARI SOLUSI': ['TP 2.1', 'TP 3.5'],
+                'AKTIVITAS 3 - PERANCANGAN PROYEK': ['TP 2.1'],
+                'AKTIVITAS 4 - PENGEMBANGAN PROYEK': ['TP 2.2', 'TP 2.3', 'TP 3.1', 'TP 3.5'],
+                'AKTIVITAS 5 - PENGOLAHAN DATA LAPORAN': ['TP 3.1', 'TP 3.2', 'TP 3.4', 'TP 3.5'],
+                'AKTIVITAS 6 - DISEMINASI VIDEO': ['TP 3.3', 'TP 3.4', 'TP 3.5']
+            }
+        };
+
+        // ================================================================
         // ==================== DESKRIPSI TP ====================
+        // ================================================================
         const DESKRIPSI_TP = {
             'TP 1.1': 'Menjelaskan pengetahuan ilmiah yang berkaitan dengan fenomena alam dan sosial di lingkungan sekitar',
             'TP 1.2': 'Membuat prediksi sederhana terhadap fenomena alam dan sosial berdasarkan pola ilmiah',
@@ -880,45 +985,144 @@
             'TP 3.5': 'Melakukan refleksi diri terhadap tahapan kegiatan penyelidikan yang telah dilakukan'
         };
 
-        const TP_GANJIL = ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'];
-        const TP_GENAP = ['TP 2.1', 'TP 2.2', 'TP 2.3', 'TP 3.1', 'TP 3.2', 'TP 3.3', 'TP 3.4', 'TP 3.5'];
+        // ================================================================
+        // ==================== CACHE ====================
+        // ================================================================
+        const cacheData = {};
 
+        // ================================================================
+        // ==================== DATA SISWA ====================
+        // ================================================================
+        let dataKelas = [];
+        let dataSiswa = {};
+        let selectedKelas = { nama: '', posisi: -1, jumlah: 0 };
+        let selectedSiswa = { nama: '', posisi: -1 };
+        let currentSemester = 'Ganjil';
+        let cacheAktivitasData = [];
+
+        // ================================================================
+        // ==================== FUNGSI UTILITY ====================
+        // ================================================================
         function getTPHeaders(semester) {
-            return semester === 'ganjil' ? TP_GANJIL : TP_GENAP;
+            var sem = String(semester || '').toLowerCase();
+            if (sem === 'ganjil') {
+                return ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'];
+            } else if (sem === 'genap') {
+                return ['TP 2.1', 'TP 2.2', 'TP 2.3', 'TP 3.1', 'TP 3.2', 'TP 3.3', 'TP 3.4', 'TP 3.5'];
+            }
+            return METADATA_IPAS.daftarTP[semester] || METADATA_IPAS.daftarTP['ganjil'] || [];
         }
 
         function getDeskripsiTP(tpKode) {
             return DESKRIPSI_TP[tpKode] || 'Mencapai kompetensi pada ' + tpKode;
         }
 
+        function escapeHtml(text) {
+            if (!text && text !== 0 && text !== false) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatLabel(key) {
+            return key.replace(/_/g, ' ')
+                .replace(/([A-Z])/g, ' $1')
+                .replace(/^./, str => str.toUpperCase())
+                .trim();
+        }
+
+        function isValidTimestamp(timestamp) {
+            if (!timestamp) return false;
+            if (timestamp === '#N/A' || timestamp === '#VALUE!' || timestamp === '#REF!' || timestamp === '#NAME?') {
+                return false;
+            }
+            try {
+                const date = new Date(timestamp);
+                return !isNaN(date.getTime());
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function formatTanggalDetail(timestamp) {
+            if (!timestamp) return '-';
+            if (timestamp === '#N/A' || timestamp === '#VALUE!' || timestamp === '#REF!' || timestamp === '#NAME?') {
+                return '-';
+            }
+            try {
+                const date = new Date(timestamp);
+                if (!isNaN(date.getTime())) {
+                    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
+                        'Oktober', 'November', 'Desember'
+                    ];
+                    const dayName = days[date.getDay()];
+                    const day = date.getDate();
+                    const month = months[date.getMonth()];
+                    const year = date.getFullYear();
+                    const hours = date.getHours().toString().padStart(2, '0');
+                    const minutes = date.getMinutes().toString().padStart(2, '0');
+                    const seconds = date.getSeconds().toString().padStart(2, '0');
+                    return `${dayName}, ${day} ${month} ${year} ${hours}:${minutes}:${seconds}`;
+                }
+            } catch (e) {}
+            return String(timestamp).split(' ')[0] || '-';
+        }
+
+        // ================================================================
         // ==================== FUNGSI PREDIKAT ====================
+        // ================================================================
         function getPredikat(nilai) {
             if (nilai === null || nilai === undefined || isNaN(nilai)) {
-                return { teks: 'Belum Ada Nilai', kelas: '', tindakLanjut: 'Belum dapat dinilai' };
+                return {
+                    teks: 'Belum Ada Nilai',
+                    kelas: 'predikat-belum-nilai',
+                    nilaiKelas: 'nilai-belum-nilai',
+                    tindakLanjut: 'Belum ada data nilai untuk TP ini.'
+                };
             }
             if (nilai >= 90) {
-                return { teks: 'Mahir', kelas: 'predikat-mahir', tindakLanjut: 'Diberikan materi pengayaan atau tantangan tambahan' };
+                return {
+                    teks: 'Mahir',
+                    kelas: 'predikat-mahir',
+                    nilaiKelas: 'nilai-mahir',
+                    tindakLanjut: 'Siswa telah mencapai penguasaan materi dengan sangat baik. Diberikan pengayaan dan tantangan tambahan.'
+                };
             } else if (nilai >= 75) {
-                return { teks: 'Cakap', kelas: 'predikat-cakap', tindakLanjut: 'Baik, lanjutkan ke materi berikutnya' };
+                return {
+                    teks: 'Cakap',
+                    kelas: 'predikat-cakap',
+                    nilaiKelas: 'nilai-cakap',
+                    tindakLanjut: 'Siswa telah mencapai Tujuan Pembelajaran dengan baik. Lanjutkan ke materi berikutnya.'
+                };
             } else if (nilai >= 60) {
-                return { teks: 'Berkembang', kelas: 'predikat-berkembang', tindakLanjut: 'Perlu bimbingan pada bagian tertentu' };
+                return {
+                    teks: 'Berkembang',
+                    kelas: 'predikat-berkembang',
+                    nilaiKelas: 'nilai-berkembang',
+                    tindakLanjut: 'Siswa masih memerlukan bimbingan pada bagian-bagian tertentu. Berikan pendampingan intensif.'
+                };
             } else {
-                return { teks: 'Belum Bimbingan', kelas: 'predikat-perlu-bimbingan', tindakLanjut: 'Harus mengikuti remedial seluruh materi pembelajaran' };
+                return {
+                    teks: 'Belum Berkembang',
+                    kelas: 'predikat-perlu-bimbingan',
+                    nilaiKelas: 'nilai-perlu-bimbingan',
+                    tindakLanjut: 'Siswa harus mengikuti program remedial seluruh materi pembelajaran.'
+                };
             }
         }
 
         function getNilaiClass(nilai) {
-            if (!nilai && nilai !== 0) return '';
+            if (nilai === null || nilai === undefined || isNaN(nilai)) return 'nilai-belum-nilai';
             if (nilai >= 90) return 'nilai-mahir';
             if (nilai >= 75) return 'nilai-cakap';
             if (nilai >= 60) return 'nilai-berkembang';
             return 'nilai-perlu-bimbingan';
         }
 
-        // ==================== DATA SISWA ====================
-        let dataKelas = [];
-        let dataSiswa = {};
-
+        // ================================================================
+        // ==================== LOAD DATA SISWA ====================
+        // ================================================================
         function loadDataSiswa() {
             return new Promise((resolve, reject) => {
                 const callbackName = 'jsonp_callback_' + Date.now();
@@ -958,13 +1162,25 @@
         function updateNamaDropdown() {
             const kelas = document.getElementById('filterKelas').value;
             const namaSelect = document.getElementById('filterNama');
+
             if (!kelas || !dataSiswa[kelas]) {
                 namaSelect.innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
                 namaSelect.disabled = true;
                 return;
             }
+
+            const posisiKelas = dataKelas.indexOf(kelas);
+            const jumlahSiswa = dataSiswa[kelas].length;
+
+            selectedKelas = {
+                nama: kelas,
+                posisi: posisiKelas,
+                jumlah: jumlahSiswa
+            };
+
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            (dataSiswa[kelas] || []).sort().forEach(nama => {
+            const siswaList = dataSiswa[kelas] || [];
+            siswaList.sort().forEach(function(nama) {
                 if (nama && nama.trim()) {
                     const option = document.createElement('option');
                     option.value = nama;
@@ -973,153 +1189,380 @@
                 }
             });
             namaSelect.disabled = false;
+
+            selectedSiswa = { nama: '', posisi: -1 };
+            document.getElementById('btnCek').disabled = true;
         }
 
-        // ==================== AMBIL DAFTAR AKTIVITAS ====================
-        async function fetchAktivitasList(semester) {
-            try {
-                const url = `${APPS_SCRIPT_URL}?action=getDaftarAktivitas&semester=${semester}&_=${Date.now()}`;
-                const response = await fetch(url);
-                const result = await response.json();
-                if (result && result.success && result.aktivitas && result.aktivitas.length > 0) {
-                    return result.aktivitas;
-                }
-                return [];
-            } catch (error) {
-                console.error('Gagal fetch aktivitas:', error);
-                return [];
+        function onSiswaSelected() {
+            const nama = document.getElementById('filterNama').value;
+            const kelas = document.getElementById('filterKelas').value;
+
+            if (!nama || !kelas) {
+                selectedSiswa = { nama: '', posisi: -1 };
+                document.getElementById('btnCek').disabled = true;
+                return;
             }
+
+            const siswaList = dataSiswa[kelas] || [];
+            const posisiSiswa = siswaList.indexOf(nama) + 1;
+
+            selectedSiswa = {
+                nama: nama,
+                posisi: posisiSiswa
+            };
+
+            document.getElementById('btnCek').disabled = false;
         }
 
-        // ==================== AMBIL DATA SISWA PER AKTIVITAS ====================
-        async function fetchSiswaData(sheetName, kelas, nama, aktivitas) {
+        function resetFilters() {
+            document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Semester Dulu --</option>';
+            document.getElementById('filterKelas').disabled = true;
+            document.getElementById('filterNama').innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
+            document.getElementById('filterNama').disabled = true;
+            document.getElementById('btnCek').disabled = true;
+            document.getElementById('aktivitasCard').style.display = 'none';
+            document.getElementById('nilaiCard').style.display = 'none';
+            document.getElementById('infoPanel').style.display = 'none';
+            cacheAktivitasData = [];
+            selectedKelas = { nama: '', posisi: -1, jumlah: 0 };
+            selectedSiswa = { nama: '', posisi: -1 };
+        }
+
+        // ================================================================
+        // ==================== FETCH DATA ====================
+        // ================================================================
+        async function fetchDataByPosition(semester, noBar, startCol, endCol) {
+            const url = APPS_SCRIPT_URL;
             try {
-                const url =
-                    `${APPS_SCRIPT_URL}?action=getData&sheetName=${encodeURIComponent(sheetName)}&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&aktivitas=${encodeURIComponent(aktivitas)}&_=${Date.now()}`;
-                const response = await fetch(url);
+                const response = await fetch(url + '?action=getDataByPosition&semester=' + encodeURIComponent(semester) +
+                    '&nobar=' + noBar + '&startCol=' + startCol + '&endCol=' + endCol + '&_=' + Date.now());
                 const result = await response.json();
-                if (result && result.success && result.data && result.data.length > 0) {
-                    return result.data[0];
+                if (result && result.success) {
+                    return result;
                 }
                 return null;
             } catch (error) {
-                console.error('Gagal fetch data siswa:', error);
+                console.error('Gagal mengambil data:', error);
                 return null;
             }
         }
 
-        async function fetchAllSiswaData(aktivitasList, kelas, nama) {
-            const promises = aktivitasList.map(aktivitas =>
-                fetchSiswaData('Rekap_aktivitas', kelas, nama, aktivitas.nama)
-            );
-            const results = await Promise.all(promises);
+        // ================================================================
+        // ==================== RENDER NILAI TP ====================
+        // ================================================================
+        function renderNilaiTable(dataNilaiPerAktivitas, headerAktivitas, semester) {
+            var tbody = document.getElementById('nilaiBody');
+            var nilaiCard = document.getElementById('nilaiCard');
+            var nilaiStats = document.getElementById('nilaiStats');
 
-            const dataMap = {};
-            aktivitasList.forEach((aktivitas, index) => {
-                dataMap[aktivitas.nama] = results[index];
+            // AMBIL TP HEADERS DENGAN FUNGSI YANG DIPERBAIKI
+            var tpHeaders = getTPHeaders(semester);
+            var mapAktivitas = semester === 'Ganjil' ? MAP_AKTIVITAS_TP.ganjil : MAP_AKTIVITAS_TP.genap;
+            
+            console.log('📊 RENDER NILAI - Semester:', semester);
+            console.log('📊 TP Headers:', tpHeaders);
+            console.log('📊 Data Nilai:', dataNilaiPerAktivitas);
+            console.log('📊 Header Aktivitas:', headerAktivitas);
+
+            // === STEP 1: BANGUN PER TP DARI DATA NILAI ===
+            var perTP = {};
+            for (var i = 0; i < tpHeaders.length; i++) {
+                perTP[tpHeaders[i]] = [];
+            }
+
+            // Loop setiap aktivitas
+            for (var i = 0; i < dataNilaiPerAktivitas.length; i++) {
+                var cellValue = dataNilaiPerAktivitas[i];
+                var aktivitasNama = String(headerAktivitas[i] || '').trim();
+                
+                if (!aktivitasNama || cellValue === undefined || cellValue === null || cellValue === '') {
+                    continue;
+                }
+
+                console.log('🔍 Aktivitas:', aktivitasNama, 'Nilai:', cellValue);
+
+                var tpListForAktivitas = mapAktivitas[aktivitasNama] || [];
+                if (tpListForAktivitas.length === 0) {
+                    console.log('   ⚠️ Tidak ada TP untuk aktivitas ini');
+                    continue;
+                }
+
+                // Parse nilai
+                var nilaiData = null;
+                
+                // CASE 1: JSON string
+                if (typeof cellValue === 'string' && cellValue.startsWith('{')) {
+                    try {
+                        var jsonStr = cellValue.replace(/, /g, ',');
+                        nilaiData = JSON.parse(jsonStr);
+                        console.log('   ✅ JSON parsed:', nilaiData);
+                    } catch(e) {
+                        console.log('   ❌ Gagal parse JSON:', e.message);
+                    }
+                }
+                // CASE 2: Angka langsung
+                else if (typeof cellValue === 'number' || !isNaN(parseFloat(cellValue))) {
+                    var num = parseFloat(cellValue);
+                    if (!isNaN(num) && num > 0) {
+                        nilaiData = {};
+                        for (var t = 0; t < tpListForAktivitas.length; t++) {
+                            nilaiData[tpListForAktivitas[t]] = num;
+                        }
+                        console.log('   ✅ Angka langsung:', num);
+                    }
+                }
+
+                if (!nilaiData) {
+                    console.log('   ⚠️ Tidak ada data nilai yang valid');
+                    continue;
+                }
+
+                // Assign nilai ke perTP
+                for (var t = 0; t < tpListForAktivitas.length; t++) {
+                    var tp = tpListForAktivitas[t];
+                    var nilai = null;
+                    // Cari nilai di JSON
+                    for (var key in nilaiData) {
+                        var keyTrimmed = key.trim();
+                        if (keyTrimmed === tp || 
+                            keyTrimmed === tp.replace('TP ', '') ||
+                            keyTrimmed === tp.replace('.', '') ||
+                            keyTrimmed.toLowerCase() === tp.toLowerCase() ||
+                            keyTrimmed.includes(tp.replace('TP ', ''))) {
+                            var val = parseFloat(nilaiData[key]);
+                            if (!isNaN(val) && val > 0) {
+                                nilai = val;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (nilai !== null && !isNaN(nilai) && nilai > 0) {
+                        // Cek duplikat
+                        var existing = false;
+                        if (perTP[tp]) {
+                            for (var j = 0; j < perTP[tp].length; j++) {
+                                if (perTP[tp][j].aktivitas === aktivitasNama) {
+                                    existing = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!existing && perTP[tp]) {
+                            perTP[tp].push({
+                                aktivitas: aktivitasNama,
+                                nilai: nilai
+                            });
+                            console.log('   ✅ Menambahkan:', tp, '=', nilai, 'di', aktivitasNama);
+                        }
+                    }
+                }
+            }
+
+            console.log('📊 HASIL PER TP:', perTP);
+
+            // === STEP 2: CEK APAKAH ADA DATA ===
+            var hasData = false;
+            for (var i = 0; i < tpHeaders.length; i++) {
+                if (perTP[tpHeaders[i]] && perTP[tpHeaders[i]].length > 0) {
+                    hasData = true;
+                    break;
+                }
+            }
+
+            if (!hasData) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">Belum ada data nilai untuk TP semester ini</td></tr>';
+                nilaiCard.style.display = 'block';
+                nilaiStats.style.display = 'none';
+                return;
+            }
+
+            // === STEP 3: RENDER TABEL ===
+            var html = '';
+            var nilaiList = [];
+            var totalSemuaNilai = 0;
+            var jumlahTPTerisi = 0;
+
+            for (var i = 0; i < tpHeaders.length; i++) {
+                var tpKode = tpHeaders[i];
+                var tpDeskripsi = getDeskripsiTP(tpKode);
+                
+                var nilaiAktivitas = perTP[tpKode] || [];
+                
+                // Buat map aktivitas → nilai
+                var nilaiMap = {};
+                for (var n = 0; n < nilaiAktivitas.length; n++) {
+                    nilaiMap[nilaiAktivitas[n].aktivitas] = nilaiAktivitas[n].nilai;
+                }
+                
+                // Dapatkan jumlah aktivitas yang mengukur TP ini
+                var jumlahAktivitas = JUMLAH_AKTIVITAS_PER_TP[tpKode] || 0;
+                
+                // Kumpulkan semua aktivitas yang mengukur TP ini
+                var aktivitasTerlibat = [];
+                for (var aktivitas in mapAktivitas) {
+                    if (mapAktivitas[aktivitas].includes(tpKode)) {
+                        aktivitasTerlibat.push(aktivitas);
+                    }
+                }
+                
+                // Hitung total nilai
+                var totalNilai = 0;
+                var items = [];
+                
+                for (var a = 0; a < aktivitasTerlibat.length; a++) {
+                    var aktivitas = aktivitasTerlibat[a];
+                    var nilai = nilaiMap[aktivitas] || 0;
+                    totalNilai += nilai;
+                    // HANYA TAMPILKAN JIKA NILAI > 0
+                    if (nilai > 0) {
+                        items.push('<div class="item"><span class="aktivitas">' + escapeHtml(aktivitas) + '</span>: <span class="nilai">' + nilai + '</span></div>');
+                    }
+                }
+                
+                if (items.length === 0) {
+                    items.push('<div class="item"><span class="aktivitas">Belum ada nilai</span>: <span class="nilai">-</span></div>');
+                }
+                
+                var perAktivitasHtml = '<div class="nilai-per-aktivitas">' + items.join('') + '</div>';
+                
+                // Hitung rata-rata
+                var rataNilai = jumlahAktivitas > 0 ? totalNilai / jumlahAktivitas : null;
+                var nilaiValid = (rataNilai !== null && !isNaN(rataNilai) && totalNilai > 0);
+                var nilaiTampil = nilaiValid ? rataNilai.toFixed(2) : '-';
+                var nilaiClass = nilaiValid ? getNilaiClass(rataNilai) : 'nilai-belum-nilai';
+                
+                var predikatHtml = '';
+                if (nilaiValid) {
+                    var predikat = getPredikat(rataNilai);
+                    var icon = predikat.teks === 'Mahir' ? 'fa-trophy' :
+                        predikat.teks === 'Cakap' ? 'fa-check-circle' :
+                        predikat.teks === 'Berkembang' ? 'fa-chart-line' : 'fa-exclamation-triangle';
+
+                    predikatHtml = '<span class="' + predikat.kelas + '"><i class="fas ' + icon + '"></i> ' + predikat.teks + '</span>' +
+                        '<div class="tindak-lanjut"><i class="fas fa-info-circle"></i> ' + predikat.tindakLanjut + '</div>';
+                    nilaiList.push(rataNilai);
+                    totalSemuaNilai += rataNilai;
+                    jumlahTPTerisi++;
+                } else {
+                    predikatHtml = '<span class="predikat-belum-nilai"><i class="fas fa-minus-circle"></i> Belum Ada Nilai</span>' +
+                        '<div class="tindak-lanjut"><i class="fas fa-info-circle"></i> Belum ada data nilai untuk TP ini.</div>';
+                }
+
+                html += '<tr>' +
+                    '<td><strong>' + tpKode + '</strong></td>' +
+                    '<td>' + escapeHtml(tpDeskripsi) + '</td>' +
+                    '<td>' + perAktivitasHtml + '</td>' +
+                    '<td class="' + nilaiClass + '" style="font-weight:700; font-size:1.1rem;">' + nilaiTampil + '</td>' +
+                    '<td>' + predikatHtml + '</td>' +
+                    '</tr>';
+            }
+
+            tbody.innerHTML = html;
+            nilaiCard.style.display = 'block';
+
+            if (nilaiList.length > 0) {
+                var rataRata = (totalSemuaNilai / nilaiList.length).toFixed(2);
+                var tertinggi = Math.max.apply(null, nilaiList);
+                var terendah = Math.min.apply(null, nilaiList);
+                document.getElementById('rataRataTP').innerText = rataRata;
+                document.getElementById('nilaiTertinggi').innerText = tertinggi;
+                document.getElementById('nilaiTerendah').innerText = terendah;
+                nilaiStats.style.display = 'flex';
+            } else {
+                nilaiStats.style.display = 'none';
+            }
+        }
+
+        // ================================================================
+        // ==================== RENDER AKTIVITAS ====================
+        // ================================================================
+        function renderAktivitasTable(data) {
+            const tbody = document.getElementById('aktivitasBody');
+            const aktivitasCard = document.getElementById('aktivitasCard');
+
+            cacheAktivitasData = data;
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">Tidak ada data aktivitas</td></tr>';
+                aktivitasCard.style.display = 'block';
+                document.getElementById('totalAktivitas').innerText = '0';
+                document.getElementById('sudahDikumpulkan').innerText = '0';
+                document.getElementById('belumDikumpulkan').innerText = '0';
+                return;
+            }
+
+            let sudahCount = 0;
+            let html = '';
+
+            data.forEach(function(item) {
+                var statusText = item.Status || 'Belum Mengumpulkan, Belum Dinilai';
+                var isSudah = statusText.includes('Sudah Mengumpulkan');
+                
+                if (isSudah) sudahCount++;
+
+                var statusKumpulText = '';
+                var statusKumpulClass = '';
+                
+                if (statusText.includes('Sudah Mengumpulkan')) {
+                    statusKumpulText = '✅ Sudah Mengumpulkan';
+                    statusKumpulClass = 'status-kumpul-sudah';
+                } else {
+                    statusKumpulText = '❌ Belum Mengumpulkan';
+                    statusKumpulClass = 'status-kumpul-belum';
+                }
+
+                var statusNilaiText = '';
+                var statusNilaiClass = '';
+                
+                if (statusText.includes('Sudah Dinilai')) {
+                    statusNilaiText = '⭐ Sudah Dinilai';
+                    statusNilaiClass = 'status-nilai-sudah';
+                } else if (statusText.includes('Belum Dinilai') && statusText.includes('Sudah Mengumpulkan')) {
+                    statusNilaiText = '⏳ Belum Dinilai';
+                    statusNilaiClass = 'status-nilai-belum';
+                } else {
+                    statusNilaiText = '⏳ Belum Dinilai';
+                    statusNilaiClass = 'status-nilai-tidak-ada';
+                }
+
+                var statusHtml = '<div class="status-container">' +
+                    '<span class="status-badge ' + statusKumpulClass + '">' + statusKumpulText + '</span>' +
+                    '<span class="status-badge ' + statusNilaiClass + '">' + statusNilaiText + '</span>' +
+                    '</div>';
+
+                var previewHtml = isSudah ?
+                    '<button class="btn-preview" data-aktivitas="' + escapeHtml(item.Nama_Aktivitas || '') +
+                    '"><i class="fas fa-eye"></i> Preview</button>' :
+                    '<button class="btn-preview" disabled><i class="fas fa-eye"></i> Preview</button>';
+
+                html += '<tr>' +
+                    '<td>' + escapeHtml(item.No || '-') + '</td>' +
+                    '<td>' + escapeHtml(item.Nama_Aktivitas || '-') + '</td>' +
+                    '<td>' + statusHtml + '</td>' +
+                    '<td style="font-size:0.75rem;">' + escapeHtml(item.Waktu_Pengumpulan || '-') + '</td>' +
+                    '<td>' + previewHtml + '</td>' +
+                    '</tr>';
             });
-            return dataMap;
+
+            tbody.innerHTML = html;
+            aktivitasCard.style.display = 'block';
+            document.getElementById('totalAktivitas').innerText = data.length;
+            document.getElementById('sudahDikumpulkan').innerText = sudahCount;
+            document.getElementById('belumDikumpulkan').innerText = data.length - sudahCount;
+
+            document.querySelectorAll('.btn-preview:not([disabled])').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const aktivitasNama = this.dataset.aktivitas;
+                    openPreview(aktivitasNama);
+                });
+            });
         }
 
-        // ==================== AMBIL NILAI TP DARI Rekap_nilai (ENDPOINT getRekapNilai) ====================
-        async function fetchNilaiTP(kelas, nama, semester) {
-            try {
-                // Cek cache dulu
-                const cacheKey = `${kelas}_${nama}_${semester}`;
-                if (cacheNilai[cacheKey]) {
-                    console.log('Menggunakan cache nilai:', cacheKey);
-                    return cacheNilai[cacheKey];
-                }
-
-                // Gunakan endpoint getRekapNilai
-                const url = `${APPS_SCRIPT_URL}?action=getRekapNilai&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&_=${Date.now()}`;
-                const response = await fetch(url);
-                const result = await response.json();
-
-                console.log('Response Rekap_nilai:', result);
-
-                if (result && result.success && result.data) {
-                    const data = result.data;
-                    
-                    // Ambil rata-rata TP sesuai semester
-                    const tpHeaders = getTPHeaders(semester);
-                    const nilaiRata = {};
-                    for (const tp of tpHeaders) {
-                        nilaiRata[tp] = data.rataTP[tp] || null;
-                    }
-                    
-                    // Ambil nilai per aktivitas sesuai semester
-                    const perAktivitas = {};
-                    for (const tp of tpHeaders) {
-                        perAktivitas[tp] = data.perTP[tp] || [];
-                    }
-                    
-                    const resultData = {
-                        success: true,
-                        nilai: nilaiRata,
-                        perAktivitas: perAktivitas
-                    };
-                    
-                    // Simpan ke cache
-                    cacheNilai[cacheKey] = resultData;
-                    return resultData;
-                }
-
-                return { success: false, nilai: {}, perAktivitas: {} };
-            } catch (error) {
-                console.error('Gagal fetch nilai TP:', error);
-                return { success: false, nilai: {}, perAktivitas: {} };
-            }
-        }
-
-        // ==================== FORMAT TANGGAL DETAIL ====================
-        function formatTanggalDetail(timestamp) {
-            if (!timestamp) return '-';
-            if (timestamp === '#N/A' || timestamp === '#VALUE!' || timestamp === '#REF!' || timestamp === '#NAME?') {
-                return '-';
-            }
-            try {
-                const date = new Date(timestamp);
-                if (!isNaN(date.getTime())) {
-                    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
-                        'Oktober', 'November', 'Desember'
-                    ];
-                    const dayName = days[date.getDay()];
-                    const day = date.getDate();
-                    const month = months[date.getMonth()];
-                    const year = date.getFullYear();
-                    const hours = date.getHours().toString().padStart(2, '0');
-                    const minutes = date.getMinutes().toString().padStart(2, '0');
-                    const seconds = date.getSeconds().toString().padStart(2, '0');
-                    return `${dayName}, ${day} ${month} ${year} ${hours}:${minutes}:${seconds}`;
-                }
-            } catch (e) {}
-            return String(timestamp).split(' ')[0] || '-';
-        }
-
-        function isValidTimestamp(timestamp) {
-            if (!timestamp) return false;
-            if (timestamp === '#N/A' || timestamp === '#VALUE!' || timestamp === '#REF!' || timestamp === '#NAME?') {
-                return false;
-            }
-            try {
-                const date = new Date(timestamp);
-                return !isNaN(date.getTime());
-            } catch (e) {
-                return false;
-            }
-        }
-
-        // ==================== ESCAPE HTML ====================
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // ==================== RENDER JAWABAN UNTUK POPUP ====================
+        // ================================================================
+        // ==================== RENDER JAWABAN POPUP ====================
+        // ================================================================
         function renderJawabanPopup(data) {
             if (!data || Object.keys(data).length === 0) {
                 return '<div class="popup-empty">Tidak ada data jawaban</div>';
@@ -1127,15 +1570,18 @@
 
             let html = '';
 
-            // Info siswa
+            const nama = data.nama || data.Nama || '-';
+            const kelas = data.kelas || data.Kelas || '-';
+            const timestamp = data.timestamp || data.Timestamp || '';
+
             html += `<div class="popup-jawaban-info">
-                <span><strong>👤 Nama:</strong> ${escapeHtml(data.Nama || data.nama || '-')}</span>
-                <span><strong>📚 Kelas:</strong> ${escapeHtml(data.Kelas || data.kelas || '-')}</span>
-                ${data.Semester ? `<span><strong>📅 Semester:</strong> ${escapeHtml(data.Semester)}</span>` : ''}
+                <span><strong>👤 Nama:</strong> ${escapeHtml(nama)}</span>
+                <span><strong>📚 Kelas:</strong> ${escapeHtml(kelas)}</span>
+                ${timestamp ? `<span><strong>📅 Waktu:</strong> ${escapeHtml(formatTanggalDetail(timestamp))}</span>` : ''}
             </div>`;
 
             const excludeKeys = ['Nama', 'nama', 'Kelas', 'kelas', 'Semester', 'semester', 'Status', 'status', 'Key', 'key',
-                '_status', '_key', 'Timestamp', 'timestamp'
+                'Timestamp', 'timestamp', '_status', '_key', 'identitas', 'aktivitas'
             ];
 
             const displayKeys = Object.keys(data).filter(key => {
@@ -1156,8 +1602,9 @@
                 if (key.toLowerCase().includes('bagian')) icon = 'fa-folder';
                 else if (key.toLowerCase().includes('jawaban')) icon = 'fa-edit';
                 else if (key.toLowerCase().includes('tabel') || key.toLowerCase().includes('data')) icon = 'fa-table';
+                else if (key.toLowerCase().includes('checklist')) icon = 'fa-check-square';
+                else if (key.toLowerCase().includes('refleksi')) icon = 'fa-pen-fancy';
 
-                // Parse JSON
                 let parsedValue = value;
                 let isJson = false;
                 if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
@@ -1234,6 +1681,9 @@
                             listHtml += `<div>${idx+1}. ${escapeHtml(String(item))}</div>`;
                         }
                     });
+                    if (listHtml === `<div class="field-value">`) {
+                        listHtml += `<span class="empty-value">(kosong)</span>`;
+                    }
                     listHtml += `</div>`;
                     return listHtml;
                 }
@@ -1263,139 +1713,9 @@
             return `<div class="field-value">${escapeHtml(String(value))}</div>`;
         }
 
-        function formatLabel(key) {
-            return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
-        }
-
-        // ==================== RENDER TABEL AKTIVITAS ====================
-        function renderAktivitasTable(aktivitasList, dataMap) {
-            const tbody = document.getElementById('aktivitasBody');
-            const aktivitasCard = document.getElementById('aktivitasCard');
-
-            if (!aktivitasList || aktivitasList.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="no-data">Tidak ada data aktivitas</td></tr>';
-                aktivitasCard.style.display = 'block';
-                document.getElementById('totalAktivitas').innerText = '0';
-                document.getElementById('sudahDikumpulkan').innerText = '0';
-                document.getElementById('belumDikumpulkan').innerText = '0';
-                return;
-            }
-
-            let sudahCount = 0;
-            let html = '';
-
-            aktivitasList.forEach((aktivitas, index) => {
-                const data = dataMap[aktivitas.nama] || null;
-                const timestamp = data ? data.Timestamp : null;
-                const isSudah = timestamp && isValidTimestamp(timestamp);
-
-                if (isSudah) sudahCount++;
-
-                const statusHtml = isSudah ?
-                    '<span class="status-sudah"><i class="fas fa-check-circle"></i> Sudah</span>' :
-                    '<span class="status-belum"><i class="fas fa-clock"></i> Belum</span>';
-
-                const tanggal = isSudah ? formatTanggalDetail(timestamp) : '-';
-
-                html += `<tr>
-                    <td>${index + 1}</td>
-                    <td>${escapeHtml(aktivitas.nama)}</td>
-                    <td>${statusHtml}</td>
-                    <td style="font-size:0.75rem;">${escapeHtml(tanggal)}</td>
-                    <td>
-                        <button class="btn-preview" data-aktivitas="${escapeHtml(aktivitas.nama)}" ${isSudah ? '' : 'disabled'}>
-                            <i class="fas fa-eye"></i> Preview
-                        </button>
-                    </td>
-                </tr>`;
-            });
-
-            tbody.innerHTML = html;
-            aktivitasCard.style.display = 'block';
-            document.getElementById('totalAktivitas').innerText = aktivitasList.length;
-            document.getElementById('sudahDikumpulkan').innerText = sudahCount;
-            document.getElementById('belumDikumpulkan').innerText = aktivitasList.length - sudahCount;
-
-            // Event listener untuk tombol preview
-            document.querySelectorAll('.btn-preview:not([disabled])').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const aktivitasNama = this.dataset.aktivitas;
-                    openPreview(aktivitasNama);
-                });
-            });
-        }
-
-        // ==================== RENDER NILAI TP ====================
-        function renderNilaiTable(nilaiData, semester) {
-            const tbody = document.getElementById('nilaiBody');
-            const nilaiCard = document.getElementById('nilaiCard');
-            const nilaiStats = document.getElementById('nilaiStats');
-
-            const tpHeaders = getTPHeaders(semester);
-
-            let html = '';
-            let nilaiList = [];
-
-            for (const tp of tpHeaders) {
-                // Nilai rata-rata dari kolom akhir
-                const nilaiRata = nilaiData.nilai[tp] || null;
-                const nilaiValid = (nilaiRata !== null && !isNaN(nilaiRata));
-                const nilaiTampil = nilaiValid ? nilaiRata : '-';
-                const nilaiClass = nilaiValid ? getNilaiClass(nilaiRata) : '';
-
-                // Nilai per aktivitas
-                const perAktivitas = nilaiData.perAktivitas[tp] || [];
-                let perAktivitasHtml = '';
-                if (perAktivitas.length > 0) {
-                    const items = perAktivitas.map(item =>
-                        `<div class="item"><span class="aktivitas">${escapeHtml(item.aktivitas)}</span>: <span class="nilai">${item.nilai}</span></div>`
-                    );
-                    perAktivitasHtml = `<div class="nilai-per-aktivitas">${items.join('')}</div>`;
-                } else {
-                    perAktivitasHtml = '<span style="color:#999;font-size:0.7rem;">-</span>';
-                }
-
-                // Predikat dari nilai rata-rata
-                let predikatHtml = '';
-                if (nilaiValid) {
-                    const predikat = getPredikat(nilaiRata);
-                    const icon = predikat.teks === 'Mahir' ? 'fa-trophy' :
-                        predikat.teks === 'Cakap' ? 'fa-check-circle' :
-                        predikat.teks === 'Berkembang' ? 'fa-chart-line' : 'fa-exclamation-triangle';
-                    predikatHtml =
-                        `<span class="${predikat.kelas}"><i class="fas ${icon}"></i> ${predikat.teks}</span>
-                        <div class="tindak-lanjut"><i class="fas fa-info-circle"></i> ${predikat.tindakLanjut}</div>`;
-                    nilaiList.push(nilaiRata);
-                } else {
-                    predikatHtml = '<span style="color:#95a5a6;"><i class="fas fa-minus-circle"></i> Belum ada nilai</span>';
-                }
-
-                html += `<tr>
-                    <td><strong>${tp}</strong></td>
-                    <td>${escapeHtml(getDeskripsiTP(tp))}</td>
-                    <td>${perAktivitasHtml}</td>
-                    <td class="${nilaiClass}" style="font-weight:700; font-size:1.1rem;">${nilaiTampil}</td>
-                    <td>${predikatHtml}</td>
-                </tr>`;
-            }
-
-            tbody.innerHTML = html;
-            nilaiCard.style.display = 'block';
-
-            if (nilaiList.length > 0) {
-                const rataRata = (nilaiList.reduce((a, b) => a + b, 0) / nilaiList.length).toFixed(2);
-                const tertinggi = Math.max(...nilaiList);
-                const terendah = Math.min(...nilaiList);
-                document.getElementById('rataRataTP').innerText = rataRata;
-                document.getElementById('nilaiTertinggi').innerText = tertinggi;
-                document.getElementById('nilaiTerendah').innerText = terendah;
-                nilaiStats.style.display = 'flex';
-            } else {
-                nilaiStats.style.display = 'none';
-            }
-        }
-
+        // ================================================================
         // ==================== POPUP PREVIEW ====================
+        // ================================================================
         function openPreview(aktivitasNama) {
             const popup = document.getElementById('popupOverlay');
             const body = document.getElementById('popupBody');
@@ -1405,87 +1725,84 @@
             body.innerHTML = '<div class="popup-empty"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>';
             popup.classList.add('active');
 
-            const semester = document.getElementById('filterSemester').value;
-            const kelas = document.getElementById('filterKelas').value;
-            const nama = document.getElementById('filterNama').value;
+            var aktivitasData = cacheAktivitasData.find(function(item) {
+                return item.Nama_Aktivitas === aktivitasNama;
+            });
 
-            // Cek cache
-            const cacheKey = `${kelas}_${nama}_${aktivitasNama}`;
-            if (cacheData[cacheKey]) {
-                const data = cacheData[cacheKey];
-                if (data && Object.keys(data).length > 0) {
-                    body.innerHTML = renderJawabanPopup(data);
-                    return;
-                }
+            if (aktivitasData && aktivitasData.Data_JSON) {
+                body.innerHTML = renderJawabanPopup(aktivitasData.Data_JSON);
+                return;
             }
 
-            // Fetch data
-            fetchSiswaData('Rekap_aktivitas', kelas, nama, aktivitasNama)
-                .then(data => {
-                    cacheData[cacheKey] = data;
-                    if (data && Object.keys(data).length > 0) {
-                        body.innerHTML = renderJawabanPopup(data);
-                    } else {
-                        body.innerHTML = '<div class="popup-empty">Tidak ada data jawaban untuk aktivitas ini</div>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetch preview:', error);
-                    body.innerHTML = '<div class="popup-empty">Gagal memuat data jawaban</div>';
-                });
+            body.innerHTML = '<div class="popup-empty">Tidak ada data jawaban untuk aktivitas ini</div>';
         }
 
+        // ================================================================
         // ==================== TAMPILKAN DATA ====================
-        async function tampilkanData() {
-            const semester = document.getElementById('filterSemester').value;
-            const kelas = document.getElementById('filterKelas').value;
-            const nama = document.getElementById('filterNama').value;
+        // ================================================================
+        async function cekData() {
+            var semester = document.getElementById('filterSemester').value;
+            var kelas = document.getElementById('filterKelas').value;
+            var nama = document.getElementById('filterNama').value;
 
             if (!semester) { alert('Pilih semester terlebih dahulu'); return; }
             if (!kelas) { alert('Pilih kelas terlebih dahulu'); return; }
             if (!nama) { alert('Pilih nama siswa terlebih dahulu'); return; }
 
+            currentSemester = semester;
+
+            var noBar = (selectedKelas.posisi * METADATA_IPAS.barisPerKelas) +
+                selectedSiswa.posisi +
+                METADATA_IPAS.rekapAktivitas.headerRows;
+
+            var startCol, endCol;
+            if (semester === 'Ganjil') {
+                startCol = METADATA_IPAS.rekapAktivitas.kolom.ganjil.start;
+                endCol = METADATA_IPAS.rekapAktivitas.kolom.ganjil.end;
+            } else {
+                startCol = METADATA_IPAS.rekapAktivitas.kolom.genap.start;
+                endCol = METADATA_IPAS.rekapAktivitas.kolom.genap.end;
+            }
+
             document.getElementById('infoPanel').style.display = 'flex';
             document.getElementById('infoNama').innerText = nama;
             document.getElementById('infoKelas').innerText = kelas;
-            document.getElementById('infoSemester').innerText = semester === 'ganjil' ? 'Ganjil' : 'Genap';
+            document.getElementById('infoSemester').innerText = semester;
 
-            const loadingMsg = document.getElementById('loadingMessage');
-            const errorMsg = document.getElementById('errorMessage');
+            var loadingMsg = document.getElementById('loadingMessage');
+            var errorMsg = document.getElementById('errorMessage');
             loadingMsg.style.display = 'block';
             errorMsg.style.display = 'none';
             document.getElementById('aktivitasCard').style.display = 'none';
             document.getElementById('nilaiCard').style.display = 'none';
 
-            const btnCek = document.getElementById('btnCek');
+            var btnCek = document.getElementById('btnCek');
             btnCek.disabled = true;
             btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
 
             try {
-                // 1. Ambil daftar aktivitas
-                const aktivitasList = await fetchAktivitasList(semester);
-                console.log('Aktivitas List:', aktivitasList);
+                var result = await fetchDataByPosition(semester, noBar, startCol, endCol);
 
-                if (!aktivitasList || aktivitasList.length === 0) {
-                    throw new Error('Tidak ada aktivitas untuk semester ini');
+                if (result && result.success) {
+                    console.log('✅ DATA DARI SERVER:', result);
+                    
+                    // Render aktivitas
+                    renderAktivitasTable(result.aktivitas || []);
+                    
+                    // === RENDER NILAI ===
+                    var dataNilai = result.dataNilaiPerAktivitas || [];
+                    var headerAktivitasNilai = result.headerNilaiAktivitas || result.headerAktivitas || [];
+                    
+                    console.log('📊 dataNilaiPerAktivitas:', dataNilai);
+                    console.log('📊 headerNilaiAktivitas:', headerAktivitasNilai);
+                    
+                    renderNilaiTable(dataNilai, headerAktivitasNilai, semester);
+                } else {
+                    throw new Error(result?.error || 'Gagal memuat data');
                 }
 
-                // 2. Ambil data siswa untuk semua aktivitas (PARALLEL)
-                const dataMap = await fetchAllSiswaData(aktivitasList, kelas, nama);
-                console.log('Data Map:', dataMap);
-
-                // 3. Render tabel aktivitas
-                renderAktivitasTable(aktivitasList, dataMap);
-
-                // 4. Ambil nilai TP dari Rekap_nilai (dengan cache)
-                const nilaiData = await fetchNilaiTP(kelas, nama, semester);
-                console.log('Nilai TP:', nilaiData);
-
-                // 5. Render tabel nilai
-                renderNilaiTable(nilaiData, semester);
-
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ ERROR:', error);
                 errorMsg.style.display = 'block';
                 document.getElementById('errorText').innerHTML = error.message || 'Gagal memuat data. Silakan coba lagi.';
             } finally {
@@ -1495,43 +1812,46 @@
             }
         }
 
+        // ================================================================
         // ==================== INISIALISASI ====================
+        // ================================================================
         async function init() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
-            if (hamburger) { hamburger.addEventListener('click', () => navMenu.classList.toggle('active')); }
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
 
-            document.getElementById('filterSemester').value = 'ganjil';
-            document.getElementById('loadingMessage').style.display = 'block';
-            document.getElementById('loadingMessage').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data siswa...';
+            var loadingMsg = document.getElementById('loadingMessage');
+            loadingMsg.style.display = 'block';
+            loadingMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data siswa...';
 
             try {
                 await loadDataSiswa();
 
-                const filterSemester = document.getElementById('filterSemester');
-                const filterKelas = document.getElementById('filterKelas');
-                const filterNama = document.getElementById('filterNama');
-                const btnCek = document.getElementById('btnCek');
+                var filterSemester = document.getElementById('filterSemester');
+                var filterKelas = document.getElementById('filterKelas');
+                var filterNama = document.getElementById('filterNama');
+                var btnCek = document.getElementById('btnCek');
 
-                filterSemester.addEventListener('change', () => {
+                filterSemester.addEventListener('change', function() {
                     resetFilters();
                     if (dataKelas.length > 0) updateKelasDropdown();
                 });
 
-                filterKelas.addEventListener('change', () => {
+                filterKelas.addEventListener('change', function() {
                     updateNamaDropdown();
                     document.getElementById('aktivitasCard').style.display = 'none';
                     document.getElementById('nilaiCard').style.display = 'none';
                     document.getElementById('btnCek').disabled = true;
                 });
 
-                filterNama.addEventListener('change', () => {
-                    if (filterNama.value) btnCek.disabled = false;
-                });
+                filterNama.addEventListener('change', onSiswaSelected);
 
-                btnCek.addEventListener('click', tampilkanData);
+                btnCek.addEventListener('click', cekData);
 
-                // Popup close
                 document.getElementById('popupClose').addEventListener('click', function() {
                     document.getElementById('popupOverlay').classList.remove('active');
                 });
@@ -1541,25 +1861,24 @@
                     }
                 });
 
-                if (dataKelas.length > 0) updateKelasDropdown();
-                document.getElementById('loadingMessage').style.display = 'none';
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        document.getElementById('popupOverlay').classList.remove('active');
+                    }
+                });
+
+                if (dataKelas.length > 0) {
+                    updateKelasDropdown();
+                }
+
+                loadingMsg.style.display = 'none';
 
             } catch (error) {
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorText').innerHTML = 'Gagal memuat data siswa. Silakan refresh halaman.';
+                loadingMsg.style.display = 'none';
+                var errorMsg = document.getElementById('errorMessage');
+                errorMsg.style.display = 'block';
+                document.getElementById('errorText').innerHTML = error.message || 'Gagal memuat data siswa. Silakan refresh halaman.';
             }
-        }
-
-        function resetFilters() {
-            document.getElementById('filterKelas').innerHTML = '<option value="">-- Pilih Semester Dulu --</option>';
-            document.getElementById('filterKelas').disabled = true;
-            document.getElementById('filterNama').innerHTML = '<option value="">-- Pilih Kelas Dulu --</option>';
-            document.getElementById('filterNama').disabled = true;
-            document.getElementById('btnCek').disabled = true;
-            document.getElementById('aktivitasCard').style.display = 'none';
-            document.getElementById('nilaiCard').style.display = 'none';
-            document.getElementById('infoPanel').style.display = 'none';
         }
 
         document.addEventListener('DOMContentLoaded', init);

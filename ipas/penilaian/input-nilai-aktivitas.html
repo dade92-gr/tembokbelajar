@@ -30,7 +30,6 @@
             line-height: 1.6;
         }
         
-        /* ===== NAVBAR ===== */
         .profile-section {
             display: flex;
             align-items: center;
@@ -67,7 +66,6 @@
         }
         .logout-btn:hover { transform: scale(1.1); color: #c0392b; }
         
-        /* ===== LOGIN OVERLAY ===== */
         .login-required-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -105,7 +103,6 @@
             box-shadow: 0 5px 15px rgba(46,204,113,0.3);
         }
         
-        /* ===== MAIN LAYOUT ===== */
         .preview-container {
             padding: 1.5rem;
             max-width: 1600px;
@@ -158,7 +155,6 @@
             color: var(--ipas-dark);
         }
         
-        /* ===== FILTER ===== */
         .filter-form {
             display: flex;
             flex-wrap: wrap;
@@ -233,7 +229,6 @@
             transform: none;
         }
         
-        /* ===== TWO COLUMN LAYOUT ===== */
         .two-column-layout {
             display: flex;
             gap: 1.5rem;
@@ -261,7 +256,6 @@
             max-height: 85vh;
         }
         
-        /* ===== DAFTAR SISWA (KOLOM KIRI - ATAS) ===== */
         .siswa-card {
             background: white;
             border-radius: 20px;
@@ -380,7 +374,7 @@
             transition: all 0.3s ease;
             white-space: nowrap;
         }
-        .btn-lihat:hover {
+        .btn-lihat:hover:not(:disabled) {
             background: var(--ipas-secondary);
             transform: scale(1.05);
         }
@@ -391,6 +385,7 @@
             opacity: 0.4;
             cursor: not-allowed;
             transform: none;
+            background: #95a5a6;
         }
         
         .tp-cell {
@@ -406,7 +401,6 @@
         }
         .tp-cell.no-value { color: #ccc; }
         
-        /* ===== RUBRIK (KOLOM KIRI - BAWAH) ===== */
         .rubrik-card {
             background: var(--rubrik-bg);
             border-radius: 20px;
@@ -508,7 +502,6 @@
             border-radius: 6px;
         }
         
-        /* ===== RUBRIK TP CARD ===== */
         .rubrik-tp-card {
             background: white;
             border-radius: var(--border-radius);
@@ -607,7 +600,6 @@
             color: white;
         }
         
-        /* ===== JAWABAN SISWA (KOLOM KANAN) ===== */
         .jawaban-header {
             display: flex;
             justify-content: space-between;
@@ -715,7 +707,6 @@
             color: var(--ipas-dark);
         }
         
-        /* ===== LOADING / ERROR / EMPTY ===== */
         .loading-message, .error-message, .empty-message {
             padding: 1.5rem;
             text-align: center;
@@ -761,7 +752,6 @@
         
         .hidden { display: none !important; }
         
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .two-column-layout {
                 flex-direction: column;
@@ -853,8 +843,8 @@
                         <label><i class="fas fa-calendar"></i> Semester</label>
                         <select id="filterSemester">
                             <option value="">-- Pilih Semester --</option>
-                            <option value="ganjil">Semester Ganjil</option>
-                            <option value="genap">Semester Genap</option>
+                            <option value="Ganjil">Semester Ganjil</option>
+                            <option value="Genap">Semester Genap</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -984,15 +974,14 @@
     let dataKelas = [];
     let dataSiswa = {};
     let aktivitasMap = {};
+    let aktivitasRubrikMap = {};
     
     let currentSemester = '';
     let currentAktivitasKode = '';
     let currentAktivitasNama = '';
     let currentKelas = '';
-    let currentSheetName = '';
     
     let cacheRubrik = null;
-    let currentRubrikAktivitas = null;
     let rubrikTPKeys = [];
     
     let siswaJawabanData = {};
@@ -1023,7 +1012,7 @@
         });
     }
     
-    // ==================== LOAD DAFTAR AKTIVITAS ====================
+    // ==================== LOAD DAFTAR AKTIVITAS DARI DATA_MAPEL ====================
     async function loadDaftarAktivitas() {
         const semester = document.getElementById('filterSemester').value;
         if (!semester) {
@@ -1038,21 +1027,24 @@
         aktivitasSelect.disabled = true;
         
         try {
-            const url = `${BASE_URL}?action=getDaftarAktivitas&semester=${semester}&_=${Date.now()}`;
+            const url = `${BASE_URL}?action=getDaftarAktivitas&semester=${encodeURIComponent(semester)}&_=${Date.now()}`;
             const response = await fetch(url);
             const result = await response.json();
             
             if (result && result.success && result.aktivitas && result.aktivitas.length > 0) {
                 aktivitasSelect.innerHTML = '<option value="">-- Pilih Aktivitas --</option>';
                 aktivitasMap = {};
+                aktivitasRubrikMap = {};
                 result.aktivitas.forEach(item => {
                     const option = document.createElement('option');
-                    option.value = item.kode || item.nama;
+                    option.value = item.nama;
                     option.textContent = item.nama;
-                    option.dataset.nama = item.nama;
-                    option.dataset.kode = item.kode;
+                    option.dataset.rubrik = item.rubrik ? JSON.stringify(item.rubrik) : '';
                     aktivitasSelect.appendChild(option);
-                    aktivitasMap[item.kode] = item.nama;
+                    aktivitasMap[item.nama] = item.nama;
+                    if (item.rubrik) {
+                        aktivitasRubrikMap[item.nama] = item.rubrik;
+                    }
                 });
                 aktivitasSelect.disabled = false;
             } else {
@@ -1080,14 +1072,31 @@
         kelasSelect.disabled = false;
     }
     
-    // ==================== AMBIL DATA ====================
+    // ==================== AMBIL DATA SISWA ====================
     async function fetchSiswaData(semester, aktivitasNama, kelas) {
-        const url = `${BASE_URL}?action=getData&sheetName=Rekap_aktivitas&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
+        const url = `${BASE_URL}?action=getSiswaByKelas&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
         try {
             const response = await fetch(url);
             const result = await response.json();
+            console.log('📊 Result getSiswaByKelas:', result);
+            
             if (result && result.success && result.data) {
-                return result.data;
+                const siswaList = [];
+                result.data.forEach(item => {
+                    if (item.data) {
+                        siswaList.push({
+                            Nama: item.nama,
+                            Kelas: item.kelas,
+                            ...item.data
+                        });
+                    } else {
+                        siswaList.push({
+                            Nama: item.nama,
+                            Kelas: item.kelas
+                        });
+                    }
+                });
+                return siswaList;
             }
             return [];
         } catch (error) {
@@ -1097,6 +1106,18 @@
     }
     
     async function loadRubrik(aktivitasNama) {
+        if (aktivitasRubrikMap[aktivitasNama]) {
+            const rubrikData = aktivitasRubrikMap[aktivitasNama];
+            const keys = Object.keys(rubrikData);
+            if (keys.length > 0) {
+                const aktivitasData = rubrikData[keys[0]];
+                if (aktivitasData && aktivitasData.rubrik_penilaian) {
+                    return aktivitasData.rubrik_penilaian;
+                }
+            }
+            return null;
+        }
+        
         try {
             const url = `${BASE_URL}?action=getRubrik&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
             const response = await fetch(url);
@@ -1113,7 +1134,7 @@
     
     async function loadNilaiInpen(semester, kelas, aktivitasNama) {
         try {
-            const url = `${BASE_URL}?action=getPenilaianBySiswa&semester=${semester}&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
+            const url = `${BASE_URL}?action=getPenilaianBySiswa&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&_=${Date.now()}`;
             const response = await fetch(url);
             const result = await response.json();
             if (result && result.success && result.data && result.data.nilai) {
@@ -1134,7 +1155,6 @@
         
         let html = '';
         
-        // Info siswa
         html += `<div class="jawaban-info">
             <span><strong>👤 Nama:</strong> ${escapeHtml(data.Nama || data.nama || '-')}</span>
             <span><strong>📚 Kelas:</strong> ${escapeHtml(data.Kelas || data.kelas || '-')}</span>
@@ -1287,7 +1307,6 @@
         const tpKeys = Object.keys(rubrikData);
         const sortedKeys = sortTPKeys(tpKeys);
         
-        // Update summary header
         updateRubrikSummary(sortedKeys, savedScores || {});
         
         for (const tpKode of sortedKeys) {
@@ -1295,8 +1314,6 @@
             if (!tpData || !tpData.kriteria || tpData.kriteria.length === 0) continue;
             
             rubrikTPKeys.push(tpKode);
-            
-            const tpIdSafe = safeId(tpKode);
             
             html += `<div class="rubrik-tp-card">
                 <div class="rubrik-tp-title">
@@ -1363,7 +1380,6 @@
         }
         let html = '';
         tpKeys.forEach(tp => {
-            // Hitung nilai dari savedScores
             let totalSkor = 0;
             let maxSkor = 0;
             if (cacheRubrik && cacheRubrik[tp]) {
@@ -1407,7 +1423,6 @@
             tpKode: tpKode
         };
         
-        // Update display
         const displayId = `nilai_${safeId(kriteriaId)}`;
         const el = document.getElementById(displayId);
         if (el) {
@@ -1415,7 +1430,6 @@
             el.className = 'nilai-display has-value';
         }
         
-        // Update highlights
         const cells = document.querySelectorAll(`.skor-cell[data-id="${kriteriaId}"]`);
         cells.forEach(cell => {
             const cellSkor = parseInt(cell.getAttribute('data-skor'));
@@ -1423,8 +1437,6 @@
         });
         
         updateAllDisplays();
-        
-        // Tampilkan tombol kirim
         document.getElementById('btnKirim').style.display = 'inline-flex';
     };
     
@@ -1446,14 +1458,12 @@
     }
     
     function updateAllDisplays() {
-        // Update summary header
         if (cacheRubrik) {
             const tpKeys = Object.keys(cacheRubrik);
             const sortedKeys = sortTPKeys(tpKeys);
             updateRubrikSummary(sortedKeys, selectedScores);
         }
         
-        // Update tombol kirim
         const btnKirim = document.getElementById('btnKirim');
         if (Object.keys(selectedScores).length > 0) {
             btnKirim.style.display = 'inline-flex';
@@ -1467,14 +1477,21 @@
         const tbody = document.getElementById('siswaTableBody');
         tbody.innerHTML = '';
         
-        // Update header TP
         const thead = document.querySelector('#siswaTable thead tr');
         const oldTpHeaders = thead.querySelectorAll('.tp-header');
         oldTpHeaders.forEach(el => el.remove());
         
+        // Urutkan TP dari yang terbesar ke terkecil (TP 1.4, 1.3, 1.2, 1.1)
+        let sortedTpKeys = [];
         if (tpKeys && tpKeys.length > 0) {
+            sortedTpKeys = [...tpKeys].sort((a, b) => {
+                const aNum = parseFloat(a.replace('TP ', ''));
+                const bNum = parseFloat(b.replace('TP ', ''));
+                return bNum - aNum;
+            });
+            
             const aksiTh = thead.querySelector('th:nth-child(3)');
-            tpKeys.forEach(tp => {
+            sortedTpKeys.forEach(tp => {
                 const th = document.createElement('th');
                 th.className = 'tp-header';
                 th.style.textAlign = 'center';
@@ -1498,35 +1515,45 @@
         let totalSiswa = siswaList.length;
         let hasDataCount = 0;
         
+        // Hitung siswa yang sudah mengumpulkan (punya data)
+        siswaList.forEach(siswa => {
+            const nama = siswa.nama || siswa.Nama || '';
+            const hasData = siswaJawabanData[nama] && Object.keys(siswaJawabanData[nama]).length > 0;
+            if (hasData) {
+                hasDataCount++;
+            }
+        });
+        
         siswaList.forEach((siswa, index) => {
             const tr = document.createElement('tr');
-            tr.dataset.nama = siswa.nama;
+            const nama = siswa.nama || siswa.Nama || '';
+            tr.dataset.nama = nama;
             tr.id = `siswa-row-${index}`;
             
-            const hasData = siswaJawabanData[siswa.nama] && Object.keys(siswaJawabanData[siswa.nama]).length > 0;
-            const btnDisabled = hasData ? '' : 'disabled';
+            // Cek apakah siswa punya data jawaban
+            const hasData = siswaJawabanData[nama] && Object.keys(siswaJawabanData[nama]).length > 0;
+            const isActive = currentSiswa === nama;
             
             let tdHtml = `
                 <td>${index + 1}</td>
-                <td class="nama-siswa">${escapeHtml(siswa.nama)}</td>
+                <td class="nama-siswa">${escapeHtml(nama)}</td>
                 <td>
-                    <button class="btn-lihat" data-nama="${escapeHtml(siswa.nama)}" onclick="toggleJawaban('${escapeHtml(siswa.nama)}')" ${btnDisabled}>
-                        <i class="fas fa-eye"></i> ${hasData ? 'Lihat' : 'Kosong'}
+                    <button class="btn-lihat ${isActive ? 'active' : ''}" 
+                            data-nama="${escapeHtml(nama)}" 
+                            onclick="toggleJawaban('${escapeHtml(nama)}')"
+                            ${!hasData ? 'disabled' : ''}>
+                        <i class="fas fa-eye"></i> ${hasData ? (isActive ? 'Tutup' : 'Lihat') : 'Kosong'}
                     </button>
                 </td>
             `;
             
-            // Tambahkan cell untuk setiap TP
-            if (tpKeys && tpKeys.length > 0) {
-                const nilaiSiswa = siswaNilaiInpen[siswa.nama] || {};
-                let hasAnyValue = false;
-                tpKeys.forEach(tp => {
+            if (sortedTpKeys && sortedTpKeys.length > 0) {
+                const nilaiSiswa = siswaNilaiInpen[nama] || {};
+                sortedTpKeys.forEach(tp => {
                     const value = nilaiSiswa[tp];
                     const hasValue = value !== undefined && value !== null && value !== '';
-                    if (hasValue) hasAnyValue = true;
                     tdHtml += `<td class="tp-cell ${hasValue ? 'has-value' : 'no-value'}">${hasValue ? value : '-'}</td>`;
                 });
-                if (hasAnyValue) hasDataCount++;
             }
             
             tr.innerHTML = tdHtml;
@@ -1549,8 +1576,15 @@
     
     // ==================== TOGGLE JAWABAN ====================
     function toggleJawaban(nama) {
+        // Cek apakah siswa punya data
+        const hasData = siswaJawabanData[nama] && Object.keys(siswaJawabanData[nama]).length > 0;
+        if (!hasData) {
+            // Jika tidak ada data, tidak melakukan apa-apa
+            return;
+        }
+        
         if (currentSiswa === nama) {
-            // Toggle off
+            // Tutup
             currentSiswa = null;
             document.getElementById('jawabanSiswaNama').textContent = '';
             document.getElementById('siswaAktifDisplay').textContent = '';
@@ -1559,13 +1593,14 @@
                     <i class="fas fa-info-circle"></i> Klik tombol "Lihat" pada daftar siswa untuk melihat jawaban
                 </div>
             `;
-            
-            // Reset rubrik
             resetRubrik();
-            
-            // Highlight row
             document.querySelectorAll('#siswaTableBody tr').forEach(row => {
                 row.classList.remove('active-row');
+                const btn = row.querySelector('.btn-lihat');
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-eye"></i> Lihat';
+                    btn.classList.remove('active');
+                }
             });
             return;
         }
@@ -1574,18 +1609,23 @@
         document.getElementById('jawabanSiswaNama').textContent = `👤 ${nama}`;
         document.getElementById('siswaAktifDisplay').textContent = `👤 ${nama}`;
         
-        // Highlight row
         document.querySelectorAll('#siswaTableBody tr').forEach(row => {
             row.classList.remove('active-row');
-            if (row.dataset.nama === nama) {
-                row.classList.add('active-row');
+            const btn = row.querySelector('.btn-lihat');
+            if (btn) {
+                if (row.dataset.nama === nama) {
+                    row.classList.add('active-row');
+                    btn.innerHTML = '<i class="fas fa-eye"></i> Tutup';
+                    btn.classList.add('active');
+                } else {
+                    btn.innerHTML = '<i class="fas fa-eye"></i> Lihat';
+                    btn.classList.remove('active');
+                }
             }
         });
         
-        // Reset rubrik
         resetRubrik();
         
-        // Tampilkan jawaban
         const data = siswaJawabanData[nama];
         if (data && Object.keys(data).length > 0) {
             document.getElementById('jawabanContent').innerHTML = renderJawaban(data);
@@ -1597,7 +1637,6 @@
             `;
         }
         
-        // Load nilai dari inpen jika ada
         loadNilaiSiswa(nama);
     }
     
@@ -1694,7 +1733,6 @@
             
             if (result && result.success) {
                 document.getElementById('saveStatus').innerHTML = `<span class="status-saved"><i class="fas fa-check"></i> Nilai untuk ${escapeHtml(currentSiswa)} berhasil disimpan!</span>`;
-                
                 siswaNilaiInpen[currentSiswa] = tpValues;
                 
                 const tpKeys = rubrikTPKeys;
@@ -1731,21 +1769,19 @@
     // ==================== TAMPILKAN DATA ====================
     async function tampilkanData() {
         currentSemester = document.getElementById('filterSemester').value;
-        currentAktivitasKode = document.getElementById('filterAktivitas').value;
+        currentAktivitasNama = document.getElementById('filterAktivitas').value;
         currentKelas = document.getElementById('filterKelas').value;
         
         if (!currentSemester) { alert('Pilih semester terlebih dahulu'); return; }
-        if (!currentAktivitasKode) { alert('Pilih aktivitas terlebih dahulu'); return; }
+        if (!currentAktivitasNama) { alert('Pilih aktivitas terlebih dahulu'); return; }
         if (!currentKelas) { alert('Pilih kelas terlebih dahulu'); return; }
-        
-        currentAktivitasNama = aktivitasMap[currentAktivitasKode] || currentAktivitasKode;
-        currentSheetName = 'Rekap_aktivitas';
         
         console.log('=== TAMPILKAN DATA ===');
         console.log('Semester:', currentSemester);
         console.log('Aktivitas:', currentAktivitasNama);
         console.log('Kelas:', currentKelas);
         
+        // Reset data
         siswaJawabanData = {};
         siswaNilaiInpen = {};
         currentSiswa = null;
@@ -1776,19 +1812,43 @@
             siswaNilaiInpen = nilaiInpen;
             console.log('Nilai inpen:', nilaiInpen);
             
+            // ===== PERBAIKAN: Proses data siswa =====
             const siswaList = [];
             siswaData.forEach(item => {
                 const nama = item.Nama || item.nama || '';
                 if (nama) {
                     siswaList.push({ nama: nama });
-                    siswaJawabanData[nama] = item;
+                    
+                    // Cek apakah ada data jawaban
+                    const itemCopy = {...item};
+                    // Hapus properti yang bukan jawaban
+                    delete itemCopy.Nama;
+                    delete itemCopy.nama;
+                    delete itemCopy.Kelas;
+                    delete itemCopy.kelas;
+                    delete itemCopy.Semester;
+                    delete itemCopy.semester;
+                    
+                    // Cek apakah ada data selain properti yang dihapus
+                    const hasData = Object.keys(itemCopy).some(key => {
+                        const val = item[key];
+                        return val !== undefined && val !== null && val !== '';
+                    });
+                    
+                    if (hasData) {
+                        siswaJawabanData[nama] = item;
+                        console.log(`✅ ${nama} memiliki data jawaban`);
+                    } else {
+                        siswaJawabanData[nama] = {};
+                        console.log(`❌ ${nama} TIDAK memiliki data jawaban`);
+                    }
                 }
             });
             
             if (rubrik) {
                 document.getElementById('rubrikContent').innerHTML = renderRubrik(rubrik, {});
             } else {
-                document.getElementById('rubrikContent').innerHTML = `<div class="empty-message" style="display:block;"><i class="fas fa-info-circle"></i> Rubrik tidak ditemukan</div>`;
+                document.getElementById('rubrikContent').innerHTML = `<div class="empty-message" style="display:block;"><i class="fas fa-info-circle"></i> Rubrik tidak ditemukan untuk aktivitas ini</div>`;
             }
             
             const tpKeys = rubrikTPKeys;

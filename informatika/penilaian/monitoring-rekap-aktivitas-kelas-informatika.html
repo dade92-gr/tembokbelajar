@@ -6,6 +6,9 @@
     <title>Rekap Aktivitas & Nilai - Informatika Guru</title>
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- TAMBAHKAN LIBRARY EXCELJS UNTUK EXPORT EXCEL DENGAN STYLING -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         :root {
             --info-primary: #3498db;
@@ -71,6 +74,30 @@
             margin-bottom: 1rem;
         }
         
+        .btn-export {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        .btn-export:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
         .login-required-overlay {
             position: fixed;
             top: 0;
@@ -93,10 +120,10 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
         .login-required-card i { font-size: 3rem; color: #e74c3c; margin-bottom: 1rem; }
-        .login-required-card h2 { color: #1f618d; margin-bottom: 0.5rem; }
+        .login-required-card h2 { color: var(--info-dark); margin-bottom: 0.5rem; }
         .login-required-card p { color: #666; margin-bottom: 1.5rem; }
         .login-required-card a {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: linear-gradient(135deg, var(--info-primary), var(--info-secondary));
             color: white;
             padding: 0.7rem 1.5rem;
             border-radius: 40px;
@@ -104,6 +131,10 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+        }
+        .login-required-card a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52,152,219,0.3);
         }
         
         .activities-container { padding: 2rem; max-width: 1600px; margin: 0 auto; }
@@ -288,7 +319,6 @@
         
         .rekap-table tr:hover { background: #f8f9fa; }
         
-        /* ===== STATUS 3 WARNA ===== */
         .status-belum-kumpul {
             display: inline-flex;
             align-items: center;
@@ -424,7 +454,6 @@
         
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* ===== MODAL PREVIEW ===== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -534,7 +563,6 @@
             padding-left: 1.2rem;
         }
         
-        /* ===== EXPAND - VERTICAL LIST ===== */
         .expand-btn {
             background: none;
             border: none;
@@ -644,6 +672,7 @@
             .activities-container { padding: 1rem; }
             .filter-form { flex-direction: column; }
             .btn-cek { width: 100%; justify-content: center; }
+            .btn-export { width: 100%; justify-content: center; }
             .rekap-table th, .rekap-table td { padding: 0.4rem; font-size: 0.65rem; }
             .info-panel-header { flex-direction: column; align-items: flex-start; }
             .profile-section { margin-left: 0; }
@@ -663,7 +692,7 @@
                 <ul class="nav-menu" id="nav-menu">
                     <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
                     <li><a href="../index-informatika.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda Informatika</a></li>
-                    <li><a href="../aktivitas-pembelajaran/index-aktifitas-informatika.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../aktivitas-pembelajaran/index-aktivitas-informatika.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
                     <li><a href="../materi-pembelajaran/index-materi-informatika.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
                     <li><a href="index-penilaian-informatika.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
                 </ul>
@@ -684,16 +713,21 @@
                         <h2><i class="fas fa-chart-line"></i> Rekap Aktivitas & Nilai Kelas</h2>
                         <p>Khusus Guru - Lihat status pengumpulan aktivitas dan nilai capaian TP siswa</p>
                     </div>
-                    <div id="profileContainer" style="display: none;">
-                        <div class="profile-section">
-                            <div class="profile-avatar" id="profileAvatar">G</div>
-                            <div class="profile-info">
-                                <div class="profile-name" id="profileName">Guru</div>
-                                <div class="profile-role" id="profileRole">Administrator</div>
+                    <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+                        <button class="btn-export" id="btnExportExcel" style="display:none;">
+                            <i class="fas fa-file-excel"></i> Export ke Excel
+                        </button>
+                        <div id="profileContainer" style="display: none;">
+                            <div class="profile-section">
+                                <div class="profile-avatar" id="profileAvatar">G</div>
+                                <div class="profile-info">
+                                    <div class="profile-name" id="profileName">Guru</div>
+                                    <div class="profile-role" id="profileRole">Administrator</div>
+                                </div>
+                                <button class="logout-btn" id="logoutBtn" title="Logout" onclick="handleLogout()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
                             </div>
-                            <button class="logout-btn" id="logoutBtn" title="Logout" onclick="handleLogout()">
-                                <i class="fas fa-sign-out-alt"></i>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -710,8 +744,8 @@
                         <label><i class="fas fa-calendar-alt"></i> Semester</label>
                         <select id="filterSemester">
                             <option value="">-- Pilih Semester --</option>
-                            <option value="ganjil" selected>Semester Ganjil</option>
-                            <option value="genap">Semester Genap</option>
+                            <option value="Ganjil" selected>Semester Ganjil</option>
+                            <option value="Genap">Semester Genap</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -833,36 +867,108 @@
         let currentKelas = '';
         let currentSemester = '';
         let aktivitasHeaders = [];
-        let aktivitasKodes = [];
-        let aktivitasNamaAsli = [];
         let siswaData = [];
         
-        // ==================== DESKRIPSI TP ====================
-        const DESKRIPSI_TP = {
-            'TP 1.1': 'Memahami dan menerapkan konsep algoritma dan struktur data dalam menyelesaikan masalah sehari-hari',
-            'TP 1.2': 'Menganalisis dan merepresentasikan data menggunakan struktur data yang tepat',
-            'TP 1.3': 'Menerapkan pemecahan masalah dengan pendekatan komputasi secara mandiri dan kolaboratif',
-            'TP 1.4': 'Membuat program sederhana menggunakan HTML dan JavaScript',
-            'TP 1.5': 'Mengimplementasikan kondisi dan perulangan dalam program sederhana',
-            'TP 1.6': 'Memahami model IPO (Input-Process-Output) dan arsitektur Von Neumann',
-            'TP 1.7': 'Memahami fungsi dan peran sistem operasi dalam komputer',
-            'TP 2.1': 'Mengidentifikasi dan menggunakan perangkat lunak pengolah dokumen, lembar kerja, dan presentasi',
-            'TP 2.2': 'Menerapkan prosedur keamanan dasar pada perangkat dan akun digital',
-            'TP 2.3': 'Menganalisis kasus keamanan digital dan memberikan solusi yang tepat',
-            'TP 2.4': 'Memahami dan menggunakan fitur kolaborasi pada Google Workspace',
-            'TP 2.5': 'Membuat portofolio digital yang aman dan terorganisir',
-            'TP 2.6': 'Memahami konsep digitalisasi budaya dan manfaatnya',
-            'TP 2.7': 'Memahami hak kekayaan intelektual dan pengelolaan jejak digital',
-            'TP 2.8': 'Mengidentifikasi profesi di bidang informatika dan perannya',
-            'TP 2.9': 'Membuat konten promosi budaya digital',
-            'TP 2.10': 'Mempresentasikan dan merefleksikan hasil proyek literasi informasi',
-            'TP 2.11': 'Menerapkan praktik keamanan akun digital (kata sandi kuat)',
-            'TP 2.12': 'Menerapkan autentikasi dua langkah (2FA) pada akun digital',
-            'TP 2.13': 'Membuat video edukasi tentang keamanan dan jejak digital'
+        // ==================== METADATA INFORMATIKA ====================
+        const METADATA_INFORMATIKA = {
+            barisPerKelas: 50,
+            headerRows: 2,
+            daftarTP: {
+                ganjil: ['TP 2.1', 'TP 2.2', 'TP 2.3', 'TP 2.4', 'TP 2.5', 'TP 2.6', 'TP 2.7', 'TP 2.8', 'TP 2.9', 'TP 2.10', 'TP 2.11', 'TP 2.12', 'TP 2.13'],
+                genap: ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4', 'TP 1.5', 'TP 1.6', 'TP 1.7']
+            }
+        };
+        
+        // ==================== JUMLAH AKTIVITAS PER TP ====================
+        const JUMLAH_AKTIVITAS_PER_TP = {
+            'TP 2.1': 2,
+            'TP 2.2': 1,
+            'TP 2.3': 2,
+            'TP 2.4': 2,
+            'TP 2.5': 2,
+            'TP 2.6': 1,
+            'TP 2.7': 2,
+            'TP 2.8': 1,
+            'TP 2.9': 1,
+            'TP 2.10': 1,
+            'TP 2.11': 2,
+            'TP 2.12': 2,
+            'TP 2.13': 2,
+            'TP 1.1': 3,
+            'TP 1.2': 2,
+            'TP 1.3': 2,
+            'TP 1.4': 4,
+            'TP 1.5': 3,
+            'TP 1.6': 3,
+            'TP 1.7': 2
+        };
+        
+        // ==================== MAP AKTIVITAS → TP ====================
+        const MAP_AKTIVITAS_TP = {
+            'AKTIVITAS 1 - Pengenalan Google Workspace & Keamanan Akun': ['TP 2.4', 'TP 2.5'],
+            'AKTIVITAS 2 - Praktik Produktivitas & Kolaborasi': ['TP 2.4'],
+            'AKTIVITAS 3 - Pengamanan & Portofolio Digital': ['TP 2.5'],
+            'AKTIVITAS 1 - Mengenal Budaya & Dunia Digital': ['TP 2.9'],
+            'AKTIVITAS 2 - Profesi Digital & Peran Informatika': ['TP 2.8'],
+            'AKTIVITAS 3 - Produksi Konten Budaya Digital': ['TP 2.6'],
+            'AKTIVITAS 1 - Hak Digital & Jejak Digital': ['TP 2.7'],
+            'AKTIVITAS 2 - Kelola Akun & Keamanan Digital': ['TP 2.11', 'TP 2.13'],
+            'AKTIVITAS 3 - Praktik Pengamanan Digital (2FA)': ['TP 2.12'],
+            'AKTIVITAS 4 - Edukasi Publik tentang Jejak Digital': ['TP 2.7', 'TP 2.11', 'TP 2.12', 'TP 2.13'],
+            'AKTIVITAS 1 - Pengantar Literasi Informasi': ['TP 2.1'],
+            'AKTIVITAS 2 - Strategi Mencari Informasi': ['TP 2.1'],
+            'AKTIVITAS 3 - Analisis Fakta & Cek Kebenaran': ['TP 2.2', 'TP 2.3'],
+            'AKTIVITAS 4 - Merancang Poster Edukatif': ['TP 2.3'],
+            'AKTIVITAS 5 - Presentasi & Refleksi': ['TP 2.10'],
+            'AKTIVITAS 1 - Mengenal Alur Komputasi & IPO': ['TP 1.6'],
+            'AKTIVITAS 2 - Simulasi Model IPO': ['TP 1.6'],
+            'AKTIVITAS 3 - Sistem Operasi & Model Von Neumann': ['TP 1.7'],
+            'AKTIVITAS 4 - Rancang & Uji Solusi': ['TP 1.4', 'TP 1.5'],
+            'AKTIVITAS 5 - Presentasi Mesin Pintar Mini': ['TP 1.4', 'TP 1.5', 'TP 1.6', 'TP 1.7'],
+            'AKTIVITAS 1 - Mengenal Algoritma & Struktur Data': ['TP 1.1'],
+            'AKTIVITAS 2 - Representasi Data & Logika Dasar': ['TP 1.1'],
+            'AKTIVITAS 3 - Pemecahan Masalah dengan Komputasi': ['TP 1.2', 'TP 1.3'],
+            'AKTIVITAS 4 - HTML Dasar dengan HTML Editor': ['TP 1.4', 'TP 1.5'],
+            'AKTIVITAS 5 - Kondisi & Perulangan Dasar': ['TP 1.4'],
+            'AKTIVITAS 6 - Presentasi Program Sederhana': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4', 'TP 1.5']
+        };
+        
+        // ==================== DESKRIPSI TP INFORMATIKA ====================
+        const DESKRIPSI_TP_INFORMATIKA = {
+            'TP 2.1': 'Memahami cara penggunaan mesin pencari dengan variabel pencarian yang kompleks',
+            'TP 2.2': 'Mengetahui dan menerapkan ekosistem periksa fakta untuk memilah fakta dan hoaks',
+            'TP 2.3': 'Menggunakan strategi membaca lateral untuk mengevaluasi informasi digital',
+            'TP 2.4': 'Menggunakan perangkat teknologi untuk mengolah dokumen, lembar kerja, dan presentasi',
+            'TP 2.5': 'Memahami dan menerapkan konfigurasi keamanan dasar untuk konektivitas jaringan lokal dan internet',
+            'TP 2.6': 'Menggunakan media digital untuk produksi konten, partisipasi aktif, dan kolaborasi daring',
+            'TP 2.7': 'Menunjukkan sikap menghargai hak atas kekayaan intelektual dalam dunia digital',
+            'TP 2.8': 'Mengenal berbagai profesi di bidang informatika dan kontribusinya dalam pelestarian budaya',
+            'TP 2.9': 'Memahami dan memberikan contoh penerapan digitalisasi budaya Indonesia',
+            'TP 2.10': 'Menyaring dan menghindari konten negatif di dunia digital',
+            'TP 2.11': 'Mengelola kata sandi secara aman menggunakan manajer kata sandi',
+            'TP 2.12': 'Menerapkan autentikasi dua langkah untuk meningkatkan keamanan akun digital',
+            'TP 2.13': 'Menerapkan pengaturan privasi dan keamanan akun di berbagai platform digital',
+            'TP 1.1': 'Memahami konsep dasar struktur data dan algoritma standar',
+            'TP 1.2': 'Menerapkan proses komputasi sederhana secara mandiri untuk mendapatkan data berkualitas',
+            'TP 1.3': 'Menerapkan proses komputasi kolaboratif untuk menghasilkan data yang berkualitas',
+            'TP 1.4': 'Menggunakan algoritma dan struktur data standar untuk menyelesaikan berbagai persoalan nyata',
+            'TP 1.5': 'Menuliskan rancangan solusi program sederhana dalam bentuk pseudocode',
+            'TP 1.6': 'Memahami dan menyimulasikan model Input–Process–Output (IPO) dalam komputer Von Neumann',
+            'TP 1.7': 'Menjelaskan fungsi dan peran sistem operasi dalam proses komputasi'
         };
         
         function getDeskripsiTP(tpKode) {
-            return DESKRIPSI_TP[tpKode] || '';
+            return DESKRIPSI_TP_INFORMATIKA[tpKode] || '';
+        }
+        
+        function getTPHeaders(semester) {
+            const sem = String(semester || '').toLowerCase();
+            if (sem === 'ganjil') {
+                return METADATA_INFORMATIKA.daftarTP.ganjil;
+            } else if (sem === 'genap') {
+                return METADATA_INFORMATIKA.daftarTP.genap;
+            }
+            return [];
         }
         
         // ==================== LOAD DATA SISWA ====================
@@ -906,71 +1012,178 @@
         // ==================== AMBIL DATA REKAP ====================
         async function fetchRekapData(semester, kelas) {
             try {
-                const url = `${APPS_SCRIPT_URL}?action=getRekapKelas&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&_=${Date.now()}`;
-                const response = await fetch(url);
-                const result = await response.json();
-                console.log('fetchRekapData result:', result);
-                return result;
-            } catch (error) {
-                console.error('Error fetchRekapData:', error);
-                throw error;
-            }
-        }
-        
-        // ==================== LOAD DAN RENDER ====================
-        async function loadAndRenderData() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const errorMsg = document.getElementById('errorMessage');
-            
-            loadingOverlay.style.display = 'flex';
-            errorMsg.style.display = 'none';
-            document.getElementById('aktivitasCard').style.display = 'none';
-            document.getElementById('nilaiCard').style.display = 'none';
-            document.getElementById('infoPanel').style.display = 'none';
-            
-            const btnCek = document.getElementById('btnCek');
-            btnCek.disabled = true;
-            btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
-            
-            try {
-                document.getElementById('loadingText').innerHTML = 'Mengambil data rekap...';
-                const result = await fetchRekapData(currentSemester, currentKelas);
+                console.log('📥 fetchRekapData - START');
+                console.log('  Semester:', semester);
+                console.log('  Kelas:', kelas);
                 
-                console.log('Result:', result);
+                // 1. Ambil daftar aktivitas dari data_mapel
+                const urlAktivitas = `${APPS_SCRIPT_URL}?action=getDaftarAktivitas&semester=${encodeURIComponent(semester)}&_=${Date.now()}`;
+                const respAktivitas = await fetch(urlAktivitas);
+                const resultAktivitas = await respAktivitas.json();
+                console.log('📊 Result Aktivitas:', resultAktivitas);
                 
-                if (result && result.success && result.data) {
-                    const data = result.data;
-                    
-                    if (!data.aktivitasHeaders || data.aktivitasHeaders.length === 0) {
-                        console.warn('Tidak ada aktivitas untuk semester ini');
-                        document.getElementById('errorText').innerHTML = `Tidak ada aktivitas untuk semester ${currentSemester}. Pastikan data di sheet Rekap_aktivitas sudah benar.`;
-                        errorMsg.style.display = 'block';
-                        return;
-                    }
-                    
-                    aktivitasHeaders = data.aktivitasHeaders || [];
-                    aktivitasKodes = data.aktivitasKodes || [];
-                    aktivitasNamaAsli = data.aktivitasNamaAsli || [];
-                    siswaData = data.siswaData || [];
-                    
-                    document.getElementById('infoSemester').innerText = currentSemester === 'ganjil' ? 'Ganjil' : 'Genap';
-                    document.getElementById('infoKelas').innerText = currentKelas;
-                    document.getElementById('infoTotalSiswa').innerText = siswaData.length;
-                    document.getElementById('infoPanel').style.display = 'flex';
-                    
-                    renderAktivitasTable();
-                    renderNilaiTable();
-                } else {
-                    throw new Error(result?.error || 'Gagal memuat data');
+                let aktivitasList = [];
+                let aktivitasProyekMap = {};
+                
+                if (resultAktivitas && resultAktivitas.success && resultAktivitas.aktivitas) {
+                    aktivitasList = resultAktivitas.aktivitas;
+                    resultAktivitas.aktivitas.forEach(item => {
+                        aktivitasProyekMap[item.nama] = item.proyek || '';
+                    });
                 }
+                
+                if (aktivitasList.length === 0) {
+                    return { success: false, error: 'Tidak ada aktivitas untuk semester ' + semester };
+                }
+                
+                // 2. Ambil data siswa dari getSiswaByKelas (gunakan aktivitas pertama)
+                const aktivitasPertama = aktivitasList[0].nama;
+                const urlSiswa = `${APPS_SCRIPT_URL}?action=getSiswaByKelas&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitasPertama)}&_=${Date.now()}`;
+                const respSiswa = await fetch(urlSiswa);
+                const resultSiswa = await respSiswa.json();
+                console.log('📊 Result Siswa:', resultSiswa);
+                
+                let semuaSiswa = {};
+                let daftarNama = [];
+                
+                if (resultSiswa && resultSiswa.success && resultSiswa.data) {
+                    resultSiswa.data.forEach(item => {
+                        const nama = item.nama || '';
+                        if (nama) {
+                            semuaSiswa[nama] = {
+                                nama: nama,
+                                kelas: kelas,
+                                aktivitas: {},
+                                nilaiTP: {},
+                                detailTP: {}
+                            };
+                            daftarNama.push(nama);
+                        }
+                    });
+                }
+                
+                // 3. Ambil data aktivitas per siswa
+                for (const aktivitas of aktivitasList) {
+                    try {
+                        const urlData = `${APPS_SCRIPT_URL}?action=getData&sheetName=Rekap_aktivitas&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitas.nama)}&semester=${encodeURIComponent(semester)}&_=${Date.now()}`;
+                        const respData = await fetch(urlData, { signal: AbortSignal.timeout(10000) });
+                        const resultData = await respData.json();
+                        console.log(`📊 Data untuk ${aktivitas.nama}:`, resultData);
+                        
+                        if (resultData && resultData.success && resultData.data) {
+                            resultData.data.forEach(item => {
+                                const nama = item.Nama || item.nama || '';
+                                if (nama && semuaSiswa[nama]) {
+                                    const timestamp = item.Timestamp || item.timestamp || '';
+                                    const isSudahKumpul = timestamp !== '' && timestamp !== null && timestamp !== undefined;
+                                    
+                                    if (!semuaSiswa[nama].aktivitas[aktivitas.nama]) {
+                                        semuaSiswa[nama].aktivitas[aktivitas.nama] = {
+                                            status: 'belum',
+                                            dinilai: false,
+                                            data: item,
+                                            proyek: aktivitasProyekMap[aktivitas.nama] || ''
+                                        };
+                                    }
+                                    if (isSudahKumpul) {
+                                        semuaSiswa[nama].aktivitas[aktivitas.nama].status = 'sudah';
+                                        semuaSiswa[nama].aktivitas[aktivitas.nama].data = item;
+                                        semuaSiswa[nama].aktivitas[aktivitas.nama].proyek = aktivitasProyekMap[aktivitas.nama] || '';
+                                        console.log(`✅ ${nama} sudah kumpul untuk ${aktivitas.nama}`);
+                                    }
+                                }
+                            });
+                        }
+                    } catch (err) {
+                        console.warn(`⚠️ Gagal mengambil data untuk ${aktivitas.nama}:`, err.message);
+                    }
+                }
+                
+                // 4. Ambil data nilai dari rekap_nilai
+                try {
+                    const urlNilai = `${APPS_SCRIPT_URL}?action=getRekapNilaiByKelas&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&_=${Date.now()}`;
+                    const respNilai = await fetch(urlNilai, { signal: AbortSignal.timeout(10000) });
+                    const resultNilai = await respNilai.json();
+                    console.log('📊 Result Nilai (getRekapNilaiByKelas):', resultNilai);
+                    
+                    if (resultNilai && resultNilai.success && resultNilai.data) {
+                        for (const siswaNilai of resultNilai.data) {
+                            const nama = siswaNilai.nama;
+                            if (semuaSiswa[nama]) {
+                                semuaSiswa[nama].detailTP = siswaNilai.detailTP || {};
+                                
+                                const nilaiTPBaru = {};
+                                const tpHeaders = getTPHeaders(semester);
+                                
+                                for (const tp of tpHeaders) {
+                                    const detailItems = semuaSiswa[nama].detailTP[tp] || [];
+                                    
+                                    let totalNilai = 0;
+                                    for (const item of detailItems) {
+                                        if (item.nilai !== null && item.nilai !== undefined && !isNaN(item.nilai)) {
+                                            totalNilai += parseFloat(item.nilai);
+                                        }
+                                    }
+                                    
+                                    const jumlahAktivitas = JUMLAH_AKTIVITAS_PER_TP[tp] || 0;
+                                    
+                                    if (jumlahAktivitas > 0) {
+                                        nilaiTPBaru[tp] = Math.round(totalNilai / jumlahAktivitas);
+                                    } else {
+                                        nilaiTPBaru[tp] = null;
+                                    }
+                                }
+                                
+                                semuaSiswa[nama].nilaiTP = nilaiTPBaru;
+                                console.log(`📊 Nilai TP untuk ${nama} (dihitung ulang):`, nilaiTPBaru);
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.warn('⚠️ Gagal mengambil nilai:', err.message);
+                }
+                
+                // 5. Konversi ke array dan urutkan
+                const siswaList = [];
+                let no = 1;
+                const sortedNama = daftarNama.sort();
+                for (const nama of sortedNama) {
+                    const siswa = semuaSiswa[nama];
+                    if (siswa) {
+                        for (const aktivitas of aktivitasList) {
+                            if (!siswa.aktivitas[aktivitas.nama]) {
+                                siswa.aktivitas[aktivitas.nama] = {
+                                    status: 'belum',
+                                    dinilai: false,
+                                    data: null,
+                                    proyek: aktivitasProyekMap[aktivitas.nama] || ''
+                                };
+                            }
+                        }
+                        siswa.no = no++;
+                        siswaList.push({
+                            no: siswa.no,
+                            nama: siswa.nama,
+                            kelas: siswa.kelas,
+                            aktivitas: siswa.aktivitas,
+                            nilaiTP: siswa.nilaiTP || {},
+                            detailTP: siswa.detailTP || {}
+                        });
+                    }
+                }
+                
+                console.log('📊 Total siswa:', siswaList.length);
+                console.log('📊 Aktivitas:', aktivitasList.map(a => a.nama));
+                
+                return {
+                    success: true,
+                    aktivitasHeaders: aktivitasList.map(a => a.nama),
+                    siswaData: siswaList
+                };
+                
             } catch (error) {
-                console.error(error);
-                errorMsg.style.display = 'block';
-                document.getElementById('errorText').innerHTML = error.message || 'Gagal memuat data. Silakan coba lagi.';
-            } finally {
-                loadingOverlay.style.display = 'none';
-                btnCek.disabled = false;
-                btnCek.innerHTML = '<i class="fas fa-search"></i> Tampilkan Rekap';
+                console.error('❌ Error fetchRekapData:', error);
+                throw error;
             }
         }
         
@@ -988,15 +1201,13 @@
                 return;
             }
             
-            // Build header
             let headerHtml = '<tr><th>NO</th><th>KELAS</th><th>NAMA</th>';
-            for (const header of aktivitasHeaders) {
-                headerHtml += `<th>${escapeHtml(header)}</th>`;
+            for (const aktivitas of aktivitasHeaders) {
+                headerHtml += `<th>${escapeHtml(aktivitas)}</th>`;
             }
             headerHtml += '</tr>';
             thead.innerHTML = headerHtml;
             
-            // Build body
             let html = '';
             let totalSudahKumpul = 0;
             let totalSudahDinilai = 0;
@@ -1008,11 +1219,8 @@
                     <td>${escapeHtml(siswa.kelas)}</td>
                     <td style="text-align:left;">${escapeHtml(siswa.nama)}</td>`;
                 
-                for (let i = 0; i < aktivitasHeaders.length; i++) {
-                    const namaAsli = aktivitasNamaAsli[i] || aktivitasHeaders[i];
-                    const kodeAktivitas = aktivitasKodes[i] || '';
-                    
-                    const statusAktivitas = siswa.aktivitas[namaAsli] || { status: 'belum', dinilai: false, kode: '' };
+                for (const aktivitas of aktivitasHeaders) {
+                    const statusAktivitas = siswa.aktivitas[aktivitas] || { status: 'belum', dinilai: false };
                     const isSudahKumpul = statusAktivitas.status === 'sudah';
                     const isSudahDinilai = statusAktivitas.dinilai === true;
                     
@@ -1033,7 +1241,7 @@
                     }
                     
                     const previewHtml = !previewDisabled
-                        ? `<button class="preview-btn" onclick="previewJawaban('${escapeHtml(kodeAktivitas)}', '${escapeHtml(siswa.nama)}', '${escapeHtml(namaAsli)}')">
+                        ? `<button class="preview-btn" onclick="previewJawaban('${escapeHtml(aktivitas)}', '${escapeHtml(siswa.nama)}')">
                             <i class="fas fa-eye" style="color: #3498db; font-size: 0.8rem;"></i>
                            </button>`
                         : `<button class="preview-btn" disabled><i class="fas fa-eye" style="color: #ccc; font-size: 0.8rem;"></i></button>`;
@@ -1063,16 +1271,8 @@
             const nilaiCard = document.getElementById('nilaiCard');
             const nilaiStats = document.getElementById('nilaiStats');
             
-            // Ambil semua TP yang tersedia dari data siswa
-            const tpSet = new Set();
-            for (const siswa of siswaData) {
-                if (siswa.nilaiTP) {
-                    for (const tp of Object.keys(siswa.nilaiTP)) {
-                        tpSet.add(tp);
-                    }
-                }
-            }
-            const tpHeaders = Array.from(tpSet).sort();
+            const tpHeaders = getTPHeaders(currentSemester);
+            console.log('📊 TP Headers untuk semester', currentSemester, ':', tpHeaders);
             
             if (!siswaData || siswaData.length === 0 || tpHeaders.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:2rem;">Tidak ada data nilai TP untuk semester ini</td></tr>';
@@ -1081,7 +1281,6 @@
                 return;
             }
             
-            // Build header
             let headerHtml = '<tr><th>NO</th><th>KELAS</th><th>NAMA</th>';
             for (const tp of tpHeaders) {
                 headerHtml += `<th>${escapeHtml(tp)}</th>`;
@@ -1089,7 +1288,6 @@
             headerHtml += '</tr>';
             thead.innerHTML = headerHtml;
             
-            // Build body
             let html = '';
             let semuaNilai = [];
             
@@ -1100,7 +1298,7 @@
                 html += `<td style="text-align:left;">${escapeHtml(siswa.nama)}</td>`;
                 
                 for (const tp of tpHeaders) {
-                    const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined ? siswa.nilaiTP[tp] : '-';
+                    const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined && siswa.nilaiTP[tp] !== null ? siswa.nilaiTP[tp] : '-';
                     const isNilaiValid = nilai !== '-' && !isNaN(parseFloat(nilai));
                     const nilaiNum = isNilaiValid ? parseFloat(nilai) : null;
                     
@@ -1110,9 +1308,9 @@
                     
                     let nilaiClass = '';
                     if (isNilaiValid) {
-                        if (nilaiNum >= 86) nilaiClass = 'nilai-baik';
-                        else if (nilaiNum >= 71) nilaiClass = 'nilai-baik';
-                        else if (nilaiNum >= 51) nilaiClass = 'nilai-cukup';
+                        if (nilaiNum >= 90) nilaiClass = 'nilai-baik';
+                        else if (nilaiNum >= 75) nilaiClass = 'nilai-baik';
+                        else if (nilaiNum >= 60) nilaiClass = 'nilai-cukup';
                         else nilaiClass = 'nilai-kurang';
                     }
                     
@@ -1133,10 +1331,10 @@
                 }
                 html += '</tr>';
                 
-                // Baris detail
+                // ===== BARIS DETAIL =====
                 for (const tp of tpHeaders) {
                     const detailId = `detail-${siswa.no}-${safeId(tp)}`;
-                    const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined ? siswa.nilaiTP[tp] : '-';
+                    const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined && siswa.nilaiTP[tp] !== null ? siswa.nilaiTP[tp] : '-';
                     const isNilaiValid = nilai !== '-' && !isNaN(parseFloat(nilai));
                     
                     const detailData = siswa.detailTP && siswa.detailTP[tp] ? siswa.detailTP[tp] : [];
@@ -1145,6 +1343,11 @@
                     html += `<td colspan="${3 + tpHeaders.length}" style="padding:0.5rem 1rem; background:#f8f9fa;">`;
                     
                     if (isNilaiValid && detailData.length > 0) {
+                        const aktivitasTerlibat = aktivitasHeaders.filter(aktivitas => {
+                            const tpList = MAP_AKTIVITAS_TP[aktivitas] || [];
+                            return tpList.includes(tp);
+                        });
+                        
                         html += `<div class="detail-container">`;
                         html += `<div class="detail-title">
                             <i class="fas fa-info-circle"></i> Detail Nilai ${escapeHtml(tp)} - ${escapeHtml(siswa.nama)}
@@ -1154,18 +1357,20 @@
                         
                         const predikat = getPredikat(parseFloat(nilai));
                         
-                        for (let i = 0; i < aktivitasHeaders.length; i++) {
-                            const headerLabel = aktivitasHeaders[i];
-                            const namaAsli = aktivitasNamaAsli[i] || headerLabel;
-                            
-                            const item = detailData.find(d => d.aktivitas === namaAsli);
+                        // ===== LOOP HANYA AKTIVITAS TERLIBAT DENGAN PROYEK =====
+                        for (const aktivitas of aktivitasTerlibat) {
+                            const item = detailData.find(d => d.aktivitas === aktivitas);
                             const nilaiAktivitas = item ? item.nilai : null;
                             const isAdaNilai = nilaiAktivitas !== null && !isNaN(nilaiAktivitas);
                             
                             const predikatAktivitas = isAdaNilai ? getPredikat(nilaiAktivitas) : { teks: 'Belum', kelas: '' };
                             
+                            // ===== TAMBAH: AMBIL PROYEK =====
+                            const proyek = siswa.aktivitas[aktivitas]?.proyek || '';
+                            const displayName = proyek ? `${proyek} - ${aktivitas}` : aktivitas;
+                            
                             html += `<div class="detail-item">
-                                <span class="aktivitas">${escapeHtml(headerLabel)}</span>
+                                <span class="aktivitas">${escapeHtml(displayName)}</span>
                                 <div class="nilai-info">
                                     <span class="nilai">${isAdaNilai ? nilaiAktivitas : '-'}</span>
                                     ${isAdaNilai ? `<span class="predikat ${predikatAktivitas.kelas}">${predikatAktivitas.teks}</span>` : ''}
@@ -1173,8 +1378,10 @@
                             </div>`;
                         }
                         
+                        const jumlahAktivitas = JUMLAH_AKTIVITAS_PER_TP[tp] || 0;
+                        
                         html += `<div class="detail-rata">
-                            <span>Rata-rata</span>
+                            <span>Rata-rata (${jumlahAktivitas} aktivitas)</span>
                             <div>
                                 <span class="nilai">${nilai}</span>
                                 <span class="predikat ${predikat.kelas}" style="margin-left:8px; padding:2px 10px; border-radius:12px; color:white; font-size:0.6rem;">${predikat.teks}</span>
@@ -1232,25 +1439,378 @@
         // ==================== PREDIKAT ====================
         function getPredikat(nilai) {
             if (nilai === null || nilai === undefined || isNaN(nilai)) {
-                return { teks: 'Belum', kelas: '', warna: '#95a5a6' };
+                return { teks: 'Belum', kelas: '', warna: '#95a5a6', tindakLanjut: 'Belum ada data nilai' };
             }
             if (nilai >= 90) {
-                return { teks: 'Mahir', kelas: 'predikat-mahir', warna: '#2980b9' };
+                return { teks: 'Mahir', kelas: 'predikat-mahir', warna: '#2980b9', tindakLanjut: 'Pertahankan prestasi, berikan tantangan lebih tinggi' };
             } else if (nilai >= 75) {
-                return { teks: 'Cakap', kelas: 'predikat-cakap', warna: '#27ae60' };
+                return { teks: 'Cakap', kelas: 'predikat-cakap', warna: '#27ae60', tindakLanjut: 'Tingkatkan pemahaman dengan latihan lanjutan' };
             } else if (nilai >= 60) {
-                return { teks: 'Berkembang', kelas: 'predikat-berkembang', warna: '#f39c12' };
+                return { teks: 'Berkembang', kelas: 'predikat-berkembang', warna: '#f39c12', tindakLanjut: 'Berikan bimbingan tambahan dan latihan intensif' };
             } else {
-                return { teks: 'Perlu Bimbingan', kelas: 'predikat-perlu-bimbingan', warna: '#e74c3c' };
+                return { teks: 'Perlu Bimbingan', kelas: 'predikat-perlu-bimbingan', warna: '#e74c3c', tindakLanjut: 'Perlu pendampingan khusus dan remedial' };
             }
         }
         
         function safeId(str) {
             return str.replace(/\./g, '_').replace(/\s+/g, '_').replace(/\(/g, '_').replace(/\)/g, '_');
         }
+
+        // ==================== EXPORT KE EXCEL (2 SHEET) ====================
+        async function exportToExcel() {
+            if (!siswaData || siswaData.length === 0 || !aktivitasHeaders || aktivitasHeaders.length === 0) {
+                alert('Tidak ada data untuk diexport. Silakan tampilkan rekap terlebih dahulu.');
+                return;
+            }
+
+            const tpHeaders = getTPHeaders(currentSemester);
+            
+            const btnExport = document.getElementById('btnExportExcel');
+            btnExport.disabled = true;
+            btnExport.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+            try {
+                const workbook = new ExcelJS.Workbook();
+                workbook.creator = 'Informatika Guru';
+                workbook.created = new Date();
+
+                // ============================================================
+                // ========== SHEET 1: "detail rekap nilai" (VERTIKAL) ==========
+                // ============================================================
+                const worksheet1 = workbook.addWorksheet('detail rekap nilai', {
+                    properties: { tabColor: { argb: 'FF3498DB' } },
+                    pageSetup: { orientation: 'landscape', fitToPage: true, margins: {
+                        left: 0.7, right: 0.7, top: 0.7, bottom: 0.7,
+                        header: 0.3, footer: 0.3
+                    }}
+                });
+
+                const borderStyle = {
+                    top: { style: 'thin', color: { argb: 'FF333333' } },
+                    bottom: { style: 'thin', color: { argb: 'FF333333' } },
+                    left: { style: 'thin', color: { argb: 'FF333333' } },
+                    right: { style: 'thin', color: { argb: 'FF333333' } }
+                };
+                
+                const headerFill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FF2E86C1' }
+                };
+                
+                const headerFont = {
+                    name: 'Segoe UI',
+                    size: 10,
+                    bold: true,
+                    color: { argb: 'FFFFFFFF' }
+                };
+                
+                const titleFont = {
+                    name: 'Segoe UI',
+                    size: 16,
+                    bold: true,
+                    color: { argb: 'FF1A5276' }
+                };
+
+                const totalCols = 10;
+                
+                const titleRow = worksheet1.getRow(1);
+                titleRow.height = 35;
+                
+                const titleCell = titleRow.getCell(1);
+                titleCell.value = `REKAP NILAI TP - ${currentKelas} (${currentSemester})`;
+                titleCell.font = titleFont;
+                titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+                worksheet1.mergeCells(1, 1, 1, totalCols);
+
+                const emptyRow = worksheet1.getRow(2);
+                emptyRow.height = 10;
+
+                const headerRow = worksheet1.getRow(3);
+                headerRow.height = 30;
+                
+                const headerColumns = ['NO', 'Nama', 'Kelas', 'TP', 'Deskripsi TP', 'Aktivitas', 'Nilai Per Aktivitas', 'Nilai Rata-Rata TP', 'Predikat', 'Tindak Lanjut'];
+                
+                for (let i = 0; i < headerColumns.length; i++) {
+                    const cell = headerRow.getCell(i + 1);
+                    cell.value = headerColumns[i];
+                    cell.font = headerFont;
+                    cell.fill = headerFill;
+                    cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: false };
+                    cell.border = borderStyle;
+                }
+
+                let currentRow = 4;
+                let no = 1;
+                
+                for (const siswa of siswaData) {
+                    const siswaStartRow = currentRow;
+                    
+                    for (const tp of tpHeaders) {
+                        const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined && siswa.nilaiTP[tp] !== null ? siswa.nilaiTP[tp] : '-';
+                        const isNilaiValid = nilai !== '-' && !isNaN(parseFloat(nilai));
+                        const nilaiNum = isNilaiValid ? parseFloat(nilai) : null;
+                        
+                        // ===== HANYA AKTIVITAS YANG MENGUKUR TP INI =====
+                        const aktivitasUntukTP = [];
+                        for (const aktivitas of aktivitasHeaders) {
+                            const tpList = MAP_AKTIVITAS_TP[aktivitas] || [];
+                            if (tpList.includes(tp)) {
+                                aktivitasUntukTP.push(aktivitas);
+                            }
+                        }
+                        
+                        const detailData = siswa.detailTP && siswa.detailTP[tp] ? siswa.detailTP[tp] : [];
+                        const nilaiMap = {};
+                        for (const d of detailData) {
+                            nilaiMap[d.aktivitas] = d.nilai;
+                        }
+                        
+                        const tpStartRow = currentRow;
+                        let barisDitulis = 0;
+                        
+                        for (const aktivitas of aktivitasUntukTP) {
+                            // ===== TAMBAH: AMBIL PROYEK =====
+                            const proyek = siswa.aktivitas[aktivitas]?.proyek || '';
+                            const displayAktivitas = proyek ? `${proyek} - ${aktivitas}` : aktivitas;
+                            
+                            const row = worksheet1.getRow(currentRow);
+                            row.height = 22;
+                            
+                            const nilaiAktivitas = nilaiMap[aktivitas] || '-';
+                            const isNilaiAktivitasValid = nilaiAktivitas !== '-' && !isNaN(parseFloat(nilaiAktivitas));
+                            
+                            const rowData = [
+                                no,
+                                siswa.nama,
+                                siswa.kelas,
+                                tp,
+                                getDeskripsiTP(tp),
+                                displayAktivitas,  // <-- PAKAI DISPLAY NAMA DENGAN PROYEK
+                                isNilaiAktivitasValid ? parseFloat(nilaiAktivitas) : '-',
+                                isNilaiValid ? nilaiNum : '-',
+                                isNilaiValid ? getPredikat(nilaiNum).teks : 'Belum Dinilai',
+                                isNilaiValid ? (getPredikat(nilaiNum).tindakLanjut || '-') : 'Belum ada data nilai'
+                            ];
+                            
+                            for (let i = 0; i < rowData.length; i++) {
+                                const cell = row.getCell(i + 1);
+                                cell.value = rowData[i];
+                                cell.border = borderStyle;
+                                cell.alignment = { 
+                                    vertical: 'middle', 
+                                    wrapText: false,
+                                    horizontal: (i === 0 || i === 3 || i === 6 || i === 7 || i === 8) ? 'center' : 'left'
+                                };
+                                
+                                if (i === 6 && isNilaiAktivitasValid) {
+                                    const num = parseFloat(nilaiAktivitas);
+                                    if (num >= 75) {
+                                        cell.font = { color: { argb: 'FF27AE60' }, bold: true };
+                                    } else if (num >= 60) {
+                                        cell.font = { color: { argb: 'FFF39C12' }, bold: true };
+                                    } else {
+                                        cell.font = { color: { argb: 'FFE74C3C' }, bold: true };
+                                    }
+                                }
+                                
+                                if (i === 7 && isNilaiValid) {
+                                    const num = parseFloat(rowData[i]);
+                                    if (num >= 75) {
+                                        cell.font = { color: { argb: 'FF27AE60' }, bold: true };
+                                    } else if (num >= 60) {
+                                        cell.font = { color: { argb: 'FFF39C12' }, bold: true };
+                                    } else {
+                                        cell.font = { color: { argb: 'FFE74C3C' }, bold: true };
+                                    }
+                                }
+                                
+                                if (i === 8) {
+                                    const val = rowData[i];
+                                    if (val === 'Mahir') {
+                                        cell.font = { color: { argb: 'FF2980B9' }, bold: true };
+                                    } else if (val === 'Cakap') {
+                                        cell.font = { color: { argb: 'FF27AE60' }, bold: true };
+                                    } else if (val === 'Berkembang') {
+                                        cell.font = { color: { argb: 'FFF39C12' }, bold: true };
+                                    } else if (val === 'Perlu Bimbingan') {
+                                        cell.font = { color: { argb: 'FFE74C3C' }, bold: true };
+                                    }
+                                }
+                            }
+                            
+                            currentRow++;
+                            barisDitulis++;
+                        }
+                        
+                        if (barisDitulis > 1) {
+                            worksheet1.mergeCells(tpStartRow, 4, currentRow - 1, 4);
+                            worksheet1.mergeCells(tpStartRow, 5, currentRow - 1, 5);
+                            worksheet1.mergeCells(tpStartRow, 8, currentRow - 1, 8);
+                            worksheet1.mergeCells(tpStartRow, 9, currentRow - 1, 9);
+                            worksheet1.mergeCells(tpStartRow, 10, currentRow - 1, 10);
+                            
+                            const mergedCellTp = worksheet1.getCell(tpStartRow, 4);
+                            mergedCellTp.alignment = { horizontal: 'center', vertical: 'middle' };
+                            mergedCellTp.font = { bold: true };
+                            
+                            const mergedCellDeskripsi = worksheet1.getCell(tpStartRow, 5);
+                            mergedCellDeskripsi.alignment = { horizontal: 'left', vertical: 'middle' };
+                            
+                            const mergedCellRata = worksheet1.getCell(tpStartRow, 8);
+                            mergedCellRata.alignment = { horizontal: 'center', vertical: 'middle' };
+                            if (isNilaiValid) {
+                                const num = parseFloat(mergedCellRata.value);
+                                if (num >= 75) {
+                                    mergedCellRata.font = { color: { argb: 'FF27AE60' }, bold: true };
+                                } else if (num >= 60) {
+                                    mergedCellRata.font = { color: { argb: 'FFF39C12' }, bold: true };
+                                } else {
+                                    mergedCellRata.font = { color: { argb: 'FFE74C3C' }, bold: true };
+                                }
+                            }
+                            
+                            const mergedCellPredikat = worksheet1.getCell(tpStartRow, 9);
+                            mergedCellPredikat.alignment = { horizontal: 'center', vertical: 'middle' };
+                            const valPredikat = mergedCellPredikat.value;
+                            if (valPredikat === 'Mahir') {
+                                mergedCellPredikat.font = { color: { argb: 'FF2980B9' }, bold: true };
+                            } else if (valPredikat === 'Cakap') {
+                                mergedCellPredikat.font = { color: { argb: 'FF27AE60' }, bold: true };
+                            } else if (valPredikat === 'Berkembang') {
+                                mergedCellPredikat.font = { color: { argb: 'FFF39C12' }, bold: true };
+                            } else if (valPredikat === 'Perlu Bimbingan') {
+                                mergedCellPredikat.font = { color: { argb: 'FFE74C3C' }, bold: true };
+                            }
+                            
+                            const mergedCellTindakLanjut = worksheet1.getCell(tpStartRow, 10);
+                            mergedCellTindakLanjut.alignment = { horizontal: 'left', vertical: 'middle' };
+                        }
+                    }
+                    
+                    const totalSiswaRows = currentRow - siswaStartRow;
+                    if (totalSiswaRows > 1) {
+                        worksheet1.mergeCells(siswaStartRow, 1, currentRow - 1, 1);
+                        worksheet1.mergeCells(siswaStartRow, 2, currentRow - 1, 2);
+                        worksheet1.mergeCells(siswaStartRow, 3, currentRow - 1, 3);
+                        
+                        const mergedCellNo = worksheet1.getCell(siswaStartRow, 1);
+                        mergedCellNo.alignment = { horizontal: 'center', vertical: 'middle' };
+                        mergedCellNo.font = { bold: true };
+                        
+                        const mergedCellNama = worksheet1.getCell(siswaStartRow, 2);
+                        mergedCellNama.alignment = { horizontal: 'left', vertical: 'middle' };
+                        mergedCellNama.font = { bold: true };
+                        
+                        const mergedCellKelas = worksheet1.getCell(siswaStartRow, 3);
+                        mergedCellKelas.alignment = { horizontal: 'center', vertical: 'middle' };
+                        mergedCellKelas.font = { bold: true };
+                    }
+                    
+                    no++;
+                }
+
+                worksheet1.getColumn(1).width = 6;
+                worksheet1.getColumn(2).width = 25;
+                worksheet1.getColumn(3).width = 12;
+                worksheet1.getColumn(4).width = 10;
+                worksheet1.getColumn(5).width = 50;
+                worksheet1.getColumn(6).width = 55;
+                worksheet1.getColumn(7).width = 18;
+                worksheet1.getColumn(8).width = 20;
+                worksheet1.getColumn(9).width = 18;
+                worksheet1.getColumn(10).width = 45;
+
+                worksheet1.views = [
+                    { state: 'frozen', ySplit: 3 }
+                ];
+
+                // ============================================================
+                // ========== SHEET 2: "rekap nilai" (HORIZONTAL) =============
+                // ============================================================
+                const worksheet2 = workbook.addWorksheet('rekap nilai', {
+                    properties: { tabColor: { argb: 'FF2980B9' } },
+                    pageSetup: { orientation: 'landscape', fitToPage: true }
+                });
+
+                const headerRow2 = worksheet2.getRow(1);
+                headerRow2.height = 30;
+                
+                const header2Columns = ['NO', 'Nama Murid', 'Kelas'];
+                for (const tp of tpHeaders) {
+                    header2Columns.push(tp);
+                }
+                
+                for (let i = 0; i < header2Columns.length; i++) {
+                    const cell = headerRow2.getCell(i + 1);
+                    cell.value = header2Columns[i];
+                    cell.font = headerFont;
+                    cell.fill = headerFill;
+                    cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: false };
+                    cell.border = borderStyle;
+                }
+
+                let rowIndex2 = 2;
+                let noSiswa = 1;
+                
+                for (const siswa of siswaData) {
+                    const row = worksheet2.getRow(rowIndex2);
+                    row.height = 22;
+                    
+                    const rowData = [noSiswa, siswa.nama, siswa.kelas];
+                    
+                    for (const tp of tpHeaders) {
+                        const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined && siswa.nilaiTP[tp] !== null ? siswa.nilaiTP[tp] : '-';
+                        rowData.push(nilai);
+                    }
+                    
+                    for (let i = 0; i < rowData.length; i++) {
+                        const cell = row.getCell(i + 1);
+                        cell.value = rowData[i];
+                        cell.border = borderStyle;
+                        cell.alignment = { 
+                            vertical: 'middle', 
+                            wrapText: false,
+                            horizontal: (i === 0 || i >= 3) ? 'center' : 'left'
+                        };
+                    }
+                    
+                    rowIndex2++;
+                    noSiswa++;
+                }
+
+                worksheet2.getColumn(1).width = 6;
+                worksheet2.getColumn(2).width = 25;
+                worksheet2.getColumn(3).width = 12;
+                for (let i = 0; i < tpHeaders.length; i++) {
+                    worksheet2.getColumn(4 + i).width = 14;
+                }
+
+                worksheet2.views = [
+                    { state: 'frozen', ySplit: 1 }
+                ];
+
+                // ============================================================
+                // ========== DOWNLOAD =========================================
+                // ============================================================
+                const fileName = `Rekap_Nilai_${currentKelas}_${currentSemester}_${new Date().toISOString().slice(0,10)}.xlsx`;
+                
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                saveAs(blob, fileName);
+                
+            } catch (error) {
+                console.error('Error export Excel:', error);
+                alert('Gagal mengekspor data: ' + error.message);
+            } finally {
+                const btnExport = document.getElementById('btnExportExcel');
+                btnExport.disabled = false;
+                btnExport.innerHTML = '<i class="fas fa-file-excel"></i> Export ke Excel';
+            }
+        }
         
         // ==================== PREVIEW JAWABAN ====================
-        async function previewJawaban(kodeAktivitas, namaSiswa, namaAktivitas) {
+        async function previewJawaban(aktivitasNama, namaSiswa) {
             const modalHtml = `
                 <div id="previewModal" class="modal-overlay" onclick="if(event.target===this) closePreviewModal()">
                     <div class="modal-container">
@@ -1260,7 +1820,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="modal-info">
-                                <p><strong>Aktivitas:</strong> ${escapeHtml(kodeAktivitas)}</p>
+                                <p><strong>Aktivitas:</strong> ${escapeHtml(aktivitasNama)}</p>
                                 <p><strong>Siswa:</strong> ${escapeHtml(namaSiswa)}</p>
                                 <p><strong>Kelas:</strong> ${escapeHtml(currentKelas)}</p>
                             </div>
@@ -1281,69 +1841,75 @@
             try {
                 const previewWrapper = document.getElementById('previewContentWrapper');
                 const url = getAppsScriptUrl();
-                
-                // Ambil data dari sheet sesuai kode aktivitas
-                const response = await fetch(`${url}?action=getData&sheetName=${encodeURIComponent(kodeAktivitas)}&kelas=${encodeURIComponent(currentKelas)}&nama=${encodeURIComponent(namaSiswa)}&_=${Date.now()}`);
+                const response = await fetch(`${url}?action=getData&sheetName=Rekap_aktivitas&kelas=${encodeURIComponent(currentKelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&semester=${encodeURIComponent(currentSemester)}&_=${Date.now()}`);
                 const result = await response.json();
                 
-                console.log('Preview result:', result);
-                
-                if (result && result.success && result.data && result.data.length > 0) {
-                    const jawabanData = result.data[0];
-                    let contentHtml = '';
+                if (result && result.success && result.data) {
+                    let jawabanData = null;
+                    for (const item of result.data) {
+                        const nama = item.Nama || item.nama || '';
+                        if (nama === namaSiswa) {
+                            jawabanData = item;
+                            break;
+                        }
+                    }
                     
-                    const excludeKeys = ['Key', 'key', '_key', 'Kelas', 'kelas', 'Nama', 'nama', 'Semester', 'semester', 'Status', 'status', 'No', 'no'];
-                    
-                    const keys = Object.keys(jawabanData).filter(key => {
-                        if (key.startsWith('_')) return false;
-                        if (excludeKeys.includes(key)) return false;
-                        if (excludeKeys.includes(key.toLowerCase())) return false;
-                        return true;
-                    });
-                    
-                    keys.sort((a, b) => {
-                        const aIsBagian = a.startsWith('Bagian_');
-                        const bIsBagian = b.startsWith('Bagian_');
-                        if (aIsBagian && !bIsBagian) return -1;
-                        if (!aIsBagian && bIsBagian) return 1;
-                        return a.localeCompare(b);
-                    });
-                    
-                    for (const key of keys) {
-                        let value = jawabanData[key];
+                    if (jawabanData) {
+                        let contentHtml = '';
                         
-                        if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
-                            try {
-                                value = JSON.parse(value);
-                            } catch(e) {}
+                        const excludeKeys = ['Key', 'key', '_key', 'Kelas', 'kelas', 'Nama', 'nama', 'Semester', 'semester', 'Status', 'status', 'Timestamp', 'timestamp', '_timestamp', 'No', 'no'];
+                        
+                        const keys = Object.keys(jawabanData).filter(key => {
+                            if (key.startsWith('_')) return false;
+                            if (excludeKeys.includes(key)) return false;
+                            if (excludeKeys.includes(key.toLowerCase())) return false;
+                            return true;
+                        });
+                        
+                        keys.sort((a, b) => {
+                            const aIsBagian = a.startsWith('Bagian_');
+                            const bIsBagian = b.startsWith('Bagian_');
+                            if (aIsBagian && !bIsBagian) return -1;
+                            if (!aIsBagian && bIsBagian) return 1;
+                            return a.localeCompare(b);
+                        });
+                        
+                        for (const key of keys) {
+                            let value = jawabanData[key];
+                            
+                            if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+                                try {
+                                    value = JSON.parse(value);
+                                } catch(e) {}
+                            }
+                            
+                            let icon = 'fa-file-alt';
+                            if (key.startsWith('Bagian_')) icon = 'fa-folder';
+                            else if (key.toLowerCase().includes('jawaban')) icon = 'fa-edit';
+                            else if (key.toLowerCase().includes('nilai')) icon = 'fa-star';
+                            
+                            contentHtml += `
+                                <div class="preview-field">
+                                    <div class="preview-field-header">
+                                        <i class="fas ${icon}"></i> ${escapeHtml(formatLabel(key))}
+                                    </div>
+                                    <div class="preview-field-value">
+                                        ${renderPreviewValue(value)}
+                                    </div>
+                                </div>
+                            `;
                         }
                         
-                        let icon = 'fa-file-alt';
-                        if (key.startsWith('Bagian_')) icon = 'fa-folder';
-                        else if (key.toLowerCase().includes('jawaban')) icon = 'fa-edit';
-                        else if (key.toLowerCase().includes('nilai')) icon = 'fa-star';
-                        else if (key.toLowerCase().includes('link')) icon = 'fa-link';
-                        else if (key.toLowerCase().includes('status')) icon = 'fa-check-circle';
+                        if (contentHtml === '') {
+                            contentHtml = '<div style="text-align:center; color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data untuk ditampilkan</div>';
+                        }
                         
-                        contentHtml += `
-                            <div class="preview-field">
-                                <div class="preview-field-header">
-                                    <i class="fas ${icon}"></i> ${escapeHtml(formatLabel(key))}
-                                </div>
-                                <div class="preview-field-value">
-                                    ${renderPreviewValue(value)}
-                                </div>
-                            </div>
-                        `;
+                        previewWrapper.innerHTML = contentHtml;
+                    } else {
+                        previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban siswa tidak ditemukan.</div>';
                     }
-                    
-                    if (contentHtml === '') {
-                        contentHtml = '<div style="text-align:center; color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data untuk ditampilkan</div>';
-                    }
-                    
-                    previewWrapper.innerHTML = contentHtml;
                 } else {
-                    previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban tidak ditemukan. Pastikan siswa sudah mengerjakan aktivitas ini.</div>';
+                    previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban tidak ditemukan.</div>';
                 }
             } catch (error) {
                 console.error('Error preview jawaban:', error);
@@ -1427,7 +1993,7 @@
                         if (displayValue === '' || displayValue === null || displayValue === undefined) {
                             displayValue = '-';
                         } else if (typeof displayValue === 'boolean') {
-                            displayValue = displayValue ? '✅ Ya' : '❌ Tidak';
+                            displayValue = displayValue ? '✅ Ya' : '❌ Não';
                         }
                         objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> <span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">${escapeHtml(String(displayValue))}</span></div>`;
                     }
@@ -1455,6 +2021,53 @@
             return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
         }
         
+        // ==================== LOAD DAN RENDER ====================
+        async function loadAndRenderData() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            loadingOverlay.style.display = 'flex';
+            errorMsg.style.display = 'none';
+            document.getElementById('aktivitasCard').style.display = 'none';
+            document.getElementById('nilaiCard').style.display = 'none';
+            document.getElementById('infoPanel').style.display = 'none';
+            document.getElementById('btnExportExcel').style.display = 'none';
+            
+            const btnCek = document.getElementById('btnCek');
+            btnCek.disabled = true;
+            btnCek.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+            
+            try {
+                document.getElementById('loadingText').innerHTML = 'Mengambil data rekap...';
+                const result = await fetchRekapData(currentSemester, currentKelas);
+                
+                if (result && result.success) {
+                    aktivitasHeaders = result.aktivitasHeaders || [];
+                    siswaData = result.siswaData || [];
+                    
+                    document.getElementById('infoSemester').innerText = currentSemester === 'Ganjil' ? 'Ganjil' : 'Genap';
+                    document.getElementById('infoKelas').innerText = currentKelas;
+                    document.getElementById('infoTotalSiswa').innerText = siswaData.length;
+                    document.getElementById('infoPanel').style.display = 'flex';
+                    
+                    renderAktivitasTable();
+                    renderNilaiTable();
+                    
+                    document.getElementById('btnExportExcel').style.display = 'inline-flex';
+                } else {
+                    throw new Error(result?.error || 'Gagal memuat data');
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                errorMsg.style.display = 'block';
+                document.getElementById('errorText').innerHTML = error.message || 'Gagal memuat data. Silakan coba lagi.';
+            } finally {
+                loadingOverlay.style.display = 'none';
+                btnCek.disabled = false;
+                btnCek.innerHTML = '<i class="fas fa-search"></i> Tampilkan Rekap';
+            }
+        }
+        
         // ==================== CEK DATA ====================
         async function cekRekap() {
             const semester = document.getElementById('filterSemester').value;
@@ -1478,6 +2091,8 @@
             }
             
             loadProfileFromSession();
+            
+            document.getElementById('btnExportExcel').addEventListener('click', exportToExcel);
             
             const loadingOverlay = document.getElementById('loadingOverlay');
             loadingOverlay.style.display = 'flex';
