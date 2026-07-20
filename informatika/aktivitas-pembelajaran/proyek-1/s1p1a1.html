@@ -699,7 +699,7 @@
                     <li><a href="../../index-informatika.html" class="nav-link"><i class="fas fa-laptop-code"></i> Beranda Informatika</a></li>
                     <li><a href="../index-aktivitas-informatika.html" class="nav-link active"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
                     <li><a href="../../materi-pembelajaran/index-materi-informatika.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
-                    <li><a href="../../penilaian/index-penilaian-inform.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                    <li><a href="../../penilaian/index-penilaian-informatika.html" class="nav-link"><i class="fas fa-chart-line"></i> Penilaian</a></li>
                 </ul>
                 <div class="hamburger" id="hamburger">
                     <span class="bar"></span>
@@ -1658,43 +1658,42 @@
         }
 
         // ==================== EXPORT TO DOCX ====================
-        function exportToDocx() {
-            const exportBtn = document.getElementById('exportBtn');
-            exportBtn.disabled = true;
-            exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+        // ==================== EXPORT TEMPLATE LEMBAR AKTIVITAS (KOSONG) ====================
+function exportToDocx() {
+    const exportBtn = document.getElementById('exportBtn');
+    exportBtn.disabled = true;
+    exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
 
-            try {
-                const worksheet = document.getElementById('worksheetForm');
-                const clone = worksheet.cloneNode(true);
-                
-                const submitBtn = clone.querySelector('.btn-submit');
-                if (submitBtn) submitBtn.remove();
-                
-                const exportWrapper = clone.querySelector('.export-wrapper');
-                if (exportWrapper) exportWrapper.remove();
-                
-                const navButtons = clone.querySelectorAll('.activity-navigation, .nav-btn');
-                navButtons.forEach(el => el.remove());
-                
-                const connStatus = clone.querySelector('.connection-status');
-                if (connStatus) connStatus.remove();
-                
-                const loadingMsg = clone.querySelector('#loadingMessage');
-                if (loadingMsg) loadingMsg.remove();
-                
-                const errorMsg = clone.querySelector('#errorMessage');
-                if (errorMsg) errorMsg.remove();
-                
-                const modals = clone.querySelectorAll('.modal');
-                modals.forEach(el => el.remove());
-
-                const wordStyles = `
+    try {
+        // === BANGUN HTML TEMPLATE KOSONG UNTUK WORD ===
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('id-ID', {
+            day: 'numeric', month: 'long', year: 'numeric'
+        });
+        
+        let htmlContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                  xmlns:w='urn:schemas-microsoft-com:office:word' 
+                  xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset="UTF-8">
+                <title>LKPD - Proyek 1 Aktivitas 1</title>
+                <!--[if gte mso 9]>
+                <xml>
+                    <w:WordDocument>
+                        <w:View>Print</w:View>
+                        <w:Zoom>100</w:Zoom>
+                    </w:WordDocument>
+                </xml>
+                <![endif]-->
+                <style>
+                    /* ===== STYLE UNTUK TEMPLATE ===== */
                     body {
-                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
                         font-size: 11pt;
-                        line-height: 1.6;
-                        color: #2c3e50;
-                        padding: 30px;
+                        line-height: 1.5;
+                        color: #222;
+                        padding: 30px 40px;
                         margin: 0;
                     }
                     
@@ -1702,259 +1701,551 @@
                         color: #21618c;
                         font-size: 18pt;
                         text-align: center;
-                        border-bottom: 3px solid #ebf5fb;
-                        padding-bottom: 10px;
-                        margin: 0 0 20px 0;
+                        font-weight: bold;
+                        border-bottom: 2px solid #d5f4e6;
+                        padding-bottom: 8px;
+                        margin: 0 0 15px 0;
                     }
                     
                     .worksheet-subtitle {
                         color: #2980b9;
-                        font-size: 14pt;
+                        font-size: 13pt;
                         font-weight: 600;
-                        border-left: 5px solid #3498db;
-                        padding-left: 15px;
-                        margin: 20px 0 10px 0;
+                        border-left: 4px solid #2980b9;
+                        padding-left: 12px;
+                        margin: 18px 0 8px 0;
                     }
                     
                     .section-title {
-                        font-size: 13pt;
-                        font-weight: 600;
-                        margin: 15px 0 10px 0;
                         color: #21618c;
+                        font-size: 12pt;
+                        font-weight: 600;
                         border-bottom: 2px solid #ebf5fb;
-                        padding-bottom: 8px;
+                        padding-bottom: 6px;
+                        margin: 15px 0 8px 0;
                     }
                     
+                    .subtitle {
+                        color: #666;
+                        font-size: 10pt;
+                        margin-bottom: 12px;
+                    }
+                    .subtitle span {
+                        margin-right: 15px;
+                    }
+                    
+                    /* ===== IDENTITAS ===== */
                     .identitas-box {
-                        background: #ebf5fb;
-                        border-radius: 10px;
-                        padding: 15px;
-                        margin-bottom: 20px;
+                        background: #f0f8f0;
+                        padding: 12px 15px;
+                        margin-bottom: 15px;
+                        border-radius: 4px;
                     }
                     .identitas-box table {
                         width: 100%;
                         border: none;
                     }
                     .identitas-box td {
-                        padding: 8px 10px;
+                        padding: 4px 8px;
                         border: none;
-                        vertical-align: top;
+                        vertical-align: middle;
                     }
-                    .identitas-box label {
+                    .identitas-box .label {
                         font-weight: 600;
                         color: #21618c;
-                        display: block;
+                        width: 80px;
                     }
-                    .identitas-box input, .identitas-box select {
-                        width: 100%;
-                        padding: 6px 8px;
-                        border: 2px solid white;
-                        border-radius: 6px;
-                        font-size: 11pt;
-                        background: white;
+                    .identitas-box .kosong {
+                        border-bottom: 1px solid #999;
+                        min-width: 150px;
+                        display: inline-block;
+                        padding: 0 20px 0 5px;
+                        color: #999;
+                        font-style: italic;
                     }
                     
+                    /* ===== TABEL DASAR ===== */
                     table {
                         width: 100%;
                         border-collapse: collapse;
-                        margin: 10px 0;
-                        font-size: 11pt;
+                        margin: 8px 0;
+                        font-size: 10pt;
                     }
                     
                     th {
                         background: #3498db;
                         color: white;
-                        padding: 8px 10px;
+                        padding: 6px 8px;
                         text-align: left;
                         font-weight: 600;
                         border: 1px solid #3498db;
                     }
                     
                     td {
-                        padding: 8px 10px;
+                        padding: 6px 8px;
                         border: 1px solid #ddd;
                         vertical-align: top;
                     }
                     
+                    /* ===== CHECKBOX ===== */
                     .checkbox-grid {
                         display: flex;
                         flex-wrap: wrap;
-                        gap: 10px 20px;
-                        margin: 10px 0;
+                        gap: 8px 20px;
+                        margin: 8px 0;
                     }
                     .checkbox-item {
                         display: flex;
                         align-items: center;
-                        gap: 8px;
+                        gap: 6px;
                     }
-                    .checkbox-item input[type="checkbox"] {
-                        width: 16px;
-                        height: 16px;
-                    }
-                    
-                    textarea, input[type="text"], input[type="number"], select {
-                        width: 100%;
-                        padding: 5px 8px;
-                        border: 2px solid #e0e0e0;
-                        border-radius: 6px;
-                        font-family: inherit;
-                        font-size: 11pt;
+                    .checkbox-item .kotak-cek {
+                        display: inline-block;
+                        width: 14px;
+                        height: 14px;
+                        border: 2px solid #999;
+                        background: white;
+                        margin-right: 5px;
                     }
                     
+                    /* ===== RADIO ===== */
                     .radio-group {
                         display: flex;
                         gap: 15px;
                         flex-wrap: wrap;
                     }
                     .radio-group label {
-                        display: flex;
+                        display: inline-flex;
                         align-items: center;
                         gap: 5px;
                     }
-                    .radio-group input[type="radio"] {
+                    .radio-group .lingkaran-cek {
+                        display: inline-block;
                         width: 14px;
                         height: 14px;
+                        border: 2px solid #999;
+                        border-radius: 50%;
+                        background: white;
+                        margin-right: 5px;
                     }
                     
+                    /* ===== TEMPAT JAWABAN ===== */
+                    .tempat-jawaban {
+                        background: #fafafa;
+                        padding: 4px 8px;
+                        border-radius: 3px;
+                        border: 1px dashed #ccc;
+                        display: block;
+                        min-height: 35px;
+                        color: #999;
+                        font-style: italic;
+                    }
+                    
+                    .tempat-jawaban-inline {
+                        background: #fafafa;
+                        padding: 2px 8px;
+                        border-radius: 3px;
+                        border: 1px dashed #ccc;
+                        display: inline-block;
+                        min-width: 150px;
+                        color: #999;
+                        font-style: italic;
+                    }
+                    
+                    textarea.tempat-jawaban {
+                        min-height: 50px;
+                        width: 100%;
+                        box-sizing: border-box;
+                        font-family: inherit;
+                        font-size: 10pt;
+                    }
+                    
+                    /* ===== INSTRUCTION BOX ===== */
                     .instruction-box {
                         background: #ebf5fb;
-                        padding: 10px 15px;
-                        border-radius: 8px;
-                        margin: 10px 0;
+                        padding: 8px 12px;
                         border-left: 4px solid #3498db;
+                        margin: 8px 0;
+                        border-radius: 4px;
                     }
                     
                     .security-tip {
                         background: #e8f5e9;
-                        padding: 10px 15px;
-                        border-radius: 8px;
-                        margin: 10px 0;
+                        padding: 8px 12px;
                         border-left: 4px solid #4caf50;
+                        margin: 8px 0;
+                        border-radius: 4px;
                     }
                     
                     .section-card {
                         border: 1px solid #e0e7ff;
-                        border-radius: 10px;
-                        padding: 15px;
-                        margin-bottom: 20px;
+                        border-radius: 8px;
+                        padding: 12px 15px;
+                        margin-bottom: 15px;
+                    }
+                    
+                    /* ===== QA TABLE ===== */
+                    .qa-table .question-col { width: 40%; }
+                    .qa-table .answer-col { width: 60%; }
+                    
+                    /* ===== FOOTER ===== */
+                    .footer-text {
+                        text-align: center;
+                        color: #999;
+                        font-size: 9pt;
+                        margin-top: 20px;
+                        border-top: 1px solid #eee;
+                        padding-top: 10px;
+                    }
+                    
+                    /* ===== SEMBUNYIKAN ELEMEN TIDAK PERLU ===== */
+                    .btn, .btn-submit, .export-wrapper, 
+                    .connection-status, .success-message, .error-message,
+                    .loading-message, .activity-navigation, .nav-btn,
+                    .modal, .modal-content, #confirmModal, #resetModal,
+                    .reset-button, .hamburger, .navbar, header,
+                    .alert, .refresh-btn {
+                        display: none !important;
                     }
                     
                     .informatika-content-card {
-                        padding: 20px;
+                        padding: 15px;
                         border-left: 5px solid #3498db;
-                        margin-bottom: 20px;
+                        margin-bottom: 15px;
                     }
                     
                     .informatika-content-card h2 {
                         color: #21618c;
-                        font-size: 20pt;
+                        font-size: 18pt;
                     }
                     
-                    .subtitle {
-                        color: #666;
-                        font-size: 10pt;
-                        margin-bottom: 15px;
-                    }
-                    .subtitle span {
-                        margin-right: 15px;
-                    }
-                    
-                    .answer-field {
-                        width: 100% !important;
-                        padding: 5px 8px !important;
-                        border: 2px solid #d0dbe8 !important;
-                        border-radius: 6px !important;
-                        font-size: 11pt !important;
-                        font-family: inherit !important;
-                        background: #fafcfe !important;
-                        box-sizing: border-box !important;
-                        resize: vertical;
+                    .informatika-content-card > p {
+                        font-size: 11pt;
+                        padding: 8px 12px;
+                        background: #ebf5fb;
+                        border-radius: 6px;
+                        border-left: 4px solid #3498db;
                     }
                     
-                    .qa-table .question-col { width: 40%; }
-                    .qa-table .answer-col { width: 60%; }
-                    
-                    .alert, .connection-status, .success-message, .error-message, 
-                    .loading-message, .activity-navigation, .nav-btn,
-                    .modal, .modal-content {
-                        display: none !important;
-                    }
-                    
-                    .export-wrapper {
-                        display: none !important;
-                    }
-                    
-                    .btn-submit {
-                        display: none !important;
-                    }
-                    
-                    .refresh-btn {
-                        display: none !important;
+                    hr {
+                        border: 0;
+                        border-top: 2px solid #d5f4e6;
+                        margin: 15px 0;
                     }
                     
                     ol {
                         margin-left: 20px;
                         color: #555;
                     }
-                `;
+                    
+                    .worksheet-container {
+                        padding: 0;
+                        margin: 0;
+                        border: none;
+                        box-shadow: none;
+                    }
+                </style>
+            </head>
+            <body>
+                <!-- ===== HEADER ===== -->
+                <div class="informatika-content-card">
+                    <h2>Proyek 1 Aktivitas 1: Pengenalan Google Workspace & Keamanan Akun</h2>
+                    <div class="subtitle">
+                        <span>📅 Pertemuan 1 • Proyek 1: Saya Siap Jadi Kreator Digital</span>
+                        <span>⏰ 4 JP</span>
+                    </div>
+                    <p><i>"Mengenal Google Workspace dan mengamankan akun Google sebagai bekal menjadi kreator digital."</i></p>
+                </div>
+                
+                <div class="instruction-box" style="background:#e8f5e9; border-left-color: #3498db;">
+                    <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
+                    Sebelum memulai proyek, mari kita kenali alat yang akan kita gunakan dan amankan akun kita terlebih dahulu!
+                </div>
 
-                const content = `
-                    <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-                          xmlns:w='urn:schemas-microsoft-com:office:word' 
-                          xmlns='http://www.w3.org/TR/REC-html40'>
-                    <head>
-                        <meta charset="UTF-8">
-                        <title>LKPD Proyek 1 Aktivitas 1</title>
-                        <!--[if gte mso 9]>
-                        <xml>
-                            <w:WordDocument>
-                                <w:View>Print</w:View>
-                                <w:Zoom>100</w:Zoom>
-                            </w:WordDocument>
-                        </xml>
-                        <![endif]-->
-                        <style>
-                            @page {
-                                size: A4;
-                                margin: 2cm 2cm 2cm 2cm;
-                            }
-                            ${wordStyles}
-                        </style>
-                    </head>
-                    <body>
-                        ${clone.innerHTML}
-                    </body>
-                    </html>
-                `;
+                <h1 class="worksheet-title">LEMBAR KERJA PESERTA DIDIK (LKPD) PROYEK 1 – AKTIVITAS 1</h1>
+                <p style="text-align: center; margin-bottom: 1.5rem; font-size: 12pt; color: #9b59b6;">
+                    <strong>PENGENALAN GOOGLE WORKSPACE & KEAMANAN AKUN</strong>
+                </p>
+                <div style="text-align: center; margin-bottom: 1.5rem; background: #ebf5fb; padding: 0.8rem; border-radius: 8px;">
+                    <p><strong>Tujuan Pembelajaran (TP 2.4 & 2.5):</strong> Mengenal Google Workspace dan menerapkan keamanan dasar akun digital.</p>
+                </div>
 
-                const blob = new Blob([content], {
-                    type: 'application/msword;charset=utf-8'
-                });
+                <!-- ===== IDENTITAS ===== -->
+                <h3 class="worksheet-subtitle">IDENTITAS KELOMPOK</h3>
+                <div class="identitas-box">
+                    <table>
+                        <tr><td class="label">Kelas</td><td>: <span class="kosong">_________________</span></td></tr>
+                        <tr><td class="label">Nama Lengkap</td><td>: <span class="kosong">_________________</span></td></tr>
+                        <tr><td class="label">Nama Kelompok</td><td>: <span class="kosong">_________________</span></td></tr>
+                        <tr><td class="label">Peran dalam Kelompok</td><td>: <span class="kosong">_________________</span></td></tr>
+                    </table>
+                </div>
 
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                const today = new Date();
-                const dateStr = today.getFullYear() + '-' + 
-                               String(today.getMonth()+1).padStart(2,'0') + '-' + 
-                               String(today.getDate()).padStart(2,'0');
-                link.download = `LKPD_Proyek1_Aktivitas1_${dateStr}.doc`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                setTimeout(() => {
-                    URL.revokeObjectURL(link.href);
-                }, 1000);
+                <!-- ===== PETUNJUK ===== -->
+                <div class="instruction-box">
+                    <strong>📚 PETUNJUK PENGGUNAAN LKPD</strong><br><br>
+                    <ol>
+                        <li>Pastikan kamu sudah memiliki akun Google (Gmail).</li>
+                        <li>Kerjakan setiap bagian dengan HP atau laptop.</li>
+                        <li>Untuk bagian praktik, buka pengaturan akun Google-mu di <strong>myaccount.google.com</strong>.</li>
+                        <li>Untuk bagian eksplorasi, buka <strong>docs.google.com</strong>, <strong>sheets.google.com</strong>, dan <strong>slides.google.com</strong>.</li>
+                        <li>Diskusikan dengan kelompok jika ada kesulitan.</li>
+                        <li>Kumpulkan LKPD setelah selesai dikerjakan.</li>
+                    </ol>
+                </div>
 
-                exportBtn.innerHTML = '<i class="fas fa-file-word"></i> Export ke DOCX';
-                exportBtn.disabled = false;
+                <!-- ===== BAGIAN A ===== -->
+                <div class="section-card">
+                    <h3 class="section-title">🛡️ BAGIAN A: KENALI AKUN GOOGLE (INDIVIDU)</h3>
+                    <div class="instruction-box">
+                        "Sebelum menggunakan Google Workspace, kenali dulu akunmu!"
+                    </div>
 
-            } catch (error) {
-                console.error('Error export DOCX:', error);
-                alert('❌ Gagal mengekspor file: ' + error.message);
-                exportBtn.innerHTML = '<i class="fas fa-file-word"></i> Export ke DOCX';
-                exportBtn.disabled = false;
-            }
-        }
+                    <table class="qa-table">
+                        <thead>
+                            <tr><th class="question-col">Pertanyaan</th><th class="answer-col">Jawaban</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Alamat email Gmail yang kamu gunakan:</td>
+                                <td><span class="tempat-jawaban">[Tulis email di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Apakah kamu sudah mengaktifkan verifikasi 2 langkah (2FA)?</td>
+                                <td>
+                                    <div class="radio-group">
+                                        <label><span class="lingkaran-cek"></span> Sudah</label>
+                                        <label><span class="lingkaran-cek"></span> Belum</label>
+                                        <label><span class="lingkaran-cek"></span> Tidak Tahu</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Apakah kamu sudah mengatur nomor HP pemulihan?</td>
+                                <td>
+                                    <div class="radio-group">
+                                        <label><span class="lingkaran-cek"></span> Sudah</label>
+                                        <label><span class="lingkaran-cek"></span> Belum</label>
+                                        <label><span class="lingkaran-cek"></span> Tidak Tahu</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Apakah kamu sudah mengatur email pemulihan?</td>
+                                <td>
+                                    <div class="radio-group">
+                                        <label><span class="lingkaran-cek"></span> Sudah</label>
+                                        <label><span class="lingkaran-cek"></span> Belum</label>
+                                        <label><span class="lingkaran-cek"></span> Tidak Tahu</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="security-tip">
+                        <strong>Tips Keamanan:</strong> Aktifkan verifikasi 2 langkah dan atur nomor HP pemulihan. Ini akan melindungi akunmu jika ada yang mencoba masuk tanpa izin!
+                    </div>
+                </div>
+
+                <!-- ===== BAGIAN B ===== -->
+                <div class="section-card">
+                    <h3 class="section-title">🔒 BAGIAN B: PRAKTIK KEAMANAN AKUN (INDIVIDU)</h3>
+                    <div class="instruction-box">
+                        <strong>Langkah Praktik:</strong> Buka <strong>myaccount.google.com</strong> dari HP-mu dan cek pengaturan keamanan!
+                    </div>
+
+                    <table class="qa-table">
+                        <thead>
+                            <tr><th class="question-col">Aspek Keamanan</th><th class="answer-col">Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Apakah kamu bisa mengakses halaman "Keamanan" di akun Google?</td>
+                                <td>
+                                    <div class="radio-group">
+                                        <label><span class="lingkaran-cek"></span> Ya</label>
+                                        <label><span class="lingkaran-cek"></span> Tidak</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Perangkat apa saja yang terhubung ke akun Google-mu?</td>
+                                <td><span class="tempat-jawaban">[Tulis perangkat di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Apakah ada perangkat yang tidak dikenal?</td>
+                                <td>
+                                    <div class="radio-group">
+                                        <label><span class="lingkaran-cek"></span> Ya</label>
+                                        <label><span class="lingkaran-cek"></span> Tidak</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Jika ada perangkat tidak dikenal, apa yang akan kamu lakukan?</td>
+                                <td><span class="tempat-jawaban">[Tulis tindakan di sini]</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="security-tip">
+                        <strong>Info:</strong> Jika ada perangkat yang tidak dikenal, segera hapus aksesnya dan ganti kata sandi!
+                    </div>
+                </div>
+
+                <!-- ===== BAGIAN C ===== -->
+                <div class="section-card">
+                    <h3 class="section-title">🛠️ BAGIAN C: EKSPLORASI GOOGLE WORKSPACE (KELOMPOK)</h3>
+                    <div class="instruction-box">
+                        "Kenali alat yang akan kalian gunakan untuk proyek-proyek berikutnya!"
+                    </div>
+
+                    <h4 style="color: #21618c; margin: 12px 0 6px 0;">📄 Aktivitas 1: Eksplorasi Google Docs</h4>
+                    <p style="margin-bottom: 6px;">Buka <strong>docs.google.com</strong> dari HP-mu, lalu jawab pertanyaan berikut:</p>
+
+                    <table class="qa-table">
+                        <thead>
+                            <tr><th class="question-col">Pertanyaan</th><th class="answer-col">Jawaban</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Apa fungsi utama Google Docs?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Fitur apa saja yang kamu lihat di halaman utama Google Docs?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Bagaimana cara membuat dokumen baru di Google Docs?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="color: #21618c; margin: 15px 0 6px 0;">📊 Aktivitas 2: Eksplorasi Google Sheets</h4>
+                    <p style="margin-bottom: 6px;">Buka <strong>sheets.google.com</strong> dari HP-mu, lalu jawab pertanyaan berikut:</p>
+
+                    <table class="qa-table">
+                        <thead>
+                            <tr><th class="question-col">Pertanyaan</th><th class="answer-col">Jawaban</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Apa fungsi utama Google Sheets?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Apa perbedaan tampilan Google Sheets dengan Google Docs?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Bagaimana cara membuat lembar kerja baru di Google Sheets?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="color: #21618c; margin: 15px 0 6px 0;">📽️ Aktivitas 3: Eksplorasi Google Slides</h4>
+                    <p style="margin-bottom: 6px;">Buka <strong>slides.google.com</strong> dari HP-mu, lalu jawab pertanyaan berikut:</p>
+
+                    <table class="qa-table">
+                        <thead>
+                            <tr><th class="question-col">Pertanyaan</th><th class="answer-col">Jawaban</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Apa fungsi utama Google Slides?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Apa yang kamu lihat di halaman utama Google Slides?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Bagaimana cara membuat presentasi baru di Google Slides?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== BAGIAN D ===== -->
+                <div class="section-card">
+                    <h3 class="section-title">📝 BAGIAN D: REFLEKSI (INDIVIDU)</h3>
+                    <div class="instruction-box">"Apa yang aku pelajari hari ini?"</div>
+
+                    <table class="qa-table">
+                        <thead>
+                            <tr><th class="question-col">Pertanyaan</th><th class="answer-col">Jawabanku</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Hal baru apa yang aku pelajari tentang keamanan akun Google?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Aplikasi Google Workspace mana yang paling menarik menurutku? Mengapa?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                            <tr>
+                                <td>Apa yang akan aku lakukan setelah ini untuk mengamankan akun Google-ku?</td>
+                                <td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 1rem; background: #f8fafc; border-radius: 8px; padding: 1rem; border: 1px dashed #3498db;">
+                        <p><strong>Checklist Pemahaman:</strong></p>
+                        <div class="checkbox-grid">
+                            <div class="checkbox-item"><span class="kotak-cek"></span> Saya sudah mengecek pengaturan keamanan akun Google</div>
+                            <div class="checkbox-item"><span class="kotak-cek"></span> Saya sudah mencoba membuka Google Docs</div>
+                            <div class="checkbox-item"><span class="kotak-cek"></span> Saya sudah mencoba membuka Google Sheets</div>
+                            <div class="checkbox-item"><span class="kotak-cek"></span> Saya sudah mencoba membuka Google Slides</div>
+                            <div class="checkbox-item"><span class="kotak-cek"></span> Saya siap untuk aktivitas berikutnya</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== FOOTER ===== -->
+                <div class="footer-text">
+                    LKPD Proyek 1 Aktivitas 1 - Pengenalan Google Workspace & Keamanan Akun | ${dateStr}
+                </div>
+            </body>
+            </html>
+        `;
+
+        // === BUAT FILE .doc ===
+        const blob = new Blob([htmlContent], {
+            type: 'application/msword;charset=utf-8'
+        });
+
+        // === DOWNLOAD ===
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        const today = new Date();
+        const dateStr2 = today.getFullYear() + '-' + 
+                       String(today.getMonth()+1).padStart(2,'0') + '-' + 
+                       String(today.getDate()).padStart(2,'0');
+        link.download = `LKPD_Proyek1_Aktivitas1_Template_${dateStr2}.doc`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => {
+            URL.revokeObjectURL(link.href);
+        }, 1000);
+
+        exportBtn.innerHTML = '<i class="fas fa-file-word"></i> Export Template DOCX';
+        exportBtn.disabled = false;
+
+    } catch (error) {
+        console.error('Error export:', error);
+        alert('❌ Gagal mengekspor template: ' + error.message);
+        exportBtn.innerHTML = '<i class="fas fa-file-word"></i> Export Template DOCX';
+        exportBtn.disabled = false;
+    }
+}
 
         // ==================== INIT ====================
         document.addEventListener('DOMContentLoaded', function() {

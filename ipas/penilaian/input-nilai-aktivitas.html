@@ -19,6 +19,8 @@
             --border-radius: 16px;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --ipas-orange: #f39c12;
+            --ipas-red: #e74c3c;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -728,6 +730,17 @@
             gap: 4px;
         }
         
+        .status-error {
+            background: #e74c3c;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
         .back-nav-simple {
             text-align: center;
             margin-top: 1.5rem;
@@ -748,6 +761,141 @@
         .back-btn-simple:hover {
             background: var(--ipas-primary);
             color: white;
+        }
+        
+        /* ============ MODAL ============ */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideDown 0.3s ease;
+            position: relative;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-content .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .modal-content .icon-warning {
+            color: var(--ipas-orange);
+        }
+        .modal-content .icon-danger {
+            color: var(--ipas-red);
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--ipas-dark);
+            font-size: 1.4rem;
+        }
+        
+        .modal-content .sub-text {
+            margin-bottom: 1.5rem;
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .modal-content .sub-text strong {
+            color: var(--ipas-dark);
+            word-break: break-word;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .modal-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+            flex: 1;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .modal-btn.danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .modal-btn.danger:hover {
+            background: #c0392b;
+        }
+        
+        .modal-btn.danger:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .modal-btn.no {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .modal-btn.no:hover {
+            background: #5a6268;
+        }
+        
+        .modal-btn.secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .modal-btn.secondary:hover {
+            background: #5a6268;
         }
         
         .hidden { display: none !important; }
@@ -776,6 +924,9 @@
             .jawaban-info { flex-direction: column; gap: 0.2rem; }
             .rubrik-header { flex-direction: column; align-items: flex-start; }
             .siswa-header { flex-direction: column; align-items: flex-start; }
+            .modal-content { margin: 10% auto; padding: 1.5rem; width: 95%; }
+            .modal-buttons { flex-direction: column; align-items: stretch; }
+            .modal-btn { width: 100%; justify-content: center; padding: 0.8rem; flex: none; min-width: unset; }
         }
         
         @media print {
@@ -942,6 +1093,28 @@
         </section>
     </div>
 
+    <!-- ===== MODAL KONFIRMASI SUDAH DINILAI ===== -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon icon-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>⚠️ Siswa Sudah Dinilai!</h3>
+            <p class="sub-text">
+                Siswa <strong id="confirmNamaSiswa"></strong> sudah memiliki nilai untuk aktivitas ini.<br><br>
+                Apakah Anda yakin ingin <strong>menilai ulang</strong> dengan data yang baru?
+            </p>
+            <div class="modal-buttons">
+                <button class="modal-btn danger" id="confirmGantiBtn" onclick="confirmGantiNilai()">
+                    <i class="fas fa-exchange-alt"></i> Ya, Nilai Ulang
+                </button>
+                <button class="modal-btn secondary" onclick="closeConfirmModal()">
+                    <i class="fas fa-times"></i> Tidak, Batal
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
     // ==================== PROTEKSI LOGIN ====================
     (function() {
@@ -987,7 +1160,10 @@
     let siswaJawabanData = {};
     let siswaNilaiInpen = {};
     let currentSiswa = null;
+    let currentSiswaHasNilai = false;
     let selectedScores = {};
+    let isSubmitting = false;
+    let pendingGantiData = null;
     
     // ==================== LOAD DATA SISWA ====================
     function loadDataSiswa() {
@@ -1083,19 +1259,20 @@
             if (result && result.success && result.data) {
                 const siswaList = [];
                 result.data.forEach(item => {
-                    if (item.data) {
-                        siswaList.push({
-                            Nama: item.nama,
-                            Kelas: item.kelas,
-                            ...item.data
-                        });
-                    } else {
-                        siswaList.push({
-                            Nama: item.nama,
-                            Kelas: item.kelas
-                        });
-                    }
+                    const nama = item.nama || '';
+                    if (!nama) return;
+                    
+                    const hasData = item.hasData === true;
+                    const dataFromApi = item.data || {};
+                    
+                    siswaList.push({
+                        Nama: nama,
+                        Kelas: item.kelas || kelas,
+                        ...dataFromApi,
+                        _hasData: hasData
+                    });
                 });
+                console.log('📊 Siswa dengan data:', siswaList.filter(s => s._hasData).map(s => s.Nama));
                 return siswaList;
             }
             return [];
@@ -1144,6 +1321,28 @@
         } catch (error) {
             console.error('Gagal load nilai inpen:', error);
             return {};
+        }
+    }
+    
+    // ==================== CEK NILAI SISWA DI inpen ====================
+    async function cekNilaiSiswaDiInpen(kelas, nama, aktivitas) {
+        try {
+            const url = `${BASE_URL}?action=getDataSiswa&kelas=${encodeURIComponent(kelas)}&nama=${encodeURIComponent(nama)}&aktivitas=${encodeURIComponent(aktivitas)}`;
+            const response = await fetch(url);
+            const result = await response.json();
+            console.log('🔍 Cek nilai siswa di inpen:', result);
+            
+            if (result.success && result.found && result.data) {
+                return {
+                    found: true,
+                    key: result.data.key || `${kelas}_${nama}_${aktivitas}_AKTIF`,
+                    data: result.data
+                };
+            }
+            return { found: false };
+        } catch (error) {
+            console.error('Error cek nilai siswa:', error);
+            return { found: false, error: error.message };
         }
     }
     
@@ -1481,7 +1680,6 @@
         const oldTpHeaders = thead.querySelectorAll('.tp-header');
         oldTpHeaders.forEach(el => el.remove());
         
-        // Urutkan TP dari yang terbesar ke terkecil (TP 1.4, 1.3, 1.2, 1.1)
         let sortedTpKeys = [];
         if (tpKeys && tpKeys.length > 0) {
             sortedTpKeys = [...tpKeys].sort((a, b) => {
@@ -1515,24 +1713,24 @@
         let totalSiswa = siswaList.length;
         let hasDataCount = 0;
         
-        // Hitung siswa yang sudah mengumpulkan (punya data)
         siswaList.forEach(siswa => {
-            const nama = siswa.nama || siswa.Nama || '';
-            const hasData = siswaJawabanData[nama] && Object.keys(siswaJawabanData[nama]).length > 0;
-            if (hasData) {
+            if (siswa._hasData === true) {
                 hasDataCount++;
             }
         });
         
         siswaList.forEach((siswa, index) => {
             const tr = document.createElement('tr');
-            const nama = siswa.nama || siswa.Nama || '';
+            const nama = siswa.Nama || siswa.nama || '';
             tr.dataset.nama = nama;
             tr.id = `siswa-row-${index}`;
             
-            // Cek apakah siswa punya data jawaban
-            const hasData = siswaJawabanData[nama] && Object.keys(siswaJawabanData[nama]).length > 0;
+            const hasData = siswa._hasData === true;
             const isActive = currentSiswa === nama;
+            
+            // Cek apakah siswa sudah dinilai sebelumnya
+            const nilaiSiswa = siswaNilaiInpen[nama] || {};
+            const sudahDinilai = Object.keys(nilaiSiswa).length > 0;
             
             let tdHtml = `
                 <td>${index + 1}</td>
@@ -1548,9 +1746,8 @@
             `;
             
             if (sortedTpKeys && sortedTpKeys.length > 0) {
-                const nilaiSiswa = siswaNilaiInpen[nama] || {};
                 sortedTpKeys.forEach(tp => {
-                    const value = nilaiSiswa[tp];
+                    const value = siswaNilaiInpen[nama] ? siswaNilaiInpen[nama][tp] : null;
                     const hasValue = value !== undefined && value !== null && value !== '';
                     tdHtml += `<td class="tp-cell ${hasValue ? 'has-value' : 'no-value'}">${hasValue ? value : '-'}</td>`;
                 });
@@ -1575,17 +1772,16 @@
     }
     
     // ==================== TOGGLE JAWABAN ====================
-    function toggleJawaban(nama) {
-        // Cek apakah siswa punya data
+    async function toggleJawaban(nama) {
         const hasData = siswaJawabanData[nama] && Object.keys(siswaJawabanData[nama]).length > 0;
         if (!hasData) {
-            // Jika tidak ada data, tidak melakukan apa-apa
             return;
         }
         
         if (currentSiswa === nama) {
             // Tutup
             currentSiswa = null;
+            currentSiswaHasNilai = false;
             document.getElementById('jawabanSiswaNama').textContent = '';
             document.getElementById('siswaAktifDisplay').textContent = '';
             document.getElementById('jawabanContent').innerHTML = `
@@ -1605,7 +1801,28 @@
             return;
         }
         
+        // ===== CEK APAKAH SISWA SUDAH DINILAI =====
+        const nilaiSiswa = siswaNilaiInpen[nama] || {};
+        const sudahDinilai = Object.keys(nilaiSiswa).length > 0;
+        
+        if (sudahDinilai) {
+            // Tampilkan konfirmasi
+            document.getElementById('confirmNamaSiswa').textContent = nama;
+            pendingGantiData = {
+                nama: nama,
+                hasData: hasData
+            };
+            document.getElementById('confirmModal').style.display = 'block';
+            return;
+        }
+        
+        // ===== LANGSUNG BUKA JIKA BELUM DINILAI =====
+        bukaJawaban(nama);
+    }
+    
+    function bukaJawaban(nama) {
         currentSiswa = nama;
+        currentSiswaHasNilai = false;
         document.getElementById('jawabanSiswaNama').textContent = `👤 ${nama}`;
         document.getElementById('siswaAktifDisplay').textContent = `👤 ${nama}`;
         
@@ -1637,7 +1854,36 @@
             `;
         }
         
+        // Load nilai yang sudah ada (jika ada)
         loadNilaiSiswa(nama);
+    }
+    
+    function confirmGantiNilai() {
+        const confirmBtn = document.getElementById('confirmGantiBtn');
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+        
+        if (pendingGantiData) {
+            const nama = pendingGantiData.nama;
+            
+            // Tutup modal
+            closeConfirmModal();
+            
+            // Buka jawaban siswa
+            bukaJawaban(nama);
+            
+            // Tandai bahwa siswa ini sudah dinilai (untuk keperluan replace)
+            currentSiswaHasNilai = true;
+        }
+        
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Ya, Nilai Ulang';
+        pendingGantiData = null;
+    }
+    
+    function closeConfirmModal() {
+        document.getElementById('confirmModal').style.display = 'none';
+        pendingGantiData = null;
     }
     
     function resetRubrik() {
@@ -1683,11 +1929,18 @@
             return;
         }
         
+        if (isSubmitting) {
+            return;
+        }
+        
         const btn = document.getElementById('btnKirim');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+        document.getElementById('saveStatus').innerHTML = '';
+        isSubmitting = true;
         
         try {
+            // ===== HITUNG NILAI TP =====
             const tpValues = {};
             const tpSums = {};
             const tpCounts = {};
@@ -1716,16 +1969,21 @@
                 tpValues[tpKode] = maxSkor > 0 ? Math.round((total / maxSkor) * 100) : 0;
             }
             
+            // ===== KIRIM DATA =====
             const dataToSend = {
                 semester: currentSemester,
                 kelas: currentKelas,
                 aktivitas: currentAktivitasNama,
                 nama: currentSiswa,
-                nilai: tpValues,
-                timestamp: new Date().toISOString()
+                nilai: tpValues
             };
             
-            console.log('Data yang dikirim:', dataToSend);
+            // Jika siswa sudah dinilai sebelumnya, kirim flag replace
+            if (currentSiswaHasNilai) {
+                dataToSend.replace = true;
+            }
+            
+            console.log('📤 Data yang dikirim:', dataToSend);
             
             const url = `${BASE_URL}?action=savePenilaianTP&data=${encodeURIComponent(JSON.stringify(dataToSend))}&_=${Date.now()}`;
             const response = await fetch(url, { method: 'GET' });
@@ -1733,12 +1991,29 @@
             
             if (result && result.success) {
                 document.getElementById('saveStatus').innerHTML = `<span class="status-saved"><i class="fas fa-check"></i> Nilai untuk ${escapeHtml(currentSiswa)} berhasil disimpan!</span>`;
-                siswaNilaiInpen[currentSiswa] = tpValues;
                 
+                // Update nilai inpen
+                siswaNilaiInpen[currentSiswa] = tpValues;
+                if (currentSiswaHasNilai) {
+                    currentSiswaHasNilai = false;
+                }
+                
+                // ===== PERBAIKAN: Refresh tabel siswa dengan status hasData yang benar =====
                 const tpKeys = rubrikTPKeys;
-                const siswaList = Object.keys(siswaJawabanData).map(nama => ({ nama }));
+                const siswaList = Object.keys(siswaJawabanData).map(nama => {
+                    // Cek apakah siswa benar-benar punya data jawaban
+                    const data = siswaJawabanData[nama] || {};
+                    // Hapus properti Nama dari pertimbangan
+                    const dataKeys = Object.keys(data).filter(key => key !== 'Nama' && key !== 'nama');
+                    const hasData = dataKeys.length > 0;
+                    return { 
+                        Nama: nama,
+                        _hasData: hasData
+                    };
+                });
                 renderSiswaTable(siswaList, tpKeys);
                 
+                // Reset rubrik dan tutup
                 resetRubrik();
                 
                 currentSiswa = null;
@@ -1753,16 +2028,23 @@
                     row.classList.remove('active-row');
                 });
                 
-                setTimeout(() => { document.getElementById('saveStatus').innerHTML = ''; }, 3000);
+                // Hilangkan status setelah 3 detik
+                setTimeout(() => { 
+                    if (document.getElementById('saveStatus').innerHTML.includes('berhasil')) {
+                        document.getElementById('saveStatus').innerHTML = ''; 
+                    }
+                }, 3000);
+                
             } else {
-                document.getElementById('saveStatus').innerHTML = `<span style="color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal: ${result.error || 'Unknown error'}</span>`;
+                document.getElementById('saveStatus').innerHTML = `<span class="status-error"><i class="fas fa-exclamation-triangle"></i> Gagal: ${result.error || 'Unknown error'}</span>`;
             }
         } catch (error) {
             console.error('Error kirim nilai:', error);
-            document.getElementById('saveStatus').innerHTML = '<span style="color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal mengirim nilai</span>';
+            document.getElementById('saveStatus').innerHTML = `<span class="status-error"><i class="fas fa-exclamation-triangle"></i> Gagal mengirim nilai: ${error.message}</span>`;
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Kirim Nilai';
+            isSubmitting = false;
         }
     }
     
@@ -1781,17 +2063,20 @@
         console.log('Aktivitas:', currentAktivitasNama);
         console.log('Kelas:', currentKelas);
         
-        // Reset data
         siswaJawabanData = {};
         siswaNilaiInpen = {};
         currentSiswa = null;
+        currentSiswaHasNilai = false;
         selectedScores = {};
         rubrikTPKeys = [];
+        isSubmitting = false;
         
         document.getElementById('loadingMessage').style.display = 'block';
         document.getElementById('errorMessage').style.display = 'none';
         document.getElementById('emptyMessage').style.display = 'none';
         document.getElementById('twoColumnLayout').style.display = 'none';
+        document.getElementById('saveStatus').innerHTML = '';
+        document.getElementById('btnKirim').style.display = 'none';
         
         try {
             const siswaData = await fetchSiswaData(currentSemester, currentAktivitasNama, currentKelas);
@@ -1812,36 +2097,32 @@
             siswaNilaiInpen = nilaiInpen;
             console.log('Nilai inpen:', nilaiInpen);
             
-            // ===== PERBAIKAN: Proses data siswa =====
             const siswaList = [];
             siswaData.forEach(item => {
                 const nama = item.Nama || item.nama || '';
                 if (nama) {
-                    siswaList.push({ nama: nama });
-                    
-                    // Cek apakah ada data jawaban
-                    const itemCopy = {...item};
-                    // Hapus properti yang bukan jawaban
-                    delete itemCopy.Nama;
-                    delete itemCopy.nama;
-                    delete itemCopy.Kelas;
-                    delete itemCopy.kelas;
-                    delete itemCopy.Semester;
-                    delete itemCopy.semester;
-                    
-                    // Cek apakah ada data selain properti yang dihapus
-                    const hasData = Object.keys(itemCopy).some(key => {
-                        const val = item[key];
-                        return val !== undefined && val !== null && val !== '';
-                    });
+                    const hasData = item._hasData === true;
                     
                     if (hasData) {
-                        siswaJawabanData[nama] = item;
+                        const itemCopy = {...item};
+                        delete itemCopy._hasData;
+                        delete itemCopy.Nama;
+                        delete itemCopy.nama;
+                        delete itemCopy.Kelas;
+                        delete itemCopy.kelas;
+                        delete itemCopy.Semester;
+                        delete itemCopy.semester;
+                        siswaJawabanData[nama] = itemCopy;
                         console.log(`✅ ${nama} memiliki data jawaban`);
                     } else {
                         siswaJawabanData[nama] = {};
                         console.log(`❌ ${nama} TIDAK memiliki data jawaban`);
                     }
+                    
+                    siswaList.push({ 
+                        Nama: nama,
+                        _hasData: hasData
+                    });
                 }
             });
             
@@ -1916,6 +2197,13 @@
             
             document.getElementById('btnCek').addEventListener('click', tampilkanData);
             
+            // Tutup modal jika klik di luar
+            document.getElementById('confirmModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeConfirmModal();
+                }
+            });
+            
             document.getElementById('loadingMessage').style.display = 'none';
         } catch (error) {
             console.error('Init error:', error);
@@ -1929,9 +2217,11 @@
         siswaJawabanData = {};
         siswaNilaiInpen = {};
         currentSiswa = null;
+        currentSiswaHasNilai = false;
         selectedScores = {};
         rubrikTPKeys = [];
         cacheRubrik = null;
+        isSubmitting = false;
         document.getElementById('twoColumnLayout').style.display = 'none';
         document.getElementById('btnKirim').style.display = 'none';
         document.getElementById('saveStatus').innerHTML = '';
@@ -1939,6 +2229,8 @@
         document.getElementById('siswaAktifDisplay').textContent = '';
         document.getElementById('rubrikSummary').innerHTML = '';
         document.getElementById('progressMini').style.display = 'none';
+        document.getElementById('confirmModal').style.display = 'none';
+        pendingGantiData = null;
     }
     
     function loadProfileFromSession() {
