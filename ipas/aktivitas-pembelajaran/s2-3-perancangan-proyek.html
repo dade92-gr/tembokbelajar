@@ -321,7 +321,48 @@
         }
         .link-preview:hover { background: var(--ipas-primary); color: white; }
         
-        /* ============ MODAL YANG DIPERBAIKI ============ */
+        /* ============ TOMBOL EXPORT ============ */
+        .export-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .export-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .export-button i {
+            font-size: 1.1rem;
+        }
+        
+        .export-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .export-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        /* ============ MODAL ============ */
         .modal {
             display: none;
             position: fixed;
@@ -584,6 +625,13 @@
         </div>
 
         <div class="lembar-aktivitas" id="worksheetForm">
+            <!-- Tombol Export -->
+            <div class="export-wrapper">
+                <button class="export-button" id="exportBtn" onclick="exportToDocx()" disabled>
+                    <i class="fas fa-file-word"></i> Export Template DOCX
+                </button>
+            </div>
+
             <div class="info-hijau">
                 <i class="fas fa-lightbulb"></i> <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
                 Selamat datang di Aktivitas 3! Sekarang saatnya MERANCANG bagaimana solusi/produk yang akan kalian buat.
@@ -1052,6 +1100,7 @@
                 document.getElementById('kelompok').disabled = false;
                 document.getElementById('tugas').disabled = false;
                 document.getElementById('submitBtn').disabled = false;
+                document.getElementById('exportBtn').disabled = false;
                 
                 // Enable all form inputs
                 document.querySelectorAll('input, select, textarea, button').forEach(el => {
@@ -1807,6 +1856,468 @@
                 
                 document.getElementById('confirmGantiBtn').disabled = false;
                 document.getElementById('confirmGantiBtn').innerHTML = '<i class="fas fa-exchange-alt"></i> Ya, Ganti Data';
+            }
+        }
+
+        // ==================== EXPORT TEMPLATE DOCX ====================
+        function exportToDocx() {
+            const exportBtn = document.getElementById('exportBtn');
+            exportBtn.disabled = true;
+            exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+            try {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('id-ID', {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                });
+
+                let htmlContent = `
+                    <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                          xmlns:w='urn:schemas-microsoft-com:office:word' 
+                          xmlns='http://www.w3.org/TR/REC-html40'>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Lembar Aktivitas IPAS - Perancangan Proyek</title>
+                        <style>
+                            body {
+                                font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+                                font-size: 11pt;
+                                line-height: 1.5;
+                                color: #222;
+                                padding: 30px 40px;
+                                margin: 0;
+                            }
+                            .worksheet-title {
+                                color: #229954;
+                                font-size: 18pt;
+                                text-align: center;
+                                font-weight: bold;
+                                border-bottom: 2px solid #d5f4e6;
+                                padding-bottom: 8px;
+                                margin: 0 0 15px 0;
+                            }
+                            .worksheet-subtitle {
+                                color: #2980b9;
+                                font-size: 13pt;
+                                font-weight: 600;
+                                border-left: 4px solid #2980b9;
+                                padding-left: 12px;
+                                margin: 18px 0 8px 0;
+                            }
+                            .identitas-box {
+                                background: #f0f8f0;
+                                padding: 12px 15px;
+                                margin-bottom: 15px;
+                                border-radius: 4px;
+                            }
+                            .identitas-box table {
+                                width: 100%;
+                                border: none;
+                            }
+                            .identitas-box td {
+                                padding: 4px 8px;
+                                border: none;
+                                vertical-align: middle;
+                            }
+                            .identitas-box .label {
+                                font-weight: 600;
+                                color: #229954;
+                                width: 80px;
+                            }
+                            .identitas-box .kosong {
+                                border-bottom: 1px solid #999;
+                                min-width: 150px;
+                                display: inline-block;
+                                padding: 0 20px 0 5px;
+                                color: #999;
+                                font-style: italic;
+                            }
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin: 8px 0;
+                                font-size: 10pt;
+                            }
+                            th {
+                                background: #2ecc71;
+                                color: white;
+                                padding: 6px 8px;
+                                text-align: left;
+                                font-weight: 600;
+                                border: 1px solid #2ecc71;
+                            }
+                            td {
+                                padding: 6px 8px;
+                                border: 1px solid #ddd;
+                                vertical-align: top;
+                            }
+                            .tempat-jawaban {
+                                background: #fafafa;
+                                padding: 4px 8px;
+                                border-radius: 3px;
+                                border: 1px dashed #ccc;
+                                display: block;
+                                min-height: 35px;
+                                color: #999;
+                                font-style: italic;
+                            }
+                            .info-hijau {
+                                background: #e8f5e9;
+                                border-left: 5px solid #2ecc71;
+                                padding: 1rem;
+                                border-radius: 12px;
+                                margin-bottom: 20px;
+                            }
+                            .info-biru {
+                                background: #e3f2fd;
+                                border-left: 5px solid #3498db;
+                                padding: 1rem;
+                                border-radius: 12px;
+                                margin-bottom: 20px;
+                            }
+                            .kotak-checklist {
+                                border: 1px solid #229954;
+                                padding: 15px;
+                                border-radius: 16px;
+                                background: #f9f9f9;
+                                margin: 15px 0;
+                            }
+                            .sketsa-area {
+                                background: #f9f9f9;
+                                border: 2px dashed #ccc;
+                                border-radius: 20px;
+                                padding: 2rem;
+                                text-align: center;
+                                margin: 1rem 0;
+                            }
+                            .materi-box {
+                                background: #e3f2fd;
+                                border-radius: 12px;
+                                padding: 15px;
+                                margin: 15px 0;
+                                border-left: 4px solid #3498db;
+                            }
+                            .soal-cek {
+                                background: #fff8e1;
+                                padding: 15px;
+                                border-radius: 12px;
+                                margin-top: 10px;
+                            }
+                            .table-aktivitas {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin: 8px 0;
+                            }
+                            .table-aktivitas th {
+                                background: #2ecc71;
+                                color: white;
+                                padding: 6px 8px;
+                            }
+                            .table-aktivitas td {
+                                padding: 6px 8px;
+                                border: 1px solid #ddd;
+                            }
+                            .anggota-grid {
+                                display: grid;
+                                grid-template-columns: repeat(2, 1fr);
+                                gap: 10px;
+                            }
+                            .anggota-item { display: flex; flex-direction: column; gap: 3px; }
+                            .anggota-item label { font-weight: 600; color: #229954; font-size: 0.9rem; }
+                            .footer-text {
+                                text-align: center;
+                                color: #999;
+                                font-size: 9pt;
+                                margin-top: 20px;
+                                border-top: 1px solid #eee;
+                                padding-top: 10px;
+                            }
+                            .btn, .submit-button, .export-wrapper, 
+                            .connection-status, .success-message, .error-message,
+                            .loading-message, .activity-navigation, .nav-btn,
+                            .modal, .modal-content, #confirmModal, #resetModal,
+                            .reset-button, .hamburger, .navbar, header,
+                            .btn-tambah, .btn-hapus, .sketsa-area input {
+                                display: none !important;
+                            }
+                            .table-responsive, table {
+                                display: table !important;
+                            }
+                            .link-preview {
+                                display: inline-block;
+                                margin-top: 8px;
+                                padding: 4px 12px;
+                                background: #d5f4e6;
+                                color: #229954;
+                                border-radius: 20px;
+                                font-size: 0.8rem;
+                                text-decoration: none;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h1 class="worksheet-title">LEMBAR AKTIVITAS IPAS SMK</h1>
+                        <h2 style="text-align: center; color: #229954; margin-bottom: 2rem;">AKTIVITAS 3: PERANCANGAN PROYEK</h2>
+                        
+                        <div class="info-hijau">
+                            <strong>HALO, KELOMPOK HEBAT!</strong><br>
+                            Selamat datang di Aktivitas 3! Sekarang saatnya MERANCANG bagaimana solusi/produk yang akan kalian buat.
+                        </div>
+
+                        <!-- BAGIAN A: IDENTITAS -->
+                        <h3 class="worksheet-subtitle">A. IDENTITAS</h3>
+                        <div class="identitas-box">
+                            <table>
+                                <tr><td class="label">Kelas</td><td>: <span class="kosong">_________________</span></td></tr>
+                                <tr><td class="label">Nama (Pengisi)</td><td>: <span class="kosong">_________________</span></td></tr>
+                                <tr><td class="label">Kelompok</td><td>: <span class="kosong">_________________</span></td></tr>
+                                <tr><td class="label">Tugas/Peran</td><td>: <span class="kosong">_________________</span></td></tr>
+                            </table>
+                        </div>
+
+                        <!-- BAGIAN B: PEMAHAMAN MATERI -->
+                        <h3 class="worksheet-subtitle">B. PEMAHAMAN MATERI "PERANCANGAN PROYEK"</h3>
+                        <div class="materi-box">
+                            <p>Sebelum merancang proyek, pelajari dulu materi <strong>"Perancangan Proyek"</strong> untuk memahami cara menyusun rencana yang matang.</p>
+                            
+                            <div class="soal-cek">
+                                <p><strong>Cek Pemahaman (WAJIB DIISI):</strong></p>
+                                <p><strong>1. Apa saja komponen utama dalam perancangan proyek? Sebutkan minimal 3!</strong></p>
+                                <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                                
+                                <p><strong>2. Mengapa pembagian tugas dalam kelompok itu penting?</strong></p>
+                                <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                                
+                                <p><strong>3. Apa fungsi dari timeline atau jadwal dalam sebuah proyek?</strong></p>
+                                <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                                
+                                <p><strong>4. Mengapa kita perlu menentukan metode pengumpulan data sejak awal proyek?</strong></p>
+                                <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                            </div>
+                        </div>
+
+                        <!-- BAGIAN C: MASALAH DAN SOLUSI -->
+                        <h3 class="worksheet-subtitle">C. MASALAH DAN SOLUSI PROYEK</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Tuliskan masalah dan solusi yang sudah kalian pilih dari Aktivitas 1 & 2.
+                        </div>
+                        <div class="kotak-checklist">
+                            <p><strong>Masalah yang akan diselesaikan:</strong></p>
+                            <span class="tempat-jawaban">[Tulis masalah di sini]</span>
+                            
+                            <p><strong>Solusi/Produk yang akan dibuat:</strong></p>
+                            <span class="tempat-jawaban">[Tulis solusi di sini]</span>
+                        </div>
+
+                        <!-- BAGIAN D: SPESIFIKASI PRODUK -->
+                        <h3 class="worksheet-subtitle">D. SPESIFIKASI PRODUK</h3>
+                        
+                        <h4 style="color: #229954;">D1. Fungsi Produk</h4>
+                        <span class="tempat-jawaban">[Tulis fungsi produk di sini]</span>
+
+                        <h4 style="color: #229954;">D2. Target Pengguna</h4>
+                        <p><span class="kosong">_________________</span></p>
+
+                        <h4 style="color: #229954;">D3. Bahan yang Dibutuhkan</h4>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Tulis bahan-bahan yang dibutuhkan beserta perkiraan biaya.
+                        </div>
+                        <table class="table-aktivitas">
+                            <thead>
+                                <tr>
+                                    <th style="width:30%">Nama Bahan</th>
+                                    <th style="width:15%">Jumlah</th>
+                                    <th style="width:20%">Perkiraan Biaya (Rp)</th>
+                                    <th style="width:35%">Sumber/Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="tempat-jawaban">[Tulis bahan di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis jumlah di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis biaya di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis sumber di sini]</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="tempat-jawaban">[Tulis bahan di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis jumlah di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis biaya di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis sumber di sini]</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p><strong>Total Perkiraan Biaya:</strong> Rp <span class="kosong">_________________</span></p>
+
+                        <h4 style="color: #229954;">D4. Cara Kerja Produk</h4>
+                        <span class="tempat-jawaban">[Tulis cara kerja produk di sini]</span>
+
+                        <!-- BAGIAN E: DESAIN PRODUK -->
+                        <h3 class="worksheet-subtitle">E. DESAIN PRODUK</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Upload gambar sketsa desain produk ke Google Drive, lalu tempelkan link-nya di bawah ini.
+                        </div>
+                        
+                        <div class="sketsa-area">
+                            <p><strong>Link Google Drive Gambar Sketsa Desain</strong></p>
+                            <p><span class="kosong">_________________</span></p>
+                        </div>
+
+                        <h4 style="color: #229954;">Bagian-bagian Produk</h4>
+                        <table class="table-aktivitas">
+                            <thead>
+                                <tr>
+                                    <th style="width:40%">Nama Bagian</th>
+                                    <th style="width:60%">Fungsi Bagian</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="tempat-jawaban">[Tulis nama bagian di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis fungsi bagian di sini]</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="tempat-jawaban">[Tulis nama bagian di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis fungsi bagian di sini]</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- BAGIAN F: KEBERHASILAN PRODUK -->
+                        <h3 class="worksheet-subtitle">F. KEBERHASILAN PRODUK</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Tentukan kriteria keberhasilan produk.
+                        </div>
+                        <table class="table-aktivitas">
+                            <thead>
+                                <tr>
+                                    <th style="width:45%">Kriteria Keberhasilan</th>
+                                    <th style="width:55%">Cara Mengukur</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="tempat-jawaban">[Tulis kriteria di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis cara mengukur di sini]</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="tempat-jawaban">[Tulis kriteria di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis cara mengukur di sini]</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- BAGIAN G: RENCANA PRODUKSI -->
+                        <h3 class="worksheet-subtitle">G. RENCANA PRODUKSI</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Rencanakan kegiatan produksi untuk 4 minggu ke depan.
+                        </div>
+                        <table class="table-aktivitas">
+                            <thead>
+                                <tr>
+                                    <th style="width:18%">Minggu</th>
+                                    <th style="width:50%">Aktivitas</th>
+                                    <th style="width:32%">Penanggung Jawab</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Minggu 4</strong></td><td><span class="tempat-jawaban">[Tulis aktivitas di sini]</span></td><td><span class="tempat-jawaban">[Tulis nama di sini]</span></td></tr>
+                                <tr><td><strong>Minggu 5</strong></td><td><span class="tempat-jawaban">[Tulis aktivitas di sini]</span></td><td><span class="tempat-jawaban">[Tulis nama di sini]</span></td></tr>
+                                <tr><td><strong>Minggu 6</strong></td><td><span class="tempat-jawaban">[Tulis aktivitas di sini]</span></td><td><span class="tempat-jawaban">[Tulis nama di sini]</span></td></tr>
+                                <tr><td><strong>Minggu 7</strong></td><td><span class="tempat-jawaban">[Tulis aktivitas di sini]</span></td><td><span class="tempat-jawaban">[Tulis nama di sini]</span></td></tr>
+                            </tbody>
+                        </table>
+
+                        <!-- BAGIAN H: RENCANA PENGUJIAN -->
+                        <h3 class="worksheet-subtitle">H. RENCANA PENGUJIAN</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Rencanakan bagaimana kalian akan menguji produk.
+                        </div>
+                        <table class="table-aktivitas">
+                            <thead>
+                                <tr>
+                                    <th style="width:30%">Aspek yang Diuji</th>
+                                    <th style="width:35%">Cara Menguji</th>
+                                    <th style="width:35%">Target Keberhasilan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="tempat-jawaban">[Tulis aspek di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis cara menguji di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis target di sini]</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="tempat-jawaban">[Tulis aspek di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis cara menguji di sini]</span></td>
+                                    <td><span class="tempat-jawaban">[Tulis target di sini]</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- BAGIAN I: PRESENTASI -->
+                        <h3 class="worksheet-subtitle">I. PERSIAPAN PRESENTASI</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Tentukan siapa yang akan presentasi rancangan kalian.
+                        </div>
+                        
+                        <p><strong>Presenter Utama:</strong> <span class="kosong">_________________</span></p>
+                        
+                        <p><strong>Anggota Kelompok:</strong></p>
+                        <div class="anggota-grid">
+                            <div class="anggota-item"><label>Anggota 1</label><span class="kosong">_________________</span></div>
+                            <div class="anggota-item"><label>Anggota 2</label><span class="kosong">_________________</span></div>
+                            <div class="anggota-item"><label>Anggota 3</label><span class="kosong">_________________</span></div>
+                            <div class="anggota-item"><label>Anggota 4</label><span class="kosong">_________________</span></div>
+                        </div>
+                        
+                        <p><strong>Catatan Presentasi / Masukan:</strong></p>
+                        <span class="tempat-jawaban">[Tulis catatan di sini]</span>
+
+                        <!-- BAGIAN J: REFLEKSI -->
+                        <h3 class="worksheet-subtitle">J. REFLEKSI KELOMPOK</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Renungkan proses perancangan yang sudah kalian lakukan.
+                        </div>
+                        <p><strong>Apa yang paling menarik dari proses merancang produk ini?</strong></p>
+                        <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                        <p><strong>Apa kesulitan terbesar saat merancang?</strong></p>
+                        <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                        <p><strong>Rencana untuk minggu depan (memulai produksi):</strong></p>
+                        <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                        
+                        <div class="footer-text">
+                            Lembar Aktivitas IPAS - Perancangan Proyek | ${dateStr}
+                        </div>
+                    </body>
+                    </html>
+                `;
+
+                const blob = new Blob([htmlContent], {
+                    type: 'application/msword;charset=utf-8'
+                });
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                const today = new Date();
+                const dateStr2 = today.getFullYear() + '-' + 
+                               String(today.getMonth()+1).padStart(2,'0') + '-' + 
+                               String(today.getDate()).padStart(2,'0');
+                link.download = `Lembar_Aktivitas_IPAS_Template_${dateStr2}.doc`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => {
+                    URL.revokeObjectURL(link.href);
+                }, 1000);
+
+                exportBtn.innerHTML = '<i class="fas fa-file-word"></i> Export Template DOCX';
+                exportBtn.disabled = false;
+
+            } catch (error) {
+                console.error('Error export:', error);
+                alert('❌ Gagal mengekspor template: ' + error.message);
+                exportBtn.innerHTML = '<i class="fas fa-file-word"></i> Export Template DOCX';
+                exportBtn.disabled = false;
             }
         }
 

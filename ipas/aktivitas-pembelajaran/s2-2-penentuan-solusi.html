@@ -247,7 +247,48 @@
         .btn-materi:hover { background: #2980b9; }
         .soal-cek { background: #fff8e1; padding: 12px; border-radius: 10px; margin-top: 10px; }
         
-        /* ============ MODAL YANG DIPERBAIKI ============ */
+        /* ============ TOMBOL EXPORT ============ */
+        .export-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .export-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .export-button i {
+            font-size: 1.1rem;
+        }
+        
+        .export-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .export-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        /* ============ MODAL ============ */
         .modal {
             display: none;
             position: fixed;
@@ -490,6 +531,13 @@
         </div>
 
         <div class="lembar-aktivitas" id="worksheetForm">
+            <!-- Tombol Export -->
+            <div class="export-wrapper">
+                <button class="export-button" id="exportBtn" onclick="exportToDocx()" disabled>
+                    <i class="fas fa-file-word"></i> Export Template DOCX
+                </button>
+            </div>
+
             <div class="info-hijau">
                 <i class="fas fa-lightbulb"></i> <strong>HALO, KELOMPOK HEBAT! 👋</strong><br>
                 Selamat datang di Aktivitas 2! Sekarang saatnya mencari SOLUSI untuk masalah yang akan dipecahkan. Fokus kita hari ini adalah mencari ide PRODUK yang bisa dibuat untuk menyelesaikan masalah kelompok.
@@ -891,6 +939,7 @@
                 document.getElementById('kelompok').disabled = false;
                 document.getElementById('tugas').disabled = false;
                 document.getElementById('submitBtn').disabled = false;
+                document.getElementById('exportBtn').disabled = false; // AKTIFKAN EXPORT
                 
                 // Enable all form inputs
                 document.querySelectorAll('input, select, textarea').forEach(el => {
@@ -1390,7 +1439,7 @@
                 await doSubmit(pendingSubmitData, false);
                 
             } catch (error) {
-                alert('❌ Gagal memeriksa data: ' + error.message);
+                alert('❌ Gagal memeriksa数据: ' + error.message);
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data';
                 submitBtn.disabled = false;
                 pendingSubmitData = null;
@@ -1466,6 +1515,422 @@
                 
                 document.getElementById('confirmGantiBtn').disabled = false;
                 document.getElementById('confirmGantiBtn').innerHTML = '<i class="fas fa-exchange-alt"></i> Ya, Ganti Data';
+            }
+        }
+
+        // ==================== EXPORT TEMPLATE DOCX ====================
+        function exportToDocx() {
+            const exportBtn = document.getElementById('exportBtn');
+            exportBtn.disabled = true;
+            exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+            try {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('id-ID', {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                });
+
+                let htmlContent = `
+                    <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                          xmlns:w='urn:schemas-microsoft-com:office:word' 
+                          xmlns='http://www.w3.org/TR/REC-html40'>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Lembar Aktivitas IPAS - Mencari Solusi</title>
+                        <style>
+                            body {
+                                font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+                                font-size: 11pt;
+                                line-height: 1.5;
+                                color: #222;
+                                padding: 30px 40px;
+                                margin: 0;
+                            }
+                            .worksheet-title {
+                                color: #229954;
+                                font-size: 18pt;
+                                text-align: center;
+                                font-weight: bold;
+                                border-bottom: 2px solid #d5f4e6;
+                                padding-bottom: 8px;
+                                margin: 0 0 15px 0;
+                            }
+                            .worksheet-subtitle {
+                                color: #2980b9;
+                                font-size: 13pt;
+                                font-weight: 600;
+                                border-left: 4px solid #2980b9;
+                                padding-left: 12px;
+                                margin: 18px 0 8px 0;
+                            }
+                            .identitas-box {
+                                background: #f0f8f0;
+                                padding: 12px 15px;
+                                margin-bottom: 15px;
+                                border-radius: 4px;
+                            }
+                            .identitas-box table {
+                                width: 100%;
+                                border: none;
+                            }
+                            .identitas-box td {
+                                padding: 4px 8px;
+                                border: none;
+                                vertical-align: middle;
+                            }
+                            .identitas-box .label {
+                                font-weight: 600;
+                                color: #229954;
+                                width: 80px;
+                            }
+                            .identitas-box .kosong {
+                                border-bottom: 1px solid #999;
+                                min-width: 150px;
+                                display: inline-block;
+                                padding: 0 20px 0 5px;
+                                color: #999;
+                                font-style: italic;
+                            }
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin: 8px 0;
+                                font-size: 10pt;
+                            }
+                            th {
+                                background: #2ecc71;
+                                color: white;
+                                padding: 6px 8px;
+                                text-align: left;
+                                font-weight: 600;
+                                border: 1px solid #2ecc71;
+                            }
+                            td {
+                                padding: 6px 8px;
+                                border: 1px solid #ddd;
+                                vertical-align: top;
+                            }
+                            .tempat-jawaban {
+                                background: #fafafa;
+                                padding: 4px 8px;
+                                border-radius: 3px;
+                                border: 1px dashed #ccc;
+                                display: block;
+                                min-height: 35px;
+                                color: #999;
+                                font-style: italic;
+                            }
+                            .info-hijau {
+                                background: #e8f5e9;
+                                border-left: 5px solid #2ecc71;
+                                padding: 1rem;
+                                border-radius: 12px;
+                                margin-bottom: 20px;
+                            }
+                            .info-biru {
+                                background: #e3f2fd;
+                                border-left: 5px solid #3498db;
+                                padding: 1rem;
+                                border-radius: 12px;
+                                margin-bottom: 20px;
+                            }
+                            .kotak-checklist {
+                                border: 1px solid #229954;
+                                padding: 15px;
+                                border-radius: 16px;
+                                background: #f9f9f9;
+                                margin: 15px 0;
+                            }
+                            .produk-box {
+                                background: #fff3e0;
+                                border-left: 4px solid #f39c12;
+                                padding: 12px;
+                                border-radius: 12px;
+                                margin: 10px 0;
+                            }
+                            .materi-box {
+                                background: #e3f2fd;
+                                border-radius: 12px;
+                                padding: 15px;
+                                margin: 15px 0;
+                                border-left: 4px solid #3498db;
+                            }
+                            .soal-cek {
+                                background: #fff8e1;
+                                padding: 12px;
+                                border-radius: 10px;
+                                margin-top: 10px;
+                            }
+                            .fishbone-table {
+                                background-color: #f9f9f9;
+                                width: 100%;
+                            }
+                            .fishbone-table th {
+                                background-color: #3498db;
+                                color: white;
+                                padding: 10px;
+                            }
+                            .fishbone-table td {
+                                padding: 10px;
+                                border: 1px solid #ddd;
+                                vertical-align: top;
+                            }
+                            .list-rapi {
+                                margin-left: 20px;
+                                list-style: none;
+                            }
+                            .list-rapi li {
+                                margin-bottom: 8px;
+                                padding-left: 20px;
+                            }
+                            .list-rapi li::before {
+                                content: "•";
+                                margin-right: 10px;
+                                color: #3498db;
+                            }
+                            .footer-text {
+                                text-align: center;
+                                color: #999;
+                                font-size: 9pt;
+                                margin-top: 20px;
+                                border-top: 1px solid #eee;
+                                padding-top: 10px;
+                            }
+                            .btn, .submit-button, .export-wrapper, 
+                            .connection-status, .success-message, .error-message,
+                            .loading-message, .activity-navigation, .nav-btn,
+                            .modal, .modal-content, #confirmModal, #resetModal,
+                            .reset-button, .hamburger, .navbar, header,
+                            .anggota-grid, .presentasi-item {
+                                display: none !important;
+                            }
+                            .table-responsive, table {
+                                display: table !important;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h1 class="worksheet-title">LEMBAR AKTIVITAS IPAS SMK</h1>
+                        <h2 style="text-align: center; color: #229954; margin-bottom: 2rem;">AKTIVITAS 2: MENCARI SOLUSI UNTUK MASALAH KITA</h2>
+                        
+                        <div class="info-hijau">
+                            <strong>HALO, KELOMPOK HEBAT!</strong><br>
+                            Selamat datang di Aktivitas 2! Sekarang saatnya mencari SOLUSI untuk masalah yang akan dipecahkan. Fokus kita hari ini adalah mencari ide PRODUK yang bisa dibuat untuk menyelesaikan masalah kelompok.
+                        </div>
+
+                        <!-- BAGIAN A: IDENTITAS -->
+                        <h3 class="worksheet-subtitle">A. IDENTITAS</h3>
+                        <div class="identitas-box">
+                            <table>
+                                <tr><td class="label">Kelas</td><td>: <span class="kosong">_________________</span></td></tr>
+                                <tr><td class="label">Nama (Pengisi)</td><td>: <span class="kosong">_________________</span></td></tr>
+                                <tr><td class="label">Kelompok</td><td>: <span class="kosong">_________________</span></td></tr>
+                                <tr><td class="label">Tugas/Peran</td><td>: <span class="kosong">_________________</span></td></tr>
+                            </table>
+                        </div>
+
+                        <!-- BAGIAN B: PEMAHAMAN MATERI -->
+                        <h3 class="worksheet-subtitle">B. PEMAHAMAN MATERI "METODE PENCARIAN SOLUSI"</h3>
+                        <div class="materi-box">
+                            <p>Sebelum mencari solusi untuk masalah kalian, pelajari dulu materi <strong>"Metode Pencarian Solusi"</strong> untuk memahami cara mencari dan memilih solusi yang tepat.</p>
+                            
+                            <div class="soal-cek">
+                                <p><strong>Cek Pemahaman (WAJIB DIISI):</strong></p>
+                                <p><strong>1. Menurut kamu apa yang dimaksud dengan "solusi"?</strong></p>
+                                <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                                
+                                <p><strong>2. Sebutkan minimal 3 metode yang bisa digunakan untuk mencari ide solusi!</strong></p>
+                                <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                                
+                                <p><strong>3. Sebutkan contoh Kriteria Solusi Hebat?</strong></p>
+                                <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                                
+                                <p><strong>4. Sebutkan aktivitas menemukan Solusi Hebatmu?</strong></p>
+                                <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                            </div>
+                        </div>
+
+                        <!-- BAGIAN C: MASALAH -->
+                        <h3 class="worksheet-subtitle">C. MASALAH YANG AKAN DIKERJAKAN</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Tuliskan masalah yang sudah kalian pilih dari Aktivitas 1 di bawah ini.
+                        </div>
+                        <div class="kotak-checklist">
+                            <p><strong>Masalah yang akan diselesaikan:</strong></p>
+                            <span class="tempat-jawaban">[Tulis masalah di sini]</span>
+                        </div>
+
+                        <!-- BAGIAN D: CARI PENYEBAB MASALAH -->
+                        <h3 class="worksheet-subtitle">D. CARI TAHU PENYEBAB MASALAH</h3>
+                        <div class="info-biru">
+                            <strong>PENJELASAN:</strong> Sebelum mencari solusi, kita harus tahu dulu APA PENYEBAB masalahnya.
+                        </div>
+
+                        <h4 style="color: #229954;">D1. JAWAB 6 PERTANYAAN INI (5W+1H)</h4>
+                        <table>
+                            <thead><tr><th>No.</th><th>Pertanyaan</th><th>Jawaban Kelompok</th></tr></thead>
+                            <tbody>
+                                <tr><td>1</td><td><strong>APA</strong> masalahnya?</td><td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td></tr>
+                                <tr><td>2</td><td><strong>SIAPA</strong> yang merasakan dampak?</td><td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td></tr>
+                                <tr><td>3</td><td><strong>DI MANA</strong> sering terjadi?</td><td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td></tr>
+                                <tr><td>4</td><td><strong>KAPAN</strong> biasanya muncul?</td><td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td></tr>
+                                <tr><td>5</td><td><strong>MENGAPA</strong> bisa terjadi? (Sebutkan 2-3 penyebab)</td><td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td></tr>
+                                <tr><td>6</td><td><strong>BAGAIMANA</strong> dampaknya jika dibiarkan?</td><td><span class="tempat-jawaban">[Tulis jawaban di sini]</span></td></tr>
+                            </tbody>
+                        </table>
+
+                        <h4 style="color: #229954;">D2. DIAGRAM "CARI PENYEBAB" (PETA SEBAB-AKIBAT)</h4>
+                        <div class="info-biru">
+                            <strong>CARA ISI:</strong> Tulis MASALAH di kotak di bawah. Lalu cari penyebab dari 4 sisi:
+                            <ul class="list-rapi">
+                                <li><strong>Perilaku / Kebiasaan Orang:</strong> Apakah karena ulah seseorang?</li>
+                                <li><strong>Cara kerja / Aturan:</strong> Apakah karena prosedur atau aturan yang kurang tepat?</li>
+                                <li><strong>Alat / Bahan:</strong> Apakah karena kurang alat atau bahan rusak?</li>
+                                <li><strong>Kondisi sekitar:</strong> Apakah karena cuaca, lokasi, atau suasana?</li>
+                            </ul>
+                        </div>
+                        
+                        <p><strong>MASALAH KAMI:</strong> <span class="kosong">_________________</span></p>
+                        
+                        <table class="fishbone-table">
+                            <tr><th style="width:30%">Kategori Penyebab</th><th>Apa saja penyebabnya?</th></tr>
+                            <tr><td><strong>Perilaku / Kebiasaan Orang</strong></td>
+                                <td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                            <tr><td><strong>Cara kerja / Aturan</strong></td>
+                                <td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                            <tr><td><strong>Alat / Bahan yang tersedia</strong></td>
+                                <td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                            <tr><td><strong>Kondisi sekitar / Suasana</strong></td>
+                                <td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                        </table>
+
+                        <!-- BAGIAN E: IDE PRODUK -->
+                        <h3 class="worksheet-subtitle">E. MENCARI IDE PRODUK SEBAGAI SOLUSI</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Fokus kita mencari PRODUK yang bisa dibuat untuk menyelesaikan masalah.<br>
+                            <strong>Aturan:</strong> Tulis 6 ide produk. Jangan dipilih dulu. Ide "liar" atau "aneh" pun boleh ditulis.
+                        </div>
+                        
+                        <div class="produk-box">
+                            <strong>CONTOH IDE PRODUK:</strong><br>
+                            • Tempat sampah dari jerigen bekas<br>
+                            • Rak sepatu dari kardus bekas<br>
+                            • Alat penyiram tanaman dari botol aqua
+                        </div>
+                        
+                        <table>
+                            <thead><tr><th>No.</th><th>IDE PRODUK YANG BISA KAMI BUAT</th><th>PENYEBAB YANG INGIN DIATASI</th></tr></thead>
+                            <tbody>
+                                <tr><td>1</td><td><span class="tempat-jawaban">[Tulis ide di sini]</span></td><td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                                <tr><td>2</td><td><span class="tempat-jawaban">[Tulis ide di sini]</span></td><td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                                <tr><td>3</td><td><span class="tempat-jawaban">[Tulis ide di sini]</span></td><td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                                <tr><td>4</td><td><span class="tempat-jawaban">[Tulis ide di sini]</span></td><td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                                <tr><td>5</td><td><span class="tempat-jawaban">[Tulis ide di sini]</span></td><td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                                <tr><td>6</td><td><span class="tempat-jawaban">[Tulis ide di sini]</span></td><td><span class="tempat-jawaban">[Tulis penyebab di sini]</span></td></tr>
+                            </tbody>
+                        </table>
+
+                        <h4 style="color: #229954;">E1. PILIH 3 PRODUK TERBAIK</h4>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Dari 6 ide di atas, pilih 3 produk yang paling mungkin kalian buat.
+                        </div>
+                        <table>
+                            <thead><tr><th>Peringkat</th><th>Produk Terbaik</th><th>Kenapa produk ini dipilih?</th></tr></thead>
+                            <tbody>
+                                <tr><td>Produk 1</td><td><span class="tempat-jawaban">[Tulis produk di sini]</span></td><td><span class="tempat-jawaban">[Tulis alasan di sini]</span></td></tr>
+                                <tr><td>Produk 2</td><td><span class="tempat-jawaban">[Tulis produk di sini]</span></td><td><span class="tempat-jawaban">[Tulis alasan di sini]</span></td></tr>
+                                <tr><td>Produk 3</td><td><span class="tempat-jawaban">[Tulis produk di sini]</span></td><td><span class="tempat-jawaban">[Tulis alasan di sini]</span></td></tr>
+                            </tbody>
+                        </table>
+
+                        <!-- BAGIAN F: PERSIAPAN PRESENTASI -->
+                        <h3 class="worksheet-subtitle">F. PERSIAPAN PRESENTASI</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Tentukan siapa yang akan presentasi. Presentasikan 3 produk terbaik kalian ke kelompok lain.
+                        </div>
+                        
+                        <p><strong>Presenter Utama:</strong> <span class="kosong">_________________</span></p>
+                        
+                        <p><strong>Anggota Kelompok:</strong></p>
+                        <p>Anggota 1: <span class="kosong">_________________</span><br>
+                        Anggota 2: <span class="kosong">_________________</span><br>
+                        Anggota 3: <span class="kosong">_________________</span><br>
+                        Anggota 4: <span class="kosong">_________________</span></p>
+                        
+                        <p><strong>Masukan dari kelompok lain:</strong></p>
+                        <span class="tempat-jawaban">[Tulis masukan di sini]</span>
+                        
+                        <p><strong>Masukan PALING BERGUNA yang kami terima:</strong></p>
+                        <span class="tempat-jawaban">[Tulis masukan di sini]</span>
+
+                        <!-- BAGIAN G: PRODUK UTAMA -->
+                        <h3 class="worksheet-subtitle">G. TETAPKAN 1 PRODUK UTAMA</h3>
+                        <div class="info-biru">
+                            <strong>PETUNJUK:</strong> Setelah dengar masukan dari kelompok lain, diskusikan lagi. Pilih 1 produk yang paling cocok.
+                        </div>
+                        <p><strong>PRODUK UTAMA KAMI:</strong> <span class="kosong">_________________</span></p>
+                        <p><strong>ALASAN MEMILIH PRODUK INI:</strong></p>
+                        <span class="tempat-jawaban">[Tulis alasan di sini]</span>
+
+                        <h4 style="color: #229954;">G1. PERTANYAAN PENELITIAN KAMI</h4>
+                        <div class="info-biru"><strong>PETUNJUK:</strong> Buatlah pertanyaan penelitian yang akan menjawab: "Apakah produk yang kami buat benar-benar bisa menyelesaikan masalah?"</div>
+                        <span class="tempat-jawaban">[Tulis pertanyaan di sini]</span>
+
+                        <h4 style="color: #229954;">G2. HIPOTESIS (Dugaan Sementara)</h4>
+                        <div class="info-biru">
+                            <strong>CONTOH HIPOTESIS:</strong><br>
+                            • <strong>JIKA</strong> kami membuat tempat sampah dari botol bekas<br>
+                            • <strong>MAKA</strong> sampah yang berserakan akan berkurang<br>
+                            • <strong>KARENA</strong> siswa jadi lebih mudah membuang sampah
+                        </div>
+                        <p><strong>JIKA</strong> kami membuat produk ini...</p>
+                        <span class="tempat-jawaban">[Tulis hipotesis di sini]</span>
+                        <p><strong>MAKA</strong> (dampak yang kami harapkan)...</p>
+                        <span class="tempat-jawaban">[Tulis hipotesis di sini]</span>
+                        <p><strong>KARENA</strong> (alasan logisnya)...</p>
+                        <span class="tempat-jawaban">[Tulis hipotesis di sini]</span>
+
+                        <!-- BAGIAN H: REFLEKSI -->
+                        <h3 class="worksheet-subtitle">H. REFLEKSI KELOMPOK</h3>
+                        <div class="info-biru"><strong>PETUNJUK:</strong> Luangkan waktu untuk merenung sejenak. Apa yang kalian pelajari hari ini?</div>
+                        <p><strong>Apa pelajaran paling berharga yang kalian dapatkan?</strong></p>
+                        <span class="tempat-jawaban">[Tulis jawaban di sini]</span>
+                        <p><strong>Rencana untuk pertemuan selanjutnya (membuat produk):</strong></p>
+                        <span class="tempat-jawaban">[Tulis rencana di sini]</span>
+                        
+                        <div class="footer-text">
+                            Lembar Aktivitas IPAS - Mencari Solusi | ${dateStr}
+                        </div>
+                    </body>
+                    </html>
+                `;
+
+                const blob = new Blob([htmlContent], {
+                    type: 'application/msword;charset=utf-8'
+                });
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                const today = new Date();
+                const dateStr2 = today.getFullYear() + '-' + 
+                               String(today.getMonth()+1).padStart(2,'0') + '-' + 
+                               String(today.getDate()).padStart(2,'0');
+                link.download = `Lembar_Aktivitas_IPAS_Template_${dateStr2}.doc`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => {
+                    URL.revokeObjectURL(link.href);
+                }, 1000);
+
+                exportBtn.innerHTML = '<i class="fas fa-file-word"></i> Export Template DOCX';
+                exportBtn.disabled = false;
+
+            } catch (error) {
+                console.error('Error export:', error);
+                alert('❌ Gagal mengekspor template: ' + error.message);
+                exportBtn.innerHTML = '<i class="fas fa-file-word"></i> Export Template DOCX';
+                exportBtn.disabled = false;
             }
         }
 
