@@ -1159,6 +1159,11 @@
             kelasSelect.disabled = false;
         }
 
+        // ================================================================
+        // ==================== PERBAIKAN UTAMA ====================
+        // ================================================================
+        // FUNGSI updateNamaDropdown(): MENGHAPUS SORTING ALFABET
+        // ================================================================
         function updateNamaDropdown() {
             const kelas = document.getElementById('filterKelas').value;
             const namaSelect = document.getElementById('filterNama');
@@ -1180,7 +1185,9 @@
 
             namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
             const siswaList = dataSiswa[kelas] || [];
-            siswaList.sort().forEach(function(nama) {
+            
+            // 🔥 PERBAIKAN: HAPUS .sort() - tampilkan sesuai urutan di sheet
+            siswaList.forEach(function(nama) {
                 if (nama && nama.trim()) {
                     const option = document.createElement('option');
                     option.value = nama;
@@ -1188,12 +1195,15 @@
                     namaSelect.appendChild(option);
                 }
             });
+            
             namaSelect.disabled = false;
-
             selectedSiswa = { nama: '', posisi: -1 };
             document.getElementById('btnCek').disabled = true;
         }
 
+        // ================================================================
+        // ==================== FUNGSI onSiswaSelected ====================
+        // ================================================================
         function onSiswaSelected() {
             const nama = document.getElementById('filterNama').value;
             const kelas = document.getElementById('filterKelas').value;
@@ -1204,7 +1214,10 @@
                 return;
             }
 
+            // Ambil daftar siswa dari dataSiswa (TANPA sorting)
             const siswaList = dataSiswa[kelas] || [];
+            
+            // Cari posisi siswa (index di array + 1, karena baris dimulai dari 1)
             const posisiSiswa = siswaList.indexOf(nama) + 1;
 
             selectedSiswa = {
@@ -1256,7 +1269,6 @@
             var nilaiCard = document.getElementById('nilaiCard');
             var nilaiStats = document.getElementById('nilaiStats');
 
-            // AMBIL TP HEADERS DENGAN FUNGSI YANG DIPERBAIKI
             var tpHeaders = getTPHeaders(semester);
             var mapAktivitas = semester === 'Ganjil' ? MAP_AKTIVITAS_TP.ganjil : MAP_AKTIVITAS_TP.genap;
             
@@ -1265,13 +1277,11 @@
             console.log('📊 Data Nilai:', dataNilaiPerAktivitas);
             console.log('📊 Header Aktivitas:', headerAktivitas);
 
-            // === STEP 1: BANGUN PER TP DARI DATA NILAI ===
             var perTP = {};
             for (var i = 0; i < tpHeaders.length; i++) {
                 perTP[tpHeaders[i]] = [];
             }
 
-            // Loop setiap aktivitas
             for (var i = 0; i < dataNilaiPerAktivitas.length; i++) {
                 var cellValue = dataNilaiPerAktivitas[i];
                 var aktivitasNama = String(headerAktivitas[i] || '').trim();
@@ -1288,10 +1298,8 @@
                     continue;
                 }
 
-                // Parse nilai
                 var nilaiData = null;
                 
-                // CASE 1: JSON string
                 if (typeof cellValue === 'string' && cellValue.startsWith('{')) {
                     try {
                         var jsonStr = cellValue.replace(/, /g, ',');
@@ -1301,7 +1309,6 @@
                         console.log('   ❌ Gagal parse JSON:', e.message);
                     }
                 }
-                // CASE 2: Angka langsung
                 else if (typeof cellValue === 'number' || !isNaN(parseFloat(cellValue))) {
                     var num = parseFloat(cellValue);
                     if (!isNaN(num) && num > 0) {
@@ -1318,11 +1325,9 @@
                     continue;
                 }
 
-                // Assign nilai ke perTP
                 for (var t = 0; t < tpListForAktivitas.length; t++) {
                     var tp = tpListForAktivitas[t];
                     var nilai = null;
-                    // Cari nilai di JSON
                     for (var key in nilaiData) {
                         var keyTrimmed = key.trim();
                         if (keyTrimmed === tp || 
@@ -1339,7 +1344,6 @@
                     }
 
                     if (nilai !== null && !isNaN(nilai) && nilai > 0) {
-                        // Cek duplikat
                         var existing = false;
                         if (perTP[tp]) {
                             for (var j = 0; j < perTP[tp].length; j++) {
@@ -1362,7 +1366,6 @@
 
             console.log('📊 HASIL PER TP:', perTP);
 
-            // === STEP 2: CEK APAKAH ADA DATA ===
             var hasData = false;
             for (var i = 0; i < tpHeaders.length; i++) {
                 if (perTP[tpHeaders[i]] && perTP[tpHeaders[i]].length > 0) {
@@ -1378,7 +1381,6 @@
                 return;
             }
 
-            // === STEP 3: RENDER TABEL ===
             var html = '';
             var nilaiList = [];
             var totalSemuaNilai = 0;
@@ -1390,16 +1392,13 @@
                 
                 var nilaiAktivitas = perTP[tpKode] || [];
                 
-                // Buat map aktivitas → nilai
                 var nilaiMap = {};
                 for (var n = 0; n < nilaiAktivitas.length; n++) {
                     nilaiMap[nilaiAktivitas[n].aktivitas] = nilaiAktivitas[n].nilai;
                 }
                 
-                // Dapatkan jumlah aktivitas yang mengukur TP ini
                 var jumlahAktivitas = JUMLAH_AKTIVITAS_PER_TP[tpKode] || 0;
                 
-                // Kumpulkan semua aktivitas yang mengukur TP ini
                 var aktivitasTerlibat = [];
                 for (var aktivitas in mapAktivitas) {
                     if (mapAktivitas[aktivitas].includes(tpKode)) {
@@ -1407,7 +1406,6 @@
                     }
                 }
                 
-                // Hitung total nilai
                 var totalNilai = 0;
                 var items = [];
                 
@@ -1415,7 +1413,6 @@
                     var aktivitas = aktivitasTerlibat[a];
                     var nilai = nilaiMap[aktivitas] || 0;
                     totalNilai += nilai;
-                    // HANYA TAMPILKAN JIKA NILAI > 0
                     if (nilai > 0) {
                         items.push('<div class="item"><span class="aktivitas">' + escapeHtml(aktivitas) + '</span>: <span class="nilai">' + nilai + '</span></div>');
                     }
@@ -1427,7 +1424,6 @@
                 
                 var perAktivitasHtml = '<div class="nilai-per-aktivitas">' + items.join('') + '</div>';
                 
-                // Hitung rata-rata
                 var rataNilai = jumlahAktivitas > 0 ? totalNilai / jumlahAktivitas : null;
                 var nilaiValid = (rataNilai !== null && !isNaN(rataNilai) && totalNilai > 0);
                 var nilaiTampil = nilaiValid ? rataNilai.toFixed(2) : '-';
@@ -1749,11 +1745,16 @@
             if (!kelas) { alert('Pilih kelas terlebih dahulu'); return; }
             if (!nama) { alert('Pilih nama siswa terlebih dahulu'); return; }
 
-            currentSemester = semester;
+            console.log('🔍 DETAIL POSISI:');
+            console.log('  Nama:', nama);
+            console.log('  Kelas:', kelas);
+            console.log('  Semester:', semester);
+            console.log('  selectedKelas:', selectedKelas);
+            console.log('  selectedSiswa:', selectedSiswa);
+            console.log('  METADATA.barisPerKelas:', METADATA_IPAS.barisPerKelas);
+            console.log('  METADATA.headerRows:', METADATA_IPAS.rekapAktivitas.headerRows);
 
-            var noBar = (selectedKelas.posisi * METADATA_IPAS.barisPerKelas) +
-                selectedSiswa.posisi +
-                METADATA_IPAS.rekapAktivitas.headerRows;
+            currentSemester = semester;
 
             var startCol, endCol;
             if (semester === 'Ganjil') {
@@ -1763,6 +1764,14 @@
                 startCol = METADATA_IPAS.rekapAktivitas.kolom.genap.start;
                 endCol = METADATA_IPAS.rekapAktivitas.kolom.genap.end;
             }
+
+            var noBar = (selectedKelas.posisi * METADATA_IPAS.barisPerKelas) +
+                selectedSiswa.posisi +
+                METADATA_IPAS.rekapAktivitas.headerRows;
+
+            console.log('  noBar hasil:', noBar);
+            console.log('  startCol:', startCol);
+            console.log('  endCol:', endCol);
 
             document.getElementById('infoPanel').style.display = 'flex';
             document.getElementById('infoNama').innerText = nama;
@@ -1786,10 +1795,8 @@
                 if (result && result.success) {
                     console.log('✅ DATA DARI SERVER:', result);
                     
-                    // Render aktivitas
                     renderAktivitasTable(result.aktivitas || []);
                     
-                    // === RENDER NILAI ===
                     var dataNilai = result.dataNilaiPerAktivitas || [];
                     var headerAktivitasNilai = result.headerNilaiAktivitas || result.headerAktivitas || [];
                     
