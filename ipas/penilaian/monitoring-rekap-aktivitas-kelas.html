@@ -6,11 +6,9 @@
     <title>Rekap Aktivitas & Nilai - IPAS Guru</title>
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- TAMBAHKAN LIBRARY EXCELJS UNTUK EXPORT EXCEL DENGAN STYLING -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
-        /* ===== SEMUA STYLE SAMA ===== */
         :root {
             --ipas-primary: #2ecc71;
             --ipas-secondary: #27ae60;
@@ -75,7 +73,6 @@
             margin-bottom: 1rem;
         }
         
-        /* TOMBOL EXPORT */
         .btn-export {
             background: linear-gradient(135deg, #28a745, #218838);
             color: white;
@@ -229,6 +226,11 @@
             background: white;
             cursor: pointer;
         }
+        .filter-group select:disabled {
+            background: #f5f5f5;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
         
         .btn-cek {
             background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
@@ -245,7 +247,7 @@
             transition: all 0.3s ease;
         }
         
-        .btn-cek:hover {
+        .btn-cek:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
         }
@@ -257,14 +259,12 @@
             border-radius: 16px;
             padding: 0.8rem 1.2rem;
             margin-top: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: none;
             flex-wrap: wrap;
-            gap: 0.8rem;
+            align-items: center;
+            gap: 0.8rem 2rem;
             font-size: 0.85rem;
         }
-        
         .info-panel span {
             display: flex;
             align-items: center;
@@ -314,14 +314,9 @@
             z-index: 2;
         }
         
-        .rekap-table td:nth-child(3) { 
-            text-align: left; 
-            font-weight: 500;
-        }
-        
+        .rekap-table td:nth-child(3) { text-align: left; font-weight: 500; }
         .rekap-table tr:hover { background: #f8f9fa; }
         
-        /* ===== STATUS 3 WARNA ===== */
         .status-belum-kumpul {
             display: inline-flex;
             align-items: center;
@@ -367,7 +362,7 @@
             border-radius: 4px;
             transition: all 0.3s ease;
         }
-        .preview-btn:hover {
+        .preview-btn:hover:not(:disabled) {
             background: var(--ipas-light);
             transform: scale(1.1);
         }
@@ -524,7 +519,7 @@
         }
         
         .preview-field {
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
             background: white;
             border-radius: 8px;
             border: 1px solid #eee;
@@ -532,23 +527,40 @@
         }
         .preview-field-header {
             background: var(--ipas-light);
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             font-weight: 600;
             color: var(--ipas-dark);
             border-bottom: 1px solid #ddd;
+            font-size: 0.8rem;
         }
         .preview-field-value {
-            padding: 0.8rem 1rem;
+            padding: 0.5rem 0.8rem;
             font-size: 0.85rem;
             white-space: pre-wrap;
             word-break: break-word;
+            line-height: 1.5;
         }
-        .preview-empty { color: #999; font-style: italic; }
+        .preview-field-value > div {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .preview-field-value > div > div { padding: 1px 0; }
+        .preview-field-value strong {
+            color: var(--ipas-dark);
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        .preview-empty {
+            color: #999;
+            font-style: italic;
+        }
         
         .preview-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.8rem;
+            table-layout: fixed;
         }
         .preview-table th {
             background: var(--ipas-light);
@@ -556,18 +568,165 @@
             padding: 6px 10px;
             border: 1px solid #ddd;
             text-align: left;
+            word-wrap: break-word;
         }
         .preview-table td {
             padding: 6px 10px;
             border: 1px solid #ddd;
+            word-wrap: break-word;
+            vertical-align: middle;
+        }
+        .preview-table th:first-child,
+        .preview-table td:first-child { max-width: 120px; }
+        
+        .preview-list { margin: 0; padding-left: 1.2rem; }
+        
+        /* ===== FILE INFO CARD ===== */
+        .file-info-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #f8f9fa;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: border-color 0.3s ease;
+            flex-wrap: wrap;
+        }
+        .file-info-card:hover {
+            border-color: var(--ipas-primary);
+        }
+        .file-info-card .file-icon {
+            font-size: 2.5rem;
+            flex-shrink: 0;
+            width: 50px;
+            text-align: center;
+        }
+        .file-info-card .file-icon.youtube { color: #ff0000; }
+        .file-info-card .file-icon.spreadsheet { color: #0f9d58; }
+        .file-info-card .file-icon.document { color: #4285f4; }
+        .file-info-card .file-icon.presentation { color: #fbbc04; }
+        .file-info-card .file-icon.pdf { color: #ea4335; }
+        .file-info-card .file-icon.folder { color: #fbbc04; }
+        .file-info-card .file-details {
+            flex: 1;
+            min-width: 150px;
+        }
+        .file-info-card .file-details .file-name {
+            font-weight: 600;
+            color: var(--ipas-dark);
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        .file-info-card .file-details .file-type {
+            font-size: 0.7rem;
+            color: #888;
+        }
+        .file-info-card .file-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .file-info-card .file-actions .btn-open {
+            background: var(--ipas-primary);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .file-info-card .file-actions .btn-open:hover {
+            background: var(--ipas-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+        .file-info-card .file-actions .btn-open.youtube-btn {
+            background: #ff0000;
+        }
+        .file-info-card .file-actions .btn-open.youtube-btn:hover {
+            background: #cc0000;
+        }
+        .file-info-card .file-actions .btn-copy {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .file-info-card .file-actions .btn-copy:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+        .file-info-card .file-actions .btn-copy.copied {
+            background: var(--ipas-primary);
         }
         
-        .preview-list {
-            margin: 0;
-            padding-left: 1.2rem;
+        /* ===== PREVIEW LINK ===== */
+        .link-preview-container {
+            margin-top: 4px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f5f5f5;
+            max-width: 100%;
+            border: 2px solid #e8e8e8;
+        }
+        .link-preview-container img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            background: white;
+        }
+        .link-preview-container video {
+            width: 100%;
+            max-height: 400px;
+            background: #000;
+            display: block;
+        }
+        .link-preview-container .preview-error {
+            padding: 0.8rem;
+            text-align: center;
+            color: #888;
+            font-size: 0.8rem;
+        }
+        .link-preview-container iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            background: white;
+        }
+        .link-preview-container .preview-footer {
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            color: #888;
+            text-align: center;
+            background: #f5f5f5;
+            border-top: 1px solid #e0e0e0;
+        }
+        .link-preview-container .preview-footer a {
+            color: var(--ipas-primary);
+            word-break: break-all;
+            text-decoration: none;
+        }
+        .link-preview-container .preview-footer a:hover {
+            text-decoration: underline;
         }
         
-        /* ===== EXPAND - VERTICAL LIST ===== */
+        /* ===== EXPAND ===== */
         .expand-btn {
             background: none;
             border: none;
@@ -582,26 +741,20 @@
             background: var(--ipas-light);
             transform: scale(1.1);
         }
-        .expand-btn.rotated {
-            transform: rotate(90deg);
-        }
+        .expand-btn.rotated { transform: rotate(90deg); }
         
         .detail-row {
             display: none;
             background: #f8f9fa;
         }
-        .detail-row.expanded {
-            display: table-row;
-        }
+        .detail-row.expanded { display: table-row; }
         .detail-row td {
             padding: 0.8rem 1rem;
             text-align: left;
             font-size: 0.75rem;
         }
         
-        .detail-container {
-            padding: 0.5rem 0;
-        }
+        .detail-container { padding: 0.5rem 0; }
         .detail-title {
             font-weight: 600;
             color: var(--ipas-dark);
@@ -747,7 +900,7 @@
                 <div class="filter-form">
                     <div class="filter-group">
                         <label><i class="fas fa-calendar-alt"></i> Semester</label>
-                        <select id="filterSemester">
+                        <select id="filterSemester" disabled>
                             <option value="">-- Pilih Semester --</option>
                             <option value="Ganjil" selected>Semester Ganjil</option>
                             <option value="Genap">Semester Genap</option>
@@ -755,12 +908,12 @@
                     </div>
                     <div class="filter-group">
                         <label><i class="fas fa-building"></i> Kelas</label>
-                        <select id="filterKelas">
+                        <select id="filterKelas" disabled>
                             <option value="">-- Pilih Kelas --</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <button class="btn-cek" id="btnCek">
+                        <button class="btn-cek" id="btnCek" disabled>
                             <i class="fas fa-search"></i> Tampilkan Rekap
                         </button>
                     </div>
@@ -786,7 +939,6 @@
                 <span id="errorText">Gagal memuat data.</span>
             </div>
 
-            <!-- Tabel Monitoring Aktivitas -->
             <div class="simple-card" id="aktivitasCard" style="display: none;">
                 <div class="section-title">
                     <i class="fas fa-table-list"></i>
@@ -806,7 +958,6 @@
                 </div>
             </div>
 
-            <!-- Tabel Rekap Nilai TP -->
             <div class="simple-card" id="nilaiCard" style="display: none;">
                 <div class="section-title">
                     <i class="fas fa-star"></i>
@@ -865,6 +1016,78 @@
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         
+        const CONFIG = {
+            MAX_RETRIES: 3,
+            TIMEOUT_MS: 15000,
+            CACHE_DURATION: 5 * 60 * 1000,
+            MAX_RENDER_DEPTH: 5
+        };
+
+        const cache = {
+            data: {},
+            timestamp: {},
+            set(key, value) {
+                this.data[key] = value;
+                this.timestamp[key] = Date.now();
+            },
+            get(key) {
+                if (!this.data[key]) return null;
+                if (Date.now() - this.timestamp[key] > CONFIG.CACHE_DURATION) {
+                    delete this.data[key];
+                    delete this.timestamp[key];
+                    return null;
+                }
+                return this.data[key];
+            },
+            clear(key) {
+                if (key) {
+                    delete this.data[key];
+                    delete this.timestamp[key];
+                } else {
+                    this.data = {};
+                    this.timestamp = {};
+                }
+            }
+        };
+
+        async function fetchWithRetry(url, options = {}) {
+            const maxRetries = options.maxRetries || CONFIG.MAX_RETRIES;
+            const timeout = options.timeout || CONFIG.TIMEOUT_MS;
+            const cacheKey = options.cacheKey || url;
+            
+            if (options.useCache !== false) {
+                const cached = cache.get(cacheKey);
+                if (cached) {
+                    console.log('📦 Pakai cache untuk:', cacheKey);
+                    return cached;
+                }
+            }
+            
+            let lastError = null;
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    console.log(`🔄 Attempt ${attempt}/${maxRetries}...`);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeout);
+                    const response = await fetch(url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const result = await response.json();
+                    if (options.useCache !== false && result && result.success) {
+                        cache.set(cacheKey, result);
+                    }
+                    return result;
+                } catch (error) {
+                    lastError = error;
+                    if (attempt < maxRetries) {
+                        await new Promise(r => setTimeout(r, Math.min(1000 * Math.pow(2, attempt - 1), 5000)));
+                    }
+                }
+            }
+            throw new Error(`Gagal: ${lastError?.message || 'Unknown error'}`);
+        }
+
         function getAppsScriptUrl() { return APPS_SCRIPT_URL; }
         
         let dataKelas = [];
@@ -873,60 +1096,650 @@
         let currentSemester = '';
         let aktivitasHeaders = [];
         let siswaData = [];
-        
-        // ==================== JUMLAH AKTIVITAS PER TP ====================
+        let isLoading = false;
+        let isInitialized = false;
+
+        // ==================== METADATA ====================
         const JUMLAH_AKTIVITAS_PER_TP = {
-            'TP 1.1': 8,
-            'TP 1.2': 6,
-            'TP 1.3': 6,
-            'TP 1.4': 6,
-            'TP 2.1': 3,
-            'TP 2.2': 1,
-            'TP 2.3': 1,
-            'TP 3.1': 2,
-            'TP 3.2': 1,
-            'TP 3.3': 1,
-            'TP 3.4': 2,
-            'TP 3.5': 5
+            'TP 1.1': 8, 'TP 1.2': 6, 'TP 1.3': 6, 'TP 1.4': 6,
+            'TP 2.1': 3, 'TP 2.2': 1, 'TP 2.3': 1,
+            'TP 3.1': 2, 'TP 3.2': 1, 'TP 3.3': 1, 'TP 3.4': 2, 'TP 3.5': 5
         };
-        
-        // ==================== TP PER SEMESTER ====================
-        const TP_GANJIL = ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'];
-        const TP_GENAP = ['TP 2.1', 'TP 2.2', 'TP 2.3', 'TP 3.1', 'TP 3.2', 'TP 3.3', 'TP 3.4', 'TP 3.5'];
-        
-        function getTPHeaders(semester) {
-            const sem = String(semester || '').toLowerCase();
-            if (sem === 'ganjil') {
-                return TP_GANJIL;
-            } else if (sem === 'genap') {
-                return TP_GENAP;
-            }
-            return [];
-        }
-        
-        // ==================== DESKRIPSI TP ====================
+
         const DESKRIPSI_TP = {
-            'TP 1.1': 'Menjelaskan pengetahuan ilmiah yang berkaitan dengan fenomena alam dan sosial di lingkungan sekitar',
-            'TP 1.2': 'Membuat prediksi sederhana terhadap fenomena alam dan sosial berdasarkan pola ilmiah',
+            'TP 1.1': 'Menjelaskan pengetahuan ilmiah yang berkaitan dengan fenomena alam dan sosial',
+            'TP 1.2': 'Membuat prediksi sederhana terhadap fenomena alam dan sosial',
             'TP 1.3': 'Melakukan pembuktian sederhana terhadap prediksi yang telah dibuat',
-            'TP 1.4': 'Mengaitkan fenomena alam dan sosial dengan keterampilan teknis pada bidang keahliannya',
+            'TP 1.4': 'Mengaitkan fenomena alam dan sosial dengan keterampilan teknis',
             'TP 2.1': 'Menyusun rancangan percobaan dengan mengikuti prosedur penyelidikan ilmiah',
             'TP 2.2': 'Melaksanakan percobaan sesuai dengan rancangan yang telah dibuat',
-            'TP 2.3': 'Memeriksa kekurangan atau kesalahan pada rancangan percobaan yang telah dilakukan',
-            'TP 3.1': 'Membuktikan hasil penyelidikan dengan menggunakan data dan bukti dari berbagai sumber',
-            'TP 3.2': 'Membangun argumen berdasarkan prinsip dasar dan bukti ilmiah yang diperoleh',
+            'TP 2.3': 'Memeriksa kekurangan atau kesalahan pada rancangan percobaan',
+            'TP 3.1': 'Membuktikan hasil penyelidikan dengan menggunakan data dan bukti',
+            'TP 3.2': 'Membangun argumen berdasarkan prinsip dasar dan bukti ilmiah',
             'TP 3.3': 'Mempertahankan argumen menggunakan penjelasan ilmiah yang logis',
             'TP 3.4': 'Mengomunikasikan proses dan hasil kegiatan penyelidikan secara ilmiah',
-            'TP 3.5': 'Melakukan refleksi diri terhadap tahapan kegiatan penyelidikan yang telah dilakukan'
+            'TP 3.5': 'Melakukan refleksi diri terhadap tahapan kegiatan penyelidikan'
         };
-        
+
+        function getTPHeaders(semester) {
+            const sem = String(semester || '').toLowerCase();
+            if (sem === 'ganjil') return ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'];
+            if (sem === 'genap') return ['TP 2.1', 'TP 2.2', 'TP 2.3', 'TP 3.1', 'TP 3.2', 'TP 3.3', 'TP 3.4', 'TP 3.5'];
+            return [];
+        }
+
         function getDeskripsiTP(tpKode) {
             return DESKRIPSI_TP[tpKode] || '';
         }
-        
+
+        function getMapAktivitasTP(semester) {
+            const sem = String(semester || '').toLowerCase();
+            if (sem === 'ganjil') {
+                return {
+                    'AKTIVITAS 1 - PERKENALAN IPAS': ['TP 1.1'],
+                    'AKTIVITAS 2 - EKSPLORASI MAKHLUK HIDUP': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                    'AKTIVITAS 3 - EKSPLORASI ZAT': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                    'AKTIVITAS 4 - EKSPLORASI ENERGI': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                    'AKTIVITAS 5 - EKSPLORASI KERUANGAN': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                    'AKTIVITAS 6 - EKSPLORASI INTERAKSI SOSIAL': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                    'AKTIVITAS 7 - EKSPLORASI PERILAKU EKONOMI': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
+                    'AKTIVITAS 8 - REVIEW MATERI SEMESTER GANJIL': ['TP 1.1'],
+                    'REVIEW MATERI SEMESTER GANJIL': ['TP 1.1']
+                };
+            } else {
+                return {
+                    'AKTIVITAS 1 - MENEMUKAN MASALAH PROYEK': ['TP 2.1', 'TP 3.5'],
+                    'AKTIVITAS 2 - MENCARI SOLUSI': ['TP 2.1', 'TP 3.5'],
+                    'AKTIVITAS 3 - PERANCANGAN PROYEK': ['TP 2.1'],
+                    'AKTIVITAS 4 - PENGEMBANGAN PROYEK': ['TP 2.2', 'TP 2.3', 'TP 3.1', 'TP 3.5'],
+                    'AKTIVITAS 5 - PENGOLAHAN DATA LAPORAN': ['TP 3.1', 'TP 3.2', 'TP 3.4', 'TP 3.5'],
+                    'AKTIVITAS 6 - DISEMINASI VIDEO': ['TP 3.3', 'TP 3.4', 'TP 3.5']
+                };
+            }
+        }
+
+        function getPredikat(nilai) {
+            if (nilai === null || nilai === undefined || isNaN(nilai)) {
+                return { teks: 'Belum Ada Nilai', kelas: 'predikat-belum-nilai', tindakLanjut: 'Belum ada data nilai.' };
+            }
+            if (nilai >= 90) return { teks: 'Mahir', kelas: 'predikat-mahir', tindakLanjut: 'Berikan pengayaan.' };
+            if (nilai >= 75) return { teks: 'Cakap', kelas: 'predikat-cakap', tindakLanjut: 'Lanjutkan ke materi berikutnya.' };
+            if (nilai >= 60) return { teks: 'Berkembang', kelas: 'predikat-berkembang', tindakLanjut: 'Berikan bimbingan intensif.' };
+            return { teks: 'Perlu Bimbingan', kelas: 'predikat-perlu-bimbingan', tindakLanjut: 'Program remedial.' };
+        }
+
+        // ==================== FUNGSI UTILITY ====================
+        function escapeHtml(text) {
+            if (!text && text !== 0 && text !== false) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatLabel(key) {
+            let cleaned = key.replace(/^[A-Z]\.\s*/, '');
+            cleaned = cleaned.replace(/_/g, ' ')
+                .replace(/([A-Z])/g, ' $1')
+                .replace(/^./, str => str.toUpperCase())
+                .trim()
+                .replace(/\s+/g, ' ');
+            return cleaned;
+        }
+
+        function safeId(str) {
+            return str.replace(/\./g, '_').replace(/\s+/g, '_').replace(/\(/g, '_').replace(/\)/g, '_');
+        }
+
+        function isLink(text) {
+            if (typeof text !== 'string') return false;
+            const trimmed = text.trim();
+            return trimmed.startsWith('http://') || trimmed.startsWith('https://') ||
+                trimmed.includes('drive.google.com') || trimmed.includes('docs.google.com') ||
+                trimmed.includes('googleusercontent.com') || trimmed.includes('youtube.com') ||
+                trimmed.includes('youtu.be') ||
+                trimmed.match(/^https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|svg|mp4|webm|mov|pdf)/i);
+        }
+
+        function detectDriveFileType(url) {
+            const patterns = {
+                video: /docs\.google\.com\/videos\/d\/([a-zA-Z0-9_-]+)/,
+                spreadsheet: /docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/,
+                document: /docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]+)/,
+                presentation: /docs\.google\.com\/presentation\/d\/([a-zA-Z0-9_-]+)/,
+                pdf: /docs\.google\.com\/pdf\/d\/([a-zA-Z0-9_-]+)/,
+                form: /docs\.google\.com\/forms\/d\/([a-zA-Z0-9_-]+)/,
+                file: /\/file\/d\/([a-zA-Z0-9_-]+)/,
+                folder: /\/folders\/([a-zA-Z0-9_-]+)/,
+                uc: /\/uc\?id=([a-zA-Z0-9_-]+)/,
+                open: /\/open\?id=([a-zA-Z0-9_-]+)/
+            };
+            for (const [type, pattern] of Object.entries(patterns)) {
+                const match = url.match(pattern);
+                if (match) return { type, fileId: match[1] };
+            }
+            const idParam = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+            if (idParam) return { type: 'file', fileId: idParam[1] };
+            const generalMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (generalMatch) return { type: 'file', fileId: generalMatch[1] };
+            return { type: 'unknown', fileId: null };
+        }
+
+        function copyLink(url) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(() => {
+                    document.querySelectorAll('.btn-copy').forEach(el => {
+                        el.classList.add('copied');
+                        el.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+                        setTimeout(() => {
+                            el.classList.remove('copied');
+                            el.innerHTML = '<i class="fas fa-copy"></i> Salin';
+                        }, 2000);
+                    });
+                }).catch(() => fallbackCopy(url));
+            } else {
+                fallbackCopy(url);
+            }
+        }
+
+        function fallbackCopy(url) {
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('Link berhasil disalin!');
+            } catch (e) {
+                alert('Gagal menyalin link. Silakan salin manual.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function extractAllLinksFromObject(obj, links = []) {
+            if (!obj || typeof obj !== 'object') return links;
+            if (Array.isArray(obj)) {
+                for (const item of obj) extractAllLinksFromObject(item, links);
+                return links;
+            }
+            for (const key of Object.keys(obj)) {
+                const val = obj[key];
+                if (typeof val === 'string' && isLink(val)) links.push(val);
+                if (typeof val === 'object' && val !== null) extractAllLinksFromObject(val, links);
+            }
+            return links;
+        }
+
+        // ==================== RENDER LINK PREVIEW UNIVERSAL ====================
+        function renderLinkPreviewUniversal(url) {
+            if (!url || url.trim() === '') {
+                return `<span class="preview-empty">(kosong)</span>`;
+            }
+            
+            let cleanUrl = url.trim();
+            const driveInfo = detectDriveFileType(cleanUrl);
+            
+            const youtubeMatch = cleanUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/);
+            if (youtubeMatch) {
+                return `
+                    <div class="file-info-card">
+                        <div class="file-icon youtube"><i class="fab fa-youtube"></i></div>
+                        <div class="file-details">
+                            <div class="file-name">${escapeHtml(cleanUrl)}</div>
+                            <div class="file-type">YouTube Video</div>
+                        </div>
+                        <div class="file-actions">
+                            <a href="${cleanUrl}" target="_blank" class="btn-open youtube-btn">
+                                <i class="fab fa-youtube"></i> Buka di YouTube
+                            </a>
+                            <button class="btn-copy" onclick="copyLink('${escapeHtml(cleanUrl)}')">
+                                <i class="fas fa-copy"></i> Salin
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (driveInfo.fileId) {
+                const iconMap = {
+                    spreadsheet: 'fa-table',
+                    document: 'fa-file-word',
+                    presentation: 'fa-file-powerpoint',
+                    form: 'fa-google',
+                    folder: 'fa-folder',
+                    video: 'fa-video',
+                    pdf: 'fa-file-pdf',
+                    file: 'fa-file'
+                };
+                const labelMap = {
+                    spreadsheet: 'Google Spreadsheet',
+                    document: 'Google Document',
+                    presentation: 'Google Presentation',
+                    form: 'Google Form',
+                    folder: 'Google Drive Folder',
+                    video: 'Google Drive Video',
+                    pdf: 'Google Drive PDF',
+                    file: 'Google Drive File'
+                };
+                const icon = iconMap[driveInfo.type] || 'fa-file';
+                const label = labelMap[driveInfo.type] || 'Google Drive';
+                const iconClass = driveInfo.type === 'folder' ? 'folder' : 
+                                 driveInfo.type === 'video' ? 'youtube' : 
+                                 driveInfo.type === 'spreadsheet' ? 'spreadsheet' :
+                                 driveInfo.type === 'document' ? 'document' :
+                                 driveInfo.type === 'presentation' ? 'presentation' :
+                                 driveInfo.type === 'pdf' ? 'pdf' : '';
+
+                if (driveInfo.type === 'folder') {
+                    const embedUrl = `https://drive.google.com/embeddedfolderview?id=${driveInfo.fileId}#grid`;
+                    return `
+                        <div class="link-preview-container">
+                            <iframe src="${embedUrl}" style="width:100%;height:400px;border:none;" allowfullscreen></iframe>
+                            <div class="preview-footer">
+                                <a href="${cleanUrl}" target="_blank">${escapeHtml(cleanUrl)}</a>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const embedUrl = `https://drive.google.com/file/d/${driveInfo.fileId}/preview`;
+                return `
+                    <div class="file-info-card">
+                        <div class="file-icon ${iconClass}"><i class="fas ${icon}"></i></div>
+                        <div class="file-details">
+                            <div class="file-name">${escapeHtml(cleanUrl)}</div>
+                            <div class="file-type">${label}</div>
+                        </div>
+                        <div class="file-actions">
+                            <a href="${cleanUrl}" target="_blank" class="btn-open">
+                                <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                            </a>
+                            <button class="btn-copy" onclick="copyLink('${escapeHtml(cleanUrl)}')">
+                                <i class="fas fa-copy"></i> Salin
+                            </button>
+                        </div>
+                        <div class="link-preview-container" style="margin-top:8px;width:100%;">
+                            <iframe src="${embedUrl}" style="width:100%;height:400px;border:none;" allow="autoplay" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (cleanUrl.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i)) {
+                return `
+                    <div class="link-preview-container">
+                        <img src="${cleanUrl}" alt="Gambar" 
+                             onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\\'preview-error\\'><i class=\\'fas fa-exclamation-triangle\\'></i> Gagal memuat gambar<br><a href=\\'${escapeHtml(cleanUrl)}\\' target=\\'_blank\\' style=\\'color:var(--ipas-primary);word-break:break-all;\\'>${escapeHtml(cleanUrl)}</a></div>'">
+                        <div class="preview-footer">
+                            <a href="${cleanUrl}" target="_blank">${escapeHtml(cleanUrl)}</a>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (cleanUrl.match(/\.(mp4|webm|mov|avi|mkv|flv)$/i)) {
+                return `
+                    <div class="link-preview-container">
+                        <video controls style="width:100%;max-height:400px;background:#000;">
+                            <source src="${cleanUrl}" type="video/mp4">
+                            <source src="${cleanUrl}" type="video/webm">
+                            <source src="${cleanUrl}" type="video/ogg">
+                            <div class="preview-error">
+                                <i class="fas fa-exclamation-triangle"></i> Browser tidak mendukung video.<br>
+                                <a href="${cleanUrl}" target="_blank" style="color:var(--ipas-primary);">${escapeHtml(cleanUrl)}</a>
+                            </div>
+                        </video>
+                        <div class="preview-footer">
+                            <a href="${cleanUrl}" target="_blank">${escapeHtml(cleanUrl)}</a>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="link-preview-container">
+                    <div class="preview-error">
+                        <i class="fas fa-link" style="font-size:1.5rem;display:block;margin-bottom:8px;"></i>
+                        <a href="${cleanUrl}" target="_blank" style="color:var(--ipas-primary);word-break:break-all;">${escapeHtml(cleanUrl)}</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== RENDER ARRAY UNIVERSAL ====================
+        function renderArrayUniversal(data) {
+            if (!Array.isArray(data) || data.length === 0) {
+                return `<span class="preview-empty">(kosong)</span>`;
+            }
+
+            const allAreArrays = data.every(item => Array.isArray(item));
+            
+            if (allAreArrays && data.length > 0) {
+                const headers = data[0].map(h => String(h));
+                const rows = data.slice(1);
+                
+                let html = `<table class="preview-table">`;
+                html += `<thead><tr>`;
+                headers.forEach(h => {
+                    html += `<th>${escapeHtml(h)}</th>`;
+                });
+                html += `</tr></thead><tbody>`;
+
+                rows.forEach(row => {
+                    if (!Array.isArray(row)) return;
+                    html += `<tr>`;
+                    row.forEach((cell) => {
+                        let display = '';
+                        if (typeof cell === 'boolean') {
+                            display = cell ? '✅ Selesai' : '❌ Belum';
+                        } else if (cell === undefined || cell === null || cell === '') {
+                            display = '<span class="preview-empty">-</span>';
+                        } else if (typeof cell === 'string' && isLink(cell)) {
+                            display = renderLinkPreviewUniversal(cell);
+                        } else {
+                            display = escapeHtml(String(cell));
+                        }
+                        html += `<td>${display}</td>`;
+                    });
+                    html += `</tr>`;
+                });
+
+                html += `</tbody></table>`;
+                return html;
+            }
+
+            if (data.every(item => typeof item === 'string')) {
+                let listHtml = `<ul class="preview-list">`;
+                data.forEach((item) => {
+                    listHtml += `<li>${escapeHtml(item)}</li>`;
+                });
+                listHtml += `</ul>`;
+                return listHtml;
+            }
+
+            if (data.every(item => typeof item === 'object' && item !== null && !Array.isArray(item))) {
+                const allKeys = new Set();
+                data.forEach(item => {
+                    Object.keys(item).forEach(k => allKeys.add(k));
+                });
+                
+                if (allKeys.size === 0) {
+                    return `<span class="preview-empty">(kosong)</span>`;
+                }
+
+                const headers = Array.from(allKeys);
+                let tableHtml = `<table class="preview-table">`;
+                tableHtml += `<thead><tr>`;
+                headers.forEach(h => {
+                    tableHtml += `<th>${escapeHtml(formatLabel(h))}</th>`;
+                });
+                tableHtml += `</tr></thead><tbody>`;
+                
+                data.forEach(item => {
+                    tableHtml += `<tr>`;
+                    headers.forEach(h => {
+                        const val = item[h];
+                        let display = (val !== undefined && val !== null && val !== '') ? 
+                                      renderValueUniversal(val) : 
+                                      '<span class="preview-empty">-</span>';
+                        tableHtml += `<td>${display}</td>`;
+                    });
+                    tableHtml += `</tr>`;
+                });
+                
+                tableHtml += `</tbody></table>`;
+                return tableHtml;
+            }
+
+            let listHtml = `<div style="display:flex;flex-direction:column;gap:4px;">`;
+            data.forEach((item, idx) => {
+                if (typeof item === 'object' && item !== null) {
+                    listHtml += `<div style="border:1px solid #e8e8e8;border-radius:8px;padding:8px 12px;margin-bottom:4px;background:#fafafa;">`;
+                    listHtml += `<div style="font-weight:600;color:var(--ipas-dark);font-size:0.8rem;margin-bottom:4px;">Item ${idx + 1}</div>`;
+                    listHtml += renderValueUniversal(item);
+                    listHtml += `</div>`;
+                } else {
+                    listHtml += `<div>${idx+1}. ${escapeHtml(String(item))}</div>`;
+                }
+            });
+            listHtml += `</div>`;
+            return listHtml;
+        }
+
+        // ==================== RENDER VALUE UNIVERSAL ====================
+        function renderValueUniversal(value, depth = 0) {
+            const MAX_DEPTH = CONFIG.MAX_RENDER_DEPTH;
+            if (depth > MAX_DEPTH) {
+                return `<span class="preview-empty">[Data terlalu dalam]</span>`;
+            }
+
+            if (value === null || value === undefined || value === '') {
+                return `<span class="preview-empty">(kosong)</span>`;
+            }
+
+            if (typeof value === 'number') {
+                return `<span>${escapeHtml(String(value))}</span>`;
+            }
+
+            if (typeof value === 'boolean') {
+                return `<span>${value ? '✅ Ya' : '❌ Tidak'}</span>`;
+            }
+
+            if (typeof value === 'string') {
+                if (isLink(value)) {
+                    return renderLinkPreviewUniversal(value);
+                }
+                
+                if (value.includes('\n')) {
+                    const lines = value.split('\n').filter(line => line.trim() !== '');
+                    if (lines.length > 1) {
+                        let listHtml = `<ul class="preview-list">`;
+                        lines.forEach(line => {
+                            listHtml += `<li>• ${escapeHtml(line.trim())}</li>`;
+                        });
+                        listHtml += `</ul>`;
+                        return listHtml;
+                    }
+                }
+                
+                if ((value.startsWith('{') || value.startsWith('[')) && (value.endsWith('}') || value.endsWith(']'))) {
+                    try {
+                        const parsed = JSON.parse(value);
+                        return renderValueUniversal(parsed, depth + 1);
+                    } catch (e) {}
+                }
+                
+                return `<span>${escapeHtml(value)}</span>`;
+            }
+
+            if (Array.isArray(value)) {
+                return renderArrayUniversal(value);
+            }
+
+            if (typeof value === 'object') {
+                const keys = Object.keys(value);
+                if (keys.length === 0) {
+                    return `<span class="preview-empty">(kosong)</span>`;
+                }
+
+                let objHtml = `<div style="display:flex;flex-direction:column;gap:4px;">`;
+                keys.forEach(key => {
+                    const val = value[key];
+                    const label = formatLabel(key);
+                    
+                    if (typeof val === 'string' && isLink(val)) {
+                        objHtml += `<div><strong>${escapeHtml(label)}:</strong> ${renderLinkPreviewUniversal(val)}</div>`;
+                    } else if (typeof val === 'object' && val !== null) {
+                        objHtml += `<div><strong>${escapeHtml(label)}:</strong> ${renderValueUniversal(val, depth + 1)}</div>`;
+                    } else {
+                        const displayVal = (val !== undefined && val !== null && val !== '') ? 
+                                           escapeHtml(String(val)) : 
+                                           '<span class="preview-empty">(kosong)</span>';
+                        objHtml += `<div><strong>${escapeHtml(label)}:</strong> ${displayVal}</div>`;
+                    }
+                });
+                objHtml += `</div>`;
+                return objHtml;
+            }
+
+            return `<span>${escapeHtml(String(value))}</span>`;
+        }
+
+        // ==================== RENDER PREVIEW UNIVERSAL ====================
+        function renderPreviewUniversal(data) {
+            if (!data || typeof data !== 'object' || Object.keys(data).length === 0) {
+                return `<div style="text-align:center;color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data untuk ditampilkan</div>`;
+            }
+
+            let html = '';
+
+            const priorityKeys = ['A. Identitas Kelompok', 'B. Produk Google Docs', 'C. Produk Google Sheets', 
+                                  'D. Produk Google Slides', 'E. Diskusi Kelompok', 'F. Refleksi Individu', 
+                                  'G. Pembagian Tugas'];
+            
+            let processedKeys = new Set(['Nama', 'nama', 'Kelas', 'kelas', 'Semester', 'semester', 
+                                         'Status', 'status', 'Key', 'key', 'Timestamp', 'timestamp', 
+                                         'Waktu', 'waktu', 'aktivitas', 'identitas', 'Identitas',
+                                         'A. Identitas Kelompok', 'Identitas Kelompok']);
+            
+            let otherKeys = Object.keys(data).filter(key => !processedKeys.has(key) && !key.startsWith('_'));
+            
+            let sortedKeys = [];
+            for (const pKey of priorityKeys) {
+                if (data[pKey] !== undefined) {
+                    sortedKeys.push(pKey);
+                }
+            }
+            for (const key of otherKeys) {
+                if (!sortedKeys.includes(key)) {
+                    sortedKeys.push(key);
+                }
+            }
+
+            for (const key of sortedKeys) {
+                const value = data[key];
+                const label = formatLabel(key);
+                let icon = 'fa-file-alt';
+                
+                if (key === 'identitas' || key === 'Identitas' || key === 'A. Identitas Kelompok') { icon = 'fa-id-card'; }
+                else if (key === 'aktivitas') { icon = 'fa-tasks'; }
+                else if (key === 'literasi') { icon = 'fa-book-open'; }
+                else if (key === 'observasi') { icon = 'fa-binoculars'; }
+                else if (key === 'prediksi') { icon = 'fa-hand-pointer'; }
+                else if (key === 'pembuktian') { icon = 'fa-flask'; }
+                else if (key === 'bab') { icon = 'fa-book'; }
+                else if (key === 'refleksi') { icon = 'fa-smile'; }
+                else if (key === 'nilai' || key === 'nilai diri kelompok') { icon = 'fa-star'; }
+                else if (key.toLowerCase().includes('jawaban')) icon = 'fa-edit';
+                else if (key.toLowerCase().includes('link') || key.toLowerCase().includes('screenshot')) icon = 'fa-link';
+                
+                const displayValue = renderValueUniversal(value, 0);
+
+                html += `
+                    <div class="preview-field">
+                        <div class="preview-field-header">
+                            <i class="fas ${icon}"></i> ${escapeHtml(label)}
+                        </div>
+                        <div class="preview-field-value">
+                            ${displayValue}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (html === '') {
+                return `<div style="text-align:center;color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data untuk ditampilkan</div>`;
+            }
+
+            return html;
+        }
+
+        // ==================== PREVIEW JAWABAN ====================
+        async function previewJawaban(aktivitasNama, namaSiswa) {
+            const modalHtml = `
+                <div id="previewModal" class="modal-overlay" onclick="if(event.target===this) closePreviewModal()">
+                    <div class="modal-container">
+                        <div class="modal-header">
+                            <h3><i class="fas fa-eye"></i> Preview Jawaban Siswa</h3>
+                            <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-info">
+                                <p><strong>Aktivitas:</strong> ${escapeHtml(aktivitasNama)}</p>
+                                <p><strong>Siswa:</strong> ${escapeHtml(namaSiswa)}</p>
+                                <p><strong>Kelas:</strong> ${escapeHtml(currentKelas)}</p>
+                            </div>
+                            <div id="previewContentWrapper" class="preview-content-wrapper">
+                                <div style="text-align:center; padding:2rem;">
+                                    <i class="fas fa-spinner fa-spin"></i> Memuat data jawaban...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const existingModal = document.getElementById('previewModal');
+            if (existingModal) existingModal.remove();
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            try {
+                const previewWrapper = document.getElementById('previewContentWrapper');
+                const url = getAppsScriptUrl();
+                const cacheKey = `preview_${currentKelas}_${aktivitasNama}_${currentSemester}`;
+                
+                const result = await fetchWithRetry(`${url}?action=getData&sheetName=Rekap_aktivitas&kelas=${encodeURIComponent(currentKelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&semester=${encodeURIComponent(currentSemester)}&_=${Date.now()}`, {
+                    cacheKey: cacheKey,
+                    useCache: true,
+                    maxRetries: CONFIG.MAX_RETRIES,
+                    timeout: CONFIG.TIMEOUT_MS
+                });
+                
+                if (result && result.success && result.data) {
+                    let jawabanData = null;
+                    for (const item of result.data) {
+                        const nama = item.Nama || item.nama || '';
+                        if (nama === namaSiswa) {
+                            jawabanData = item;
+                            break;
+                        }
+                    }
+                    
+                    if (jawabanData) {
+                        previewWrapper.innerHTML = renderPreviewUniversal(jawabanData);
+                    } else {
+                        previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban siswa tidak ditemukan.</div>';
+                    }
+                } else {
+                    previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban tidak ditemukan.</div>';
+                }
+            } catch (error) {
+                console.error('Error preview jawaban:', error);
+                const previewWrapper = document.getElementById('previewContentWrapper');
+                if (previewWrapper) {
+                    previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data jawaban: ' + escapeHtml(error.message) + '</div>';
+                }
+            }
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('previewModal');
+            if (modal) modal.remove();
+        }
+
         // ==================== LOAD DATA SISWA ====================
         function loadDataSiswa() {
             return new Promise((resolve, reject) => {
+                const cacheKey = 'dataSiswa';
+                const cached = cache.get(cacheKey);
+                if (cached) {
+                    dataKelas = cached.kelasList || [];
+                    dataSiswaPerKelas = cached.siswaPerKelas || {};
+                    resolve();
+                    return;
+                }
+
                 const callbackName = 'jsonp_callback_' + Date.now();
                 window[callbackName] = function(result) {
                     const script = document.querySelector(`script[src*="${callbackName}"]`);
@@ -934,6 +1747,10 @@
                     delete window[callbackName];
                     
                     if (result && result.success) {
+                        cache.set(cacheKey, {
+                            kelasList: result.kelasList || [],
+                            siswaPerKelas: result.siswaPerKelas || {}
+                        });
                         dataKelas = result.kelasList || [];
                         dataSiswaPerKelas = result.siswaPerKelas || {};
                         resolve();
@@ -948,7 +1765,7 @@
                 document.head.appendChild(script);
             });
         }
-        
+
         function updateKelasDropdown() {
             const kelasSelect = document.getElementById('filterKelas');
             kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
@@ -960,46 +1777,22 @@
                     kelasSelect.appendChild(option);
                 }
             });
-        }
-        
-        // ==================== MAPPING AKTIVITAS → TP ====================
-        function getMapAktivitasTP(semester) {
-            const sem = String(semester || '').toLowerCase();
-            if (sem === 'ganjil') {
-                return {
-                    'AKTIVITAS 1 - PERKENALAN IPAS': ['TP 1.1'],
-                    'AKTIVITAS 2 - EKSPLORASI MAKHLUK HIDUP': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
-                    'AKTIVITAS 3 - EKSPLORASI ZAT': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
-                    'AKTIVITAS 4 - EKSPLORASI ENERGI': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
-                    'AKTIVITAS 5 - EKSPLORASI KERUANGAN': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
-                    'AKTIVITAS 6 - EKSPLORASI INTERAKSI SOSIAL': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
-                    'AKTIVITAS 7 - EKSPLORASI PERILAKU EKONOMI': ['TP 1.1', 'TP 1.2', 'TP 1.3', 'TP 1.4'],
-                    'AKTIVITAS 8 - REVIEW MATERI SEMESTER GANJIL': ['TP 1.1']
-                };
-            } else {
-                return {
-                    'AKTIVITAS 1 - MENEMUKAN MASALAH PROYEK': ['TP 2.1', 'TP 3.5'],
-                    'AKTIVITAS 2 - MENCARI SOLUSI': ['TP 2.1', 'TP 3.5'],
-                    'AKTIVITAS 3 - PERANCANGAN PROYEK': ['TP 2.1'],
-                    'AKTIVITAS 4 - PENGEMBANGAN PROYEK': ['TP 2.2', 'TP 2.3', 'TP 3.1', 'TP 3.5'],
-                    'AKTIVITAS 5 - PENGOLAHAN DATA LAPORAN': ['TP 3.1', 'TP 3.2', 'TP 3.4', 'TP 3.5'],
-                    'AKTIVITAS 6 - DISEMINASI VIDEO': ['TP 3.3', 'TP 3.4', 'TP 3.5']
-                };
-            }
+            kelasSelect.disabled = false;
         }
 
-        // ==================== AMBIL DATA REKAP ====================
+        // ==================== FETCH REKAP DATA ====================
         async function fetchRekapData(semester, kelas) {
             try {
                 console.log('📥 fetchRekapData - START');
                 console.log('  Semester:', semester);
                 console.log('  Kelas:', kelas);
                 
-                // 1. Ambil daftar aktivitas dari data_mapel
                 const urlAktivitas = `${APPS_SCRIPT_URL}?action=getDaftarAktivitas&semester=${encodeURIComponent(semester)}&_=${Date.now()}`;
-                const respAktivitas = await fetch(urlAktivitas);
-                const resultAktivitas = await respAktivitas.json();
-                console.log('📊 Result Aktivitas:', resultAktivitas);
+                const cacheKeyAktivitas = `daftarAktivitas_${semester}`;
+                const resultAktivitas = await fetchWithRetry(urlAktivitas, {
+                    cacheKey: cacheKeyAktivitas,
+                    useCache: true
+                });
                 
                 let aktivitasList = [];
                 if (resultAktivitas && resultAktivitas.success && resultAktivitas.aktivitas) {
@@ -1010,12 +1803,13 @@
                     return { success: false, error: 'Tidak ada aktivitas untuk semester ' + semester };
                 }
                 
-                // 2. Ambil data siswa dari getSiswaByKelas (gunakan aktivitas pertama)
                 const aktivitasPertama = aktivitasList[0].nama;
                 const urlSiswa = `${APPS_SCRIPT_URL}?action=getSiswaByKelas&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitasPertama)}&_=${Date.now()}`;
-                const respSiswa = await fetch(urlSiswa);
-                const resultSiswa = await respSiswa.json();
-                console.log('📊 Result Siswa:', resultSiswa);
+                const cacheKeySiswa = `siswa_${semester}_${kelas}`;
+                const resultSiswa = await fetchWithRetry(urlSiswa, {
+                    cacheKey: cacheKeySiswa,
+                    useCache: true
+                });
                 
                 let semuaSiswa = {};
                 let daftarNama = [];
@@ -1036,82 +1830,80 @@
                     });
                 }
                 
-                // 3. Ambil data aktivitas per siswa
-                const mapAktivitasTP = getMapAktivitasTP(semester);
+                // Parallel request untuk semua aktivitas
+                const aktivitasPromises = aktivitasList.map(aktivitas => {
+                    const urlData = `${APPS_SCRIPT_URL}?action=getData&sheetName=Rekap_aktivitas&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitas.nama)}&semester=${encodeURIComponent(semester)}&_=${Date.now()}`;
+                    const cacheKeyAktivitasData = `aktivitas_${semester}_${kelas}_${aktivitas.nama}`;
+                    return fetchWithRetry(urlData, {
+                        cacheKey: cacheKeyAktivitasData,
+                        useCache: true,
+                        maxRetries: CONFIG.MAX_RETRIES,
+                        timeout: CONFIG.TIMEOUT_MS
+                    }).catch(err => {
+                        console.warn(`⚠️ Gagal ambil data ${aktivitas.nama}:`, err.message);
+                        return null;
+                    });
+                });
                 
-                for (const aktivitas of aktivitasList) {
-                    try {
-                        const urlData = `${APPS_SCRIPT_URL}?action=getData&sheetName=Rekap_aktivitas&kelas=${encodeURIComponent(kelas)}&aktivitas=${encodeURIComponent(aktivitas.nama)}&semester=${encodeURIComponent(semester)}&_=${Date.now()}`;
-                        const respData = await fetch(urlData, { signal: AbortSignal.timeout(10000) });
-                        const resultData = await respData.json();
-                        console.log(`📊 Data untuk ${aktivitas.nama}:`, resultData);
-                        
-                        if (resultData && resultData.success && resultData.data) {
-                            resultData.data.forEach(item => {
-                                const nama = item.Nama || item.nama || '';
-                                if (nama && semuaSiswa[nama]) {
-                                    const timestamp = item.Timestamp || item.timestamp || '';
-                                    const isSudahKumpul = timestamp !== '' && timestamp !== null && timestamp !== undefined;
-                                    
-                                    if (!semuaSiswa[nama].aktivitas[aktivitas.nama]) {
-                                        semuaSiswa[nama].aktivitas[aktivitas.nama] = {
-                                            status: 'belum',
-                                            dinilai: false,
-                                            data: item
-                                        };
-                                    }
-                                    if (isSudahKumpul) {
-                                        semuaSiswa[nama].aktivitas[aktivitas.nama].status = 'sudah';
-                                        semuaSiswa[nama].aktivitas[aktivitas.nama].data = item;
-                                        console.log(`✅ ${nama} sudah kumpul untuk ${aktivitas.nama}`);
-                                    }
+                const allResults = await Promise.all(aktivitasPromises);
+                
+                for (let i = 0; i < allResults.length; i++) {
+                    const resultData = allResults[i];
+                    const aktivitas = aktivitasList[i];
+                    
+                    if (resultData && resultData.success && resultData.data) {
+                        resultData.data.forEach(item => {
+                            const nama = item.Nama || item.nama || '';
+                            if (nama && semuaSiswa[nama]) {
+                                const timestamp = item.Timestamp || item.timestamp || '';
+                                const isSudahKumpul = timestamp !== '' && timestamp !== null && timestamp !== undefined;
+                                
+                                if (!semuaSiswa[nama].aktivitas[aktivitas.nama]) {
+                                    semuaSiswa[nama].aktivitas[aktivitas.nama] = {
+                                        status: 'belum',
+                                        dinilai: false,
+                                        data: item
+                                    };
                                 }
-                            });
-                        }
-                    } catch (err) {
-                        console.warn(`⚠️ Gagal mengambil data untuk ${aktivitas.nama}:`, err.message);
+                                if (isSudahKumpul) {
+                                    semuaSiswa[nama].aktivitas[aktivitas.nama].status = 'sudah';
+                                    semuaSiswa[nama].aktivitas[aktivitas.nama].data = item;
+                                }
+                            }
+                        });
                     }
                 }
                 
-                // 4. Ambil data nilai dari rekap_nilai
+                // Ambil data nilai
                 try {
                     const urlNilai = `${APPS_SCRIPT_URL}?action=getRekapNilaiByKelas&semester=${encodeURIComponent(semester)}&kelas=${encodeURIComponent(kelas)}&_=${Date.now()}`;
-                    const respNilai = await fetch(urlNilai, { signal: AbortSignal.timeout(10000) });
-                    const resultNilai = await respNilai.json();
-                    console.log('📊 Result Nilai (getRekapNilaiByKelas):', resultNilai);
+                    const cacheKeyNilai = `rekapNilai_${semester}_${kelas}`;
+                    const resultNilai = await fetchWithRetry(urlNilai, {
+                        cacheKey: cacheKeyNilai,
+                        useCache: true
+                    });
                     
                     if (resultNilai && resultNilai.success && resultNilai.data) {
                         for (const siswaNilai of resultNilai.data) {
                             const nama = siswaNilai.nama;
                             if (semuaSiswa[nama]) {
-                                // Simpan detail TP dari backend
                                 semuaSiswa[nama].detailTP = siswaNilai.detailTP || {};
                                 
-                                // ===== HITUNG ULANG NILAI RATA-RATA PER TP =====
                                 const nilaiTPBaru = {};
                                 const tpHeaders = getTPHeaders(semester);
                                 
                                 for (const tp of tpHeaders) {
                                     const detailItems = semuaSiswa[nama].detailTP[tp] || [];
-                                    
                                     let totalNilai = 0;
                                     for (const item of detailItems) {
                                         if (item.nilai !== null && item.nilai !== undefined && !isNaN(item.nilai)) {
                                             totalNilai += parseFloat(item.nilai);
                                         }
                                     }
-                                    
                                     const jumlahAktivitas = JUMLAH_AKTIVITAS_PER_TP[tp] || 0;
-                                    
-                                    if (jumlahAktivitas > 0) {
-                                        nilaiTPBaru[tp] = Math.round(totalNilai / jumlahAktivitas);
-                                    } else {
-                                        nilaiTPBaru[tp] = null;
-                                    }
+                                    nilaiTPBaru[tp] = jumlahAktivitas > 0 ? Math.round(totalNilai / jumlahAktivitas) : null;
                                 }
-                                
                                 semuaSiswa[nama].nilaiTP = nilaiTPBaru;
-                                console.log(`📊 Nilai TP untuk ${nama} (dihitung ulang):`, nilaiTPBaru);
                             }
                         }
                     }
@@ -1119,7 +1911,7 @@
                     console.warn('⚠️ Gagal mengambil nilai:', err.message);
                 }
                 
-                // 5. Konversi ke array dan urutkan
+                // Konversi ke array
                 const siswaList = [];
                 let no = 1;
                 const sortedNama = daftarNama.sort();
@@ -1147,9 +1939,6 @@
                     }
                 }
                 
-                console.log('📊 Total siswa:', siswaList.length);
-                console.log('📊 Aktivitas:', aktivitasList.map(a => a.nama));
-                
                 return {
                     success: true,
                     aktivitasHeaders: aktivitasList.map(a => a.nama),
@@ -1161,7 +1950,7 @@
                 throw error;
             }
         }
-        
+
         // ==================== RENDER TABEL AKTIVITAS ====================
         function renderAktivitasTable() {
             const thead = document.getElementById('aktivitasHeader');
@@ -1238,7 +2027,7 @@
             document.getElementById('totalSudahDinilai').innerText = totalSudahDinilai;
             document.getElementById('totalBelumKumpul').innerText = totalBelumKumpul;
         }
-        
+
         // ==================== RENDER TABEL NILAI ====================
         function renderNilaiTable() {
             const thead = document.getElementById('nilaiHeader');
@@ -1248,8 +2037,6 @@
             
             const tpHeaders = getTPHeaders(currentSemester);
             const mapAktivitasTP = getMapAktivitasTP(currentSemester);
-            
-            console.log('📊 TP Headers untuk semester', currentSemester, ':', tpHeaders);
             
             if (!siswaData || siswaData.length === 0 || tpHeaders.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:2rem;">Tidak ada data nilai TP untuk semester ini</td></tr>';
@@ -1279,9 +2066,7 @@
                     const isNilaiValid = nilai !== '-' && !isNaN(parseFloat(nilai));
                     const nilaiNum = isNilaiValid ? parseFloat(nilai) : null;
                     
-                    if (isNilaiValid) {
-                        semuaNilai.push(nilaiNum);
-                    }
+                    if (isNilaiValid) semuaNilai.push(nilaiNum);
                     
                     let nilaiClass = '';
                     if (isNilaiValid) {
@@ -1293,7 +2078,6 @@
                     
                     const cellId = `cell-${siswa.no}-${safeId(tp)}`;
                     const detailId = `detail-${siswa.no}-${safeId(tp)}`;
-                    
                     const detailData = siswa.detailTP && siswa.detailTP[tp] ? siswa.detailTP[tp] : [];
                     const hasDetail = detailData.length > 0;
                     
@@ -1308,12 +2092,11 @@
                 }
                 html += '</tr>';
                 
-                // ===== BARIS DETAIL - HANYA TAMPILKAN AKTIVITAS YANG MENGUKUR TP TERSEBUT =====
+                // Detail rows
                 for (const tp of tpHeaders) {
                     const detailId = `detail-${siswa.no}-${safeId(tp)}`;
                     const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined && siswa.nilaiTP[tp] !== null ? siswa.nilaiTP[tp] : '-';
                     const isNilaiValid = nilai !== '-' && !isNaN(parseFloat(nilai));
-                    
                     const detailData = siswa.detailTP && siswa.detailTP[tp] ? siswa.detailTP[tp] : [];
                     
                     html += `<tr class="detail-row" id="${detailId}">`;
@@ -1338,7 +2121,6 @@
                             const item = detailData.find(d => d.aktivitas === aktivitas);
                             const nilaiAktivitas = item ? item.nilai : null;
                             const isAdaNilai = nilaiAktivitas !== null && !isNaN(nilaiAktivitas);
-                            
                             const predikatAktivitas = isAdaNilai ? getPredikat(nilaiAktivitas) : { teks: 'Belum', kelas: '' };
                             
                             html += `<div class="detail-item">
@@ -1359,12 +2141,10 @@
                                 <span class="predikat ${predikat.kelas}" style="margin-left:8px; padding:2px 10px; border-radius:12px; color:white; font-size:0.6rem;">${predikat.teks}</span>
                             </div>
                         </div>`;
-                        
                         html += `</div></div>`;
                     } else {
                         html += `<div class="detail-empty">Tidak ada detail nilai untuk TP ini</div>`;
                     }
-                    
                     html += `</td></tr>`;
                 }
             }
@@ -1386,8 +2166,7 @@
                 document.getElementById('nilaiTerendahKelas').innerText = '0';
             }
         }
-        
-        // ==================== TOGGLE EXPAND ====================
+
         function toggleExpand(cellId, detailId) {
             const detailRow = document.getElementById(detailId);
             const btn = document.querySelector(`#${cellId} .expand-btn i`);
@@ -1400,44 +2179,20 @@
                         if (otherBtn) otherBtn.classList.remove('rotated');
                     }
                 });
-                
                 detailRow.classList.toggle('expanded');
-                if (btn) {
-                    btn.classList.toggle('rotated');
-                }
+                if (btn) btn.classList.toggle('rotated');
             }
-        }
-        
-        // ==================== PREDIKAT ====================
-        function getPredikat(nilai) {
-            if (nilai === null || nilai === undefined || isNaN(nilai)) {
-                return { teks: 'Belum', kelas: '', warna: '#95a5a6', tindakLanjut: 'Belum ada data nilai' };
-            }
-            if (nilai >= 90) {
-                return { teks: 'Mahir', kelas: 'predikat-mahir', warna: '#2980b9', tindakLanjut: 'Pertahankan prestasi, berikan tantangan lebih tinggi' };
-            } else if (nilai >= 75) {
-                return { teks: 'Cakap', kelas: 'predikat-cakap', warna: '#27ae60', tindakLanjut: 'Tingkatkan pemahaman dengan latihan lanjutan' };
-            } else if (nilai >= 60) {
-                return { teks: 'Berkembang', kelas: 'predikat-berkembang', warna: '#f39c12', tindakLanjut: 'Berikan bimbingan tambahan dan latihan intensif' };
-            } else {
-                return { teks: 'Perlu Bimbingan', kelas: 'predikat-perlu-bimbingan', warna: '#e74c3c', tindakLanjut: 'Perlu pendampingan khusus dan remedial' };
-            }
-        }
-        
-        function safeId(str) {
-            return str.replace(/\./g, '_').replace(/\s+/g, '_');
         }
 
-        // ==================== EXPORT KE EXCEL (2 SHEET) ====================
+        // ==================== EXPORT KE EXCEL ====================
         async function exportToExcel() {
             if (!siswaData || siswaData.length === 0 || !aktivitasHeaders || aktivitasHeaders.length === 0) {
-                alert('Tidak ada data untuk diexport. Silakan tampilkan rekap terlebih dahulu.');
+                alert('Tidak ada data untuk diexport.');
                 return;
             }
 
             const tpHeaders = getTPHeaders(currentSemester);
             const mapAktivitasTP = getMapAktivitasTP(currentSemester);
-            
             const btnExport = document.getElementById('btnExportExcel');
             btnExport.disabled = true;
             btnExport.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
@@ -1447,15 +2202,10 @@
                 workbook.creator = 'IPAS Guru';
                 workbook.created = new Date();
 
-                // ============================================================
-                // ========== SHEET 1: "detail rekap nilai" (VERTIKAL) ==========
-                // ============================================================
+                // Sheet 1: Detail Rekap Nilai
                 const worksheet1 = workbook.addWorksheet('detail rekap nilai', {
                     properties: { tabColor: { argb: 'FF2ECC71' } },
-                    pageSetup: { orientation: 'landscape', fitToPage: true, margins: {
-                        left: 0.7, right: 0.7, top: 0.7, bottom: 0.7,
-                        header: 0.3, footer: 0.3
-                    }}
+                    pageSetup: { orientation: 'landscape', fitToPage: true }
                 });
 
                 const borderStyle = {
@@ -1489,19 +2239,14 @@
                 
                 const titleRow = worksheet1.getRow(1);
                 titleRow.height = 35;
-                
                 const titleCell = titleRow.getCell(1);
                 titleCell.value = `REKAP NILAI TP - ${currentKelas} (${currentSemester})`;
                 titleCell.font = titleFont;
                 titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
                 worksheet1.mergeCells(1, 1, 1, totalCols);
 
-                const emptyRow = worksheet1.getRow(2);
-                emptyRow.height = 10;
-
                 const headerRow = worksheet1.getRow(3);
                 headerRow.height = 30;
-                
                 const headerColumns = ['NO', 'Nama', 'Kelas', 'TP', 'Deskripsi TP', 'Aktivitas', 'Nilai Per Aktivitas', 'Nilai Rata-Rata TP', 'Predikat', 'Tindak Lanjut'];
                 
                 for (let i = 0; i < headerColumns.length; i++) {
@@ -1509,7 +2254,7 @@
                     cell.value = headerColumns[i];
                     cell.font = headerFont;
                     cell.fill = headerFill;
-                    cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: false };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
                     cell.border = borderStyle;
                 }
 
@@ -1524,20 +2269,15 @@
                         const isNilaiValid = nilai !== '-' && !isNaN(parseFloat(nilai));
                         const nilaiNum = isNilaiValid ? parseFloat(nilai) : null;
                         
-                        // ===== PERBAIKAN: HANYA AKTIVITAS YANG MENGUKUR TP INI =====
                         const aktivitasUntukTP = [];
                         for (const aktivitas of aktivitasHeaders) {
                             const tpList = mapAktivitasTP[aktivitas] || [];
-                            if (tpList.includes(tp)) {
-                                aktivitasUntukTP.push(aktivitas);
-                            }
+                            if (tpList.includes(tp)) aktivitasUntukTP.push(aktivitas);
                         }
                         
                         const detailData = siswa.detailTP && siswa.detailTP[tp] ? siswa.detailTP[tp] : [];
                         const nilaiMap = {};
-                        for (const d of detailData) {
-                            nilaiMap[d.aktivitas] = d.nilai;
-                        }
+                        for (const d of detailData) nilaiMap[d.aktivitas] = d.nilai;
                         
                         const tpStartRow = currentRow;
                         let barisDitulis = 0;
@@ -1550,16 +2290,12 @@
                             const isNilaiAktivitasValid = nilaiAktivitas !== '-' && !isNaN(parseFloat(nilaiAktivitas));
                             
                             const rowData = [
-                                no,
-                                siswa.nama,
-                                siswa.kelas,
-                                tp,
-                                getDeskripsiTP(tp),
+                                no, siswa.nama, siswa.kelas, tp, getDeskripsiTP(tp),
                                 aktivitas,
                                 isNilaiAktivitasValid ? parseFloat(nilaiAktivitas) : '-',
                                 isNilaiValid ? nilaiNum : '-',
                                 isNilaiValid ? getPredikat(nilaiNum).teks : 'Belum Dinilai',
-                                isNilaiValid ? (getPredikat(nilaiNum).tindakLanjut || '-') : 'Belum ada data nilai'
+                                isNilaiValid ? getPredikat(nilaiNum).tindakLanjut : 'Belum ada data nilai'
                             ];
                             
                             for (let i = 0; i < rowData.length; i++) {
@@ -1567,47 +2303,10 @@
                                 cell.value = rowData[i];
                                 cell.border = borderStyle;
                                 cell.alignment = { 
-                                    vertical: 'middle', 
-                                    wrapText: false,
+                                    vertical: 'middle',
                                     horizontal: (i === 0 || i === 3 || i === 6 || i === 7 || i === 8) ? 'center' : 'left'
                                 };
-                                
-                                if (i === 6 && isNilaiAktivitasValid) {
-                                    const num = parseFloat(nilaiAktivitas);
-                                    if (num >= 75) {
-                                        cell.font = { color: { argb: 'FF27AE60' }, bold: true };
-                                    } else if (num >= 60) {
-                                        cell.font = { color: { argb: 'FFF39C12' }, bold: true };
-                                    } else {
-                                        cell.font = { color: { argb: 'FFE74C3C' }, bold: true };
-                                    }
-                                }
-                                
-                                if (i === 7 && isNilaiValid) {
-                                    const num = parseFloat(rowData[i]);
-                                    if (num >= 75) {
-                                        cell.font = { color: { argb: 'FF27AE60' }, bold: true };
-                                    } else if (num >= 60) {
-                                        cell.font = { color: { argb: 'FFF39C12' }, bold: true };
-                                    } else {
-                                        cell.font = { color: { argb: 'FFE74C3C' }, bold: true };
-                                    }
-                                }
-                                
-                                if (i === 8) {
-                                    const val = rowData[i];
-                                    if (val === 'Mahir') {
-                                        cell.font = { color: { argb: 'FF2980B9' }, bold: true };
-                                    } else if (val === 'Cakap') {
-                                        cell.font = { color: { argb: 'FF27AE60' }, bold: true };
-                                    } else if (val === 'Berkembang') {
-                                        cell.font = { color: { argb: 'FFF39C12' }, bold: true };
-                                    } else if (val === 'Perlu Bimbingan') {
-                                        cell.font = { color: { argb: 'FFE74C3C' }, bold: true };
-                                    }
-                                }
                             }
-                            
                             currentRow++;
                             barisDitulis++;
                         }
@@ -1618,42 +2317,6 @@
                             worksheet1.mergeCells(tpStartRow, 8, currentRow - 1, 8);
                             worksheet1.mergeCells(tpStartRow, 9, currentRow - 1, 9);
                             worksheet1.mergeCells(tpStartRow, 10, currentRow - 1, 10);
-                            
-                            const mergedCellTp = worksheet1.getCell(tpStartRow, 4);
-                            mergedCellTp.alignment = { horizontal: 'center', vertical: 'middle' };
-                            mergedCellTp.font = { bold: true };
-                            
-                            const mergedCellDeskripsi = worksheet1.getCell(tpStartRow, 5);
-                            mergedCellDeskripsi.alignment = { horizontal: 'left', vertical: 'middle' };
-                            
-                            const mergedCellRata = worksheet1.getCell(tpStartRow, 8);
-                            mergedCellRata.alignment = { horizontal: 'center', vertical: 'middle' };
-                            if (isNilaiValid) {
-                                const num = parseFloat(mergedCellRata.value);
-                                if (num >= 75) {
-                                    mergedCellRata.font = { color: { argb: 'FF27AE60' }, bold: true };
-                                } else if (num >= 60) {
-                                    mergedCellRata.font = { color: { argb: 'FFF39C12' }, bold: true };
-                                } else {
-                                    mergedCellRata.font = { color: { argb: 'FFE74C3C' }, bold: true };
-                                }
-                            }
-                            
-                            const mergedCellPredikat = worksheet1.getCell(tpStartRow, 9);
-                            mergedCellPredikat.alignment = { horizontal: 'center', vertical: 'middle' };
-                            const valPredikat = mergedCellPredikat.value;
-                            if (valPredikat === 'Mahir') {
-                                mergedCellPredikat.font = { color: { argb: 'FF2980B9' }, bold: true };
-                            } else if (valPredikat === 'Cakap') {
-                                mergedCellPredikat.font = { color: { argb: 'FF27AE60' }, bold: true };
-                            } else if (valPredikat === 'Berkembang') {
-                                mergedCellPredikat.font = { color: { argb: 'FFF39C12' }, bold: true };
-                            } else if (valPredikat === 'Perlu Bimbingan') {
-                                mergedCellPredikat.font = { color: { argb: 'FFE74C3C' }, bold: true };
-                            }
-                            
-                            const mergedCellTindakLanjut = worksheet1.getCell(tpStartRow, 10);
-                            mergedCellTindakLanjut.alignment = { horizontal: 'left', vertical: 'middle' };
                         }
                     }
                     
@@ -1662,20 +2325,7 @@
                         worksheet1.mergeCells(siswaStartRow, 1, currentRow - 1, 1);
                         worksheet1.mergeCells(siswaStartRow, 2, currentRow - 1, 2);
                         worksheet1.mergeCells(siswaStartRow, 3, currentRow - 1, 3);
-                        
-                        const mergedCellNo = worksheet1.getCell(siswaStartRow, 1);
-                        mergedCellNo.alignment = { horizontal: 'center', vertical: 'middle' };
-                        mergedCellNo.font = { bold: true };
-                        
-                        const mergedCellNama = worksheet1.getCell(siswaStartRow, 2);
-                        mergedCellNama.alignment = { horizontal: 'left', vertical: 'middle' };
-                        mergedCellNama.font = { bold: true };
-                        
-                        const mergedCellKelas = worksheet1.getCell(siswaStartRow, 3);
-                        mergedCellKelas.alignment = { horizontal: 'center', vertical: 'middle' };
-                        mergedCellKelas.font = { bold: true };
                     }
-                    
                     no++;
                 }
 
@@ -1689,84 +2339,54 @@
                 worksheet1.getColumn(8).width = 20;
                 worksheet1.getColumn(9).width = 18;
                 worksheet1.getColumn(10).width = 45;
+                worksheet1.views = [{ state: 'frozen', ySplit: 3 }];
 
-                worksheet1.views = [
-                    { state: 'frozen', ySplit: 3 }
-                ];
-
-                // ============================================================
-                // ========== SHEET 2: "rekap nilai" (HORIZONTAL) =============
-                // ============================================================
+                // Sheet 2: Rekap Nilai
                 const worksheet2 = workbook.addWorksheet('rekap nilai', {
                     properties: { tabColor: { argb: 'FF3498DB' } },
                     pageSetup: { orientation: 'landscape', fitToPage: true }
                 });
 
-                // Header sheet 2
                 const headerRow2 = worksheet2.getRow(1);
                 headerRow2.height = 30;
-                
                 const header2Columns = ['NO', 'Nama Murid', 'Kelas'];
-                for (const tp of tpHeaders) {
-                    header2Columns.push(tp);
-                }
+                for (const tp of tpHeaders) header2Columns.push(tp);
                 
                 for (let i = 0; i < header2Columns.length; i++) {
                     const cell = headerRow2.getCell(i + 1);
                     cell.value = header2Columns[i];
                     cell.font = headerFont;
                     cell.fill = headerFill;
-                    cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: false };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
                     cell.border = borderStyle;
                 }
 
-                // Data sheet 2
                 let rowIndex2 = 2;
                 let noSiswa = 1;
-                
                 for (const siswa of siswaData) {
                     const row = worksheet2.getRow(rowIndex2);
                     row.height = 22;
-                    
                     const rowData = [noSiswa, siswa.nama, siswa.kelas];
-                    
                     for (const tp of tpHeaders) {
-                        const nilai = siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined && siswa.nilaiTP[tp] !== null ? siswa.nilaiTP[tp] : '-';
-                        rowData.push(nilai);
+                        rowData.push(siswa.nilaiTP && siswa.nilaiTP[tp] !== undefined && siswa.nilaiTP[tp] !== null ? siswa.nilaiTP[tp] : '-');
                     }
-                    
                     for (let i = 0; i < rowData.length; i++) {
                         const cell = row.getCell(i + 1);
                         cell.value = rowData[i];
                         cell.border = borderStyle;
-                        cell.alignment = { 
-                            vertical: 'middle', 
-                            wrapText: false,
-                            horizontal: (i === 0 || i >= 3) ? 'center' : 'left'
-                        };
+                        cell.alignment = { vertical: 'middle', horizontal: (i === 0 || i >= 3) ? 'center' : 'left' };
                     }
-                    
                     rowIndex2++;
                     noSiswa++;
                 }
 
-                // Set column widths untuk sheet 2
-                worksheet2.getColumn(1).width = 6;   // NO
-                worksheet2.getColumn(2).width = 25;  // Nama Murid
-                worksheet2.getColumn(3).width = 12;  // Kelas
-                for (let i = 0; i < tpHeaders.length; i++) {
-                    worksheet2.getColumn(4 + i).width = 14;
-                }
+                worksheet2.getColumn(1).width = 6;
+                worksheet2.getColumn(2).width = 25;
+                worksheet2.getColumn(3).width = 12;
+                for (let i = 0; i < tpHeaders.length; i++) worksheet2.getColumn(4 + i).width = 14;
+                worksheet2.views = [{ state: 'frozen', ySplit: 1 }];
 
-                worksheet2.views = [
-                    { state: 'frozen', ySplit: 1 }
-                ];
-
-                // ============================================================
-                // ========== DOWNLOAD =========================================
-                // ============================================================
                 const fileName = `Rekap_Nilai_${currentKelas}_${currentSemester}_${new Date().toISOString().slice(0,10)}.xlsx`;
-                
                 const buffer = await workbook.xlsx.writeBuffer();
                 const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                 saveAs(blob, fileName);
@@ -1780,224 +2400,15 @@
                 btnExport.innerHTML = '<i class="fas fa-file-excel"></i> Export ke Excel';
             }
         }
-        
-        // ==================== PREVIEW JAWABAN ====================
-        async function previewJawaban(aktivitasNama, namaSiswa) {
-            const modalHtml = `
-                <div id="previewModal" class="modal-overlay" onclick="if(event.target===this) closePreviewModal()">
-                    <div class="modal-container">
-                        <div class="modal-header">
-                            <h3><i class="fas fa-eye"></i> Preview Jawaban Siswa</h3>
-                            <button class="modal-close" onclick="closePreviewModal()">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="modal-info">
-                                <p><strong>Aktivitas:</strong> ${escapeHtml(aktivitasNama)}</p>
-                                <p><strong>Siswa:</strong> ${escapeHtml(namaSiswa)}</p>
-                                <p><strong>Kelas:</strong> ${escapeHtml(currentKelas)}</p>
-                            </div>
-                            <div id="previewContentWrapper" class="preview-content-wrapper">
-                                <div style="text-align:center; padding:2rem;">
-                                    <i class="fas fa-spinner fa-spin"></i> Memuat data jawaban...
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            const existingModal = document.getElementById('previewModal');
-            if (existingModal) existingModal.remove();
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
-            try {
-                const previewWrapper = document.getElementById('previewContentWrapper');
-                const url = getAppsScriptUrl();
-                const response = await fetch(`${url}?action=getData&sheetName=Rekap_aktivitas&kelas=${encodeURIComponent(currentKelas)}&aktivitas=${encodeURIComponent(aktivitasNama)}&semester=${encodeURIComponent(currentSemester)}&_=${Date.now()}`);
-                const result = await response.json();
-                
-                if (result && result.success && result.data) {
-                    let jawabanData = null;
-                    for (const item of result.data) {
-                        const nama = item.Nama || item.nama || '';
-                        if (nama === namaSiswa) {
-                            jawabanData = item;
-                            break;
-                        }
-                    }
-                    
-                    if (jawabanData) {
-                        let contentHtml = '';
-                        
-                        const excludeKeys = ['Key', 'key', '_key', 'Kelas', 'kelas', 'Nama', 'nama', 'Semester', 'semester', 'Status', 'status', 'Timestamp', 'timestamp', '_timestamp', 'No', 'no'];
-                        
-                        const keys = Object.keys(jawabanData).filter(key => {
-                            if (key.startsWith('_')) return false;
-                            if (excludeKeys.includes(key)) return false;
-                            if (excludeKeys.includes(key.toLowerCase())) return false;
-                            return true;
-                        });
-                        
-                        keys.sort((a, b) => {
-                            const aIsBagian = a.startsWith('Bagian_');
-                            const bIsBagian = b.startsWith('Bagian_');
-                            if (aIsBagian && !bIsBagian) return -1;
-                            if (!aIsBagian && bIsBagian) return 1;
-                            return a.localeCompare(b);
-                        });
-                        
-                        for (const key of keys) {
-                            let value = jawabanData[key];
-                            
-                            if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
-                                try {
-                                    value = JSON.parse(value);
-                                } catch(e) {}
-                            }
-                            
-                            let icon = 'fa-file-alt';
-                            if (key.startsWith('Bagian_')) icon = 'fa-folder';
-                            else if (key.toLowerCase().includes('jawaban')) icon = 'fa-edit';
-                            else if (key.toLowerCase().includes('nilai')) icon = 'fa-star';
-                            
-                            contentHtml += `
-                                <div class="preview-field">
-                                    <div class="preview-field-header">
-                                        <i class="fas ${icon}"></i> ${escapeHtml(formatLabel(key))}
-                                    </div>
-                                    <div class="preview-field-value">
-                                        ${renderPreviewValue(value)}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                        
-                        if (contentHtml === '') {
-                            contentHtml = '<div style="text-align:center; color:#95a5a6;"><i class="fas fa-info-circle"></i> Tidak ada data untuk ditampilkan</div>';
-                        }
-                        
-                        previewWrapper.innerHTML = contentHtml;
-                    } else {
-                        previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban siswa tidak ditemukan.</div>';
-                    }
-                } else {
-                    previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Data jawaban tidak ditemukan.</div>';
-                }
-            } catch (error) {
-                console.error('Error preview jawaban:', error);
-                const previewWrapper = document.getElementById('previewContentWrapper');
-                if (previewWrapper) {
-                    previewWrapper.innerHTML = '<div style="text-align:center; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data jawaban.</div>';
-                }
-            }
-        }
-        
-        function closePreviewModal() {
-            const modal = document.getElementById('previewModal');
-            if (modal) modal.remove();
-        }
-        
-        function renderPreviewValue(value) {
-            if (value === null || value === undefined || value === '') {
-                return '<span class="preview-empty">-</span>';
-            }
-            
-            if (Array.isArray(value)) {
-                if (value.length === 0) return '<span class="preview-empty">(Kosong)</span>';
-                
-                const allObjects = value.every(item => typeof item === 'object' && item !== null);
-                
-                if (allObjects && value.length > 0) {
-                    const allKeys = new Set();
-                    value.forEach(item => {
-                        Object.keys(item).forEach(key => allKeys.add(key));
-                    });
-                    const headers = Array.from(allKeys);
-                    
-                    let tableHtml = '<table class="preview-table">';
-                    tableHtml += '<thead><tr>';
-                    headers.forEach(header => {
-                        tableHtml += `<th>${escapeHtml(formatLabel(header))}</th>`;
-                    });
-                    tableHtml += '</tr></thead><tbody>';
-                    
-                    value.forEach(item => {
-                        tableHtml += '<tr>';
-                        headers.forEach(header => {
-                            let cellValue = item[header];
-                            if (cellValue === undefined || cellValue === null) cellValue = '-';
-                            if (typeof cellValue === 'object') cellValue = JSON.stringify(cellValue);
-                            tableHtml += `<td>${escapeHtml(String(cellValue))}</td>`;
-                        });
-                        tableHtml += '</tr>';
-                    });
-                    tableHtml += '</tbody></table>';
-                    return tableHtml;
-                } else {
-                    let listHtml = '<ul class="preview-list">';
-                    value.forEach((item) => {
-                        if (item === '' || item === null || item === undefined) {
-                            listHtml += `<li><em>kosong</em></li>`;
-                        } else {
-                            listHtml += `<li>${escapeHtml(String(item))}</li>`;
-                        }
-                    });
-                    listHtml += '</ul>';
-                    return listHtml;
-                }
-            }
-            
-            if (typeof value === 'object') {
-                if (Object.keys(value).length === 0) return '<span class="preview-empty">(Kosong)</span>';
-                
-                let objectHtml = '<div>';
-                for (const [objKey, objValue] of Object.entries(value)) {
-                    const keyLabel = formatLabel(objKey);
-                    
-                    if (Array.isArray(objValue) && objValue.length > 0 && objValue.every(item => typeof item === 'object' && item !== null)) {
-                        objectHtml += `<div style="margin-bottom:0.8rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
-                    } else if (typeof objValue === 'object' && objValue !== null && !Array.isArray(objValue)) {
-                        objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
-                    } else if (Array.isArray(objValue)) {
-                        objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> ${renderPreviewValue(objValue)}</div>`;
-                    } else {
-                        let displayValue = objValue;
-                        if (displayValue === '' || displayValue === null || displayValue === undefined) {
-                            displayValue = '-';
-                        } else if (typeof displayValue === 'boolean') {
-                            displayValue = displayValue ? '✅ Ya' : '❌ Tidak';
-                        }
-                        objectHtml += `<div style="margin-bottom:0.5rem;"><strong>${escapeHtml(keyLabel)}:</strong> <span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">${escapeHtml(String(displayValue))}</span></div>`;
-                    }
-                }
-                objectHtml += '</div>';
-                return objectHtml;
-            }
-            
-            if (typeof value === 'boolean') {
-                return value ? '✅ Ya' : '❌ Tidak';
-            }
-            
-            const displayValue = (value === null || value === undefined || value === '') ? '-' : String(value);
-            return `<span style="background:#f8f9fa; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block;">${escapeHtml(displayValue)}</span>`;
-        }
-        
-        function escapeHtml(text) {
-            if (!text && text !== 0) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        function formatLabel(key) {
-            return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
-        }
-        
+
         // ==================== LOAD DAN RENDER ====================
         async function loadAndRenderData() {
+            if (isLoading) return;
+            
             const loadingOverlay = document.getElementById('loadingOverlay');
             const errorMsg = document.getElementById('errorMessage');
             
+            isLoading = true;
             loadingOverlay.style.display = 'flex';
             errorMsg.style.display = 'none';
             document.getElementById('aktivitasCard').style.display = 'none';
@@ -2024,7 +2435,6 @@
                     
                     renderAktivitasTable();
                     renderNilaiTable();
-                    
                     document.getElementById('btnExportExcel').style.display = 'inline-flex';
                 } else {
                     throw new Error(result?.error || 'Gagal memuat data');
@@ -2037,11 +2447,13 @@
                 loadingOverlay.style.display = 'none';
                 btnCek.disabled = false;
                 btnCek.innerHTML = '<i class="fas fa-search"></i> Tampilkan Rekap';
+                isLoading = false;
             }
         }
-        
-        // ==================== CEK DATA ====================
+
         async function cekRekap() {
+            if (isLoading) return;
+            
             const semester = document.getElementById('filterSemester').value;
             const kelas = document.getElementById('filterKelas').value;
             
@@ -2050,10 +2462,9 @@
             
             currentSemester = semester;
             currentKelas = kelas;
-            
             await loadAndRenderData();
         }
-        
+
         // ==================== INIT ====================
         async function init() {
             const hamburger = document.getElementById('hamburger');
@@ -2063,8 +2474,14 @@
             }
             
             loadProfileFromSession();
-            
             document.getElementById('btnExportExcel').addEventListener('click', exportToExcel);
+            
+            isLoading = true;
+            isInitialized = false;
+            
+            document.getElementById('filterSemester').disabled = true;
+            document.getElementById('filterKelas').disabled = true;
+            document.getElementById('btnCek').disabled = true;
             
             const loadingOverlay = document.getElementById('loadingOverlay');
             loadingOverlay.style.display = 'flex';
@@ -2073,34 +2490,42 @@
             try {
                 await loadDataSiswa();
                 updateKelasDropdown();
+                document.getElementById('filterSemester').disabled = false;
+                document.getElementById('btnCek').disabled = false;
+                isInitialized = true;
+                isLoading = false;
             } catch (error) {
                 console.error('Gagal load data siswa:', error);
                 const errorMsg = document.getElementById('errorMessage');
                 errorMsg.style.display = 'block';
                 document.getElementById('errorText').innerHTML = 'Gagal memuat data kelas. Silakan refresh halaman.';
+                isLoading = false;
+                document.getElementById('filterSemester').disabled = false;
+                document.getElementById('btnCek').disabled = false;
             } finally {
                 loadingOverlay.style.display = 'none';
             }
             
-            document.getElementById('btnCek').addEventListener('click', cekRekap);
+            document.getElementById('btnCek').addEventListener('click', function() {
+                if (!isInitialized || isLoading) {
+                    alert('⏳ Halaman masih memuat data. Tunggu sebentar.');
+                    return;
+                }
+                cekRekap();
+            });
         }
-        
+
         function loadProfileFromSession() {
             const adminName = sessionStorage.getItem('adminName');
             const adminRole = sessionStorage.getItem('adminRole');
             if (adminName) {
-                const profileName = document.getElementById('profileName');
-                const profileRole = document.getElementById('profileRole');
-                const profileAvatar = document.getElementById('profileAvatar');
-                const profileContainer = document.getElementById('profileContainer');
-                
-                if (profileName) profileName.innerText = adminName;
-                if (profileRole) profileRole.innerText = adminRole || 'Administrator';
-                if (profileAvatar) profileAvatar.innerText = adminName.charAt(0);
-                if (profileContainer) profileContainer.style.display = 'block';
+                document.getElementById('profileName').innerText = adminName;
+                document.getElementById('profileRole').innerText = adminRole || 'Administrator';
+                document.getElementById('profileAvatar').innerText = adminName.charAt(0);
+                document.getElementById('profileContainer').style.display = 'block';
             }
         }
-        
+
         function handleLogout() {
             sessionStorage.removeItem('isAdminLoggedIn');
             sessionStorage.removeItem('adminName');
@@ -2108,7 +2533,7 @@
             sessionStorage.removeItem('adminUsername');
             window.location.href = 'index-penilaian-ipas.html';
         }
-        
+
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
