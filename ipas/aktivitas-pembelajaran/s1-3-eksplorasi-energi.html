@@ -1684,13 +1684,13 @@
                     ["Kelas", document.getElementById('kelas').value || ''],
                     ["Nama", document.getElementById('nama').value || '']
                 ],
-                "B. Observasi": [
-                    ["Fenomena", document.getElementById('fenomena_nama').value || ''],
-                    ["Energi Awal → Akhir", document.getElementById('fenomena_ubah').value || ''],
-                    ["Sumber Energi", document.getElementById('fenomena_sumber').value || ''],
-                    ["Manfaat", document.getElementById('fenomena_manfaat').value || ''],
-                    ["Link Dokumentasi Observasi", document.getElementById('linkObservasi').value || '']
-                ],
+                "B. Observasi": {
+                    "Fenomena": document.getElementById('fenomena_nama').value || '',
+                    "Energi Awal → Akhir": document.getElementById('fenomena_ubah').value || '',
+                    "Sumber Energi": document.getElementById('fenomena_sumber').value || '',
+                    "Manfaat": document.getElementById('fenomena_manfaat').value || '',
+                    "Link Dokumentasi Observasi": document.getElementById('linkObservasi').value || ''
+                },
                 "C. Prediksi": [
                     ["Prediksi", document.getElementById('predHasil').value || ''],
                     ["Alasan", document.getElementById('predAlasan').value || '']
@@ -1754,22 +1754,14 @@
                 }
             }
 
-            // B. Observasi
-            if (data["B. Observasi"] && Array.isArray(data["B. Observasi"])) {
+            // B. Observasi - SEKARANG BERUPA OBJECT, BUKAN ARRAY
+            if (data["B. Observasi"] && typeof data["B. Observasi"] === 'object') {
                 const obs = data["B. Observasi"];
-                obs.forEach(item => {
-                    if (Array.isArray(item) && item.length === 2) {
-                        const field = item[0];
-                        const value = item[1] || '';
-                        if (field === "Fenomena") document.getElementById('fenomena_nama').value = value;
-                        else if (field === "Energi Awal → Akhir") document.getElementById('fenomena_ubah').value =
-                            value;
-                        else if (field === "Sumber Energi") document.getElementById('fenomena_sumber').value = value;
-                        else if (field === "Manfaat") document.getElementById('fenomena_manfaat').value = value;
-                        else if (field === "Link Dokumentasi Observasi") document.getElementById('linkObservasi')
-                            .value = value;
-                    }
-                });
+                document.getElementById('fenomena_nama').value = obs["Fenomena"] || '';
+                document.getElementById('fenomena_ubah').value = obs["Energi Awal → Akhir"] || '';
+                document.getElementById('fenomena_sumber').value = obs["Sumber Energi"] || '';
+                document.getElementById('fenomena_manfaat').value = obs["Manfaat"] || '';
+                document.getElementById('linkObservasi').value = obs["Link Dokumentasi Observasi"] || '';
             }
 
             // C. Prediksi
