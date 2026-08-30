@@ -53,6 +53,11 @@
             box-shadow: var(--shadow);
             margin-bottom: 1.5rem;
             border-left: 5px solid var(--primary);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
         }
 
         .header-title {
@@ -103,7 +108,7 @@
 
         .identitas-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1rem;
             background: var(--primary-light);
             padding: 1.2rem 1.5rem;
@@ -575,6 +580,106 @@
             flex-shrink: 0;
         }
 
+        /* --- Perbaikan tampilan tambahan --- */
+        .badge-video {
+            display: inline-block;
+            background: #e74c3c;
+            color: #fff;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+
+        .upload-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            border-left: 5px solid #1976d2;
+            transition: background 0.3s ease;
+        }
+        .upload-box:hover {
+            background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%);
+        }
+        .upload-box .label-icon {
+            color: #1565c0;
+        }
+
+        .video-hint {
+            background: #fff8e1;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #f57c00;
+            margin-top: 6px;
+            font-size: 0.9rem;
+            color: #4e342e;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .video-hint i {
+            color: #f57c00;
+            margin-top: 2px;
+        }
+
+        .badge-step {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .progress-steps .step-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .progress-steps .step-label.active {
+            color: var(--primary-dark);
+        }
+        .progress-steps .step-label .step-num {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            text-align: center;
+            line-height: 22px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .progress-steps .step-label.active .step-num {
+            background: var(--primary);
+            color: #fff;
+        }
+        .progress-arrow {
+            color: #ccc;
+            font-size: 0.8rem;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 0 0.8rem;
@@ -617,6 +722,12 @@
             .tp-card .tp-item {
                 flex-wrap: wrap;
             }
+            .progress-steps {
+                justify-content: center;
+            }
+            .progress-arrow {
+                display: none;
+            }
         }
 
         @media (max-width: 480px) {
@@ -639,6 +750,9 @@
             }
             .tp-card .tp-item {
                 font-size: 0.85rem;
+            }
+            .progress-steps .step-label {
+                font-size: 0.7rem;
             }
         }
     </style>
@@ -739,20 +853,16 @@
                 <h2 class="section-title"><i class="fas fa-id-card"></i> A. Identitas</h2>
                 <div class="identitas-grid">
                     <div class="identitas-item">
-                        <label>Kelas</label>
+                        <label><i class="fas fa-users"></i> Kelas</label>
                         <select id="kelas" onchange="updateNama(); saveDraft();" disabled>
                             <option value="">-- Pilih --</option>
                         </select>
                     </div>
                     <div class="identitas-item">
-                        <label>Nama</label>
+                        <label><i class="fas fa-user"></i> Nama</label>
                         <select id="nama" onchange="saveDraft();" disabled>
                             <option value="">-- Pilih --</option>
                         </select>
-                    </div>
-                    <div class="identitas-item">
-                        <label>Tugas/Peran</label>
-                        <textarea class="dynamic-textarea dynamic-textarea-sm" id="tugas" rows="1" placeholder="Contoh: Ketua" oninput="saveDraft(); autoResize(this);" disabled></textarea>
                     </div>
                 </div>
             </div>
@@ -962,15 +1072,21 @@
                     </div>
                 </div>
 
-                <!-- Dokumentasi -->
-                <div style="margin-bottom:1rem; background:#e3f2fd; padding:0.8rem 1.2rem; border-radius:10px; border-left:5px solid #1976d2;">
+                <!-- Dokumentasi Pembuktian - VIDEO EDIT -->
+                <div class="upload-box" style="margin-bottom:1rem;">
                     <label style="font-weight:600; display:block; margin-bottom:2px;">
-                        📸 Dokumentasi Pembuktian
+                        <i class="fas fa-video label-icon"></i> Dokumentasi Pembuktian <span class="badge-video">WAJIB VIDEO</span>
                     </label>
                     <div style="font-size:0.9rem; color:#555; margin-bottom:4px;">
-                        Ambil foto/video setiap tahapan pembuktian. Upload ke Google Drive.
+                        <strong>Upload video hasil editan</strong> yang memuat <strong>seluruh tahapan</strong> pembuktian, mulai dari persiapan alat/bahan, pelaksanaan, hingga hasil akhir!
                     </div>
-                    <textarea class="dynamic-textarea dynamic-textarea-sm" id="linkPembuktian" rows="1" placeholder="Tempel link folder Google Drive..." oninput="saveDraft(); autoResize(this);"></textarea>
+                    <div class="video-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Tips:</strong> Rekam semua tahapan, lalu gabung/edit menjadi 1 video. Sertakan keterangan singkat di setiap tahapan agar mudah dipahami.
+                        </div>
+                    </div>
+                    <textarea class="dynamic-textarea dynamic-textarea-sm" id="linkPembuktian" rows="1" placeholder="Tempel link folder Google Drive (video hasil editan)..." oninput="saveDraft(); autoResize(this);" style="margin-top:8px;"></textarea>
                 </div>
 
                 <!-- Analisis -->
@@ -1172,7 +1288,7 @@
         // ================================================================
         const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
         const URL_PEREKAPAN = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
-        const STORAGE_KEY = 'ipas_aktivitas4_draft_v7';
+        const STORAGE_KEY = 'ipas_aktivitas4_draft_v8';
         const AKTIVITAS_NAMA = 'AKTIVITAS 4 - EKSPLORASI ENERGI';
         const SHEET_NAME = 'data_aktivitas';
 
@@ -1464,7 +1580,7 @@
 
         function enableForm() {
             if (isOnline) {
-                ['kelas', 'nama', 'tugas', 'submitBtn', 'exportBtn'].forEach(id => {
+                ['kelas', 'nama', 'submitBtn', 'exportBtn'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.disabled = false;
                 });
@@ -1620,8 +1736,7 @@
                 "A. Identitas": [
                     ["Field", "Nilai"],
                     ["Kelas", document.getElementById('kelas').value || ''],
-                    ["Nama", document.getElementById('nama').value || ''],
-                    ["Tugas/Peran", document.getElementById('tugas').value || '']
+                    ["Nama", document.getElementById('nama').value || '']
                 ],
                 "B. Observasi": [
                     ["Fenomena", document.getElementById('fenomena_nama').value || ''],
@@ -1640,7 +1755,7 @@
                     "Alat dan Bahan": alatData,
                     "Langkah-langkah": langkahData,
                     "Hasil Pengamatan": hasilData,
-                    "Link Dokumentasi": document.getElementById('linkPembuktian').value || '',
+                    "Link Video Pembuktian (Hasil Editan)": document.getElementById('linkPembuktian').value || '',
                     "Kesesuaian": document.querySelector('input[name="kesesuaian"]:checked')?.value || '',
                     "Penjelasan": document.getElementById('buktiPenjelasan').value || '',
                     "Kesimpulan": document.getElementById('buktiKesimpulan').value || ''
@@ -1673,15 +1788,13 @@
             if (data["A. Identitas"] && Array.isArray(data["A. Identitas"])) {
                 const identitas = data["A. Identitas"];
                 let kelasValue = '',
-                    namaValue = '',
-                    tugasValue = '';
+                    namaValue = '';
                 identitas.forEach(item => {
                     if (Array.isArray(item) && item.length === 2) {
                         const field = item[0];
                         const value = item[1] || '';
                         if (field === "Kelas") kelasValue = value;
                         else if (field === "Nama") namaValue = value;
-                        else if (field === "Tugas/Peran") tugasValue = value;
                     }
                 });
                 const sel = document.getElementById('kelas');
@@ -1693,7 +1806,6 @@
                 for (let opt of selNama.options) {
                     if (opt.value === namaValue) { opt.selected = true; break; }
                 }
-                document.getElementById('tugas').value = tugasValue;
             }
 
             // B. Observasi
@@ -1731,7 +1843,7 @@
                 const p = data["D. Pembuktian"];
                 document.getElementById('buktiPrediksi').value = p["Prediksi yang dibuktikan"] || '';
                 document.getElementById('buktiRencana').value = p["Rencana"] || '';
-                document.getElementById('linkPembuktian').value = p["Link Dokumentasi"] || '';
+                document.getElementById('linkPembuktian').value = p["Link Video Pembuktian (Hasil Editan)"] || '';
 
                 // Alat dan Bahan
                 if (p["Alat dan Bahan"] && p["Alat dan Bahan"].length > 0) {
@@ -2037,6 +2149,9 @@
                         .tp-card .tp-item { display:flex; align-items:center; gap:12px; padding:3px 0; }
                         .tp-card .tp-item .tp-code { background:#f39c12; color:#fff; padding:2px 10px; border-radius:12px; font-weight:700; font-size:0.8rem; min-width:45px; text-align:center; }
                         .tp-card .tp-item .tp-desc { color:#e67e22; }
+                        .upload-box { background:#e3f2fd; padding:10px 14px; border-radius:10px; border-left:5px solid #1976d2; margin-bottom:12px; }
+                        .badge-video { background:#e74c3c; color:#fff; padding:2px 12px; border-radius:12px; font-size:0.75rem; font-weight:700; margin-left:6px; }
+                        .video-hint { background:#fff8e1; padding:8px 12px; border-radius:8px; border-left:4px solid #f57c00; margin-top:6px; font-size:0.9rem; }
                         @media (max-width:768px) { .identitas-grid { grid-template-columns:1fr; } }
                     </style>
                     </head><body>
