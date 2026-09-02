@@ -38,22 +38,26 @@
         .bab-subtitle { color: var(--ipas-semester1); font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         .bab-subtitle i { font-size: 0.8rem; }
         
-        .bab-info { display: flex; gap: 2rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
-        .info-item { display: flex; align-items: center; gap: 10px; background: var(--ipas-light); padding: 0.8rem 1.5rem; border-radius: 50px; color: var(--ipas-dark); font-weight: 600; }
-        .info-item i { color: var(--ipas-semester1); font-size: 1.2rem; }
-        
-        /* ===== VIDEO WRAPPER ===== */
-        .video-wrapper {
+        /* ===== VIDEO WRAPPER & CONTROLS ===== */
+        .video-section {
             margin: 1.5rem auto 2.5rem auto;
             max-width: 800px;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-            background: #000;
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(52, 152, 219, 0.1);
+        }
+        
+        .video-wrapper {
             position: relative;
             padding-bottom: 56.25%;
             height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #000;
         }
+        
         .video-wrapper iframe {
             position: absolute;
             top: 0;
@@ -62,6 +66,100 @@
             height: 100%;
             border: 0;
         }
+        
+        .video-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--ipas-gray);
+            border-radius: 12px;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .video-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+        
+        .video-status i {
+            font-size: 1.2rem;
+        }
+        
+        .video-status .status-text {
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            color: #f39c12;
+        }
+        
+        .status-completed {
+            color: var(--ipas-primary);
+        }
+        
+        .btn-complete {
+            padding: 0.7rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-complete:disabled {
+            background: #e9ecef;
+            color: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .btn-complete:disabled i {
+            color: #adb5bd;
+        }
+        
+        .btn-complete.active {
+            background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .btn-complete.active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(46, 204, 113, 0.5);
+        }
+        
+        .btn-complete.active i {
+            color: white;
+        }
+        
+        /* ===== PROGRESS BAR ===== */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--ipas-semester1), var(--ipas-primary));
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+        
         .video-caption {
             text-align: center;
             color: #6c757d;
@@ -106,6 +204,26 @@
         .nav-btn.secondary { background: white; color: var(--ipas-dark); border: 2px solid var(--ipas-light); }
         .nav-btn.secondary:hover { background: var(--ipas-light); transform: translateX(-5px); }
         
+        /* ===== COMPLETED ANIMATION ===== */
+        .completed-animation {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: var(--ipas-primary);
+            font-weight: 700;
+            animation: popIn 0.5s ease;
+        }
+        
+        .completed-animation.show {
+            display: inline-flex;
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
         @media (max-width: 768px) {
@@ -113,17 +231,17 @@
             .bab-card { padding: 2rem; }
             .bab-header { flex-direction: column; text-align: center; }
             .bab-title-wrapper h1 { font-size: 2rem; }
-            .bab-info { justify-content: center; }
             .bab-navigation { flex-direction: column; }
             .nav-btn { justify-content: center; }
-            .video-wrapper { max-width: 100%; }
+            .video-section { padding: 1rem; }
+            .video-controls { flex-direction: column; align-items: stretch; text-align: center; }
+            .btn-complete { justify-content: center; }
         }
         
         @media (max-width: 480px) {
             .bab-card { padding: 1.5rem; }
             .bab-title-wrapper h1 { font-size: 1.8rem; }
             .bab-icon { width: 60px; height: 60px; font-size: 2rem; }
-            .info-item { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -159,18 +277,32 @@
                 </div>
             </div>
 
-            <!-- ===== VIDEO YOUTUBE DI ATAS MATERI ===== -->
-            <div class="video-wrapper">
-<iframe
-    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
-    src="https://www.youtube-nocookie.com/embed/jYyRCuoKiqg"
-    title="Video: Energi dan Perubahannya"
-    referrerpolicy="strict-origin-when-cross-origin"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen>
-</iframe>
+            <!-- ===== VIDEO SECTION WITH COMPLETION TRACKING ===== -->
+            <div class="video-section">
+                <div class="video-wrapper">
+                    <div id="video-player"></div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                
+                <div class="video-controls">
+                    <div class="video-status">
+                        <i class="fas fa-circle status-pending" id="status-icon"></i>
+                        <span class="status-text" id="status-text">Belum ditonton</span>
+                    </div>
+                    <button class="btn-complete" id="complete-btn" disabled>
+                        <i class="fas fa-check-circle"></i>
+                        <span id="btn-text">Tandai Selesai</span>
+                    </button>
+                </div>
+                <div class="video-caption">🎬 Video pengantar: Energi dan Perubahannya</div>
+                <div style="text-align: center; margin-top: 0.5rem; font-size: 0.85rem; color: #6c757d;">
+                    <i class="fas fa-info-circle"></i> Tonton video sampai selesai untuk mengaktifkan tombol "Tandai Selesai"
+                </div>
             </div>
-            <p class="video-caption">🎬 Video pengantar: Energi dan Perubahannya</p>
 
             <!-- ===== AWAL MATERI ===== -->
             <div class="bab-description">
@@ -444,15 +576,18 @@
                 <a href="s1-bab-3.html" class="nav-btn secondary">
                     <i class="fas fa-arrow-left"></i> Kembali ke Bab 3
                 </a>
-                <a href="s1-bab-5.html" class="nav-btn primary">
+                <a href="s1-bab-5.html" class="nav-btn primary" id="next-btn">
                     Lanjut ke Bab 5 <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
         </div>
     </section>
 
+    <!-- ===== YOUTUBE IFrame API ===== -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script>
-        // ===== HAMBURGER MENU - SAMA PERSIS DENGAN REFERENSI =====
+        // ===== HAMBURGER MENU =====
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');
             const navMenu = document.getElementById('nav-menu');
@@ -462,6 +597,191 @@
                 });
             }
         });
+
+        // ===== YOUTUBE PLAYER COMPLETION TRACKING =====
+        var player;
+        var isCompleted = false;
+        var progressInterval = null;
+        
+        // DOM Elements
+        var completeBtn = document.getElementById('complete-btn');
+        var statusIcon = document.getElementById('status-icon');
+        var statusText = document.getElementById('status-text');
+        var progressBar = document.getElementById('progress-bar');
+        var btnText = document.getElementById('btn-text');
+
+        // Fungsi ini dipanggil otomatis oleh YouTube API saat siap
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('video-player', {
+                height: '390',
+                width: '640',
+                videoId: 'jYyRCuoKiqg',
+                playerVars: {
+                    'rel': 0,
+                    'modestbranding': 1,
+                    'fs': 1,
+                    'disablekb': 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            console.log('✅ Player siap dimainkan');
+            updateStatus('pending', '▶️ Siap diputar');
+        }
+
+        function onPlayerStateChange(event) {
+            var state = event.data;
+            
+            // Update progress bar saat video diputar
+            if (state === YT.PlayerState.PLAYING) {
+                updateStatus('playing', '▶️ Sedang diputar...');
+                startProgressTracking();
+            } 
+            else if (state === YT.PlayerState.PAUSED) {
+                updateStatus('paused', '⏸️ Dijeda');
+                stopProgressTracking();
+            }
+            else if (state === YT.PlayerState.ENDED) {
+                // 🔥 VIDEO SELESAI! Aktifkan tombol
+                isCompleted = true;
+                updateStatus('completed', '✅ Selesai!');
+                completeBtn.disabled = false;
+                completeBtn.classList.add('active');
+                btnText.textContent = '✔️ Sudah Selesai';
+                
+                // Tampilkan notifikasi
+                showCompletionNotification();
+                
+                // Hentikan tracking progress
+                stopProgressTracking();
+                progressBar.style.width = '100%';
+            }
+            else if (state === YT.PlayerState.BUFFERING) {
+                updateStatus('buffering', '⏳ Memuat...');
+            }
+            else if (state === YT.PlayerState.UNSTARTED) {
+                updateStatus('pending', '▶️ Siap diputar');
+                progressBar.style.width = '0%';
+            }
+        }
+
+        // ===== TRACKING PROGRESS =====
+        function startProgressTracking() {
+            if (progressInterval) return;
+            
+            progressInterval = setInterval(function() {
+                if (player && player.getCurrentTime && player.getDuration) {
+                    var current = player.getCurrentTime();
+                    var total = player.getDuration();
+                    if (total > 0) {
+                        var percent = (current / total) * 100;
+                        progressBar.style.width = Math.min(percent, 99) + '%';
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopProgressTracking() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        // ===== UPDATE STATUS UI =====
+        function updateStatus(state, message) {
+            statusText.textContent = message;
+            statusIcon.className = 'fas fa-circle';
+            
+            if (state === 'playing' || state === 'buffering') {
+                statusIcon.style.color = '#3498db';
+            } else if (state === 'paused') {
+                statusIcon.style.color = '#f39c12';
+            } else if (state === 'completed') {
+                statusIcon.style.color = '#2ecc71';
+                statusIcon.className = 'fas fa-check-circle';
+            } else {
+                statusIcon.style.color = '#6c757d';
+            }
+        }
+
+        // ===== NOTIFIKASI SELESAI =====
+        function showCompletionNotification() {
+            // Notifikasi sederhana
+            var notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #2ecc71;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 30px rgba(46, 204, 113, 0.4);
+                font-weight: 600;
+                z-index: 9999;
+                animation: popIn 0.5s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-check-circle" style="font-size: 1.5rem;"></i>
+                <span>Video selesai! Tombol "Tandai Selesai" aktif.</span>
+            `;
+            document.body.appendChild(notification);
+            
+            // Hilangkan setelah 5 detik
+            setTimeout(function() {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s ease';
+                setTimeout(function() {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 500);
+            }, 5000);
+        }
+
+        // ===== ERROR HANDLER =====
+        function onPlayerError(event) {
+            console.error('❌ YouTube Player Error:', event.data);
+            
+            // Jika error 150/153, beri tahu pengguna
+            if (event.data === 150 || event.data === 153) {
+                statusText.textContent = '⚠️ Error: Video tidak bisa diputar. Coba refresh halaman.';
+                statusIcon.className = 'fas fa-exclamation-triangle';
+                statusIcon.style.color = '#e74c3c';
+                
+                // Tampilkan pesan error di konsol
+                console.warn('YouTube Error 153/150: Pastikan halaman diakses melalui server (http://) bukan file lokal (file://)');
+            }
+        }
+
+        // ===== KOMPATIBILITAS: Fallback jika API tidak loading =====
+        // Jika API gagal loading dalam 10 detik, beri tahu pengguna
+        setTimeout(function() {
+            if (typeof YT === 'undefined' || !YT.Player) {
+                statusText.textContent = '⚠️ Gagal memuat YouTube. Refresh halaman.';
+                statusIcon.className = 'fas fa-exclamation-triangle';
+                statusIcon.style.color = '#e74c3c';
+            }
+        }, 10000);
+
+        // ===== CLEANUP: Hentikan interval saat halaman ditutup =====
+        window.addEventListener('beforeunload', function() {
+            stopProgressTracking();
+        });
+
+        console.log('🎬 YouTube Player dengan Completion Tracking siap!');
+        console.log('📌 Video ID: jYyRCuoKiqg');
+        console.log('ℹ️ Tombol "Tandai Selesai" akan aktif setelah video selesai diputar.');
     </script>
 </body>
 </html>
