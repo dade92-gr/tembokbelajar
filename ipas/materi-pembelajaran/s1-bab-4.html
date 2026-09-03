@@ -146,22 +146,29 @@
         /* WARNING ANTI-SKIP */
         .warning-anti-skip {
             display: none;
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            color: #856404;
-            padding: 0.5rem 1rem;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 0.7rem 1rem;
             border-radius: 8px;
             margin-top: 0.5rem;
             font-size: 0.9rem;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            animation: shake 0.5s ease;
         }
         
         .warning-anti-skip.show {
             display: flex;
         }
         
-        .warning-anti-skip i { color: #ffc107; font-size: 1.1rem; }
+        .warning-anti-skip i { color: #dc3545; font-size: 1.2rem; }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
         
         .video-caption {
             text-align: center;
@@ -291,7 +298,7 @@
                 <!-- Warning Anti-Skip -->
                 <div class="warning-anti-skip" id="warning-anti-skip">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <span>⚠️ Anda tidak boleh melompat ke akhir video. Tonton sampai selesai!</span>
+                    <span id="warning-text">⚠️ Anda tidak boleh melompat ke akhir video! Tonton sampai selesai.</span>
                 </div>
                 
                 <div class="video-controls">
@@ -605,12 +612,14 @@
             }
         });
 
-        // ===== YOUTUBE PLAYER WITH ANTI-SKIP =====
+        // ===== YOUTUBE PLAYER WITH ADVANCED ANTI-SKIP =====
         var player;
         var isCompleted = false;
         var progressInterval = null;
         var videoDuration = 0;
-        var maxWatchedTime = 0; // Track posisi tertinggi yang pernah dicapai
+        var maxWatchedTime = 0;
+        var lastValidTime = 0;      // Posisi terakhir yang sah (tanpa loncatan)
+        var lastCheckTime = 0;      // Waktu terakhir pengecekan (untuk deteksi loncatan)
         
         // DOM Elements
         var completeBtn = document.getElementById('complete-btn');
@@ -619,9 +628,14 @@
         var progressBar = document.getElementById('progress-bar');
         var btnText = document.getElementById('btn-text');
         var warningAntiSkip = document.getElementById('warning-anti-skip');
+        var warningText = document.getElementById('warning-text');
 
         // Threshold: minimal 85% video harus ditonton
-        var WATCH_THRESHOLD = 0.85; // 85%
+        var WATCH_THRESHOLD = 0.85;
+        
+        // Maksimum lonjatan waktu yang diizinkan per detik (detik)
+        // Jika lebih dari ini, dianggap curang (skip/drag)
+        var MAX_JUMP_PER_SECOND = 5; // 5 detik per detik waktu nyata
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('video-player', {
@@ -632,7 +646,7 @@
                     'rel': 0,
                     'modestbranding': 1,
                     'fs': 1,
-                    'disablekb': 0
+                    'disablekb': 1  // Nonaktifkan keyboard shortcut untuk skip
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -646,33 +660,75 @@
             videoDuration = player.getDuration();
             console.log('✅ Player siap. Durasi video:', videoDuration, 'detik');
             updateStatus('pending', '▶️ Siap diputar');
+            lastCheckTime = Date.now();
         }
 
         function onPlayerStateChange(event) {
             var state = event.data;
             var currentTime = player.getCurrentTime();
+            var now = Date.now();
+            var timeDiff = (now - lastCheckTime) / 1000; // detik
+            lastCheckTime = now;
             
             if (state === YT.PlayerState.PLAYING) {
+                // 🔥 CEK LONJATAN WAKTU
+                var timeJump = currentTime - lastValidTime;
+                
+                // Jika ada lonjatan yang tidak wajar (lebih dari MAX_JUMP_PER_SECOND)
+                if (lastValidTime > 0 && timeJump > MAX_JUMP_PER_SECOND * timeDiff) {
+                    // DETEKSI CURANG! User skip/drag
+                    console.warn('⚠️ Deteksi loncatan tidak wajar!', {
+                        lastValid: lastValidTime,
+                        current: currentTime,
+                        jump: timeJump,
+                        maxAllowed: MAX_JUMP_PER_SECOND * timeDiff
+                    });
+                    
+                    // Kembalikan ke posisi terakhir yang sah
+                    player.seekTo(lastValidTime, true);
+                    
+                    // Tampilkan peringatan
+                    warningText.textContent = '⚠️ Jangan menyeret video ke akhir! Tonton secara normal.';
+                    warningAntiSkip.classList.add('show');
+                    
+                    // Reset status
+                    updateStatus('pending', '⚠️ Harap tonton tanpa skip!');
+                    progressBar.style.width = ((maxWatchedTime / videoDuration) * 100) + '%';
+                    
+                    return;
+                }
+                
+                // Jika lolos pengecekan, update lastValidTime
+                if (currentTime > lastValidTime) {
+                    lastValidTime = currentTime;
+                }
+                
+                // Update maxWatchedTime (hanya jika tidak ada loncatan)
+                if (currentTime > maxWatchedTime) {
+                    maxWatchedTime = currentTime;
+                }
+                
+                // Hapus warning jika user sudah menonton dengan benar
+                warningAntiSkip.classList.remove('show');
+                
                 updateStatus('playing', '▶️ Sedang diputar...');
                 startProgressTracking();
-                
-                // Reset warning jika user kembali menonton dengan benar
-                warningAntiSkip.classList.remove('show');
             } 
             else if (state === YT.PlayerState.PAUSED) {
                 updateStatus('paused', '⏸️ Dijeda');
                 stopProgressTracking();
             }
             else if (state === YT.PlayerState.ENDED) {
-                // 🔥 Video selesai - TAPI kita cek dulu apakah legitimate
+                // 🔥 Video selesai - CEK LEGITIMASI
                 stopProgressTracking();
                 
-                // Cek apakah user benar-benar menonton sampai ≥85%
                 var watchPercent = (maxWatchedTime / videoDuration) * 100;
-                
                 console.log('📊 Persentase tontonan maksimum:', watchPercent.toFixed(1) + '%');
                 
-                if (maxWatchedTime >= videoDuration * WATCH_THRESHOLD) {
+                // Cek apakah user benar-benar menonton sampai ≥85% TANPA loncatan
+                if (maxWatchedTime >= videoDuration * WATCH_THRESHOLD && 
+                    lastValidTime >= videoDuration * WATCH_THRESHOLD) {
+                    
                     // ✅ SAH! User menonton cukup lama
                     isCompleted = true;
                     updateStatus('completed', '✅ Selesai!');
@@ -681,17 +737,22 @@
                     btnText.textContent = '✔️ Sudah Selesai';
                     progressBar.style.width = '100%';
                     showCompletionNotification();
+                    
                 } else {
                     // ❌ TIDAK SAH! User skip ke akhir
+                    warningText.textContent = '⚠️ Anda harus menonton ' + (WATCH_THRESHOLD * 100) + '% video, bukan skip ke akhir!';
                     warningAntiSkip.classList.add('show');
-                    updateStatus('pending', '⚠️ Tonton sampai 85%');
-                    progressBar.style.width = watchPercent + '%';
+                    updateStatus('pending', '⚠️ Tonton sampai ' + (WATCH_THRESHOLD * 100) + '%');
+                    progressBar.style.width = Math.min((maxWatchedTime / videoDuration) * 100, 99) + '%';
                     
-                    // Reset video ke posisi terakhir yang sah (maxWatchedTime)
-                    // agar user tidak bisa curang
+                    // Reset video ke posisi terakhir yang sah
                     setTimeout(function() {
-                        if (player && maxWatchedTime > 0) {
-                            player.seekTo(maxWatchedTime, true);
+                        if (player && lastValidTime > 0) {
+                            player.seekTo(lastValidTime, true);
+                            player.playVideo();
+                        } else {
+                            // Jika belum ada posisi sah, mulai dari awal
+                            player.seekTo(0, true);
                             player.playVideo();
                         }
                     }, 1500);
@@ -703,10 +764,12 @@
             else if (state === YT.PlayerState.UNSTARTED) {
                 updateStatus('pending', '▶️ Siap diputar');
                 progressBar.style.width = '0%';
+                lastValidTime = 0;
+                maxWatchedTime = 0;
             }
         }
 
-        // ===== TRACKING PROGRESS DENGAN ANTI-SKIP =====
+        // ===== TRACKING PROGRESS =====
         function startProgressTracking() {
             if (progressInterval) return;
             
@@ -716,17 +779,10 @@
                     var total = player.getDuration();
                     
                     if (total > 0) {
-                        // Update posisi tertinggi yang pernah dicapai
-                        if (current > maxWatchedTime) {
-                            maxWatchedTime = current;
-                        }
-                        
-                        // Hitung persentase berdasarkan maxWatchedTime (bukan current)
-                        // Ini mencegah user curang dengan melompat ke akhir
+                        // Gunakan maxWatchedTime untuk progress bar
                         var percent = (maxWatchedTime / total) * 100;
                         progressBar.style.width = Math.min(percent, 99) + '%';
                         
-                        // Jika sudah mencapai threshold, beri tahu user
                         if (percent >= (WATCH_THRESHOLD * 100) && !isCompleted) {
                             updateStatus('playing', '✅ Hampir selesai...');
                         }
@@ -812,10 +868,12 @@
             stopProgressTracking();
         });
 
-        console.log('🎬 YouTube Player dengan Anti-Skip aktif!');
+        console.log('🎬 YouTube Player dengan Advanced Anti-Skip aktif!');
         console.log('📌 Video ID: jYyRCuoKiqg');
         console.log('📊 Threshold:', (WATCH_THRESHOLD * 100) + '%');
+        console.log('🚫 Max jump per detik:', MAX_JUMP_PER_SECOND + ' detik');
         console.log('ℹ️ Tombol "Tandai Selesai" aktif setelah menonton minimal ' + (WATCH_THRESHOLD * 100) + '%');
+        console.log('ℹ️ Sistem akan mendeteksi dan mencegah skip/drag ke akhir video.');
     </script>
 </body>
 </html>
