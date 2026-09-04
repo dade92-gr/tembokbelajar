@@ -71,7 +71,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1.5rem;
+            gap: 1rem;
             margin-top: 1rem;
             padding: 0.8rem 1.5rem;
             background: var(--ipas-gray);
@@ -79,46 +79,58 @@
             flex-wrap: wrap;
         }
         
-        .btn-play-custom {
-            width: 50px;
-            height: 50px;
+        .btn-control {
+            width: 44px;
+            height: 44px;
             border: none;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--ipas-semester1), var(--ipas-primary));
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            flex-shrink: 0;
         }
         
-        .btn-play-custom:hover {
+        .btn-control:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 25px rgba(52, 152, 219, 0.4);
         }
         
-        .btn-play-custom:active {
+        .btn-control:active {
             transform: scale(0.95);
         }
         
-        .btn-play-custom:disabled {
+        .btn-control:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
         }
         
+        .btn-control.muted {
+            background: #e74c3c;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-control.muted:hover {
+            box-shadow: 0 6px 25px rgba(231, 76, 60, 0.4);
+        }
+        
         .video-info-custom {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            font-size: 0.95rem;
+            gap: 0.8rem;
+            font-size: 0.9rem;
             color: #555;
+            flex: 1;
+            justify-content: center;
         }
         
-        .video-info-custom i { font-size: 1.2rem; }
+        .video-info-custom i { font-size: 1.1rem; }
         .video-info-custom .status-text { font-weight: 600; }
         .status-pending { color: #f39c12; }
         .status-playing { color: #3498db; }
@@ -249,7 +261,8 @@
             .bab-navigation { flex-direction: column; }
             .nav-btn { justify-content: center; }
             .video-section { padding: 1rem; }
-            .video-controls-custom { flex-direction: column; align-items: center; gap: 1rem; }
+            .video-controls-custom { gap: 0.7rem; padding: 0.6rem 1rem; }
+            .btn-control { width: 40px; height: 40px; font-size: 1rem; }
             .btn-complete { width: 100%; }
         }
         
@@ -303,11 +316,16 @@
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
                 
-                <!-- Kontrol Kustom -->
+                <!-- Kontrol Kustom: Play/Pause + Volume -->
                 <div class="video-controls-custom">
-                    <button class="btn-play-custom" id="play-btn" disabled>
+                    <button class="btn-control" id="play-btn" disabled>
                         <i class="fas fa-play" id="play-icon"></i>
                     </button>
+                    
+                    <button class="btn-control" id="volume-btn" disabled>
+                        <i class="fas fa-volume-up" id="volume-icon"></i>
+                    </button>
+                    
                     <div class="video-info-custom">
                         <i class="fas fa-circle status-pending" id="status-icon"></i>
                         <span class="status-text" id="status-text">⏳ Memuat player...</span>
@@ -627,10 +645,13 @@
         var progressInterval = null;
         var videoDuration = 0;
         var isPlaying = false;
+        var isMuted = false;
         
         // DOM Elements
         var playBtn = document.getElementById('play-btn');
         var playIcon = document.getElementById('play-icon');
+        var volumeBtn = document.getElementById('volume-btn');
+        var volumeIcon = document.getElementById('volume-icon');
         var completeBtn = document.getElementById('complete-btn');
         var statusIcon = document.getElementById('status-icon');
         var statusText = document.getElementById('status-text');
@@ -668,12 +689,13 @@
             videoDuration = player.getDuration();
             console.log('✅ Player siap. Durasi:', videoDuration, 'detik');
             
-            // Aktifkan tombol play
+            // Aktifkan tombol
             playBtn.disabled = false;
+            volumeBtn.disabled = false;
             updateStatus('pending', '▶️ Siap diputar');
         }
 
-        // ===== TOMBOL PLAY/PAUSE KUSTOM =====
+        // ===== TOMBOL PLAY/PAUSE =====
         playBtn.addEventListener('click', function() {
             if (!isPlayerReady || !player) {
                 console.warn('⚠️ Player belum siap');
@@ -682,7 +704,6 @@
             
             try {
                 if (isCompleted) {
-                    // Putar ulang dari awal
                     player.seekTo(0);
                     player.playVideo();
                     isCompleted = false;
@@ -700,6 +721,30 @@
                 }
             } catch (e) {
                 console.error('❌ Error kontrol video:', e);
+            }
+        });
+
+        // ===== TOMBOL VOLUME (MUTE/UNMUTE) =====
+        volumeBtn.addEventListener('click', function() {
+            if (!isPlayerReady || !player) {
+                console.warn('⚠️ Player belum siap');
+                return;
+            }
+            
+            try {
+                if (isMuted) {
+                    player.unMute();
+                    isMuted = false;
+                    volumeIcon.className = 'fas fa-volume-up';
+                    volumeBtn.classList.remove('muted');
+                } else {
+                    player.mute();
+                    isMuted = true;
+                    volumeIcon.className = 'fas fa-volume-mute';
+                    volumeBtn.classList.add('muted');
+                }
+            } catch (e) {
+                console.error('❌ Error kontrol volume:', e);
             }
         });
 
@@ -836,9 +881,9 @@
             stopProgressTracking();
         });
 
-        console.log('🎬 YouTube Player - Kontrol Kustom (dengan pengecekan player)');
+        console.log('🎬 YouTube Player - Kontrol Kustom (Play + Volume)');
         console.log('📌 Video ID: jYyRCuoKiqg');
-        console.log('ℹ️ User hanya bisa Play dan Pause, TIDAK BISA SKIP!');
+        console.log('ℹ️ User hanya bisa Play/Pause dan Mute/Unmute');
         console.log('ℹ️ Tombol "Tandai Selesai" aktif setelah video selesai diputar.');
     </script>
 </body>
