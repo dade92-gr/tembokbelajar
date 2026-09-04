@@ -200,6 +200,24 @@
             font-style: italic;
         }
         
+        /* ===== VOLUME INFO ===== */
+        .volume-info {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #856404;
+            background: #fff3cd;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #ffc107;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .volume-info i { color: #f39c12; font-size: 1rem; }
+        
         .video-info-text {
             text-align: center;
             margin-top: 0.5rem;
@@ -339,6 +357,13 @@
                 </button>
                 
                 <div class="video-caption">🎬 Video pengantar: Energi dan Perubahannya</div>
+                
+                <!-- ===== VOLUME INFO ===== -->
+                <div class="volume-info">
+                    <i class="fas fa-volume-up"></i>
+                    <span>🔊 Volume video sudah maksimal. Jika masih pelan, <strong>naikkan volume perangkat Anda</strong> (speaker/headphone).</span>
+                </div>
+                
                 <div class="video-info-text">
                     <i class="fas fa-info-circle"></i> Tonton video sampai selesai untuk mengaktifkan tombol "Tandai Selesai"
                 </div>
@@ -646,6 +671,7 @@
         var videoDuration = 0;
         var isPlaying = false;
         var isMuted = false;
+        var isVolumeSynced = false;
         
         // DOM Elements
         var playBtn = document.getElementById('play-btn');
@@ -657,24 +683,6 @@
         var statusText = document.getElementById('status-text');
         var progressBar = document.getElementById('progress-bar');
         var btnText = document.getElementById('btn-text');
-
-        // ===== FUNGSI UNMUTE OTOMATIS =====
-        function ensureAudio() {
-            if (!isPlayerReady || !player) return;
-            
-            try {
-                var isCurrentlyMuted = player.isMuted();
-                if (isCurrentlyMuted) {
-                    player.unMute();
-                    isMuted = false;
-                    volumeIcon.className = 'fas fa-volume-up';
-                    volumeBtn.classList.remove('muted');
-                    console.log('🔊 Suara diaktifkan');
-                }
-            } catch (e) {
-                console.warn('⚠️ Gagal mengaktifkan suara:', e);
-            }
-        }
 
         function onYouTubeIframeAPIReady() {
             console.log('🎬 YouTube API siap, membuat player...');
@@ -707,15 +715,17 @@
             videoDuration = player.getDuration();
             console.log('✅ Player siap. Durasi:', videoDuration, 'detik');
             
-            // 🔥 UNMUTE OTOMATIS SAAT PLAYER SIAP
+            // 🔥 SET VOLUME MAKSIMAL (100%)
             try {
+                player.setVolume(100);
                 player.unMute();
                 isMuted = false;
+                isVolumeSynced = true;
                 volumeIcon.className = 'fas fa-volume-up';
                 volumeBtn.classList.remove('muted');
-                console.log('🔊 Suara diaktifkan otomatis');
+                console.log('🔊 Volume disetel ke 100%');
             } catch(e) {
-                console.warn('⚠️ Gagal unmute otomatis:', e);
+                console.warn('⚠️ Gagal set volume:', e);
             }
             
             // Aktifkan tombol
@@ -732,9 +742,6 @@
             }
             
             try {
-                // 🔥 Pastikan suara aktif saat play pertama kali
-                ensureAudio();
-                
                 if (isCompleted) {
                     player.seekTo(0);
                     player.playVideo();
@@ -917,9 +924,9 @@
 
         console.log('🎬 YouTube Player - Kontrol Kustom (Play + Volume)');
         console.log('📌 Video ID: jYyRCuoKiqg');
-        console.log('ℹ️ User hanya bisa Play/Pause dan Mute/Unmute');
+        console.log('🔊 Volume disetel ke 100% saat player siap');
+        console.log('ℹ️ Tombol volume berfungsi penuh (mute/unmute)');
         console.log('ℹ️ Tombol "Tandai Selesai" aktif setelah video selesai diputar.');
-        console.log('🔊 Suara akan aktif otomatis saat player siap');
     </script>
 </body>
 </html>
