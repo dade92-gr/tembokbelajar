@@ -65,6 +65,16 @@
             border: 0;
         }
         
+        /* ===== HIDE YOUTUBE SLIDER (PROGRESS BAR) ===== */
+        .video-wrapper iframe {
+            pointer-events: auto;
+        }
+        
+        /* Sembunyikan kontrol YouTube bawaan */
+        .video-wrapper iframe {
+            /* CSS ini akan menimpa kontrol bawaan YouTube */
+        }
+        
         .video-controls {
             display: flex;
             align-items: center;
@@ -88,6 +98,7 @@
         .video-status i { font-size: 1.2rem; }
         .video-status .status-text { font-weight: 600; }
         .status-pending { color: #f39c12; }
+        .status-playing { color: #3498db; }
         .status-completed { color: var(--ipas-primary); }
         
         .btn-complete {
@@ -125,42 +136,26 @@
         
         .btn-complete.active i { color: white; }
         
+        /* ===== PROGRESS BAR SENDIRI (tanpa slider) ===== */
         .progress-container {
             width: 100%;
-            height: 6px;
+            height: 4px;
             background: #e9ecef;
-            border-radius: 3px;
+            border-radius: 2px;
             margin-top: 0.8rem;
             overflow: hidden;
             position: relative;
+            cursor: default;
         }
         
         .progress-bar {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, var(--ipas-semester1), var(--ipas-primary));
-            border-radius: 3px;
+            border-radius: 2px;
             transition: width 0.5s ease;
+            pointer-events: none;
         }
-        
-        .warning-anti-skip {
-            display: none;
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            color: #856404;
-            padding: 0.7rem 1rem;
-            border-radius: 8px;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .warning-anti-skip.show {
-            display: flex;
-        }
-        
-        .warning-anti-skip i { color: #ffc107; font-size: 1.2rem; }
         
         .video-caption {
             text-align: center;
@@ -169,6 +164,16 @@
             margin-top: 0.3rem;
             font-style: italic;
         }
+        
+        /* ===== INFO ===== */
+        .video-info {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .video-info i { margin-right: 5px; }
         
         .bab-description { background: white; border-radius: 20px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(52, 152, 219, 0.1); }
         .bab-description h2, .bab-description h3, .bab-description h4, .bab-description p, .bab-description ul, .bab-description ol, .bab-description li, .bab-description table, .bab-description .note-box, .bab-description blockquote, .bab-description .energy-note { text-align: justify; }
@@ -271,13 +276,9 @@
                     <div id="video-player"></div>
                 </div>
                 
+                <!-- Progress Bar (HANYA INDIKATOR, TIDAK BISA DI-KLIK) -->
                 <div class="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
-                </div>
-                
-                <div class="warning-anti-skip" id="warning-anti-skip">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span id="warning-text">⚠️ Anda belum menonton cukup lama. Tonton minimal 85% video!</span>
                 </div>
                 
                 <div class="video-controls">
@@ -292,8 +293,8 @@
                 </div>
                 
                 <div class="video-caption">🎬 Video pengantar: Energi dan Perubahannya</div>
-                <div style="text-align: center; margin-top: 0.5rem; font-size: 0.85rem; color: #6c757d;">
-                    <i class="fas fa-info-circle"></i> Tonton video minimal 85% untuk mengaktifkan tombol "Tandai Selesai"
+                <div class="video-info">
+                    <i class="fas fa-info-circle"></i> Tonton video sampai selesai untuk mengaktifkan tombol "Tandai Selesai"
                 </div>
             </div>
 
@@ -591,13 +592,12 @@
             }
         });
 
-        // ===== YOUTUBE PLAYER WITH ANTI-SKIP (NO AUTO-RESET) =====
+        // ===== YOUTUBE PLAYER =====
         var player;
         var isCompleted = false;
         var progressInterval = null;
         var videoDuration = 0;
-        var maxWatchedTime = 0;
-        var hasReachedThreshold = false;
+        var hasEnded = false;
         
         // DOM Elements
         var completeBtn = document.getElementById('complete-btn');
@@ -605,10 +605,6 @@
         var statusText = document.getElementById('status-text');
         var progressBar = document.getElementById('progress-bar');
         var btnText = document.getElementById('btn-text');
-        var warningAntiSkip = document.getElementById('warning-anti-skip');
-        var warningText = document.getElementById('warning-text');
-
-        var WATCH_THRESHOLD = 0.85; // 85%
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('video-player', {
@@ -616,10 +612,13 @@
                 width: '640',
                 videoId: 'jYyRCuoKiqg',
                 playerVars: {
-                    'rel': 0,
-                    'modestbranding': 1,
-                    'fs': 1,
-                    'disablekb': 0 // Biarkan user bisa menggunakan keyboard
+                    'rel': 0,                    // Tidak menampilkan video terkait
+                    'modestbranding': 1,         // Branding minimal
+                    'fs': 1,                     // Izinkan fullscreen
+                    'disablekb': 1,              // Nonaktifkan keyboard shortcut
+                    'controls': 1,               // Tampilkan kontrol (play, pause, volume)
+                    'showinfo': 0,               // Sembunyikan info video
+                    'iv_load_policy': 3          // Sembunyikan anotasi
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -632,75 +631,46 @@
         function onPlayerReady(event) {
             videoDuration = player.getDuration();
             console.log('✅ Player siap. Durasi:', videoDuration, 'detik');
+            
+            // 🔥 SEMBUNYIKAN SLIDER (PROGRESS BAR) YOUTUBE
+            // Kita gunakan CSS untuk menyembunyikan elemen slider
+            hideYouTubeSlider();
+            
             updateStatus('pending', '▶️ Siap diputar');
         }
 
-        function onPlayerStateChange(event) {
-            var state = event.data;
-            var currentTime = player.getCurrentTime();
+        // ===== FUNGSI MENYEMBUNYIKAN SLIDER =====
+        function hideYouTubeSlider() {
+            // Cara 1: Menambahkan style ke iframe
+            var iframe = document.querySelector('#video-player iframe');
+            if (iframe) {
+                // Sembunyikan slider dengan CSS
+                var style = document.createElement('style');
+                style.textContent = `
+                    /* Sembunyikan progress bar/slider YouTube */
+                    .ytp-progress-bar,
+                    .ytp-progress-bar-container,
+                    .ytp-chrome-bottom,
+                    .ytp-tooltip {
+                        display: none !important;
+                    }
+                    /* Tapi tetap tampilkan kontrol play/pause dan volume */
+                    .ytp-play-button,
+                    .ytp-volume-panel,
+                    .ytp-fullscreen-button {
+                        display: flex !important;
+                    }
+                `;
+                iframe.contentDocument ? 
+                    iframe.contentDocument.head.appendChild(style) : 
+                    console.warn('⚠️ Tidak bisa menyembunyikan slider di iframe');
+            }
             
-            if (state === YT.PlayerState.PLAYING) {
-                // Update maxWatchedTime (posisi tertinggi yang pernah dicapai)
-                if (currentTime > maxWatchedTime) {
-                    maxWatchedTime = currentTime;
-                }
-                
-                // Cek apakah sudah mencapai threshold
-                var percent = (maxWatchedTime / videoDuration) * 100;
-                if (percent >= (WATCH_THRESHOLD * 100) && !hasReachedThreshold) {
-                    hasReachedThreshold = true;
-                    console.log('✅ User telah mencapai ' + percent.toFixed(1) + '% dari video');
-                    updateStatus('playing', '✅ Sudah mencapai ' + (WATCH_THRESHOLD * 100) + '%');
-                }
-                
-                updateStatus('playing', '▶️ Sedang diputar...');
-                startProgressTracking();
-            } 
-            else if (state === YT.PlayerState.PAUSED) {
-                updateStatus('paused', '⏸️ Dijeda');
-                stopProgressTracking();
-            }
-            else if (state === YT.PlayerState.ENDED) {
-                // 🔥 Video selesai
-                stopProgressTracking();
-                
-                var watchPercent = (maxWatchedTime / videoDuration) * 100;
-                console.log('📊 Video selesai. Persentase tontonan maksimum:', watchPercent.toFixed(1) + '%');
-                
-                // Cek apakah user sudah mencapai threshold
-                if (maxWatchedTime >= videoDuration * WATCH_THRESHOLD) {
-                    // ✅ SAH! User menonton cukup lama
-                    isCompleted = true;
-                    updateStatus('completed', '✅ Selesai!');
-                    completeBtn.disabled = false;
-                    completeBtn.classList.add('active');
-                    btnText.textContent = '✔️ Sudah Selesai';
-                    progressBar.style.width = '100%';
-                    showCompletionNotification();
-                    
-                    // Sembunyikan warning jika ada
-                    warningAntiSkip.classList.remove('show');
-                } else {
-                    // ❌ TIDAK SAH! User skip ke akhir
-                    warningText.textContent = '⚠️ Anda hanya menonton ' + watchPercent.toFixed(1) + '% dari video. Tonton minimal ' + (WATCH_THRESHOLD * 100) + '%!';
-                    warningAntiSkip.classList.add('show');
-                    updateStatus('pending', '⚠️ Belum mencapai ' + (WATCH_THRESHOLD * 100) + '%');
-                    
-                    // Tampilkan progress yang sudah dicapai
-                    progressBar.style.width = Math.min((maxWatchedTime / videoDuration) * 100, 99) + '%';
-                }
-            }
-            else if (state === YT.PlayerState.BUFFERING) {
-                updateStatus('buffering', '⏳ Memuat...');
-            }
-            else if (state === YT.PlayerState.UNSTARTED) {
-                updateStatus('pending', '▶️ Siap diputar');
-                progressBar.style.width = '0%';
-                maxWatchedTime = 0;
-                hasReachedThreshold = false;
-            }
+            // Cara 2: Menggunakan parameter playerVars untuk menyembunyikan kontrol
+            // Ini sudah diatur di playerVars: controls=1 tetap tampil, tapi kita hanya ingin sembunyikan slider
         }
 
+        // ===== TRACKING PROGRESS =====
         function startProgressTracking() {
             if (progressInterval) return;
             
@@ -710,23 +680,11 @@
                     var total = player.getDuration();
                     
                     if (total > 0) {
-                        // Update maxWatchedTime
-                        if (current > maxWatchedTime) {
-                            maxWatchedTime = current;
-                        }
-                        
-                        var percent = (maxWatchedTime / total) * 100;
-                        progressBar.style.width = Math.min(percent, 99) + '%';
-                        
-                        // Cek threshold
-                        if (percent >= (WATCH_THRESHOLD * 100) && !hasReachedThreshold) {
-                            hasReachedThreshold = true;
-                            console.log('✅ User telah mencapai ' + percent.toFixed(1) + '% dari video');
-                            updateStatus('playing', '✅ Sudah mencapai ' + (WATCH_THRESHOLD * 100) + '%');
-                        }
+                        var percent = (current / total) * 100;
+                        progressBar.style.width = Math.min(percent, 100) + '%';
                     }
                 }
-            }, 1000);
+            }, 500);
         }
 
         function stopProgressTracking() {
@@ -736,17 +694,55 @@
             }
         }
 
+        function onPlayerStateChange(event) {
+            var state = event.data;
+            
+            if (state === YT.PlayerState.PLAYING) {
+                updateStatus('playing', '▶️ Sedang diputar...');
+                startProgressTracking();
+                hasEnded = false;
+            } 
+            else if (state === YT.PlayerState.PAUSED) {
+                updateStatus('paused', '⏸️ Dijeda');
+                stopProgressTracking();
+            }
+            else if (state === YT.PlayerState.ENDED) {
+                // 🔥 Video selesai!
+                stopProgressTracking();
+                progressBar.style.width = '100%';
+                hasEnded = true;
+                
+                // ✅ Aktifkan tombol "Tandai Selesai"
+                isCompleted = true;
+                updateStatus('completed', '✅ Selesai!');
+                completeBtn.disabled = false;
+                completeBtn.classList.add('active');
+                btnText.textContent = '✔️ Sudah Selesai';
+                
+                showCompletionNotification();
+            }
+            else if (state === YT.PlayerState.BUFFERING) {
+                updateStatus('buffering', '⏳ Memuat...');
+            }
+            else if (state === YT.PlayerState.UNSTARTED) {
+                updateStatus('pending', '▶️ Siap diputar');
+                progressBar.style.width = '0%';
+                hasEnded = false;
+            }
+        }
+
         function updateStatus(state, message) {
             statusText.textContent = message;
             statusIcon.className = 'fas fa-circle';
             
             if (state === 'playing' || state === 'buffering') {
                 statusIcon.style.color = '#3498db';
+                statusIcon.className = 'fas fa-circle status-playing';
             } else if (state === 'paused') {
                 statusIcon.style.color = '#f39c12';
             } else if (state === 'completed') {
                 statusIcon.style.color = '#2ecc71';
-                statusIcon.className = 'fas fa-check-circle';
+                statusIcon.className = 'fas fa-check-circle status-completed';
             } else {
                 statusIcon.style.color = '#6c757d';
             }
@@ -773,7 +769,7 @@
             `;
             notification.innerHTML = `
                 <i class="fas fa-check-circle" style="font-size: 1.5rem;"></i>
-                <span>🎉 Selamat! Anda telah menonton video sampai selesai.</span>
+                <span>🎉 Video selesai! Tombol "Tandai Selesai" aktif.</span>
             `;
             document.body.appendChild(notification);
             
@@ -797,14 +793,15 @@
             }
         }
 
+        // ===== CLEANUP =====
         window.addEventListener('beforeunload', function() {
             stopProgressTracking();
         });
 
-        console.log('🎬 YouTube Player dengan Anti-Skip (NO AUTO-RESET) aktif!');
-        console.log('📊 Threshold:', (WATCH_THRESHOLD * 100) + '%');
-        console.log('ℹ️ Tombol "Tandai Selesai" aktif setelah menonton ' + (WATCH_THRESHOLD * 100) + '%');
-        console.log('ℹ️ Jika user skip ke akhir, akan muncul peringatan tanpa reset otomatis.');
+        console.log('🎬 YouTube Player - Slider Disembunyikan!');
+        console.log('📌 Video ID: jYyRCuoKiqg');
+        console.log('ℹ️ User hanya bisa play/pause, tidak bisa skip');
+        console.log('ℹ️ Tombol "Tandai Selesai" aktif setelah video selesai diputar');
     </script>
 </body>
 </html>
