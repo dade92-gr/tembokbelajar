@@ -63,10 +63,10 @@
             width: 100%;
             height: 100%;
             border: 0;
-            pointer-events: none; /* 🔥 MATIKAN SEMUA INTERAKSI DI IFRAME */
+            pointer-events: none;
         }
         
-        /* ===== KONTROL VIDEO KUSTOM ===== */
+        /* KONTROL KUSTOM */
         .video-controls-custom {
             display: flex;
             align-items: center;
@@ -104,6 +104,12 @@
             transform: scale(0.95);
         }
         
+        .btn-play-custom:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
         .video-info-custom {
             display: flex;
             align-items: center;
@@ -118,7 +124,6 @@
         .status-playing { color: #3498db; }
         .status-completed { color: var(--ipas-primary); }
         
-        /* Progress Bar (HANYA INDIKATOR) */
         .progress-container {
             width: 100%;
             height: 4px;
@@ -293,19 +298,19 @@
                     <div id="video-player"></div>
                 </div>
                 
-                <!-- Progress Bar (HANYA INDIKATOR) -->
+                <!-- Progress Bar -->
                 <div class="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
                 
-                <!-- Kontrol Kustom: Hanya Play & Pause -->
+                <!-- Kontrol Kustom -->
                 <div class="video-controls-custom">
-                    <button class="btn-play-custom" id="play-btn">
+                    <button class="btn-play-custom" id="play-btn" disabled>
                         <i class="fas fa-play" id="play-icon"></i>
                     </button>
                     <div class="video-info-custom">
                         <i class="fas fa-circle status-pending" id="status-icon"></i>
-                        <span class="status-text" id="status-text">Belum ditonton</span>
+                        <span class="status-text" id="status-text">⏳ Memuat player...</span>
                     </div>
                 </div>
                 
@@ -616,7 +621,8 @@
         });
 
         // ===== YOUTUBE PLAYER =====
-        var player;
+        var player = null;
+        var isPlayerReady = false;
         var isCompleted = false;
         var progressInterval = null;
         var videoDuration = 0;
@@ -632,6 +638,8 @@
         var btnText = document.getElementById('btn-text');
 
         function onYouTubeIframeAPIReady() {
+            console.log('🎬 YouTube API siap, membuat player...');
+            
             player = new YT.Player('video-player', {
                 height: '390',
                 width: '640',
@@ -639,10 +647,10 @@
                 playerVars: {
                     'rel': 0,
                     'modestbranding': 1,
-                    'controls': 0,        // 🔥 MATIKAN SEMUA KONTROL YOUTUBE
-                    'disablekb': 1,       // Nonaktifkan keyboard
-                    'fs': 0,              // Nonaktifkan fullscreen
-                    'iv_load_policy': 3,  // Sembunyikan anotasi
+                    'controls': 0,
+                    'disablekb': 1,
+                    'fs': 0,
+                    'iv_load_policy': 3,
                     'autoplay': 0,
                     'showinfo': 0,
                     'playsinline': 1
@@ -656,29 +664,42 @@
         }
 
         function onPlayerReady(event) {
+            isPlayerReady = true;
             videoDuration = player.getDuration();
             console.log('✅ Player siap. Durasi:', videoDuration, 'detik');
+            
+            // Aktifkan tombol play
+            playBtn.disabled = false;
             updateStatus('pending', '▶️ Siap diputar');
         }
 
         // ===== TOMBOL PLAY/PAUSE KUSTOM =====
-        document.getElementById('play-btn').addEventListener('click', function() {
-            if (isCompleted) {
-                // Jika video sudah selesai, putar dari awal
-                player.seekTo(0);
-                player.playVideo();
-                isCompleted = false;
-                completeBtn.disabled = true;
-                completeBtn.classList.remove('active');
-                btnText.textContent = 'Tandai Selesai';
-                updateStatus('playing', '▶️ Diputar ulang...');
+        playBtn.addEventListener('click', function() {
+            if (!isPlayerReady || !player) {
+                console.warn('⚠️ Player belum siap');
                 return;
             }
             
-            if (isPlaying) {
-                player.pauseVideo();
-            } else {
-                player.playVideo();
+            try {
+                if (isCompleted) {
+                    // Putar ulang dari awal
+                    player.seekTo(0);
+                    player.playVideo();
+                    isCompleted = false;
+                    completeBtn.disabled = true;
+                    completeBtn.classList.remove('active');
+                    btnText.textContent = 'Tandai Selesai';
+                    updateStatus('playing', '▶️ Diputar ulang...');
+                    return;
+                }
+                
+                if (isPlaying) {
+                    player.pauseVideo();
+                } else {
+                    player.playVideo();
+                }
+            } catch (e) {
+                console.error('❌ Error kontrol video:', e);
             }
         });
 
@@ -698,13 +719,11 @@
                 stopProgressTracking();
             }
             else if (state === YT.PlayerState.ENDED) {
-                // 🔥 Video selesai!
                 isPlaying = false;
                 playIcon.className = 'fas fa-play';
                 stopProgressTracking();
                 progressBar.style.width = '100%';
                 
-                // ✅ Aktifkan tombol "Tandai Selesai"
                 isCompleted = true;
                 updateStatus('completed', '✅ Selesai!');
                 completeBtn.disabled = false;
@@ -728,13 +747,17 @@
             if (progressInterval) return;
             
             progressInterval = setInterval(function() {
-                if (player && player.getCurrentTime && player.getDuration) {
-                    var current = player.getCurrentTime();
-                    var total = player.getDuration();
-                    
-                    if (total > 0) {
-                        var percent = (current / total) * 100;
-                        progressBar.style.width = Math.min(percent, 100) + '%';
+                if (player && isPlayerReady) {
+                    try {
+                        var current = player.getCurrentTime();
+                        var total = player.getDuration();
+                        
+                        if (total > 0) {
+                            var percent = (current / total) * 100;
+                            progressBar.style.width = Math.min(percent, 100) + '%';
+                        }
+                    } catch (e) {
+                        // Abaikan error
                     }
                 }
             }, 500);
@@ -813,7 +836,7 @@
             stopProgressTracking();
         });
 
-        console.log('🎬 YouTube Player - Kontrol Kustom!');
+        console.log('🎬 YouTube Player - Kontrol Kustom (dengan pengecekan player)');
         console.log('📌 Video ID: jYyRCuoKiqg');
         console.log('ℹ️ User hanya bisa Play dan Pause, TIDAK BISA SKIP!');
         console.log('ℹ️ Tombol "Tandai Selesai" aktif setelah video selesai diputar.');
