@@ -658,6 +658,24 @@
         var progressBar = document.getElementById('progress-bar');
         var btnText = document.getElementById('btn-text');
 
+        // ===== FUNGSI UNMUTE OTOMATIS =====
+        function ensureAudio() {
+            if (!isPlayerReady || !player) return;
+            
+            try {
+                var isCurrentlyMuted = player.isMuted();
+                if (isCurrentlyMuted) {
+                    player.unMute();
+                    isMuted = false;
+                    volumeIcon.className = 'fas fa-volume-up';
+                    volumeBtn.classList.remove('muted');
+                    console.log('🔊 Suara diaktifkan');
+                }
+            } catch (e) {
+                console.warn('⚠️ Gagal mengaktifkan suara:', e);
+            }
+        }
+
         function onYouTubeIframeAPIReady() {
             console.log('🎬 YouTube API siap, membuat player...');
             
@@ -689,6 +707,17 @@
             videoDuration = player.getDuration();
             console.log('✅ Player siap. Durasi:', videoDuration, 'detik');
             
+            // 🔥 UNMUTE OTOMATIS SAAT PLAYER SIAP
+            try {
+                player.unMute();
+                isMuted = false;
+                volumeIcon.className = 'fas fa-volume-up';
+                volumeBtn.classList.remove('muted');
+                console.log('🔊 Suara diaktifkan otomatis');
+            } catch(e) {
+                console.warn('⚠️ Gagal unmute otomatis:', e);
+            }
+            
             // Aktifkan tombol
             playBtn.disabled = false;
             volumeBtn.disabled = false;
@@ -703,6 +732,9 @@
             }
             
             try {
+                // 🔥 Pastikan suara aktif saat play pertama kali
+                ensureAudio();
+                
                 if (isCompleted) {
                     player.seekTo(0);
                     player.playVideo();
@@ -737,11 +769,13 @@
                     isMuted = false;
                     volumeIcon.className = 'fas fa-volume-up';
                     volumeBtn.classList.remove('muted');
+                    console.log('🔊 Suara diaktifkan');
                 } else {
                     player.mute();
                     isMuted = true;
                     volumeIcon.className = 'fas fa-volume-mute';
                     volumeBtn.classList.add('muted');
+                    console.log('🔇 Suara dimatikan');
                 }
             } catch (e) {
                 console.error('❌ Error kontrol volume:', e);
@@ -885,6 +919,7 @@
         console.log('📌 Video ID: jYyRCuoKiqg');
         console.log('ℹ️ User hanya bisa Play/Pause dan Mute/Unmute');
         console.log('ℹ️ Tombol "Tandai Selesai" aktif setelah video selesai diputar.');
+        console.log('🔊 Suara akan aktif otomatis saat player siap');
     </script>
 </body>
 </html>
