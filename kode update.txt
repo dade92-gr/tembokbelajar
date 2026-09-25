@@ -25,7 +25,7 @@ if errorlevel 1 (
 )
 
 echo [1] Menambahkan semua file yang berubah...
-git add .
+git add -A
 if errorlevel 1 (
     echo ❌ ERROR: Gagal menambahkan file.
     pause
@@ -34,15 +34,6 @@ if errorlevel 1 (
 echo ✅ Berhasil menambahkan file.
 echo.
 
-REM --- CEK APAKAH ADA PERUBAHAN YANG AKAN DI-COMMIT ---
-for /f "delims=" %%i in ('git status --porcelain') do set "ada_perubahan=1"
-if not defined ada_perubahan (
-    echo ℹ️  Tidak ada perubahan yang perlu di-commit.
-    echo    Proses selesai.
-    pause
-    exit /b 0
-)
-
 REM --- FORMAT TANGGAL AMAN (YYYY-MM-DD_HH-MM-SS) ---
 for /f "tokens=1-3 delims=/" %%a in ("%date%") do (
     set "dd=%%a"
@@ -50,20 +41,18 @@ for /f "tokens=1-3 delims=/" %%a in ("%date%") do (
     set "yyyy=%%c"
 )
 
-REM Ambil jam dari %time% (format: HH:MM:SS,XX)
 for /f "tokens=1-3 delims=:." %%a in ("%time%") do (
     set "hh=%%a"
     set "min=%%b"
     set "ss=%%c"
 )
 
-REM Hapus spasi jika jam < 10
 set "hh=%hh: =0%"
 
 set "tanggal_aman=%yyyy%-%mm%-%dd%_%hh%-%min%-%ss%"
 
 echo [2] Menyimpan perubahan...
-git commit -m "Auto update: %tanggal_aman%"
+git commit -m "Auto update: %tanggal_aman%" --allow-empty
 if errorlevel 1 (
     echo ❌ ERROR: Gagal commit.
     pause
@@ -72,8 +61,8 @@ if errorlevel 1 (
 echo ✅ Berhasil commit.
 echo.
 
-echo [3] Mengirim ke GitHub...
-git push origin main
+echo [3] Mengirim ke GitHub (overwrite remote)...
+git push origin main --force
 if errorlevel 1 (
     echo ❌ ERROR: Gagal push ke GitHub.
     echo    Periksa koneksi internet dan pastikan Anda memiliki akses ke repository.
