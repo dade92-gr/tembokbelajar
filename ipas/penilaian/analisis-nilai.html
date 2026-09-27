@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Nilai Per Aktivitas - IPAS Guru</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+        :root {
+            --ipas-primary: #2ecc71;
+            --ipas-secondary: #27ae60;
+            --ipas-light: #d5f4e6;
+            --ipas-dark: #229954;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #3498db;
+            --purple: #9b59b6;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 0.3rem 0.8rem 0.3rem 0.3rem;
+            border-radius: 50px;
+            border: 1px solid var(--ipas-light);
+            margin-left: auto;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .profile-info { font-size: 0.85rem; }
+        .profile-name { font-weight: 700; color: var(--ipas-dark); }
+        .profile-role { font-size: 0.7rem; color: #888; }
+        .logout-btn {
+            background: none; border: none; color: #e74c3c;
+            cursor: pointer; font-size: 1rem; padding: 5px;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover { transform: scale(1.1); color: #c0392b; }
+        
+        .info-panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;
+        }
+        
+        .login-required-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 20000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .login-required-card {
+            background: white; border-radius: 24px; padding: 2rem;
+            text-align: center; max-width: 400px; margin: 1rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .login-required-card i { font-size: 3rem; color: #e74c3c; margin-bottom: 1rem; }
+        .login-required-card h2 { color: #229954; margin-bottom: 0.5rem; }
+        .login-required-card p { color: #666; margin-bottom: 1.5rem; }
+        .login-required-card a {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white; padding: 0.7rem 1.5rem;
+            border-radius: 40px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        
+        .activities-container { padding: 2rem; max-width: 1600px; margin: 0 auto; }
+        
+        .ipas-content-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px; padding: 2rem;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.1);
+            border-left: 5px solid var(--ipas-primary);
+            margin-bottom: 2rem;
+        }
+        .ipas-content-card h2 {
+            color: var(--ipas-dark); font-size: 1.8rem;
+            margin-bottom: 0.5rem; position: relative;
+            display: inline-block; padding-bottom: 10px;
+        }
+        .ipas-content-card h2::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 60px; height: 4px;
+            background: linear-gradient(90deg, var(--ipas-primary), var(--ipas-secondary));
+            border-radius: 2px;
+        }
+        .ipas-content-card p { font-size: 1rem; color: #666; margin-top: 0.5rem; }
+        
+        .simple-card {
+            background: white; border-radius: 20px;
+            padding: 1.8rem; margin-bottom: 2rem;
+            border: 1px solid rgba(46, 204, 113, 0.1);
+        }
+        
+        .section-title {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 1.5rem; padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--ipas-light);
+        }
+        .section-title i {
+            width: 40px; height: 40px;
+            background: var(--ipas-light); color: var(--ipas-primary);
+            border-radius: 12px; display: flex;
+            align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .section-title h3 { font-size: 1.2rem; color: var(--ipas-dark); font-weight: 600; }
+        
+        .filter-form { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+        .filter-group { flex: 0 0 auto; min-width: 180px; }
+        .filter-group label {
+            display: block; font-size: 0.8rem; font-weight: 600;
+            color: var(--ipas-dark); margin-bottom: 0.3rem;
+        }
+        .filter-group select {
+            width: 100%; padding: 0.7rem 1rem;
+            border: 1px solid #ddd; border-radius: 12px;
+            font-size: 0.9rem; background: white; cursor: pointer;
+        }
+        .filter-group select:disabled { background: #f5f5f5; opacity: 0.7; cursor: not-allowed; }
+        
+        .kelas-checklist { flex: 1; min-width: 280px; }
+        .kelas-checklist label.title-label {
+            display: block; font-size: 0.8rem; font-weight: 600;
+            color: var(--ipas-dark); margin-bottom: 0.3rem;
+        }
+        .kelas-options, .aktivitas-options {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            padding: 0.6rem; background: #f8f9fa;
+            border-radius: 12px; border: 1px solid #ddd; min-height: 50px;
+        }
+        .kelas-checkbox, .aktivitas-checkbox {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; background: white;
+            border: 2px solid #e0e0e0; border-radius: 30px;
+            cursor: pointer; font-size: 0.85rem; font-weight: 500;
+            transition: all 0.2s; user-select: none;
+        }
+        .kelas-checkbox:hover, .aktivitas-checkbox:hover { border-color: var(--ipas-primary); }
+        .kelas-checkbox input, .aktivitas-checkbox input { display: none; }
+        .kelas-checkbox.checked, .aktivitas-checkbox.checked {
+            background: var(--ipas-primary); color: white; border-color: var(--ipas-primary);
+        }
+        
+        .aktivitas-checklist { flex: 1 1 100%; min-width: 280px; margin-top: 0.5rem; }
+        .aktivitas-checklist label.title-label {
+            display: block; font-size: 0.8rem; font-weight: 600;
+            color: var(--ipas-dark); margin-bottom: 0.3rem;
+        }
+        
+        .btn-mini {
+            background: white; border: 1px solid #ddd;
+            color: var(--ipas-dark); padding: 4px 12px;
+            border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn-mini:hover { background: var(--ipas-light); border-color: var(--ipas-primary); }
+        
+        .btn-cek {
+            background: linear-gradient(135deg, var(--ipas-primary), var(--ipas-secondary));
+            color: white; border: none; padding: 0.7rem 2rem;
+            border-radius: 40px; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; display: inline-flex; align-items: center;
+            gap: 8px; transition: all 0.3s ease; align-self: flex-end;
+        }
+        .btn-cek:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        .btn-cek:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .kpi-card {
+            background: white; border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--ipas-primary);
+            position: relative; overflow: hidden;
+        }
+        .kpi-card.warning { border-left-color: var(--warning); }
+        .kpi-card.danger { border-left-color: var(--danger); }
+        .kpi-card.info { border-left-color: var(--info); }
+        .kpi-card.purple { border-left-color: var(--purple); }
+        .kpi-label {
+            font-size: 0.75rem; font-weight: 600; color: #888;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .kpi-value {
+            font-size: 2rem; font-weight: 700;
+            color: var(--ipas-dark); margin: 4px 0; line-height: 1;
+        }
+        .kpi-sub { font-size: 0.75rem; color: #666; }
+        .kpi-icon {
+            position: absolute; right: 15px; top: 50%;
+            transform: translateY(-50%); font-size: 2.5rem;
+            opacity: 0.1; color: var(--ipas-dark);
+        }
+        
+        .chart-container { position: relative; height: 350px; }
+        .chart-container.tall { height: 450px; }
+        .chart-container.donut { height: 400px; max-width: 500px; margin: 0 auto; }
+        
+        .ranking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 1.5rem;
+        }
+        .ranking-card {
+            border-radius: 16px; padding: 1.2rem;
+            border: 1px solid #eee;
+        }
+        .ranking-card.top {
+            background: linear-gradient(135deg, #fff9e6, #fffdf5);
+            border-color: #f39c12;
+        }
+        .ranking-card.bottom {
+            background: linear-gradient(135deg, #fdedec, #fff5f5);
+            border-color: #e74c3c;
+        }
+        .ranking-card h4 {
+            font-size: 1rem; color: var(--ipas-dark);
+            margin-bottom: 1rem; display: flex; align-items: center;
+            gap: 8px; padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+        }
+        .ranking-list { display: flex; flex-direction: column; gap: 6px; }
+        .ranking-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 12px; background: white;
+            border-radius: 10px; font-size: 0.85rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .ranking-item .rank-num {
+            width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; font-weight: 700; font-size: 0.75rem;
+            color: white; flex-shrink: 0;
+        }
+        .ranking-card.top .rank-num { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .ranking-card.bottom .rank-num { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .ranking-item .nama {
+            flex: 1; font-weight: 500; color: var(--ipas-dark);
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .ranking-item .kelas-label {
+            font-size: 0.7rem; color: #888;
+            background: #f0f0f0; padding: 2px 8px; border-radius: 20px;
+        }
+        .ranking-item .kelengkapan-label {
+            font-size: 0.7rem; font-weight: 600;
+            padding: 2px 8px; border-radius: 20px;
+        }
+        .ranking-item .kelengkapan-label.full { background: #d5f4e6; color: #27ae60; }
+        .ranking-item .kelengkapan-label.partial { background: #fdebd0; color: #e67e22; }
+        .ranking-item .kelengkapan-label.low { background: #fadbd8; color: #c0392b; }
+        .ranking-item .nilai {
+            font-weight: 700; color: var(--ipas-dark);
+            min-width: 55px; text-align: right;
+        }
+        .ranking-item .nilai.mahir { color: #2980b9; }
+        .ranking-item .nilai.cakap { color: #27ae60; }
+        .ranking-item .nilai.berkembang { color: #f39c12; }
+        .ranking-item .nilai.perlu { color: #e74c3c; }
+        
+        .table-wrapper {
+            overflow-x: auto; border-radius: 12px;
+            border: 1px solid #eee;
+        }
+        .summary-table {
+            width: 100%; border-collapse: collapse; font-size: 0.85rem;
+        }
+        .summary-table th {
+            background: var(--ipas-light); color: var(--ipas-dark);
+            padding: 12px 10px; text-align: center; font-weight: 600;
+            border-bottom: 2px solid #ddd; position: sticky; top: 0;
+        }
+        .summary-table td {
+            padding: 10px; text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .summary-table td:first-child {
+            font-weight: 700; color: var(--ipas-dark); text-align: left;
+        }
+        .summary-table tr:hover { background: #f8f9fa; }
+        .summary-table .nilai-cell { font-weight: 700; }
+        .summary-table .nilai-cell.mahir { color: #2980b9; }
+        .summary-table .nilai-cell.cakap { color: #27ae60; }
+        .summary-table .nilai-cell.berkembang { color: #f39c12; }
+        .summary-table .nilai-cell.perlu { color: #e74c3c; }
+        .summary-table .rata-kelas {
+            background: var(--ipas-light); font-weight: 700;
+            color: var(--ipas-dark);
+        }
+        .summary-table .status-badge {
+            display: inline-flex; align-items: center;
+            padding: 4px 12px; border-radius: 30px;
+            font-size: 0.7rem; font-weight: 600;
+        }
+        .summary-table .status-badge.baik { background: #d5f4e6; color: #27ae60; }
+        .summary-table .status-badge.cukup { background: #fdebd0; color: #e67e22; }
+        .summary-table .status-badge.kritis { background: #fadbd8; color: #c0392b; }
+        .summary-table .status-badge.kosong { background: #ecf0f1; color: #7f8c8d; }
+        
+        /* ===== ACCORDION ===== */
+        .accordion-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .accordion-item {
+            background: white;
+            border-radius: 16px;
+            border: 2px solid #e8e8e8;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .accordion-item:hover {
+            border-color: var(--ipas-primary);
+        }
+        
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            transition: background 0.3s ease;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .accordion-header:hover {
+            background: var(--ipas-light);
+        }
+        
+        .accordion-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .accordion-toggle {
+            width: 32px;
+            height: 32px;
+            background: var(--ipas-light);
+            color: var(--ipas-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .accordion-item.open .accordion-toggle {
+            transform: rotate(90deg);
+            background: var(--ipas-primary);
+            color: white;
+        }
+        
+        .accordion-kelas-nama {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--ipas-dark);
+        }
+        
+        .accordion-stats {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .mini-stat {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #f0f0f0;
+            color: #555;
+        }
+        
+        .mini-stat.dinilai { background: #d5f4e6; color: #27ae60; }
+        .mini-stat.kosong { background: #fadbd8; color: #c0392b; }
+        .mini-stat.rata-semua { background: #fdebd0; color: #e67e22; }
+        .mini-stat.rata-dinilai { background: #d6eaf8; color: #2980b9; }
+        
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: #fafafa;
+        }
+        
+        .accordion-item.open .accordion-body {
+            max-height: 5000px;
+        }
+        
+        .accordion-body-inner {
+            padding: 1.2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        /* ===== SECTION DALAM ACCORDION ===== */
+        .kelas-section {
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+        
+        .kelas-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .kelas-section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .kelas-section-title.clickable {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .kelas-section-title.clickable:hover {
+            background: #f8f9fa;
+        }
+        
+        .kelas-section-title .toggle-icon {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+            color: var(--ipas-primary);
+        }
+        
+        .kelas-section-title i:first-child {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+        
+        /* TOP SECTION */
+        .top-section .kelas-section-title {
+            background: linear-gradient(135deg, #fff9e6, #fffdf5);
+            color: #b7791f;
+        }
+        .top-section .kelas-section-title i:first-child {
+            background: #f39c12;
+            color: white;
+        }
+        
+        /* BOTTOM SECTION */
+        .bottom-section .kelas-section-title {
+            background: linear-gradient(135deg, #fdedec, #fff5f5);
+            color: #c0392b;
+        }
+        .bottom-section .kelas-section-title i:first-child {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        /* SEMUA SECTION */
+        .semua-section .kelas-section-title {
+            background: #f8f9fa;
+            color: var(--ipas-dark);
+        }
+        .semua-section .kelas-section-title i:first-child {
+            background: var(--ipas-light);
+            color: var(--ipas-primary);
+        }
+        
+        /* KOSONG SECTION */
+        .kosong-section .kelas-section-title {
+            background: linear-gradient(135deg, #f5f5f5, #fafafa);
+            color: #7f8c8d;
+        }
+        .kosong-section .kelas-section-title i:first-child {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        /* ===== LIST SISWA DI ACCORDION ===== */
+        .kelas-siswa-list {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .kelas-siswa-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .kelas-siswa-item:last-child {
+            border-bottom: none;
+        }
+        
+        .kelas-siswa-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .rank-medal {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: white;
+            flex-shrink: 0;
+            background: #f39c12;
+        }
+        
+        .rank-medal.rank-1 {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            box-shadow: 0 2px 6px rgba(243, 156, 18, 0.4);
+            transform: scale(1.1);
+        }
+        .rank-medal.rank-2 {
+            background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+            box-shadow: 0 2px 6px rgba(149, 165, 166, 0.4);
+        }
+        .rank-medal.rank-3 {
+            background: linear-gradient(135deg, #cd7f32, #b87333);
+            box-shadow: 0 2px 6px rgba(184, 115, 51, 0.4);
+        }
+        
+        .rank-medal.bottom-rank {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .siswa-nama-full {
+            flex: 1;
+            font-weight: 500;
+            color: var(--ipas-dark);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .siswa-nilai {
+            font-weight: 700;
+            min-width: 65px;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+        
+        .siswa-nilai.mahir { color: #2980b9; }
+        .siswa-nilai.cakap { color: #27ae60; }
+        .siswa-nilai.berkembang { color: #f39c12; }
+        .siswa-nilai.perlu { color: #e74c3c; }
+        
+        .kelengkapan-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        
+        .kelengkapan-label.full { background: #d5f4e6; color: #27ae60; }
+        .kelengkapan-label.partial { background: #fdebd0; color: #e67e22; }
+        .kelengkapan-label.low { background: #fadbd8; color: #c0392b; }
+        
+        .detail-siswa-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .detail-siswa-table th {
+            background: var(--ipas-light);
+            color: var(--ipas-dark);
+            padding: 10px 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .detail-siswa-table td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.8rem;
+        }
+        
+        .detail-siswa-table td.nama {
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .detail-siswa-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .detail-siswa-table .nilai-cell {
+            font-weight: 600;
+        }
+        
+        .detail-siswa-table .nilai-cell.mahir { color: #2980b9; }
+        .detail-siswa-table .nilai-cell.cakap { color: #27ae60; }
+        .detail-siswa-table .nilai-cell.berkembang { color: #f39c12; }
+        .detail-siswa-table .nilai-cell.perlu { color: #e74c3c; }
+        
+        .detail-siswa-table .rata-siswa {
+            font-weight: 700;
+            color: var(--ipas-dark);
+            background: #f8f9fa;
+        }
+        
+        .detail-siswa-table .rata-siswa.mahir { color: #2980b9; }
+        .detail-siswa-table .rata-siswa.cakap { color: #27ae60; }
+        .detail-siswa-table .rata-siswa.berkembang { color: #f39c12; }
+        .detail-siswa-table .rata-siswa.perlu { color: #e74c3c; }
+        
+        .kosong-list {
+            padding: 1rem;
+        }
+        
+        .kosong-list .nama-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .kosong-list .nama-item {
+            background: #fdf2f2;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #721c24;
+            border: 1px solid #fadbd8;
+        }
+        
+        .semua-siswa-wrapper {
+            padding: 1rem;
+            background: #fafafa;
+        }
+        
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .pagination button {
+            background: white;
+            border: 1px solid #ddd;
+            color: var(--ipas-dark);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background: var(--ipas-primary);
+            color: white;
+            border-color: var(--ipas-primary);
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .pagination .page-info {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .insight-card {
+            background: linear-gradient(135deg, #fff9e6, #fffdf5);
+            border-left: 5px solid var(--warning);
+            border-radius: 16px; padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .insight-card h3 {
+            color: #b7791f; font-size: 1.05rem;
+            display: flex; align-items: center;
+            gap: 10px; margin-bottom: 1rem;
+        }
+        .insight-list { display: flex; flex-direction: column; gap: 8px; }
+        .insight-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 8px 12px; background: white;
+            border-radius: 10px; font-size: 0.85rem;
+        }
+        .insight-item i { color: var(--warning); margin-top: 3px; }
+        
+        .empty-state {
+            text-align: center; padding: 3rem 2rem; color: #95a5a6;
+        }
+        .empty-state i { font-size: 4rem; opacity: 0.3; margin-bottom: 1rem; }
+        .empty-state h3 { color: var(--ipas-dark); margin-bottom: 0.5rem; }
+        
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none;
+            justify-content: center; align-items: center; z-index: 9999;
+        }
+        .loading-card {
+            background: white; padding: 2rem;
+            border-radius: 20px; text-align: center; min-width: 250px;
+        }
+        .loading-spinner {
+            width: 50px; height: 50px;
+            border: 4px solid var(--ipas-light);
+            border-top-color: var(--ipas-primary);
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+        .loading-card p { color: var(--ipas-dark); font-weight: 600; }
+        .loading-card .loading-text { font-size: 0.8rem; color: #888; margin-top: 0.5rem; }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .back-nav-simple { text-align: center; margin-top: 2rem; }
+        .back-btn-simple {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: white; color: var(--ipas-dark);
+            padding: 0.7rem 1.8rem; border-radius: 40px;
+            text-decoration: none; font-weight: 600;
+            border: 1px solid var(--ipas-light);
+            transition: all 0.3s ease;
+        }
+        .back-btn-simple:hover { background: var(--ipas-primary); color: white; }
+        
+        @media (max-width: 768px) {
+            .activities-container { padding: 1rem; }
+            .filter-form { flex-direction: column; }
+            .btn-cek { width: 100%; justify-content: center; }
+            .chart-container { height: 280px; }
+            .kpi-value { font-size: 1.5rem; }
+            .info-panel-header { flex-direction: column; align-items: flex-start; }
+            .profile-section { margin-left: 0; }
+            .ranking-grid { grid-template-columns: 1fr; }
+            .accordion-stats { font-size: 0.7rem; }
+            .detail-siswa-table { font-size: 0.7rem; }
+            .detail-siswa-table th, .detail-siswa-table td { padding: 5px 3px; }
+            .kelas-siswa-item {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .siswa-nama-full {
+                min-width: 100%;
+                order: -1;
+                font-size: 0.8rem;
+            }
+            .rank-medal {
+                width: 24px;
+                height: 24px;
+                font-size: 0.7rem;
+            }
+            .siswa-nilai {
+                min-width: 50px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Sekolah" onerror="this.style.display='none'">
+                    <h1>TEMBOK BELAJAR - PROJEK IPAS</h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index-ipas.html" class="nav-link"><i class="fas fa-flask"></i> Beranda IPAS</a></li>
+                    <li><a href="../aktivitas-pembelajaran/index-aktifitas-ipas.html" class="nav-link"><i class="fas fa-tasks"></i> Daftar Aktivitas</a></li>
+                    <li><a href="../materi-pembelajaran/index-materi-ipas.html" class="nav-link"><i class="fas fa-book-open"></i> Daftar Materi</a></li>
+                    <li><a href="index-penilaian-ipas.html" class="nav-link active"><i class="fas fa-chart-line"></i> Penilaian</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div id="mainContent">
+        <section class="activities-container">
+            <div class="ipas-content-card">
+                <div class="info-panel-header">
+                    <div>
+                        <h2><i class="fas fa-star"></i> Analisis Nilai Per Aktivitas</h2>
+                        <p>Analisis rata-rata nilai aktivitas siswa antar kelas - Projek IPAS</p>
+                    </div>
+                    <div id="profileContainer" style="display: none;">
+                        <div class="profile-section">
+                            <div class="profile-avatar" id="profileAvatar">G</div>
+                            <div class="profile-info">
+                                <div class="profile-name" id="profileName">Guru</div>
+                                <div class="profile-role" id="profileRole">Administrator</div>
+                            </div>
+                            <button class="logout-btn" id="logoutBtn" title="Logout" onclick="handleLogout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER -->
+            <div class="simple-card">
+                <div class="section-title">
+                    <i class="fas fa-filter"></i>
+                    <h3>Filter Pencarian</h3>
+                </div>
+                
+                <div class="filter-form">
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar-alt"></i> Semester</label>
+                        <select id="filterSemester" disabled>
+                            <option value="">-- Pilih Semester --</option>
+                            <option value="Ganjil" selected>Semester Ganjil</option>
+                            <option value="Genap">Semester Genap</option>
+                        </select>
+                    </div>
+                    
+                    <div class="kelas-checklist">
+                        <label class="title-label"><i class="fas fa-school"></i> Pilih Kelas</label>
+                        <div class="kelas-options" id="kelasOptions">
+                            <span style="color:#999; font-size:0.85rem;">
+                                <i class="fas fa-spinner fa-spin"></i> Memuat kelas...
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="aktivitas-checklist" id="aktivitasChecklistWrapper" style="display:none;">
+                        <label class="title-label">
+                            <i class="fas fa-tasks"></i> Pilih Aktivitas 
+                            <span style="font-weight:400; font-size:0.75rem; color:#888;">
+                                (kosongkan untuk semua)
+                            </span>
+                        </label>
+                        <div style="display:flex; gap:8px; margin-bottom:6px;">
+                            <button type="button" class="btn-mini" id="btnPilihSemuaAkt">
+                                <i class="fas fa-check-double"></i> Pilih Semua
+                            </button>
+                            <button type="button" class="btn-mini" id="btnHapusSemuaAkt">
+                                <i class="fas fa-times"></i> Hapus Semua
+                            </button>
+                        </div>
+                        <div class="aktivitas-options" id="aktivitasOptions">
+                            <span style="color:#999; font-size:0.85rem;">
+                                <i class="fas fa-spinner fa-spin"></i> Memuat aktivitas...
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group" style="flex:0 0 auto; align-self:flex-end;">
+                        <button class="btn-cek" id="btnCek" disabled>
+                            <i class="fas fa-chart-line"></i> Tampilkan Analisis
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI -->
+            <div id="kpiSection" style="display:none;">
+                <div class="simple-card">
+                    <div class="section-title">
+                        <i class="fas fa-gauge-high"></i>
+                        <h3>Ringkasan Nilai</h3>
+                    </div>
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Rata-rata Keseluruhan</div>
+                            <div class="kpi-value" id="kpiAvg">0</div>
+                            <div class="kpi-sub" id="kpiAvgSub">-</div>
+                            <i class="fas fa-star kpi-icon"></i>
+                        </div>
+                        <div class="kpi-card info">
+                            <div class="kpi-label">Aktivitas Dianalisis</div>
+                            <div class="kpi-value" id="kpiJumlahAkt">0</div>
+                            <div class="kpi-sub">Aktivitas terpilih</div>
+                            <i class="fas fa-tasks kpi-icon"></i>
+                        </div>
+                        <div class="kpi-card purple">
+                            <div class="kpi-label">Siswa Mahir</div>
+                            <div class="kpi-value" id="kpiSiswaMahir">0</div>
+                            <div class="kpi-sub">Nilai rata-rata ≥ 90</div>
+                            <i class="fas fa-trophy kpi-icon"></i>
+                        </div>
+                        <div class="kpi-card warning">
+                            <div class="kpi-label">Nilai Tertinggi</div>
+                            <div class="kpi-value" id="kpiNilaiMax">0</div>
+                            <div class="kpi-sub">Dari semua siswa</div>
+                            <i class="fas fa-arrow-up kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHART 1 -->
+            <div class="simple-card" id="chartKelasCard" style="display:none;">
+                <div class="section-title">
+                    <i class="fas fa-chart-column"></i>
+                    <h3>Rata-rata Nilai per Kelas</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartKelas"></canvas>
+                </div>
+            </div>
+
+            <!-- CHART 2 -->
+            <div class="simple-card" id="chartDistribusiCard" style="display:none;">
+                <div class="section-title">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>Distribusi Predikat Siswa</h3>
+                </div>
+                <div class="chart-container donut">
+                    <canvas id="chartDistribusi"></canvas>
+                </div>
+            </div>
+
+            <!-- CHART 3 -->
+            <div class="simple-card" id="chartAktivitasCard" style="display:none;">
+                <div class="section-title">
+                    <i class="fas fa-list-check"></i>
+                    <h3>Rata-rata Nilai per Aktivitas</h3>
+                </div>
+                <div class="chart-container tall">
+                    <canvas id="chartAktivitas"></canvas>
+                </div>
+            </div>
+
+            <!-- CHART 4 -->
+            <div class="simple-card" id="chartPerAktivitasCard" style="display:none;">
+                <div class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Perbandingan Nilai per Aktivitas Antar Kelas</h3>
+                </div>
+                <div class="chart-container tall">
+                    <canvas id="chartPerAktivitas"></canvas>
+                </div>
+            </div>
+
+            <!-- RANKING -->
+            <div class="simple-card" id="rankingCard" style="display:none;">
+                <div class="section-title">
+                    <i class="fas fa-ranking-star"></i>
+                    <h3>Ranking Siswa (Global)</h3>
+                </div>
+                <div class="ranking-grid">
+                    <div class="ranking-card top">
+                        <h4><i class="fas fa-trophy"></i> Top 10 Siswa Terbaik</h4>
+                        <div class="ranking-list" id="rankingTopList"></div>
+                    </div>
+                    <div class="ranking-card bottom">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Top 10 Perlu Perhatian</h4>
+                        <div class="ranking-list" id="rankingBottomList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABEL RINGKASAN PER KELAS -->
+            <div class="simple-card" id="tableCard" style="display:none;">
+                <div class="section-title">
+                    <i class="fas fa-table"></i>
+                    <h3>Ringkasan per Kelas</h3>
+                </div>
+                <div class="table-wrapper">
+                    <table class="summary-table" id="detailTable">
+                        <thead id="detailTableHead"></thead>
+                        <tbody id="detailTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DETAIL PERHITUNGAN PER KELAS (ACCORDION) -->
+            <div class="simple-card" id="detailPerhitunganCard" style="display:none;">
+                <div class="section-title">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Detail Perhitungan Per Kelas</h3>
+                </div>
+                <div class="accordion-wrapper" id="accordionWrapper"></div>
+            </div>
+
+            <!-- INSIGHT -->
+            <div class="insight-card" id="insightCard" style="display:none;">
+                <h3><i class="fas fa-lightbulb"></i> Insight Otomatis</h3>
+                <div class="insight-list" id="insightList"></div>
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div class="simple-card" id="emptyState">
+                <div class="empty-state">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>Belum Ada Data</h3>
+                    <p>Pilih semester, aktivitas, dan minimal 1 kelas, lalu klik "Tampilkan Analisis"</p>
+                </div>
+            </div>
+
+            <div class="back-nav-simple">
+                <a href="index-penilaian-ipas.html" class="back-btn-simple">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Menu Penilaian
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <p id="loadingText">Memuat data...</p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== PROTEKSI LOGIN ====================
+        (function() {
+            const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
+            if (isLoggedIn !== 'true') {
+                const mainContent = document.getElementById('mainContent');
+                if (mainContent) mainContent.style.display = 'none';
+                
+                const body = document.body;
+                const warningDiv = document.createElement('div');
+                warningDiv.className = 'login-required-overlay';
+                warningDiv.innerHTML = `
+                    <div class="login-required-card">
+                        <i class="fas fa-lock"></i>
+                        <h2>Akses Terbatas</h2>
+                        <p>Halaman ini hanya dapat diakses oleh Guru/Admin yang telah login.</p>
+                        <a href="index-penilaian-ipas.html">
+                            <i class="fas fa-arrow-left"></i> Kembali ke Halaman Login
+                        </a>
+                    </div>
+                `;
+                body.appendChild(warningDiv);
+                return;
+            }
+            const mainContent = document.getElementById('mainContent');
+            if (mainContent) mainContent.style.display = 'block';
+        })();
+
+        // ==================== KONFIGURASI ====================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOV0q9vp8bVeVXCoYWa7qNUqzSPTA7BgTTjwEO0qjUGeHy-mrx7O0hFhcEHxK57oVY/exec';
+        const URL_DATA_SISWA = 'https://script.google.com/macros/s/AKfycbxZMS_o6xWMAQAkjBzzEMR9tJmHOnHCX13KJX2xZMn7WIr-A9pwVK_3DDHnMg7y_rD29Q/exec';
+
+        if (typeof ChartDataLabels !== 'undefined') {
+            Chart.register(ChartDataLabels);
+        }
+
+        // ==================== STATE ====================
+        let dataKelas = [];
+        let aktivitasTersedia = [];
+        let chartKelasInstance = null;
+        let chartDistribusiInstance = null;
+        let chartAktivitasInstance = null;
+        let chartPerAktivitasInstance = null;
+        let isLoading = false;
+        let accordionPageState = {};
+
+        // ==================== FETCH RETRY ====================
+        async function fetchWithRetry(url, maxRetries = 3, timeout = 60000) {
+            let lastError = null;
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeout);
+                    const response = await fetch(url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    lastError = error;
+                    if (attempt < maxRetries) {
+                        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
+                    }
+                }
+            }
+            throw new Error(`Gagal setelah ${maxRetries} percobaan: ${lastError?.message}`);
+        }
+
+        // ==================== LOAD KELAS ====================
+        function loadDataSiswa() {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_cb_' + Date.now();
+                const timeoutId = setTimeout(() => {
+                    cleanup();
+                    reject(new Error('Timeout memuat data kelas'));
+                }, 15000);
+                
+                function cleanup() {
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script) script.remove();
+                    delete window[callbackName];
+                    clearTimeout(timeoutId);
+                }
+                
+                window[callbackName] = function(result) {
+                    cleanup();
+                    if (result && result.success) {
+                        dataKelas = result.kelasList || [];
+                        resolve();
+                    } else {
+                        reject(new Error('Gagal memuat data kelas'));
+                    }
+                };
+                
+                const script = document.createElement('script');
+                script.src = URL_DATA_SISWA + '?callback=' + callbackName;
+                script.onerror = () => {
+                    cleanup();
+                    reject(new Error('Gagal terhubung ke server data kelas'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        function renderKelasCheckboxes() {
+            const container = document.getElementById('kelasOptions');
+            
+            if (!dataKelas || dataKelas.length === 0) {
+                container.innerHTML = '<span style="color:#e74c3c;">Tidak ada kelas tersedia</span>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            dataKelas.forEach(kelas => {
+                if (!kelas || !kelas.trim()) return;
+                
+                const label = document.createElement('label');
+                label.className = 'kelas-checkbox';
+                label.innerHTML = `
+                    <input type="checkbox" value="${kelas}">
+                    <i class="fas fa-check" style="display:none; font-size:0.7rem;"></i>
+                    <span>${kelas}</span>
+                `;
+                
+                const checkbox = label.querySelector('input');
+                const icon = label.querySelector('i');
+                
+                checkbox.addEventListener('change', () => {
+                    label.classList.toggle('checked', checkbox.checked);
+                    icon.style.display = checkbox.checked ? 'inline' : 'none';
+                });
+                
+                container.appendChild(label);
+            });
+        }
+
+        // ==================== MUAT AKTIVITAS ====================
+        async function muatDaftarAktivitas(semester) {
+            const wrapper = document.getElementById('aktivitasChecklistWrapper');
+            const container = document.getElementById('aktivitasOptions');
+            
+            if (!semester) {
+                wrapper.style.display = 'none';
+                return;
+            }
+            
+            wrapper.style.display = 'block';
+            container.innerHTML = '<span style="color:#999; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> Memuat aktivitas...</span>';
+            
+            try {
+                const url = `${APPS_SCRIPT_URL}?action=getDaftarAktivitasFilter&semester=${encodeURIComponent(semester)}&_=${Date.now()}`;
+                const result = await fetchWithRetry(url, 2, 15000);
+                
+                if (!result?.success || !result.aktivitas || result.aktivitas.length === 0) {
+                    container.innerHTML = '<span style="color:#e74c3c; font-size:0.85rem;">Tidak ada aktivitas untuk semester ini</span>';
+                    return;
+                }
+                
+                aktivitasTersedia = result.aktivitas;
+                renderAktivitasCheckboxes();
+            } catch (error) {
+                console.error('Gagal load aktivitas:', error);
+                container.innerHTML = '<span style="color:#e74c3c; font-size:0.85rem;">Gagal memuat aktivitas</span>';
+            }
+        }
+
+        function renderAktivitasCheckboxes() {
+            const container = document.getElementById('aktivitasOptions');
+            container.innerHTML = '';
+            
+            aktivitasTersedia.forEach(akt => {
+                const label = document.createElement('label');
+                label.className = 'aktivitas-checkbox';
+                label.innerHTML = `
+                    <input type="checkbox" value="${akt.nama}">
+                    <i class="fas fa-check" style="display:none; font-size:0.7rem;"></i>
+                    <span>${akt.nama}</span>
+                `;
+                
+                const checkbox = label.querySelector('input');
+                const icon = label.querySelector('i');
+                
+                checkbox.addEventListener('change', () => {
+                    label.classList.toggle('checked', checkbox.checked);
+                    icon.style.display = checkbox.checked ? 'inline' : 'none';
+                });
+                
+                container.appendChild(label);
+            });
+        }
+
+        // ==================== TAMPILKAN ANALISIS ====================
+        async function tampilkanAnalisis() {
+            if (isLoading) return;
+            
+            const semester = document.getElementById('filterSemester').value;
+            const checkboxes = document.querySelectorAll('.kelas-checkbox input:checked');
+            const kelasTerpilih = Array.from(checkboxes).map(cb => cb.value);
+            
+            const aktivitasCheckboxes = document.querySelectorAll('#aktivitasOptions .aktivitas-checkbox input:checked');
+            const aktivitasTerpilih = Array.from(aktivitasCheckboxes).map(cb => cb.value);
+            
+            if (!semester) { alert('Pilih semester dulu'); return; }
+            if (kelasTerpilih.length === 0) { alert('Pilih minimal 1 kelas'); return; }
+            
+            if (aktivitasTerpilih.length === 0 && aktivitasTersedia.length > 0) {
+                const konfirmasi = confirm(
+                    '⚠️ Tidak ada aktivitas yang dipilih.\n\n' +
+                    'Analisis akan menggunakan SEMUA aktivitas semester ini ' +
+                    '(' + aktivitasTersedia.length + ' aktivitas).\n\n' +
+                    'Lanjutkan?'
+                );
+                if (!konfirmasi) return;
+            }
+            
+            isLoading = true;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('btnCek').disabled = true;
+            document.getElementById('btnCek').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+            document.getElementById('loadingText').innerText = 'Mengambil data nilai...';
+            
+            try {
+                let url = `${APPS_SCRIPT_URL}?action=getDashboardNilai` +
+                          `&semester=${encodeURIComponent(semester)}` +
+                          `&kelas=${encodeURIComponent(kelasTerpilih.join(','))}` +
+                          `&_=${Date.now()}`;
+                
+                if (aktivitasTerpilih.length > 0) {
+                    url += `&aktivitas=${encodeURIComponent(aktivitasTerpilih.join(','))}`;
+                }
+                
+                console.log('📤 Request:', url);
+                const result = await fetchWithRetry(url, 3, 60000);
+                
+                if (!result?.success) {
+                    throw new Error(result?.error || 'Gagal memuat data');
+                }
+                
+                console.log('✅ Data diterima:', result);
+                renderDashboardFromAPI(result);
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i>
+                        <h3>Gagal Memuat Data</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                hideAll();
+            } finally {
+                isLoading = false;
+                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('btnCek').disabled = false;
+                document.getElementById('btnCek').innerHTML = '<i class="fas fa-chart-line"></i> Tampilkan Analisis';
+            }
+        }
+
+        // ==================== RENDER ====================
+        function renderDashboardFromAPI(apiData) {
+            window.lastApiData = apiData;
+            
+            const dataPerKelas = apiData.dataPerKelas || [];
+            
+            if (dataPerKelas.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle" style="color:#e74c3c;"></i>
+                        <h3>Tidak Ada Data</h3>
+                        <p>Tidak ada kelas yang valid.</p>
+                    </div>
+                `;
+                hideAll();
+                return;
+            }
+            
+            document.getElementById('emptyState').style.display = 'none';
+            
+            renderKPI(apiData);
+            renderChartKelas(dataPerKelas);
+            renderChartDistribusi(apiData.distribusiPredikat);
+            renderChartAktivitas(apiData.perAktivitasAgregat);
+            renderChartPerAktivitas(dataPerKelas, apiData.aktivitasList);
+            renderRanking(apiData.rankingSiswa);
+            renderTableRingkasan(dataPerKelas, apiData.aktivitasList);
+            renderAccordion(dataPerKelas);
+            renderInsight(apiData);
+            
+            document.getElementById('kpiSection').style.display = 'block';
+            document.getElementById('chartKelasCard').style.display = 'block';
+            document.getElementById('chartDistribusiCard').style.display = 'block';
+            document.getElementById('chartAktivitasCard').style.display = 'block';
+            document.getElementById('chartPerAktivitasCard').style.display = 'block';
+            document.getElementById('rankingCard').style.display = 'block';
+            document.getElementById('tableCard').style.display = 'block';
+            document.getElementById('detailPerhitunganCard').style.display = 'block';
+            document.getElementById('insightCard').style.display = 'block';
+        }
+
+        function hideAll() {
+            ['kpiSection', 'chartKelasCard', 'chartDistribusiCard', 'chartAktivitasCard', 
+             'chartPerAktivitasCard', 'rankingCard', 'tableCard', 'detailPerhitunganCard', 'insightCard']
+                .forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
+        }
+
+        // ==================== KPI ====================
+        function renderKPI(apiData) {
+            const total = apiData.totalKeseluruhan || {};
+            const distribusi = apiData.distribusiPredikat || {};
+            
+            document.getElementById('kpiAvg').innerText = (total.rataRataSemua || 0).toFixed(1);
+            document.getElementById('kpiAvgSub').innerHTML = 
+                `Semua: <strong>${(total.rataRataSemua || 0).toFixed(1)}</strong> · ` +
+                `Dinilai: <strong>${(total.rataRataDinilai || 0).toFixed(1)}</strong><br>` +
+                `${total.totalSiswaDinilai || 0} dari ${total.totalSiswa || 0} siswa dinilai`;
+            document.getElementById('kpiJumlahAkt').innerText = apiData.aktivitasList?.length || 0;
+            document.getElementById('kpiSiswaMahir').innerText = distribusi.mahir || 0;
+            document.getElementById('kpiNilaiMax').innerText = (total.nilaiMax || 0).toFixed(1);
+        }
+
+        // ==================== CHART 1 ====================
+        function renderChartKelas(results) {
+            const ctx = document.getElementById('chartKelas').getContext('2d');
+            if (chartKelasInstance) chartKelasInstance.destroy();
+            
+            const labels = results.map(r => r.kelas);
+            const dataSemua = results.map(r => parseFloat(r.rataRataSemua.toFixed(1)));
+            const dataDinilai = results.map(r => parseFloat(r.rataRataDinilai.toFixed(1)));
+            
+            chartKelasInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Rata² Semua Siswa (kosong=0)',
+                            data: dataSemua,
+                            backgroundColor: 'rgba(243, 156, 18, 0.85)',
+                            borderColor: 'rgba(243, 156, 18, 1)',
+                            borderWidth: 2,
+                            borderRadius: 8
+                        },
+                        {
+                            label: 'Rata² Siswa Dinilai',
+                            data: dataDinilai,
+                            backgroundColor: 'rgba(46, 204, 113, 0.85)',
+                            borderColor: 'rgba(46, 204, 113, 1)',
+                            borderWidth: 2,
+                            borderRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 25 } },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { boxWidth: 12, font: { size: 11 }, padding: 10 }
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            offset: 4,
+                            color: '#2c3e50',
+                            font: { size: 10, weight: 'bold' },
+                            formatter: (value) => value.toFixed(1)
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: '#f0f0f0' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // ==================== CHART 2 ====================
+        function renderChartDistribusi(distribusi) {
+            const ctx = document.getElementById('chartDistribusi').getContext('2d');
+            if (chartDistribusiInstance) chartDistribusiInstance.destroy();
+            
+            if (!distribusi) return;
+            
+            const labels = ['Mahir (≥90)', 'Cakap (75-89)', 'Berkembang (60-74)', 'Perlu Bimbingan (<60)'];
+            const data = [
+                distribusi.mahir || 0,
+                distribusi.cakap || 0,
+                distribusi.berkembang || 0,
+                distribusi.perluBimbingan || 0
+            ];
+            const colors = ['#2980b9', '#27ae60', '#f39c12', '#e74c3c'];
+            
+            const total = data.reduce((a, b) => a + b, 0);
+            
+            chartDistribusiInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors.map(c => c + 'dd'),
+                        borderColor: colors,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { size: 12 }, padding: 15 }
+                        },
+                        datalabels: {
+                            color: 'white',
+                            font: { size: 13, weight: 'bold' },
+                            formatter: (value) => {
+                                const pct = total > 0 ? (value / total * 100).toFixed(0) : 0;
+                                return value > 0 ? `${value}\n(${pct}%)` : '';
+                            },
+                            textAlign: 'center'
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==================== CHART 3 ====================
+        function renderChartAktivitas(perAktivitasAgregat) {
+            const ctx = document.getElementById('chartAktivitas').getContext('2d');
+            if (chartAktivitasInstance) chartAktivitasInstance.destroy();
+            
+            if (!perAktivitasAgregat) return;
+            
+            const stats = Object.entries(perAktivitasAgregat)
+                .map(([akt, val]) => ({
+                    aktivitas: akt,
+                    rataRata: val.rataRata || 0,
+                    jumlahDinilai: val.jumlahDinilai || 0
+                }))
+                .sort((a, b) => a.rataRata - b.rataRata);
+            
+            const labels = stats.map(s => {
+                let short = s.aktivitas.replace('AKTIVITAS ', 'Akt ').replace(' - ', ': ');
+                if (short.length > 40) short = short.substring(0, 40) + '…';
+                return short;
+            });
+            const data = stats.map(s => parseFloat(s.rataRata.toFixed(1)));
+            const colors = data.map(p => {
+                if (p >= 90) return 'rgba(41, 128, 185, 0.85)';
+                if (p >= 75) return 'rgba(46, 204, 113, 0.85)';
+                if (p >= 60) return 'rgba(243, 156, 18, 0.85)';
+                return 'rgba(231, 76, 60, 0.85)';
+            });
+            
+            chartAktivitasInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Rata-rata',
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: colors.map(c => c.replace('0.85', '1')),
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { right: 55 } },
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            offset: 4,
+                            color: '#2c3e50',
+                            font: { size: 12, weight: 'bold' },
+                            formatter: (value) => value.toFixed(1)
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => {
+                                    const s = stats[ctx.dataIndex];
+                                    return [
+                                        `Rata-rata: ${s.rataRata.toFixed(1)}`,
+                                        `Siswa dinilai: ${s.jumlahDinilai}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: '#f0f0f0' }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==================== CHART 4 ====================
+        function renderChartPerAktivitas(results, aktivitasList) {
+            const ctx = document.getElementById('chartPerAktivitas').getContext('2d');
+            if (chartPerAktivitasInstance) chartPerAktivitasInstance.destroy();
+            
+            if (!results || !aktivitasList || aktivitasList.length === 0) return;
+            
+            const palette = [
+                '#2ecc71', '#3498db', '#f39c12', '#9b59b6', '#e74c3c',
+                '#1abc9c', '#e67e22', '#34495e', '#16a085', '#c0392b',
+                '#8e44ad', '#27ae60', '#2980b9', '#d35400', '#7f8c8d'
+            ];
+            
+            const datasets = results.map((dk, idx) => {
+                const data = aktivitasList.map(akt => {
+                    const info = dk.perAktivitas && dk.perAktivitas[akt];
+                    return info && info.rataRata !== null ? parseFloat(info.rataRata.toFixed(1)) : 0;
+                });
+                
+                return {
+                    label: dk.kelas,
+                    data: data,
+                    backgroundColor: palette[idx % palette.length] + 'cc',
+                    borderColor: palette[idx % palette.length],
+                    borderWidth: 2,
+                    borderRadius: 6
+                };
+            });
+            
+            const labels = aktivitasList.map(a => {
+                let short = a.replace('AKTIVITAS ', 'Akt ').replace(' - ', ': ');
+                if (short.length > 30) short = short.substring(0, 30) + '…';
+                return short;
+            });
+            
+            const totalLabels = results.length * aktivitasList.length;
+            const showLabels = totalLabels <= 24;
+            
+            chartPerAktivitasInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 25 } },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { boxWidth: 12, font: { size: 11 }, padding: 10 }
+                        },
+                        datalabels: {
+                            display: showLabels,
+                            anchor: 'end',
+                            align: 'end',
+                            offset: 2,
+                            color: '#2c3e50',
+                            font: { size: 9, weight: 'bold' },
+                            formatter: (value) => value.toFixed(0)
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => aktivitasList[items[0].dataIndex],
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: '#f0f0f0' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==================== RANKING ====================
+        function renderRanking(ranking) {
+            if (!ranking) return;
+            
+            const top = ranking.top10 || [];
+            const bottom = ranking.bottom10 || [];
+            
+            const topList = document.getElementById('rankingTopList');
+            topList.innerHTML = '';
+            top.forEach((siswa, idx) => {
+                const predikat = getPredikat(siswa.rataRata);
+                const kelengkapanClass = getKelengkapanClass(siswa.kelengkapan);
+                const div = document.createElement('div');
+                div.className = 'ranking-item';
+                div.innerHTML = `
+                    <div class="rank-num">${idx + 1}</div>
+                    <div class="nama" title="${siswa.nama}">${siswa.nama}</div>
+                    <span class="kelas-label">${siswa.kelas}</span>
+                    <span class="kelengkapan-label ${kelengkapanClass}">${siswa.aktivitasKumpul}/${siswa.totalAktivitas}</span>
+                    <div class="nilai ${predikat.kelas}">${siswa.rataRata.toFixed(1)}</div>
+                `;
+                topList.appendChild(div);
+            });
+            
+            const bottomList = document.getElementById('rankingBottomList');
+            bottomList.innerHTML = '';
+            bottom.forEach((siswa, idx) => {
+                const predikat = getPredikat(siswa.rataRata);
+                const kelengkapanClass = getKelengkapanClass(siswa.kelengkapan);
+                const div = document.createElement('div');
+                div.className = 'ranking-item';
+                div.innerHTML = `
+                    <div class="rank-num">${idx + 1}</div>
+                    <div class="nama" title="${siswa.nama}">${siswa.nama}</div>
+                    <span class="kelas-label">${siswa.kelas}</span>
+                    <span class="kelengkapan-label ${kelengkapanClass}">${siswa.aktivitasKumpul}/${siswa.totalAktivitas}</span>
+                    <div class="nilai ${predikat.kelas}">${siswa.rataRata.toFixed(1)}</div>
+                `;
+                bottomList.appendChild(div);
+            });
+        }
+
+        function getPredikat(nilai) {
+            if (nilai >= 90) return { teks: 'Mahir', kelas: 'mahir' };
+            if (nilai >= 75) return { teks: 'Cakap', kelas: 'cakap' };
+            if (nilai >= 60) return { teks: 'Berkembang', kelas: 'berkembang' };
+            return { teks: 'Perlu Bimbingan', kelas: 'perlu' };
+        }
+
+        function getKelengkapanClass(pct) {
+            if (pct >= 0.99) return 'full';
+            if (pct >= 0.5) return 'partial';
+            return 'low';
+        }
+
+        function getStatusKelas(rataRataSemua, totalSiswa) {
+            if (totalSiswa === 0) return { teks: 'Kosong', kelas: 'kosong', emoji: '⚪' };
+            if (rataRataSemua >= 75) return { teks: 'Baik', kelas: 'baik', emoji: '🟢' };
+            if (rataRataSemua >= 60) return { teks: 'Cukup', kelas: 'cukup', emoji: '🟡' };
+            return { teks: 'Kritis', kelas: 'kritis', emoji: '🔴' };
+        }
+
+        // ==================== TABEL RINGKASAN ====================
+        function renderTableRingkasan(results, aktivitasList) {
+            const thead = document.getElementById('detailTableHead');
+            const tbody = document.getElementById('detailTableBody');
+            
+            if (!results || results.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:2rem;">Tidak ada data</td></tr>';
+                return;
+            }
+            
+            let headerHtml = '<tr>';
+            headerHtml += '<th>Kelas</th>';
+            headerHtml += '<th>Total Siswa</th>';
+            headerHtml += '<th>Dinilai</th>';
+            headerHtml += '<th>Kosong</th>';
+            
+            aktivitasList.forEach(akt => {
+                let short = akt.replace('AKTIVITAS ', 'Akt ').replace(' - ', ': ');
+                if (short.length > 20) short = short.substring(0, 20) + '…';
+                headerHtml += `<th>${short}</th>`;
+            });
+            
+            headerHtml += '<th>Rata² Semua</th>';
+            headerHtml += '<th>Rata² Dinilai</th>';
+            headerHtml += '<th>Status</th>';
+            headerHtml += '</tr>';
+            thead.innerHTML = headerHtml;
+            
+            let html = '';
+            results.forEach(r => {
+                const status = getStatusKelas(r.rataRataSemua, r.totalSiswa);
+                
+                html += `<tr>`;
+                html += `<td>${r.kelas}</td>`;
+                html += `<td>${r.totalSiswa}</td>`;
+                html += `<td style="color:#27ae60; font-weight:600;">${r.siswaDinilai}</td>`;
+                html += `<td style="color:#e74c3c; font-weight:600;">${r.siswaKosong}</td>`;
+                
+                aktivitasList.forEach(akt => {
+                    const info = r.perAktivitas && r.perAktivitas[akt];
+                    const nilai = info && info.rataRata !== null ? info.rataRata.toFixed(1) : '-';
+                    const predikat = info && info.rataRata !== null ? getPredikat(info.rataRata) : { kelas: '' };
+                    html += `<td class="nilai-cell ${predikat.kelas}">${nilai}</td>`;
+                });
+                
+                html += `<td class="rata-kelas">${r.rataRataSemua.toFixed(1)}</td>`;
+                html += `<td style="font-weight:700; color:#2980b9;">${r.rataRataDinilai.toFixed(1)}</td>`;
+                html += `<td><span class="status-badge ${status.kelas}">${status.emoji} ${status.teks}</span></td>`;
+                html += `</tr>`;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        // ==================== ACCORDION ====================
+        function renderAccordion(results) {
+            const wrapper = document.getElementById('accordionWrapper');
+            wrapper.innerHTML = '';
+            
+            accordionPageState = {};
+            
+            results.forEach((r, idx) => {
+                accordionPageState[r.kelas] = 1;
+                
+                const item = document.createElement('div');
+                item.className = 'accordion-item';
+                item.id = `accordion-${idx}`;
+                
+                item.innerHTML = `
+                    <div class="accordion-header" onclick="toggleAccordion(${idx})">
+                        <div class="accordion-header-left">
+                            <div class="accordion-toggle">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="accordion-kelas-nama">${r.kelas}</div>
+                        </div>
+                        <div class="accordion-stats">
+                            <span class="mini-stat">${r.totalSiswa} siswa</span>
+                            <span class="mini-stat dinilai">${r.siswaDinilai} dinilai</span>
+                            <span class="mini-stat kosong">${r.siswaKosong} kosong</span>
+                            <span class="mini-stat rata-semua">Rata² Semua: ${r.rataRataSemua.toFixed(1)}</span>
+                            <span class="mini-stat rata-dinilai">Rata² Dinilai: ${r.rataRataDinilai.toFixed(1)}</span>
+                        </div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-body-inner" id="accordion-body-${idx}"></div>
+                    </div>
+                `;
+                
+                wrapper.appendChild(item);
+            });
+        }
+
+        function toggleAccordion(idx) {
+            const item = document.getElementById(`accordion-${idx}`);
+            if (!item) return;
+            
+            const isOpen = item.classList.contains('open');
+            
+            if (!isOpen) {
+                renderAccordionContent(idx);
+                item.classList.add('open');
+            } else {
+                item.classList.remove('open');
+            }
+        }
+
+        function renderAccordionContent(idx) {
+            const apiData = window.lastApiData;
+            if (!apiData) return;
+            
+            const r = apiData.dataPerKelas[idx];
+            const body = document.getElementById(`accordion-body-${idx}`);
+            
+            if (!body) return;
+            
+            let html = '';
+            
+            // ============ KASUS 1: TIDAK ADA SISWA DINILAI ============
+            if (!r.daftarSiswaDinilai || r.daftarSiswaDinilai.length === 0) {
+                html += '<div style="text-align:center; padding:1.5rem; color:#95a5a6; background:#f8f9fa; border-radius:12px; margin-bottom:1rem;">';
+                html += '<i class="fas fa-info-circle" style="font-size:1.5rem; opacity:0.5;"></i>';
+                html += '<p style="margin-top:0.5rem;">Belum ada siswa yang dinilai di kelas ini</p>';
+                html += '</div>';
+                
+                if (r.daftarSiswaKosong && r.daftarSiswaKosong.length > 0) {
+                    html += renderKosongList(r.daftarSiswaKosong);
+                }
+                
+                body.innerHTML = html;
+                return;
+            }
+            
+            // ============ AMBIL TOP 10 & BOTTOM 10 ============
+            const daftar = r.daftarSiswaDinilai;
+            const jumlahTopBottom = 10;
+            const top10 = daftar.slice(0, Math.min(jumlahTopBottom, daftar.length));
+            const bottom10 = daftar.slice(-Math.min(jumlahTopBottom, daftar.length)).reverse();
+            
+            // Filter bottom agar tidak duplikat dengan top (kalau siswa < 20)
+            const bottomFiltered = bottom10.filter(b => !top10.find(t => t.nama === b.nama));
+            
+            // ============ RENDER TOP 10 ============
+            html += `
+                <div class="kelas-section top-section">
+                    <div class="kelas-section-title">
+                        <i class="fas fa-trophy"></i>
+                        <span>${top10.length} Siswa Terbaik Kelas Ini</span>
+                    </div>
+                    <div class="kelas-siswa-list">
+            `;
+            
+            top10.forEach((siswa, i) => {
+                const predikat = getPredikat(siswa.rataRata);
+                const kelengkapanClass = getKelengkapanClass(siswa.kelengkapan);
+                const rankClass = i < 3 ? `rank-${i + 1}` : '';
+                
+                html += `
+                    <div class="kelas-siswa-item top-item">
+                        <div class="rank-medal ${rankClass}">${i + 1}</div>
+                        <div class="siswa-nama-full">${siswa.nama}</div>
+                        <span class="kelengkapan-label ${kelengkapanClass}">${siswa.aktivitasKumpul}/${siswa.totalAktivitas}</span>
+                        <div class="siswa-nilai ${predikat.kelas}">${siswa.rataRata.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+            
+            html += `</div></div>`;
+            
+            // ============ RENDER BOTTOM 10 ============
+            if (bottomFiltered.length > 0) {
+                html += `
+                    <div class="kelas-section bottom-section">
+                        <div class="kelas-section-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>${bottomFiltered.length} Siswa Perlu Perhatian</span>
+                        </div>
+                        <div class="kelas-siswa-list">
+                `;
+                
+                bottomFiltered.forEach((siswa, i) => {
+                    const predikat = getPredikat(siswa.rataRata);
+                    const kelengkapanClass = getKelengkapanClass(siswa.kelengkapan);
+                    
+                    const warningIcon = siswa.kelengkapan < 0.5 
+                        ? '<i class="fas fa-user-slash" style="color:#e74c3c; margin-left:5px;" title="Kelengkapan rendah"></i>' 
+                        : '';
+                    
+                    html += `
+                        <div class="kelas-siswa-item bottom-item">
+                            <div class="rank-medal bottom-rank">${i + 1}</div>
+                            <div class="siswa-nama-full">
+                                ${siswa.nama} ${warningIcon}
+                            </div>
+                            <span class="kelengkapan-label ${kelengkapanClass}">${siswa.aktivitasKumpul}/${siswa.totalAktivitas}</span>
+                            <div class="siswa-nilai ${predikat.kelas}">${siswa.rataRata.toFixed(2)}</div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div></div>`;
+            }
+            
+            // ============ RENDER TABEL SEMUA SISWA (COLLAPSIBLE) ============
+            html += `
+                <div class="kelas-section semua-section">
+                    <div class="kelas-section-title clickable" onclick="toggleSemuaSiswa(${idx})">
+                        <i class="fas fa-list-ol"></i>
+                        <span>Lihat Semua Siswa (${daftar.length} siswa)</span>
+                        <i class="fas fa-chevron-down toggle-icon" id="toggle-icon-${idx}"></i>
+                    </div>
+                    <div class="semua-siswa-wrapper" id="semua-siswa-${idx}" style="display:none;">
+                        <div id="semua-siswa-content-${idx}"></div>
+                    </div>
+                </div>
+            `;
+            
+            // ============ RENDER SISWA KOSONG ============
+            if (r.daftarSiswaKosong && r.daftarSiswaKosong.length > 0) {
+                html += renderKosongList(r.daftarSiswaKosong);
+            }
+            
+            body.innerHTML = html;
+        }
+
+        function renderKosongList(daftarSiswaKosong) {
+            let html = `
+                <div class="kelas-section kosong-section">
+                    <div class="kelas-section-title">
+                        <i class="fas fa-user-slash"></i>
+                        <span>${daftarSiswaKosong.length} Siswa Tanpa Nilai</span>
+                    </div>
+                    <div class="kosong-list">
+                        <div class="nama-list">
+            `;
+            
+            daftarSiswaKosong.forEach(s => {
+                html += `<span class="nama-item">${s.nama}</span>`;
+            });
+            
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return html;
+        }
+
+        function toggleSemuaSiswa(idx) {
+            const wrapper = document.getElementById(`semua-siswa-${idx}`);
+            const icon = document.getElementById(`toggle-icon-${idx}`);
+            
+            if (!wrapper) return;
+            
+            if (wrapper.style.display === 'none') {
+                renderTabelSemuaSiswa(idx);
+                wrapper.style.display = 'block';
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            } else {
+                wrapper.style.display = 'none';
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function renderTabelSemuaSiswa(idx) {
+            const apiData = window.lastApiData;
+            if (!apiData) return;
+            
+            const r = apiData.dataPerKelas[idx];
+            const aktivitasList = apiData.aktivitasList;
+            const container = document.getElementById(`semua-siswa-content-${idx}`);
+            
+            if (!container) return;
+            
+            const perPage = 10;
+            const totalPages = Math.ceil(r.daftarSiswaDinilai.length / perPage);
+            const page = accordionPageState[r.kelas] || 1;
+            const start = (page - 1) * perPage;
+            const end = start + perPage;
+            const pageData = r.daftarSiswaDinilai.slice(start, end);
+            
+            let html = '<table class="detail-siswa-table">';
+            html += '<thead><tr>';
+            html += '<th>No</th>';
+            html += '<th style="text-align:left;">Nama</th>';
+            aktivitasList.forEach(akt => {
+                let short = akt.replace('AKTIVITAS ', 'Akt ').replace(' - ', ': ');
+                if (short.length > 15) short = short.substring(0, 15) + '…';
+                html += `<th title="${akt}">${short}</th>`;
+            });
+            html += '<th>Kumpul</th>';
+            html += '<th>Rata²</th>';
+            html += '</tr></thead>';
+            html += '<tbody>';
+            
+            pageData.forEach((siswa, i) => {
+                const globalIdx = start + i + 1;
+                const predikat = getPredikat(siswa.rataRata);
+                const kelengkapanClass = getKelengkapanClass(siswa.kelengkapan);
+                
+                html += '<tr>';
+                html += `<td>${globalIdx}</td>`;
+                html += `<td class="nama">${siswa.nama}</td>`;
+                
+                aktivitasList.forEach(akt => {
+                    const nilai = siswa.perAktivitas[akt];
+                    const nilaiDisplay = nilai > 0 ? nilai.toFixed(1) : '-';
+                    const pred = nilai > 0 ? getPredikat(nilai) : { kelas: '' };
+                    html += `<td class="nilai-cell ${pred.kelas}">${nilaiDisplay}</td>`;
+                });
+                
+                html += `<td><span class="kelengkapan-label ${kelengkapanClass}" style="padding:2px 8px;border-radius:20px;font-size:0.7rem;">${siswa.aktivitasKumpul}/${siswa.totalAktivitas}</span></td>`;
+                html += `<td class="rata-siswa ${predikat.kelas}">${siswa.rataRata.toFixed(2)}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            
+            if (totalPages > 1) {
+                html += '<div class="pagination">';
+                html += `<button ${page <= 1 ? 'disabled' : ''} onclick="changeAccordionPage(${idx}, ${page - 1})"><i class="fas fa-chevron-left"></i> Prev</button>`;
+                html += `<span class="page-info">Halaman ${page} / ${totalPages}</span>`;
+                html += `<button ${page >= totalPages ? 'disabled' : ''} onclick="changeAccordionPage(${idx}, ${page + 1})">Next <i class="fas fa-chevron-right"></i></button>`;
+                html += '</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function changeAccordionPage(idx, newPage) {
+            const apiData = window.lastApiData;
+            if (!apiData) return;
+            
+            const r = apiData.dataPerKelas[idx];
+            const perPage = 10;
+            const totalPages = Math.ceil(r.daftarSiswaDinilai.length / perPage);
+            
+            if (newPage < 1 || newPage > totalPages) return;
+            
+            accordionPageState[r.kelas] = newPage;
+            renderTabelSemuaSiswa(idx);
+        }
+
+        // ==================== INSIGHT ====================
+        function renderInsight(apiData) {
+            const list = document.getElementById('insightList');
+            list.innerHTML = '';
+            
+            const insights = [];
+            
+            const aktStats = Object.entries(apiData.perAktivitasAgregat || {})
+                .map(([akt, val]) => ({ akt, rataRata: val.rataRata || 0 }))
+                .sort((a, b) => b.rataRata - a.rataRata);
+            
+            if (aktStats.length > 0) {
+                const terbaik = aktStats[0];
+                const terburuk = aktStats[aktStats.length - 1];
+                
+                insights.push({
+                    icon: 'fa-trophy',
+                    text: `Aktivitas rata-rata tertinggi: <strong>${terbaik.akt}</strong> (${terbaik.rataRata.toFixed(1)})`
+                });
+                
+                insights.push({
+                    icon: 'fa-exclamation-triangle',
+                    text: `Aktivitas rata-rata terendah: <strong>${terburuk.akt}</strong> (${terburuk.rataRata.toFixed(1)})`
+                });
+            }
+            
+            const kelasDinilai = (apiData.dataPerKelas || [])
+                .filter(r => r.siswaDinilai > 0)
+                .sort((a, b) => b.rataRataDinilai - a.rataRataDinilai);
+            
+            if (kelasDinilai.length > 0) {
+                const terbaik = kelasDinilai[0];
+                const terburuk = kelasDinilai[kelasDinilai.length - 1];
+                
+                insights.push({
+                    icon: 'fa-medal',
+                    text: `Kelas tertinggi (dinilai): <strong>${terbaik.kelas}</strong> (${terbaik.rataRataDinilai.toFixed(1)})`
+                });
+                
+                if (kelasDinilai.length > 1) {
+                    insights.push({
+                        icon: 'fa-balance-scale',
+                        text: `Kelas terendah (dinilai): <strong>${terburuk.kelas}</strong> (${terburuk.rataRataDinilai.toFixed(1)})`
+                    });
+                }
+            }
+            
+            const distribusi = apiData.distribusiPredikat || {};
+            const totalSiswa = (distribusi.mahir || 0) + (distribusi.cakap || 0) + (distribusi.berkembang || 0) + (distribusi.perluBimbingan || 0);
+            
+            if (totalSiswa > 0) {
+                const pctMahir = (distribusi.mahir / totalSiswa * 100).toFixed(1);
+                insights.push({
+                    icon: 'fa-chart-pie',
+                    text: `<strong>${pctMahir}%</strong> siswa mencapai predikat Mahir (${distribusi.mahir} dari ${totalSiswa})`
+                });
+                
+                if (distribusi.perluBimbingan > 0) {
+                    insights.push({
+                        icon: 'fa-user-graduate',
+                        text: `<strong>${distribusi.perluBimbingan} siswa</strong> perlu bimbingan intensif (nilai < 60)`
+                    });
+                }
+            }
+            
+            const total = apiData.totalKeseluruhan || {};
+            if (total.totalSiswaKosong > 0) {
+                insights.push({
+                    icon: 'fa-user-slash',
+                    text: `<strong>${total.totalSiswaKosong} siswa</strong> belum mengumpulkan aktivitas apapun`
+                });
+            }
+            
+            insights.forEach(ins => {
+                const div = document.createElement('div');
+                div.className = 'insight-item';
+                div.innerHTML = `<i class="fas ${ins.icon}"></i><span>${ins.text}</span>`;
+                list.appendChild(div);
+            });
+        }
+
+        // ==================== PROFILE ====================
+        function loadProfileFromSession() {
+            const adminName = sessionStorage.getItem('adminName');
+            const adminRole = sessionStorage.getItem('adminRole');
+            if (adminName) {
+                document.getElementById('profileName').innerText = adminName;
+                document.getElementById('profileRole').innerText = adminRole || 'Administrator';
+                document.getElementById('profileAvatar').innerText = adminName.charAt(0).toUpperCase();
+                document.getElementById('profileContainer').style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            sessionStorage.removeItem('adminName');
+            sessionStorage.removeItem('adminRole');
+            sessionStorage.removeItem('adminUsername');
+            sessionStorage.removeItem('adminMapel');
+            window.location.href = 'index-penilaian-ipas.html';
+        }
+
+        // ==================== INIT ====================
+        async function init() {
+            const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
+            if (isLoggedIn !== 'true') return;
+            
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            }
+            
+            loadProfileFromSession();
+            
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('loadingText').innerText = 'Memuat daftar kelas...';
+            
+            try {
+                await loadDataSiswa();
+                renderKelasCheckboxes();
+                document.getElementById('filterSemester').disabled = false;
+                document.getElementById('btnCek').disabled = false;
+                
+                const sem = document.getElementById('filterSemester').value;
+                if (sem) await muatDaftarAktivitas(sem);
+            } catch (e) {
+                console.error('❌ Gagal load kelas:', e);
+                document.getElementById('kelasOptions').innerHTML = 
+                    '<span style="color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat kelas. Refresh halaman.</span>';
+                document.getElementById('btnCek').disabled = false;
+                document.getElementById('filterSemester').disabled = false;
+            } finally {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+            
+            document.getElementById('filterSemester').addEventListener('change', function() {
+                muatDaftarAktivitas(this.value);
+            });
+            
+            document.getElementById('btnPilihSemuaAkt').addEventListener('click', function() {
+                document.querySelectorAll('#aktivitasOptions .aktivitas-checkbox').forEach(label => {
+                    const cb = label.querySelector('input');
+                    cb.checked = true;
+                    label.classList.add('checked');
+                    label.querySelector('i').style.display = 'inline';
+                });
+            });
+            
+            document.getElementById('btnHapusSemuaAkt').addEventListener('click', function() {
+                document.querySelectorAll('#aktivitasOptions .aktivitas-checkbox').forEach(label => {
+                    const cb = label.querySelector('input');
+                    cb.checked = false;
+                    label.classList.remove('checked');
+                    label.querySelector('i').style.display = 'none';
+                });
+            });
+            
+            document.getElementById('btnCek').addEventListener('click', tampilkanAnalisis);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
